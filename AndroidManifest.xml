@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="#TESTED_APP_PACKAGE#.test"
+      android:versionCode="1"
+      android:versionName="1.0">
+    <application android:label="instrumentation_backend">
+
+    <uses-library android:name="android.test.runner" />
+    </application>
+    <uses-sdk android:minSdkVersion="4" />
+    <instrumentation android:targetPackage="#TESTED_APP_PACKAGE#" android:name="android.test.InstrumentationTestRunner" />
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest> 

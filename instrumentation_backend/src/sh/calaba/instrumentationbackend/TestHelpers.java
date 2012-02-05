@@ -1,0 +1,143 @@
+package sh.calaba.instrumentationbackend;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import android.app.Instrumentation;
+import android.content.Context;
+import android.view.View;
+import android.widget.TextView;
+
+public class TestHelpers {
+	private static Map<String, Integer> resourceNamesToIds = new HashMap<String, Integer>();
+	private static Map<Integer, String> resourceIdsToNames = new HashMap<Integer, String>();
+	
+	 public static void loadIds(Context context) {
+		 
+		 resourceNamesToIds = new HashMap<String, Integer>();
+    	try {
+			InputStream is = context.getResources().getAssets().open("ids.txt");
+			BufferedReader input =  new BufferedReader(new InputStreamReader(is));
+			String line = null;
+			while (( line = input.readLine()) != null){
+				line = line.trim();
+				if (line.contains(InstrumentationBackend.TARGET_PACKAGE + ":id/")) {
+					if (line.startsWith("resource")) {
+						String[] tokens = line.split(" ");
+						String name = tokens[2];
+						name = name.replace(InstrumentationBackend.TARGET_PACKAGE + ":id/", "");
+						name = name.replace(":", "");
+							
+						System.out.println(name + " - " + Integer.parseInt(tokens[1].substring(2), 16));
+						resourceNamesToIds.put(name, Integer.parseInt(tokens[1].substring(2), 16));
+						resourceIdsToNames.put(Integer.parseInt(tokens[1].substring(2), 16), name);
+					}
+				}
+			}
+			System.out.println(new TreeSet<String>(resourceNamesToIds.keySet()));
+			System.out.println(new TreeMap<String,Integer>(resourceNamesToIds));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+	
+    public static TextView getTextViewByDescription(String description) {
+        View view = getViewByDescription(description);
+        if (view != null && view instanceof TextView) {
+            return (TextView) view;
+        } else {
+            return null;
+        }
+    }
+
+    public static <T extends View> T getViewByDescription(String description, Class<T> c) {
+        return (T) getViewByDescription(description);
+    }
+
+    public static View getViewByDescription(String description) {
+        for (View view : InstrumentationBackend.solo.getCurrentViews()) {
+            String viewDescription = view.getContentDescription() + "";
+            if (viewDescription != null && viewDescription.equalsIgnoreCase(description)) {
+                return view;
+            }
+        }
+        return null;
+    }
+
+    public static View getViewById(String idString) {
+    	for (View v : InstrumentationBackend.solo.getCurrentViews()) {
+    		if (resourceNamesToIds.get(idString) == v.getId()) {
+    			return v;
+    		}
+    	}
+    	System.out.println("Did not find view " + idString);
+    	System.out.println("Found these views:");
+    	for (View v : InstrumentationBackend.solo.getCurrentViews()) {
+    		System.out.println(v.getId());
+    		if (resourceIdsToNames.containsKey(v.getId())) {
+    			System.out.println(resourceIdsToNames.get(v.getId()));
+    		}
+    	}
+    	return null;
+    }
+
+    public static int[] parseTime(String timeString) {
+        String[] splitTimeString = timeString.split(":");
+        int hour = Integer.parseInt(splitTimeString[0]);
+        int minute = Integer.parseInt(splitTimeString[1]);
+
+        if (hour < 0 || hour > 23) {
+            throw new RuntimeException("Failed to parse time: Hours was '" + hour + "' and must be between 00 and 23. Time format is HH-mm (ex: '23:49')");
+        } else if (minute < 0 || minute > 59) {
+            throw new RuntimeException("Failed to parse time: Minutes was '" + minute + "' and must be between 00 and 59. Time format is HH-mm (ex: '23:49')");
+        } else {
+            int[] time = { hour, minute };
+            return time;
+        }
+    }
+
+    public static int[] parseDate(String dateString) {
+        try {
+            DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            formatter.setLenient(false);
+            Date date = (Date) formatter.parse(dateString);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int[] dateInts = new int[3];
+            dateInts[0] = cal.get(Calendar.DAY_OF_MONTH);
+            dateInts[1] = cal.get(Calendar.MONTH);
+            dateInts[2] = cal.get(Calendar.YEAR);
+
+            return dateInts;
+        } catch (Exception e) {
+            throw new RuntimeException("Could not parse date:'" + dateString + "'. Date format is dd-MM-yyyy (ex: 31-12-2011).", e);
+        }
+    }
+    public static void wait(int durationInSeconds) {
+    	wait(new Double(durationInSeconds));
+    }
+    
+
+    public static void wait(double durationInSeconds) {
+        try {
+			Thread.sleep((int)(durationInSeconds * 1000));
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+    }
+
+}
