@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="" default="test" basedir=".">
+    <description>
+      Bits and pices plucked out of $ANDROID_HOME/tools/ant/build.xml
+    </description>
+
+    <property environment="env"/>    
+    <property file="build.properties"/>
+    <property name="staging.dir" value="staging"/>
+    <property name="bin.dir" value="bin"/>
+    <property name="test.app" value="${bin.dir}/Test.apk"/>
+    <property name="test.app.aapt" value="${bin.dir}/Test_aapt.apk"/>
+    <property name="dex.file" value="${bin.dir}/classes.dex"/>
+    <property name="test.app.unsigned" value ="${bin.dir}/Test_unsigned.apk"/>
+    <property name="test.app.signed" value ="${bin.dir}/Test.apk"/>
+
+
+    <property name="android.lib" value="${env.ANDROID_HOME}/platforms/android-4/android.jar"/>
+    <path id="android.antlibs">
+        <pathelement path="${env.ANDROID_HOME}/tools/lib/anttasks.jar" />
+    </path>
+    <taskdef name="xpath" classname="com.android.ant.XPathTask" classpathref="android.antlibs"/>
+    <taskdef name="aapt" classname="com.android.ant.AaptExecTask" classpathref="android.antlibs" />
+    <taskdef name="apkbuilder" classname="com.android.ant.ApkBuilderTask" classpathref="android.antlibs" />
+
+
+    <uptodate property="test.app.upto.date" targetfile="${test.app.signed}" >
+      <srcfiles dir= "instrumentation_backend/" includes="**/*"/>
+      <srcfiles file="build.properties/"/>
+    </uptodate>
+
+    <path id="jar.libs.ref">
+      <fileset dir="${staging.dir}/libs/" includes="*.jar" />
+    </path>
+
+    <path id="cucumber.path">
+      <fileset dir="cucumber/" includes="*.jar" />
+    </path>
+    
+    <path id="android.target.classpath">
+      <fileset dir="${env.ANDROID_HOME}/platforms/android-8/" includes="*.jar"/>
+    </path>
+
+    <target name="test" description="Run test features" depends="install.app, install.test">
+	      <exec executable="cucumber">
+          <env key="TEST_PACKAGE_NAME" value="${tested.package_name}.test" />
+          <arg line="features/playlist.feature" />
+       </exec>
+    </target>
+    
+
+    <target name="-init" unless="test.app.upto.date">
+      <mkdir dir="${staging.dir}"/>
+      <mkdir dir="${bin.dir}"/>
+    </target>
+    
+    <target name="stage" unless="test.app.upto.date">
+      <antcall target="clean"/>
+      <antcall target="-init"/>
+      <antcall target="-prepare.manifest"/>
+      <antcall target="-prepare.testserver"/>
+    </target>
+
+    <target name="-prepare.manifest" description="Makes sure the manifest matches the tested application by looking at its manifest file">
+      <copy file="AndroidManifest.xml" todir="${staging.dir}"/>
+      <replace file="${staging.dir}/AndroidManifest.xml" token="#TESTED_APP_PACKAGE#" value="${tested.package_name}"/>
+    </target>
+
+    <target name="-prepare.testserver" description="Makes sure the testserver matches the tested application by looking at its manifest file">
+      <copy todir="${staging.dir}">
+				<fileset dir="instrumentation_backend"/>
+      </copy>
+      <replace file="${staging.dir}/src/sh/calaba/instrumentationbackend/InstrumentationBackend.java" token="#ACTIVITY_PACKAGE#" value="${tested.package_name}"/>
+
+      <replace file="${staging.dir}/src/sh/calaba/instrumentationbackend/InstrumentationBackend.java" token="#ACTIVITY_QUALIFIED_NAME#" value="${tested.main_activity}"/>
+			<exec executable="${env.ANDROID_HOME}/platform-tools/aapt" failonerror="true" output="${staging.dir}/assets/ids.txt">
+				<arg line="dump resources ${tested.project.apk}" />
+			</exec>
+    </target>
+
+
+    <target name="compile" depends="stage" unless="test.app.upto.date">
+      <javac 
+	  srcdir="${staging.dir}/src"
+	  destdir="${bin.dir}"
+	  verbose="${verbose}"
+	  bootclasspathref="android.target.classpath"
+	  classpath="${extensible.classpath}"
+	  classpathref="jar.libs.ref">
+      </javac>
+    </target>
+
+    
+    <target name="package" depends="compile, -aapt, -dex, -apk, -sign" unless="test.app.upto.date">
+    </target>
+    
+    <target name="install.test" description="Install the test server"> 
+      <antcall target="package"/>
+      <echo message="Installing test"/>
+      <antcall target="-install.helper">
+	<param name="apk.to.install" value="${test.app}"/>
+      </antcall>
+    </target>    
+
+    <target name="install.app" description="Install the app under test">
+      <antcall target="-install.helper">
+	<param name="apk.to.install" value="${tested.project.apk}"/>
+      </antcall>
+    </target>    
+
+    
+    <target name="clean" description="clean up">
+      <delete dir="${staging.dir}"/>
+      <delete dir="${bin.dir}"/>
+    </target>
+
+    <target name="-install.helper" description="Helper to install apk file">
+      <!-- Make sure path to apk is absolute -->
+      <property name="apk.full.path" location="${apk.to.install}"/>
+
+      <echo message="Installing:${apk.to.install}"/>      
+
+      <exec executable="${env.ANDROID_HOME}/platform-tools/adb" failonerror="true">
+	<arg value="install" />
+	<arg value="-r" />
+	<arg path="${apk.full.path}" />
+      </exec>
+    </target>
+
+    <target name="-aapt" unless="test.app.upto.date">
+      <exec executable="${env.ANDROID_HOME}/platform-tools/aapt" failonerror="yes">
+	<arg line="package"/>
+	<arg line="-f"/> 
+	<arg line="-M ${staging.dir}/AndroidManifest.xml"/>  
+	<arg line="-F ${test.app.aapt}"/> 
+	<arg line="-I ${android.lib}"/> 
+	<arg line="-A ${staging.dir}/assets"/> 
+	<arg line="-m"/> 
+	<arg line="-J gen"/>
+      </exec>
+    </target>
+
+     <target name="-dex" depends ="-stage.libs" unless="test.app.upto.date">
+       <exec executable="${env.ANDROID_HOME}/platform-tools/dx" failonerror="yes">
+	 <arg line="--dex"/>
+	 <arg line="--output ${dex.file}"/> 
+	 <arg line="${bin.dir}"/> 
+       </exec>
+     </target>
+
+    <target name="-stage.libs">
+      <copy todir="${bin.dir}/libs">
+				<fileset dir="instrumentation_backend/libs"/>
+      </copy>
+    </target>
+
+    <target name="-apk" unless="test.app.upto.date">
+      <exec executable="${env.ANDROID_HOME}/tools/apkbuilder" failonerror="yes">
+	<arg line="${test.app.unsigned}"/>
+	<arg line="-u"/> 
+	<arg line="-z ${test.app.aapt}"/> 
+	<arg line="-f ${dex.file}"/> 
+      </exec>
+    </target>
+
+
+    <target name ="-sign" unless="test.app.upto.date">
+      <signjar
+	  jar="${test.app.unsigned}"
+	  signedjar="${test.app.signed}"
+	  keystore="${key.store}"
+	  storepass="${key.store.password}"
+	  alias="${key.alias}"
+	  keypass="${key.alias.password}"
+	  verbose="false"/>
+    </target>
+
+</project>

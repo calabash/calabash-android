@@ -1,0 +1,4 @@
+*.class
+bin
+staging
+instrumentation_backend/.settings
