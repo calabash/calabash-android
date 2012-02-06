@@ -44,7 +44,7 @@
     <target name="test" description="Run test features" depends="install.app, install.test">
 	      <exec executable="cucumber">
           <env key="TEST_PACKAGE_NAME" value="${tested.package_name}.test" />
-          <arg line="features/playlist.feature" />
+          <arg line="features" />
        </exec>
     </target>
     
