@@ -2,3 +2,4 @@
 bin
 staging
 instrumentation_backend/.settings
+instrumentation_backend/assets/foo.bar
