@@ -13,9 +13,10 @@ public class ClearTextFieldByContentDescription implements Action {
 
     @Override
     public Result execute(String... args) {
-        View view = TestHelpers.getTextViewByDescription(args[1]);
+        String contentDescription = args[0];
+        View view = TestHelpers.getTextViewByDescription(contentDescription);
         if(view == null) {
-            return new Result(false, "No view found with content description: '" + args[1] + "'");
+            return new Result(false, "No view found with content description: '" + contentDescription + "'");
         } else if (!(view instanceof EditText)) {
             return new Result(false, "Expected EditText found: '" + view.getClass() + "'");
         } else {
