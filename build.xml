@@ -6,16 +6,16 @@
 
     <property environment="env"/>    
     <property file="build.properties"/>
-    <property name="staging.dir" value="staging"/>
-    <property name="bin.dir" value="bin"/>
-    <property name="test.app" value="${bin.dir}/Test.apk"/>
-    <property name="test.app.aapt" value="${bin.dir}/Test_aapt.apk"/>
-    <property name="dex.file" value="${bin.dir}/classes.dex"/>
-    <property name="test.app.unsigned" value ="${bin.dir}/Test_unsigned.apk"/>
-    <property name="test.app.signed" value ="${bin.dir}/Test.apk"/>
+    <property name="staging.dir" location="staging"/>
+    <property name="bin.dir" location="bin"/>
+    <property name="test.app" location="${bin.dir}/Test.apk"/>
+    <property name="test.app.aapt" location="${bin.dir}/Test_aapt.apk"/>
+    <property name="dex.file" location="${bin.dir}/classes.dex"/>
+    <property name="test.app.unsigned" location="${bin.dir}/Test_unsigned.apk"/>
+    <property name="test.app.signed" location="${bin.dir}/Test.apk"/>
 
 
-    <property name="android.lib" value="${env.ANDROID_HOME}/platforms/android-4/android.jar"/>
+    <property name="android.lib" location="${env.ANDROID_HOME}/platforms/android-4/android.jar"/>
     <path id="android.antlibs">
         <pathelement path="${env.ANDROID_HOME}/tools/lib/anttasks.jar" />
     </path>
