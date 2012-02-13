@@ -43,7 +43,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
     }
     
     public InstrumentationBackend() {
-        super(LAUNCHER_ACTIVITY_FULL_CLASSNAME, getActivityClass());
+        super(TARGET_PACKAGE, getActivityClass());
     }
 
     @Override
