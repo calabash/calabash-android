@@ -8,7 +8,7 @@ import sh.calaba.instrumentationbackend.actions.Action;
 
 
 public class Command {
-    
+    private String line;
     private String command;
     private String[] arguments;
     
@@ -28,8 +28,16 @@ public class Command {
     	return arguments;
     }
     
-    public String toString() {
-		return "Command:'" + getCommand() + "', arguments:'" + Arrays.toString(getArguments()) + "'";
+    public void setLine(String line) {
+		this.line = line;
+	}
+
+	public String getLine() {
+		return line;
+	}
+
+	public String toString() {
+		return "Command:'Line:" + getLine() + "," + getCommand() + "', arguments:'" + Arrays.toString(getArguments()) + "'";
 	}
 
     public Result execute() {
