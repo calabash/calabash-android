@@ -4,6 +4,7 @@
       Bits and pices plucked out of $ANDROID_HOME/tools/ant/build.xml
     </description>
 
+    <property name="adb.device.arg" value="" />
     <property environment="env"/>    
     <property file="build.properties"/>
     <property name="staging.dir" location="staging"/>
@@ -44,7 +45,9 @@
     <target name="test" description="Run test features" depends="install.app, install.test">
 	      <exec executable="cucumber">
           <env key="TEST_PACKAGE_NAME" value="${tested.package_name}.test" />
+          <arg line="ADB_DEVICE_ARG=${adb.device.arg}" />
           <arg line="features" />
+          <arg line="features/playlist.feature" />
        </exec>
     </target>
     
@@ -121,9 +124,10 @@
       <echo message="Installing:${apk.to.install}"/>      
 
       <exec executable="${env.ANDROID_HOME}/platform-tools/adb" failonerror="true">
-	<arg value="install" />
-	<arg value="-r" />
-	<arg path="${apk.full.path}" />
+        <arg value="${adb.device.arg}" />
+        <arg value="install" />
+        <arg value="-r" />
+        <arg path="${apk.full.path}" />
       </exec>
     </target>
 

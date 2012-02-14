@@ -40,6 +40,10 @@ To run your test:
 
     ant test
 
+To specify on which device the test should run (if you have both an emulator running and a device attached), pass the `adb.device.arg` system property (`-e` or `-d`) like so:
+
+    ant test -Dadb.device.arg=-e
+
 
 Predefined steps
 -----------------
