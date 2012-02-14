@@ -11,7 +11,7 @@ public class AssertText implements Action {
     @Override
     public Result execute(String... args) {
         String text = args[0];
-        boolean found = InstrumentationBackend.solo.searchText(text);
+        boolean found = InstrumentationBackend.solo.searchText(text, true);
         boolean shouldBeFound = Boolean.parseBoolean(args[1]);
         
         if(shouldBeFound && !found) {
