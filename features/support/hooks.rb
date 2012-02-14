@@ -70,5 +70,5 @@ def create_port_forward_to_test_server
 end
 
 def adb_command
-  "#{ENV['ANDROID_HOME']}/platform-tools/adb"
+  "#{ENV['ANDROID_HOME']}/platform-tools/adb #{ENV["ADB_DEVICE_ARG"]}"
 end
