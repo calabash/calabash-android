@@ -14,6 +14,10 @@
     <property name="test.app.unsigned" location="${bin.dir}/Test_unsigned.apk"/>
     <property name="test.app.signed" location="${bin.dir}/Test.apk"/>
 
+    <!-- Windows support -->
+    <condition property="bat" value=".bat" else=""><os family="windows" /></condition>
+    <property name="dx" location="${env.ANDROID_HOME}/platform-tools/dx${bat}" />
+    <property name="apkbuilder" location="${env.ANDROID_HOME}/tools/apkbuilder${bat}" />
 
     <property name="android.lib" location="${env.ANDROID_HOME}/platforms/android-4/android.jar"/>
     <path id="android.antlibs">
@@ -140,13 +144,13 @@
       </exec>
     </target>
 
-     <target name="-dex" depends ="-stage.libs" unless="test.app.upto.date">
-       <exec executable="${env.ANDROID_HOME}/platform-tools/dx" failonerror="yes">
-	 <arg line="--dex"/>
-	 <arg line="--output ${dex.file}"/> 
-	 <arg line="${bin.dir}"/> 
-       </exec>
-     </target>
+    <target name="-dex" depends ="-stage.libs" unless="test.app.upto.date">
+      <exec executable="${dx}" failonerror="yes">
+        <arg line="--dex"/>
+        <arg line="--output ${dex.file}"/>
+        <arg line="${bin.dir}"/>
+      </exec>
+    </target>
 
     <target name="-stage.libs">
       <copy todir="${bin.dir}/libs">
@@ -155,11 +159,11 @@
     </target>
 
     <target name="-apk" unless="test.app.upto.date">
-      <exec executable="${env.ANDROID_HOME}/tools/apkbuilder" failonerror="yes">
-	<arg line="${test.app.unsigned}"/>
-	<arg line="-u"/> 
-	<arg line="-z ${test.app.aapt}"/> 
-	<arg line="-f ${dex.file}"/> 
+      <exec executable="${apkbuilder}" failonerror="yes">
+        <arg line="${test.app.unsigned}"/>
+        <arg line="-u"/>
+        <arg line="-z ${test.app.aapt}"/>
+        <arg line="-f ${dex.file}"/>
       </exec>
     </target>
 
