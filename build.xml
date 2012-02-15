@@ -51,7 +51,6 @@
           <env key="TEST_PACKAGE_NAME" value="${tested.package_name}.test" />
           <arg value="ADB_DEVICE_ARG=${adb.device.arg}" />
           <arg value="features" />
-          <arg value="features/playlist.feature" />
        </exec>
     </target>
     
