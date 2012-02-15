@@ -49,9 +49,9 @@
     <target name="test" description="Run test features" depends="install.app, install.test">
 	      <exec executable="cucumber">
           <env key="TEST_PACKAGE_NAME" value="${tested.package_name}.test" />
-          <arg line="ADB_DEVICE_ARG=${adb.device.arg}" />
-          <arg line="features" />
-          <arg line="features/playlist.feature" />
+          <arg value="ADB_DEVICE_ARG=${adb.device.arg}" />
+          <arg value="features" />
+          <arg value="features/playlist.feature" />
        </exec>
     </target>
     
@@ -81,7 +81,9 @@
 
       <replace file="${staging.dir}/src/sh/calaba/instrumentationbackend/InstrumentationBackend.java" token="#ACTIVITY_QUALIFIED_NAME#" value="${tested.main_activity}"/>
 			<exec executable="${env.ANDROID_HOME}/platform-tools/aapt" failonerror="true" output="${staging.dir}/assets/ids.txt">
-				<arg line="dump resources ${tested.project.apk}" />
+				<arg value="dump" />
+        <arg value="resources" />
+        <arg file="${tested.project.apk}" />
 			</exec>
     </target>
 
@@ -137,22 +139,28 @@
 
     <target name="-aapt" unless="test.app.upto.date">
       <exec executable="${env.ANDROID_HOME}/platform-tools/aapt" failonerror="yes">
-	<arg line="package"/>
-	<arg line="-f"/> 
-	<arg line="-M ${staging.dir}/AndroidManifest.xml"/>  
-	<arg line="-F ${test.app.aapt}"/> 
-	<arg line="-I ${android.lib}"/> 
-	<arg line="-A ${staging.dir}/assets"/> 
-	<arg line="-m"/> 
-	<arg line="-J gen"/>
+        <arg value="package" />
+        <arg value="-f" />
+        <arg value="-M" />
+        <arg file="${staging.dir}/AndroidManifest.xml" />
+        <arg value="-F" />
+        <arg file="${test.app.aapt}" />
+        <arg value="-I" />
+        <arg path="${android.lib}" />
+        <arg value="-A" />
+        <arg path="${staging.dir}/assets" />
+        <arg value="-m" />
+        <arg value="-J" />
+        <arg path="gen" />
       </exec>
     </target>
 
     <target name="-dex" depends ="-stage.libs" unless="test.app.upto.date">
       <exec executable="${dx}" failonerror="yes">
-        <arg line="--dex"/>
-        <arg line="--output ${dex.file}"/>
-        <arg line="${bin.dir}"/>
+        <arg value="--dex" />
+        <arg value="--output" />
+        <arg file="${dex.file}" />
+        <arg path="${bin.dir}" />
       </exec>
     </target>
 
@@ -164,10 +172,12 @@
 
     <target name="-apk" unless="test.app.upto.date">
       <exec executable="${apkbuilder}" failonerror="yes">
-        <arg line="${test.app.unsigned}"/>
-        <arg line="-u"/>
-        <arg line="-z ${test.app.aapt}"/>
-        <arg line="-f ${dex.file}"/>
+        <arg file="${test.app.unsigned}" />
+        <arg value="-u" />
+        <arg value="-z" />
+        <arg file="${test.app.aapt}" />
+        <arg value="-f" />
+        <arg file="${dex.file}" />
       </exec>
     </target>
 
