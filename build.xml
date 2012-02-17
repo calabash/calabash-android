@@ -129,7 +129,7 @@
       <echo message="Installing:${apk.to.install}"/>      
 
       <exec executable="${env.ANDROID_HOME}/platform-tools/adb" failonerror="true">
-        <arg value="${adb.device.arg}" />
+        <arg line="${adb.device.arg}" />
         <arg value="install" />
         <arg value="-r" />
         <arg path="${apk.full.path}" />
