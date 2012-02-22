@@ -3,7 +3,6 @@ package sh.calaba.instrumentationbackend.actions.webview;
 
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
-import android.util.Log;
 import android.webkit.WebView;
 
 public class DumpBodyHtml implements Action {
@@ -11,6 +10,7 @@ public class DumpBodyHtml implements Action {
     @Override
     public Result execute(String... args) {
     	                         
+    	Result result = Result.successResult();
     	for (CalabashChromeClient ccc : CalabashChromeClient.findAndPrepareWebViews()) {
     		WebView webView = ccc.getWebView();
 			
@@ -19,11 +19,11 @@ public class DumpBodyHtml implements Action {
 				"})()");
 
 			String r = ccc.getResult();
-			//Log.i("Html", r);
 			System.out.println("Html:");
 			System.out.println("" + r);
+			result.addBonusInformation(r);
 		}
-    	return Result.successResult();
+    	return result;
     }
 
     @Override
