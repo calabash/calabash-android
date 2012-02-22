@@ -3,7 +3,7 @@ Then /^I go back$/ do
 end
 
 Then /^I press the menu key$/ do
-  performAction('press_menu_key')
+  performAction('press_menu')
 end
 
 Then /^I swipe left$/ do
