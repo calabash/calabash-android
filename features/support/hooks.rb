@@ -35,3 +35,15 @@ def performAction(action, *arguments)
 rescue Timeout::Error
   raise Exception, "#{Time.now} - Step timed out"
 end
+
+
+Before do |scenario|
+  Step_index = 0
+  Step_line = scenario.raw_steps[Step_index].line
+end
+
+AfterStep do |scenario|
+  #Handle multiline steps
+  Step_index = Step_index + 1
+  Step_line = scenario.raw_steps[Step_index].line unless scenario.raw_steps[Step_index].nil?
+end
