@@ -19,6 +19,10 @@ Then /^I wait for "([^\"]*)" to appear$/ do |text|
   performAction('wait_for_text', text)
 end
 
+Then /^I wait to see "([^\"]*)"$/ do |text|
+  performAction('wait_for_text', text)
+end
+
 Then /^I wait for the "([^\"]*)" button to appear$/ do |text|
   performAction('wait_for_button', text)
 end
