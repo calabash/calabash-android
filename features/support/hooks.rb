@@ -5,6 +5,14 @@ require 'socket'
 require 'timeout'
 
 
+def macro(txt)
+  if self.respond_to? :step
+    step(txt)
+  else
+    Then(txt)
+  end
+end
+
 def performAction(action, *arguments)
   $stderr.puts "#{Time.now} - Action: #{action} - Params: #{arguments.join(', ')}"
 
@@ -26,49 +34,4 @@ def performAction(action, *arguments)
   end
 rescue Timeout::Error
   raise Exception, "#{Time.now} - Step timed out"
-end
-
-Before do |scenario|
-
-  system("#{adb_command} shell am instrument -w -e class sh.calaba.instrumentationbackend.InstrumentationBackend #{ENV['TEST_PACKAGE_NAME']}/android.test.InstrumentationTestRunner 1>&2 &")
-  sleep 2
-  begin
-    establish_connection_to_test_server
-    $stderr.puts "#{Time.now} - Connection established"
-  rescue Exception => e
-    $stderr.puts "#{Time.now} - Exception:#{e.backtrace}"
-  end
-end
-
-After do |scenario| 
-  close_connection_to_test_server
-end
-
-def establish_connection_to_test_server
-  create_port_forward_to_test_server
-  end_time = Time.now + 60
-  begin 
-    Timeout.timeout(5) do
-      @@client = TCPSocket.open('127.0.0.1',7101)
-      @@client.send("Ping!\n",0)
-      $stderr.puts "#{Time.now} - Got '#" + @@client.readline + "' from testserver"
-    end
-  rescue Exception => e
-    $stderr.puts "#{Time.now} - Got exception:#{e}. Retrying!"
-    sleep(1)
-    retry unless Time.now > end_time
-  end
-end
-
-def close_connection_to_test_server
-  $stderr.puts "#{Time.now} - Closing connection to test"
-  @@client.close
-end
-
-def create_port_forward_to_test_server
-  $stderr.puts `#{adb_command} forward tcp:7101 tcp:7101`
-end
-
-def adb_command
-  "#{ENV['ANDROID_HOME']}/platform-tools/adb #{ENV["ADB_DEVICE_ARG"]}"
 end
