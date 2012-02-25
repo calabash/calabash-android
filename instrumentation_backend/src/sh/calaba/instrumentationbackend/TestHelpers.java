@@ -4,20 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
-import android.app.Instrumentation;
 import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
@@ -42,14 +35,12 @@ public class TestHelpers {
 						name = name.replace(InstrumentationBackend.TARGET_PACKAGE + ":id/", "");
 						name = name.replace(":", "");
 							
-						System.out.println(name + " - " + Integer.parseInt(tokens[1].substring(2), 16));
 						resourceNamesToIds.put(name, Integer.parseInt(tokens[1].substring(2), 16));
 						resourceIdsToNames.put(Integer.parseInt(tokens[1].substring(2), 16), name);
 					}
 				}
 			}
-			System.out.println(new TreeSet<String>(resourceNamesToIds.keySet()));
-			System.out.println(new TreeMap<String,Integer>(resourceNamesToIds));
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
