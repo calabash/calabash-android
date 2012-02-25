@@ -1,5 +1,6 @@
 def connect_to_test_server
-  $stderr.puts `#{adb_command} forward tcp:7101 tcp:7101`
+  $stderr.puts `#{adb_command} forward tcp:#{ENV["TEST_SERVER_PORT"]} tcp:7101`
+  
   end_time = Time.now + 60
   begin 
     Timeout.timeout(5) do
