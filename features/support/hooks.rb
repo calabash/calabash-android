@@ -38,12 +38,20 @@ end
 
 
 Before do |scenario|
-  Step_index = 0
-  Step_line = scenario.raw_steps[Step_index].line
+  StepCounter.step_index = 0
+  StepCounter.step_line = scenario.raw_steps[StepCounter.step_index].line
 end
 
 AfterStep do |scenario|
   #Handle multiline steps
-  Step_index = Step_index + 1
-  Step_line = scenario.raw_steps[Step_index].line unless scenario.raw_steps[Step_index].nil?
+  StepCounter.step_index = StepCounter.step_index + 1
+  StepCounter.step_line = scenario.raw_steps[StepCounter.step_index].line unless scenario.raw_steps[StepCounter.step_index].nil?
+end
+
+
+StepCounter = Class.new
+class << StepCounter
+  @step_index = 0
+  @step_line = 0
+  attr_accessor :step_index, :step_line
 end
