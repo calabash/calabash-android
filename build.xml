@@ -48,7 +48,11 @@
 
     <target name="test" description="Run test features" depends="install.app, install.test">
 	      <exec executable="cucumber">
+          <env key="PACKAGE_NAME" value="${tested.package_name}" />
           <env key="TEST_PACKAGE_NAME" value="${tested.package_name}.test" />
+          <env key="APP_PATH" value="${tested.project.apk}" />
+          <env key="TEST_APP_PATH" value="bin/Test.apk" />
+          <env key="TEST_SERVER_PORT" value="34777" />
           <arg value="ADB_DEVICE_ARG=${adb.device.arg}" />
           <arg value="features" />
        </exec>
