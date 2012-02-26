@@ -4,7 +4,7 @@ def connect_to_test_server
   end_time = Time.now + 60
   begin 
     Timeout.timeout(5) do
-      @@client = TCPSocket.open('127.0.0.1',7101)
+      @@client = TCPSocket.open('127.0.0.1',ENV["TEST_SERVER_PORT"])
       @@client.send("Ping!\n",0)
       $stderr.puts "#{Time.now} - Got '#" + @@client.readline + "' from testserver"
     end
