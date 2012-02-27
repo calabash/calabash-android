@@ -29,8 +29,10 @@ def performAction(action, *arguments)
     $stderr.puts "#{Time.now} - Result:'" + result + "'"
     raise "Empty result from TestServer" if result.chomp.empty?
     result = JSON.parse(result)
-    raise result["message"].to_s unless result["success"]
-    #Move along
+    if not result["success"] then
+      take_screenshot
+      raise result["message"].to_s
+    end
   end
 rescue Timeout::Error
   raise Exception, "#{Time.now} - Step timed out"
