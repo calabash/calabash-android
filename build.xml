@@ -54,7 +54,7 @@
           <env key="TEST_APP_PATH" value="bin/Test.apk" />
           <env key="TEST_SERVER_PORT" value="34777" />
           <env key="ADB_DEVICE_ARG" value="${adb.device.arg}" />
-          <arg value="features/navigation.feature" />
+          <arg value="features" />
        </exec>
     </target>
     
