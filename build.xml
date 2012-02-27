@@ -53,8 +53,8 @@
           <env key="APP_PATH" value="${tested.project.apk}" />
           <env key="TEST_APP_PATH" value="bin/Test.apk" />
           <env key="TEST_SERVER_PORT" value="34777" />
-          <arg value="ADB_DEVICE_ARG=${adb.device.arg}" />
-          <arg value="features" />
+          <env key="ADB_DEVICE_ARG" value="${adb.device.arg}" />
+          <arg value="features/navigation.feature" />
        </exec>
     </target>
     
@@ -133,10 +133,7 @@
       <echo message="Installing:${apk.to.install}"/>      
 
       <exec executable="${env.ANDROID_HOME}/platform-tools/adb" failonerror="true">
-        <arg value="${adb.device.arg}" />
-        <arg value="install" />
-        <arg value="-r" />
-        <arg path="${apk.full.path}" />
+        <arg line="${adb.device.arg} install -r ${apk.full.path}" />
       </exec>
     </target>
 
