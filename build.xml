@@ -46,7 +46,7 @@
       <fileset dir="${env.ANDROID_HOME}/platforms/android-8/" includes="*.jar"/>
     </path>
 
-    <target name="test" description="Run test features" depends="install.app, install.test">
+    <target name="test" description="Run test features">
 	      <exec executable="cucumber">
           <env key="PACKAGE_NAME" value="${tested.package_name}" />
           <env key="TEST_PACKAGE_NAME" value="${tested.package_name}.test" />
