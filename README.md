@@ -20,13 +20,15 @@ To get get started with Calabash-Android you can either download a zip from [her
 
 Configuration
 -------------
+We assume that you already have the Android SDK installed and that `$ANDROID_HOME` is pointing to it.
+
 Change the following value in the `build.properties` file:
 
 * `tested.package_name` the package name from your AndroidManifest.xml.
 * `tested.main_activity` the fully qualified name of your main activity.
 * `tested.project.apk` path to the APK you want to test.
 
-Make sure that the app you are trying to test is signed with the `key.store` certificate.
+**Notice:** Make sure that the app you are trying to test is signed with the `key.store` certificate.
 
 
 Writing a test
