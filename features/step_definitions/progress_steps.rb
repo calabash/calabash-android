@@ -15,6 +15,15 @@ Then /^I wait for (\d+) seconds$/ do |seconds|
   performAction('wait', seconds)
 end
 
+Then /^I wait for 1 second$/ do
+  performAction('wait', 1)
+end
+
+Then /^I wait for a second$/ do
+  performAction('wait', 1)
+end
+
+
 Then /^I wait for "([^\"]*)" to appear$/ do |text|
   performAction('wait_for_text', text)
 end
