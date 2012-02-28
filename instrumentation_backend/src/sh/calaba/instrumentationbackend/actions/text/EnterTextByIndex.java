@@ -10,7 +10,7 @@ public class EnterTextByIndex implements Action {
 
     @Override
     public Result execute(String... args) {
-        InstrumentationBackend.solo.enterText(Integer.parseInt(args[1]), args[0]);
+        InstrumentationBackend.solo.enterText(Integer.parseInt(args[1]) - 1, args[0]);
         return Result.successResult();
     }
 

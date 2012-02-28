@@ -10,7 +10,7 @@ public class LongPressTextAndSelectFromMenuByIndex implements Action {
 
     @Override
     public Result execute(String... args) {
-        InstrumentationBackend.solo.clickLongOnTextAndPress(args[0], Integer.parseInt(args[1]));
+        InstrumentationBackend.solo.clickLongOnTextAndPress(args[0], Integer.parseInt(args[1]) - 1);
         return Result.successResult();
     }
 

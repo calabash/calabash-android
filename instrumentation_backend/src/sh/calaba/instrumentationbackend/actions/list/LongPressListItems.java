@@ -10,7 +10,7 @@ public class LongPressListItems implements Action {
 
     @Override
     public Result execute(String... args) {
-        InstrumentationBackend.solo.clickLongInList(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+        InstrumentationBackend.solo.clickLongInList(Integer.parseInt(args[0]) - 1, Integer.parseInt(args[1]));
         return Result.successResult();
     }
 
