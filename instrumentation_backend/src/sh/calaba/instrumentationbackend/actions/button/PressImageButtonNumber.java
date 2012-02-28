@@ -10,7 +10,7 @@ public class PressImageButtonNumber implements Action {
 
     @Override
     public Result execute(String... args) {
-        InstrumentationBackend.solo.clickOnImageButton(Integer.parseInt(args[0]));
+        InstrumentationBackend.solo.clickOnImageButton(Integer.parseInt(args[0]) - 1);
         return Result.successResult();
     }
 

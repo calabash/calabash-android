@@ -12,7 +12,7 @@ public class SetDateByIndex implements Action {
     @Override
     public Result execute(String... args) {
         int[] date = TestHelpers.parseDate(args[0]);
-        InstrumentationBackend.solo.setDatePicker(Integer.parseInt(args[1]), date[2], date[1], date[0]);
+        InstrumentationBackend.solo.setDatePicker(Integer.parseInt(args[1]) - 1, date[2], date[1], date[0]);
         return Result.successResult();
     }
 
