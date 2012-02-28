@@ -10,7 +10,7 @@ Calabash-Android lets you run [Cucumber](http://cukes.info) features on you Andr
         And I press "Login"
         Then I see "Welcome to coolest app ever"
 
-You can run your Calabash features on multiple devices using [LessPainful.com](httpw://www.lesspainful.com)
+You can run your Calabash features on multiple devices using [LessPainful.com](https://www.lesspainful.com)
 
 
 To get get started with Calabash-Android you can either download a zip from [here](https://github.com/calabash/calabash-android/zipball/master) or clone it using the following command.
