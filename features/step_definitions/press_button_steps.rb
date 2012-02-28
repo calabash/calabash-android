@@ -15,10 +15,6 @@ Then /^I press view with id "([^\"]*)"$/ do |view_id|
   performAction('click_on_view_by_id',view_id)
 end
 
-Then /^I press view with name "([^\"]*)"$/ do |view_name|
-  performAction('press_view_with_name',view_name)
-end
-
 Then /^I press "([^\"]*)"$/ do |identifier|
   performAction('press',identifier)
 end
