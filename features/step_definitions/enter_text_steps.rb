@@ -7,10 +7,6 @@ Then /^I enter "([^\"]*)" into input field number (\d+)$/ do |text, number|
   performAction('enter_text_into_numbered_field',text, number)
 end
 
-Then /^I enter "([^\"]*)" into input field number (\d+) - beta$/ do |text, number|
-  performAction('enter_text_into_numbered_field_show_keyboard',text, number)
-end
-
 Then /^I enter "([^\"]*)" into "([^\"]*)"$/ do |text, name|
   performAction('enter_text_into_named_field',text, name)
 end
