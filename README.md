@@ -26,12 +26,14 @@ Change the following value in the `build.properties` file:
 * `tested.main_activity` the fully qualified name of your main activity.
 * `tested.project.apk` path to the APK you want to test.
 
+Make sure that the app you are trying to test is signed with the `key.store` certificate.
+
 
 Writing a test
 --------------
 The Cucumber features goes in the `features` library and should have the ".feature" extension.
 
-You can start out by looking at `features/test_dummy.feature`. You can extend this feature or make your own using some of the predefined steps that comes with Calabash
+You can start out by looking at `features/test_dummy.feature`. You can extend this feature or make your own using some of the [predefined steps](features/step_definitions/canned_steps.md) that comes with Calabash
 
 
 Running test
@@ -48,7 +50,4 @@ To specify on which device the test should run (if you have both an emulator run
 Predefined steps
 -----------------
 
-The predefined steps are located in the `features/step_definitions` folder. For now you can look through these files to see which is available.
-
-Comming...
-
+The predefined steps are located in the `features/step_definitions` folder. A compiled list of predefined steps with comments is available [here](features/step_definitions/canned_steps.md)
