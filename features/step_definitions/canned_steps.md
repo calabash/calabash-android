@@ -16,8 +16,8 @@ To assert that specified text can be found use any of the following steps.
 To assert that specified text cannot be found use any of the following steps.
 
     Then /^I should not see "([^\"]*)"$/
-    Then /^I dont see the text "([^\"]*)"$/
-    Then /^I dont see "([^\"]*)"$/  
+    Then /^I don't see the text "([^\"]*)"$/
+    Then /^I don't see "([^\"]*)"$/  
 
 
 Input steps

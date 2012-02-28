@@ -21,11 +21,11 @@ Then /^I should not see "([^\"]*)"$/ do |text|
 end
 
 
-Then /^I dont see the text "([^\"]*)"$/ do |text|  
+Then /^I don't see the text "([^\"]*)"$/ do |text|  
   performAction('assert_text', text, false) #second param indicated that the text should _not_ be found
 end
 
-Then /^I dont see "([^\"]*)"$/ do |text|  
+Then /^I don't see "([^\"]*)"$/ do |text|  
   performAction('assert_text', text, false) #second param indicated that the text should _not_ be found
 end
 
