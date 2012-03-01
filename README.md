@@ -1,6 +1,6 @@
 Calabash-Android
 ================
-Calabash-Android lets you run [Cucumber](http://cukes.info) features on you Android device or emulator.
+Calabash-Android lets you run [Cucumber](http://cukes.info) features on your Android device or emulator.
 
     Feature: Login feature
       Scenario: As a valid user I can log into my app
@@ -10,10 +10,10 @@ Calabash-Android lets you run [Cucumber](http://cukes.info) features on you Andr
         And I press "Login"
         Then I see "Welcome to coolest app ever"
 
-You can run your Calabash features on multiple devices using [LessPainful.com](https://www.lesspainful.com)
+You can run your Calabash features on multiple devices using [LessPainful.com](https://www.lesspainful.com).
 
 
-To get get started with Calabash-Android you can either download a zip from [here](https://github.com/calabash/calabash-android/zipball/master) or clone it using the following command.
+To get started with Calabash-Android you can either download a zip from the [Downloads sections](https://github.com/calabash/calabash-android/zipball/master) or clone it using the following command
 
     git clone git://github.com/calabash/calabash-android.git
 
@@ -35,7 +35,7 @@ Writing a test
 --------------
 The Cucumber features goes in the `features` library and should have the ".feature" extension.
 
-You can start out by looking at `features/test_dummy.feature`. You can extend this feature or make your own using some of the [predefined steps](features/step_definitions/canned_steps.md) that comes with Calabash
+You can start out by looking at `features/test_dummy.feature`. You can extend this feature or make your own using some of the [predefined steps](features/step_definitions/canned_steps.md) that comes with Calabash.
 
 
 Running test
