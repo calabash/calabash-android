@@ -52,4 +52,4 @@ To specify on which device the test should run (if you have both an emulator run
 Predefined steps
 -----------------
 
-The predefined steps are located in the `features/step_definitions` folder. A compiled list of predefined steps with comments is available [here](features/step_definitions/canned_steps.md)
+The predefined steps are located in the `features/step_definitions` folder. A compiled list of predefined steps with comments is available [here](blob/master/features/step_definitions/canned_steps.md)
