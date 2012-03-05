@@ -12,16 +12,32 @@ Calabash-Android lets you run [Cucumber](http://cukes.info) features on your And
 
 You can run your Calabash features on multiple devices using [LessPainful.com](https://www.lesspainful.com).
 
+Installation
+------------
+### Prerequisites
+You need to have `cucumber`, Ruby 1.9.2+ installed, and a recent RubyGems installation.
 
-To get started with Calabash-Android you can either download a zip from the [Downloads sections](https://github.com/calabash/calabash-android/zipball/master) or clone it using the following command
+You can install `cucumber` like this:
+
+    gem install cucumber
+
+The `json` gem is also required
+
+    gem install json
+
+You should have the Android SDK install and `$ANDROID_HOME` should be pointing to it.
+
+### Installation
+
+You can obtain the newest version of Calabash-Android either by downloading a zip from the [Downloads sections](https://github.com/calabash/calabash-android/zipball/master) or cloning it using the following command
 
     git clone git://github.com/calabash/calabash-android.git
 
 
+
+
 Configuration
 -------------
-We assume that you already have the Android SDK installed and that `$ANDROID_HOME` is pointing to it.
-
 Change the following value in the `build.properties` file:
 
 * `tested.package_name` the package name from your AndroidManifest.xml.
