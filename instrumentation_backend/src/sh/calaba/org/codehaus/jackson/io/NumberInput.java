@@ -296,7 +296,7 @@ public final class NumberInput
     {
         // [JACKSON-486]: avoid some nasty float representations... but should it be MIN_NORMAL or MIN_VALUE?
         if (NASTY_SMALL_DOUBLE.equals(numStr)) {
-            return Double.MIN_NORMAL;
+            return 0x1.0p-1022; //Double.MIN_NORMAL; Hardcoded since MIN_NORMAL is not available until SDK level 10
         }
         return Double.parseDouble(numStr);
     }
