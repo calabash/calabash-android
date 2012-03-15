@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 
 import sh.calaba.instrumentationbackend.actions.Actions;
@@ -174,8 +175,12 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
     }
     
     private void createSocets() throws IOException {
-        myService = new ServerSocket(7101);
-        myService.setSoTimeout(120000);
+    	try {
+    	    myService = new ServerSocket(7101);
+    	    myService.setSoTimeout(120000);
+    	} catch (SocketException e) {
+    	    throw new RuntimeException("Could not create socket. Did you set the android.permission.INTERNET permission in your AndroidManifest.xml", e);
+    	}
     }
     
     public static void log(String message) {
