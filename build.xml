@@ -63,7 +63,7 @@
       </uptodate>
     </target>
     
-    <target name="stage" depends="-init" unless="test.app.upto.date">
+    <target name="-stage">
       <mkdir dir="${staging.dir}"/>
       <mkdir dir="${bin.dir}"/>
       <antcall target="-prepare.manifest"/>
@@ -90,8 +90,8 @@
     </target>
 
 
-    <target name="compile" depends="-init" unless="test.app.upto.date">
-      <antcall target="stage" />
+    <target name="-compile">
+      <antcall target="-stage" />
       <javac 
 	       srcdir="${staging.dir}/src"
 	       destdir="${bin.dir}"
@@ -104,7 +104,7 @@
 
     
     <target name="package" depends="-init" unless="test.app.upto.date">
-      <antcall target="compile" />
+      <antcall target="-compile" />
       <antcall target="-aapt" />
       <antcall target="-dex" />
       <antcall target="-apk" />
@@ -117,7 +117,7 @@
       <delete dir="${bin.dir}"/>
     </target>
 
-    <target name="-aapt" depends="-init" unless="test.app.upto.date">
+    <target name="-aapt">
       <exec executable="${env.ANDROID_HOME}/platform-tools/aapt" failonerror="yes">
         <arg value="package" />
         <arg value="-f" />
@@ -135,7 +135,7 @@
       </exec>
     </target>
 
-    <target name="-dex" depends="-init" unless="test.app.upto.date">
+    <target name="-dex">
       <antcall target="-stage.libs"/>
       <exec executable="${dx}" failonerror="yes">
         <arg value="--dex" />
@@ -151,7 +151,7 @@
       </copy>
     </target>
 
-    <target name="-apk" depends="-init" unless="test.app.upto.date">
+    <target name="-apk">
       <exec executable="${apkbuilder}" failonerror="yes">
         <arg file="${test.app.unsigned}" />
         <arg value="-u" />
@@ -163,7 +163,7 @@
     </target>
 
 
-    <target name ="-sign" depends="-init" unless="test.app.upto.date">
+    <target name ="-sign">
       <signjar
 	  jar="${test.app.unsigned}"
 	  signedjar="${test.app.signed}"
