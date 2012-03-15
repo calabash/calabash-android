@@ -52,7 +52,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
         super.setUp();
         
         mapper = createJsonMapper();
-        createSocets();
+        createSockets();
         solo = new Solo(getInstrumentation(), this.getActivity());
         actions = new Actions(getInstrumentation(), this);
         TestHelpers.loadIds(getInstrumentation().getContext());
@@ -174,7 +174,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
         }
     }
     
-    private void createSocets() throws IOException {
+    private void createSockets() throws IOException {
     	try {
     	    myService = new ServerSocket(7101);
     	    myService.setSoTimeout(120000);
