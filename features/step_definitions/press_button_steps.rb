@@ -3,7 +3,6 @@ Given /^I press the "([^\"]*)" button$/ do |buttonText|
 end
 
 Then /^I press button number (\d+)$/ do |buttonNumber|
-  puts "Press button step invoked"
   performAction('press_button_number', buttonNumber) 
 end
 

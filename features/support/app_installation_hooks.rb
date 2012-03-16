@@ -5,7 +5,7 @@ end
 Before do |scenario|
   feature_name = scenario.feature.name
   if FeatureNameMemory.feature_name != feature_name
-    $stdout.puts "Is first scenario - reinstalling apps"
+    log "Is first scenario - reinstalling apps"
     uninstall_apps
     install_app(ENV["TEST_APP_PATH"])
     install_app(ENV["APP_PATH"])
