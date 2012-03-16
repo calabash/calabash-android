@@ -1,19 +1,24 @@
 AfterConfiguration do |config|
-	@@feature_name = nil
+	FeatureNameMemory.feature_name = nil
 end
 
 Before do |scenario|
-	feature_name = scenario.feature.name
-	if @@feature_name != feature_name
-		$stdout.puts "Is first scenario"
-		uninstall_app
-		install_app
-		@@feature_name = feature_name
+  feature_name = scenario.feature.name
+  if FeatureNameMemory.feature_name != feature_name
+    $stdout.puts "Is first scenario - reinstalling apps"
+    uninstall_apps
+    install_app(ENV["TEST_APP_PATH"])
+    install_app(ENV["APP_PATH"])
+    FeatureNameMemory.feature_name = feature_name
 	end
 end
 
-
 at_exit do
-	uninstall_app
+#	uninstall_apps
 end
 
+FeatureNameMemory = Class.new
+class << FeatureNameMemory
+  @feature_name = nil
+  attr_accessor :feature_name
+end
