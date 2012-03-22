@@ -33,6 +33,7 @@ def performAction(action, *arguments)
       take_screenshot
       raise result["message"].to_s
     end
+    return result
   end
 rescue Timeout::Error
   raise Exception, "Step timed out"
