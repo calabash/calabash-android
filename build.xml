@@ -14,6 +14,8 @@
     <property name="dex.file" location="${bin.dir}/classes.dex"/>
     <property name="test.app.unsigned" location="${bin.dir}/Test_unsigned.apk"/>
     <property name="test.app.signed" location="${bin.dir}/Test.apk"/>
+    <property name="calabashjs.dir" location="instrumentation_backend/calabash-js/src"/>
+
 
     <!-- Windows support -->
     <condition property="bat" value=".bat" else=""><os family="windows" /></condition>
@@ -78,6 +80,9 @@
     <target name="-prepare.testserver" description="Makes sure the testserver matches the tested application by looking at its manifest file">
       <copy todir="${staging.dir}">
 				<fileset dir="instrumentation_backend"/>
+      </copy>
+      <copy todir="${staging.dir}/assets">
+        <fileset dir="${calabashjs.dir}"/>
       </copy>
       <replace file="${staging.dir}/src/sh/calaba/instrumentationbackend/InstrumentationBackend.java" token="#ACTIVITY_PACKAGE#" value="${tested.package_name}"/>
 
