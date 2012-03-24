@@ -15,6 +15,7 @@ import sh.calaba.org.codehaus.jackson.JsonGenerationException;
 import sh.calaba.org.codehaus.jackson.map.JsonMappingException;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import sh.calaba.org.codehaus.jackson.map.DeserializationConfig.Feature;
+import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 
@@ -32,6 +33,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
     private BufferedReader commandStream;
     
     private ObjectMapper mapper;
+    public static Instrumentation instrumentation;
     public static Solo solo;
     public static Actions actions;
     
@@ -55,7 +57,8 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
         createSockets();
         solo = new Solo(getInstrumentation(), this.getActivity());
         actions = new Actions(getInstrumentation(), this);
-        TestHelpers.loadIds(getInstrumentation().getContext());
+        instrumentation = getInstrumentation();
+        TestHelpers.loadIds(instrumentation.getContext());
     }
 
 
