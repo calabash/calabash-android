@@ -81,6 +81,13 @@
       <copy todir="${staging.dir}">
 				<fileset dir="instrumentation_backend"/>
       </copy>
+      <available file="${calabashjs.dir}" type="dir" property="doesCalabashJsExist" />
+      <fail unless="doesCalabashJsExist">
+        ${calabashjs.dir} does not exist.
+Try running:
+  git submodule init
+  git submodule update
+      </fail>
       <copy todir="${staging.dir}/assets">
         <fileset dir="${calabashjs.dir}"/>
       </copy>
