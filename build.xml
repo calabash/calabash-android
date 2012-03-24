@@ -42,7 +42,7 @@
     </path>
     
     <path id="android.target.classpath">
-      <fileset dir="${env.ANDROID_HOME}/platforms/android-8/" includes="*.jar"/>
+      <fileset dir="${env.ANDROID_HOME}/platforms/android-4/" includes="*.jar"/>
     </path>
 
     <target name="test" description="Run test features" depends="package">
@@ -78,13 +78,7 @@
       </uptodate>
     </target>
     
-
-    <target name="copy_features">
-      <copy todir="features/">
-        <fileset dir="../FlyingColorsPlayerAid/features"/>
-      </copy>
-    </target>
-    <target name="stage" depends="-init, copy_features" unless="test.app.upto.date">
+    <target name="stage" depends="-init" unless="test.app.upto.date">
   
       <mkdir dir="${staging.dir}"/>
       <mkdir dir="${bin.dir}"/>
