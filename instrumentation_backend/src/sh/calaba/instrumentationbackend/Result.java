@@ -58,4 +58,7 @@ public class Result {
     	return successResult;
     }
     
+    public String toString() {
+        return "Success: " + success + ", message: " + message;
+    }
 }

@@ -57,7 +57,10 @@ public class CalabashChromeClient extends WebChromeClient {
 	}
 	
 	public String getResult() {
-		eventHandled.block(20000);
+		eventHandled.block(30000);
+		if (result.message == null) {
+			throw new RuntimeException("Timed out waiting for result for JavaScript");
+		}
 		return result.message;
 	}
 	
@@ -67,7 +70,8 @@ public class CalabashChromeClient extends WebChromeClient {
 	
 	public static List<CalabashChromeClient> findAndPrepareWebViews() {
 		List<CalabashChromeClient> webViews = new ArrayList<CalabashChromeClient>();
-		for (View view : InstrumentationBackend.solo.getCurrentViews()) {
+		ArrayList<View> views = InstrumentationBackend.solo.getCurrentViews();
+		for (View view : views) {
 			if ( view instanceof WebView) {
 				WebView webView = (WebView)view;
 				webViews.add(new CalabashChromeClient(webView));

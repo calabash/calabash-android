@@ -1,0 +1,3 @@
+[submodule "instrumentation_backend/calabash-js"]
+	path = instrumentation_backend/calabash-js
+	url = https://github.com/calabash/calabash-js

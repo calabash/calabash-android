@@ -1,11 +1,5 @@
 package sh.calaba.instrumentationbackend.actions;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +29,6 @@ public class Actions {
         this.targetContext = parentInstrumentation.getTargetContext();
         loadActions();
     }
-
-    
-   
     
     private void loadActions() {
         try {
