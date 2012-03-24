@@ -20,7 +20,7 @@
     <property name="dx" location="${env.ANDROID_HOME}/platform-tools/dx${bat}" />
     <property name="apkbuilder" location="${env.ANDROID_HOME}/tools/apkbuilder${bat}" />
 
-    <property name="android.lib" location="${env.ANDROID_HOME}/platforms/android-4/android.jar"/>
+    <property name="android.lib" location="${env.ANDROID_HOME}/platforms/android-10/android.jar"/>
     <path id="android.antlibs">
         <pathelement path="${env.ANDROID_HOME}/tools/lib/anttasks.jar" />
     </path>
@@ -56,18 +56,41 @@
     </target>
     
 
-    <target name="-init">
+
+    <condition property="tested.apk.found">
+      <available file="${tested.project.apk}"/>
+    </condition>
+
+    <target name="-halt.on.tested.app.apk.nonexistance" unless="${tested.apk.found}">
+      <fail message="Tested apk: '${tested.project.apk}' could not be found"/>
+    </target>
+  
+    <target name="-check.preconditions">
+      <antcall target="-halt.on.tested.app.apk.nonexistance"/>    
+    </target>
+
+    <target name="-init" depends="-check.preconditions">
       <uptodate property="test.app.upto.date" targetfile="${test.app.signed}" >
         <srcfiles dir= "instrumentation_backend/" includes="**/*"/>
         <srcfiles file="build.properties"/>
       </uptodate>
     </target>
     
-    <target name="-stage">
+
+    <target name="copy_features">
+      <copy todir="features/">
+        <fileset dir="../FlyingColorsPlayerAid/features"/>
+      </copy>
+    </target>
+    <target name="stage" depends="-init, copy_features" unless="test.app.upto.date">
+  
       <mkdir dir="${staging.dir}"/>
       <mkdir dir="${bin.dir}"/>
       <antcall target="-prepare.manifest"/>
       <antcall target="-prepare.testserver"/>
+      
+ 
+    
     </target>
 
     <target name="-prepare.manifest" description="Makes sure the manifest matches the tested application by looking at its manifest file">
@@ -75,23 +98,28 @@
       <replace file="${staging.dir}/AndroidManifest.xml" token="#TESTED_APP_PACKAGE#" value="${tested.package_name}"/>
     </target>
 
-    <target name="-prepare.testserver" description="Makes sure the testserver matches the tested application by looking at its manifest file">
+    <target name="-prepare.testserver" depends="-halt.on.tested.app.apk.nonexistance" description="Makes sure the testserver matches the tested application by looking at its manifest file">
       <copy todir="${staging.dir}">
 				<fileset dir="instrumentation_backend"/>
       </copy>
       <replace file="${staging.dir}/src/sh/calaba/instrumentationbackend/InstrumentationBackend.java" token="#ACTIVITY_PACKAGE#" value="${tested.package_name}"/>
 
       <replace file="${staging.dir}/src/sh/calaba/instrumentationbackend/InstrumentationBackend.java" token="#ACTIVITY_QUALIFIED_NAME#" value="${tested.main_activity}"/>
+
 			<exec executable="${env.ANDROID_HOME}/platform-tools/aapt" failonerror="true" output="${staging.dir}/assets/ids.txt">
 				<arg value="dump" />
         <arg value="resources" />
         <arg file="${tested.project.apk}" />
 			</exec>
+
+
+   
     </target>
 
+  
 
-    <target name="-compile">
-      <antcall target="-stage" />
+    <target name="compile" depends="-init" unless="test.app.upto.date">
+      <antcall target="stage" />
       <javac 
 	       srcdir="${staging.dir}/src"
 	       destdir="${bin.dir}"
@@ -104,7 +132,7 @@
 
     
     <target name="package" depends="-init" unless="test.app.upto.date">
-      <antcall target="-compile" />
+      <antcall target="compile" />
       <antcall target="-aapt" />
       <antcall target="-dex" />
       <antcall target="-apk" />
@@ -117,7 +145,7 @@
       <delete dir="${bin.dir}"/>
     </target>
 
-    <target name="-aapt">
+    <target name="-aapt" depends="-init" unless="test.app.upto.date">
       <exec executable="${env.ANDROID_HOME}/platform-tools/aapt" failonerror="yes">
         <arg value="package" />
         <arg value="-f" />
@@ -135,7 +163,7 @@
       </exec>
     </target>
 
-    <target name="-dex">
+    <target name="-dex" depends="-init" unless="test.app.upto.date">
       <antcall target="-stage.libs"/>
       <exec executable="${dx}" failonerror="yes">
         <arg value="--dex" />
@@ -151,7 +179,7 @@
       </copy>
     </target>
 
-    <target name="-apk">
+    <target name="-apk" depends="-init" unless="test.app.upto.date">
       <exec executable="${apkbuilder}" failonerror="yes">
         <arg file="${test.app.unsigned}" />
         <arg value="-u" />
@@ -163,7 +191,7 @@
     </target>
 
 
-    <target name ="-sign">
+    <target name ="-sign" depends="-init" unless="test.app.upto.date">
       <signjar
 	  jar="${test.app.unsigned}"
 	  signedjar="${test.app.signed}"
