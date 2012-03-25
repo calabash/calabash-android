@@ -56,9 +56,12 @@
           <arg value="features" />
        </exec>
     </target>
-    
+    <target name="-check.preconditions">
+      <available file="${tested.project.apk}" property="tested.apk.found" />
+      <fail unless="tested.apk.found" message="Tested apk: '${tested.project.apk}' could not be found"/>
+    </target>
 
-    <target name="-init">
+    <target name="-init" depends="-check.preconditions">
       <uptodate property="test.app.upto.date" targetfile="${test.app.signed}" >
         <srcfiles dir= "instrumentation_backend/" includes="**/*"/>
         <srcfiles file="build.properties"/>
