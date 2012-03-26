@@ -29,4 +29,7 @@ Then /^I don't see "([^\"]*)"$/ do |text|
   performAction('assert_text', text, false) #second param indicated that the text should _not_ be found
 end
 
+Then /^I see "([^\"]*)" as "([^\"]*)"$/ do |expected_text, text_view_description|  
+  performAction('assert_text_in_textview', expected_text, text_view_description)
+end
 
