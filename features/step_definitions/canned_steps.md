@@ -19,6 +19,8 @@ To assert that specified text cannot be found use any of the following steps.
     Then /^I don't see the text "([^\"]*)"$/
     Then /^I don't see "([^\"]*)"$/  
 
+To assert the text of a specific TextView use:
+    Then /^I see "([^\"]*)" as "([^\"]*)"$/
 
 Input steps
 -----------
