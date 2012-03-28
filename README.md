@@ -33,6 +33,11 @@ You can obtain the newest version of Calabash-Android either by downloading a zi
 
     git clone git://github.com/calabash/calabash-android.git
 
+And to fetch `calabash-js` which is the a shared project with `calabash-ios` you have to run
+    
+    git submodule init
+    git submodule update
+
 
 
 

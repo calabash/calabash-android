@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby -wKU
+require "rubygems"
 require 'tempfile'
 require 'json'
 
@@ -17,7 +18,7 @@ secret = ARGV[1]
 
 archive_path = "#{Tempfile.new("archive").path}.zip"
 puts "Creating zip file"
-system ("zip -r -o #{archive_path} features && zip -j #{archive_path} bin/Test.apk")
+system("zip -r -o #{archive_path} features && zip -j #{archive_path} bin/Test.apk")
 
 puts "Uploading apk and features to www.lesspainful.com"
 result = `curl -F "secret=#{secret}" -F "app=@#{apk_file}" -F "env=@#{archive_path}" https://www.lesspainful.com/cmd_upload`
