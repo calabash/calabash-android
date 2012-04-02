@@ -52,12 +52,13 @@ public class QueryHelper {
 	
 	public static float[] getScreenCoordinatesForCenter(Map<String, Object> rectangle) {
 		try {
-			WebView webView = CalabashChromeClient.findAndPrepareWebViews().get(0).getWebView();
+			
+			CalabashChromeClient calabashChromeClient = CalabashChromeClient.findAndPrepareWebViews().get(0);
 		
-			Field mActualScale = WebView.class.getDeclaredField("mActualScale");
-			mActualScale.setAccessible(true);
-			float scale = mActualScale.getFloat(webView);
-		
+			WebView webView = calabashChromeClient.getWebView();
+			float scale = calabashChromeClient.getScale();
+			
+			System.out.println("scale: " + scale);
 			int[] webviewLocation = new int[2];
 			webView.getLocationOnScreen(webviewLocation);
 			

@@ -1,10 +1,12 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import android.os.Build;
 import android.os.ConditionVariable;
 import android.view.View;
 import android.webkit.JsPromptResult;
@@ -49,6 +51,29 @@ public class CalabashChromeClient extends WebChromeClient {
 			} else {
 				return mWebChromeClient.onJsPrompt(view, url, message, defaultValue, r);
 			}
+		}
+	}
+	
+	
+	
+	public float getScale() {
+		try {
+			Field mActualScaleField = null;
+			Object targetObject = webView;
+			
+			if (Build.VERSION.SDK_INT < 14) { //before Ice cream sandwich
+				mActualScaleField = WebView.class.getDeclaredField("mActualScale");
+			} else {
+				Field zoomManagerField = WebView.class.getDeclaredField("mZoomManager");
+				zoomManagerField.setAccessible(true);
+				targetObject = zoomManagerField.get(webView);
+				
+				mActualScaleField = Class.forName("android.webkit.ZoomManager").getDeclaredField("mActualScale");
+			}
+			mActualScaleField.setAccessible(true);
+			return mActualScaleField.getFloat(targetObject);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
