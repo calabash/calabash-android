@@ -29,7 +29,7 @@ You should have the Android SDK install and `$ANDROID_HOME` should be pointing t
 
 ### Installation
 
-You can obtain the newest version of Calabash-Android either by downloading a zip from the [Downloads sections](https://github.com/calabash/calabash-android/zipball/master) or cloning it using the following command
+You can obtain the newest version of Calabash-Android by cloning it using the following command
 
     git clone git://github.com/calabash/calabash-android.git
 
