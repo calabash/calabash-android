@@ -36,4 +36,6 @@ Then /^I wait for the "([^\"]*)" button to appear$/ do |text|
   performAction('wait_for_button', text)
 end
 
-
+Then /^I wait for the "([^\" ]*)" screen to appear$/ do |text|
+    performAction('wait_for_screen', text)
+end

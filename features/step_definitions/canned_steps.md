@@ -154,6 +154,9 @@ Waits for the specified text to appear.
     Then /^I wait for the "([^\"]*)" button to appear$/
 Waits for a button with the specified text to appear.
 
+    Then /^I wait for the "([^\" ]*)" screen to appear$/ 
+Waits for a particular screen (Android Activity) to appear.
+
     Then /^I wait for 1 second$/
     Then /^I wait for a second$/
 Waits for one second.
