@@ -39,3 +39,7 @@ end
 Then /^I wait for the "([^\" ]*)" screen to appear$/ do |text|
     performAction('wait_for_screen', text)
 end
+
+Then /^I wait upto (\d+) seconds for the "([^\" ]*)" screen to appear$/ do |timeout, text|
+    performAction('wait_for_screen', text, timeout)
+end
