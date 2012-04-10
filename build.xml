@@ -46,7 +46,7 @@
     </path>
 
     <target name="test" description="Run test features" depends="package">
-	      <exec executable="cucumber">
+	      <exec executable="cucumber{bat}">
           <env key="PACKAGE_NAME" value="${tested.package_name}" />
           <env key="TEST_PACKAGE_NAME" value="${tested.package_name}.test" />
           <env key="APP_PATH" value="${tested.project.apk}" />

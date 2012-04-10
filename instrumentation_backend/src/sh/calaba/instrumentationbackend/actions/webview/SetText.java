@@ -13,6 +13,11 @@ import sh.calaba.org.codehaus.jackson.type.TypeReference;
 
 public class SetText implements Action {
 
+	/**
+	 * args[0]: Selector type "xpath" or "css"
+	 * args[1]: xpath or css selector
+	 * args[2]: text to enter into the first selected element 
+	 */
     @Override
     public Result execute(String... args) {
     	try {
@@ -28,7 +33,7 @@ public class SetText implements Action {
 			firstElement.remove("html");
 			String firstElemntJson = QueryHelper.toJsonString(firstElement);
 			
-			String result = QueryHelper.executeJavascriptInWebview("set_text.js", firstElemntJson, "fooo");
+			String result = QueryHelper.executeJavascriptInWebview("set_text.js", firstElemntJson, args[2]);
 	    	return new Result(true, result);
     	} catch (Exception e) {
     		throw new RuntimeException(e);
