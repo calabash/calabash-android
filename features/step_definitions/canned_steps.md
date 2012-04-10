@@ -154,10 +154,10 @@ Waits for the specified text to appear.
     Then /^I wait for the "([^\"]*)" button to appear$/
 Waits for a button with the specified text to appear.
 
-    Then /^I wait for the "([^\" ]*)" screen to appear$/ 
+    Then /^I wait for the "([^\"]*)" screen to appear$/ 
 Waits for a particular screen (Android Activity) to appear.
 
-    Then /^I wait upto (\d+) seconds for the "([^\" ]*)" screen to appear$/ 
+    Then /^I wait upto (\d+) seconds for the "([^\"]*)" screen to appear$/ 
 Waits for a particular screen (Android Activity) to appear with a timeout.
 
     Then /^I wait for 1 second$/
