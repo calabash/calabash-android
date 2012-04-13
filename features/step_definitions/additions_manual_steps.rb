@@ -10,7 +10,7 @@ Then /^I compare the current screen with the reference image "([^\"]*)" manually
     log "Dirname: #{File.dirname(name)}"
     FileUtils.mkdir_p(dest) if !Dir.exists?(dest)
     FileUtils.cp(name, dest)
-    embed(name, 'image/png', name)
+    embed(name, 'image/png', "Reference image: #{name}")
 end
 
 Then /^I manually (.*)$/ do |action|
