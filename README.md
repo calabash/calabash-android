@@ -25,7 +25,7 @@ The `json` gem is also required
 
     gem install json
 
-You should have the Android SDK install and `$ANDROID_HOME` should be pointing to it.
+You should have the Android SDK installed and `$ANDROID_HOME` should be pointing to it.
 
 ### Installation
 
@@ -48,6 +48,7 @@ Change the following value in the `build.properties` file:
 * `tested.package_name` the package name from your AndroidManifest.xml.
 * `tested.main_activity` the fully qualified name of your main activity.
 * `tested.project.apk` path to the APK you want to test.
+* Optionally, set the `TEST_ARTIFACTS_DIR` to point to where you want test artifacts such as screenshots to be put. If this is not set, test artifacts are put in a directory called "./results". The TEST_ARTIFACTS_DIR directory is DELETED on every test run and replaced with the new test artifacts.
 
 **Notice:** Make sure that the app you are trying to test is signed with the `key.store` certificate.
 
