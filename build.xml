@@ -22,7 +22,7 @@
     <property name="dx" location="${env.ANDROID_HOME}/platform-tools/dx${bat}" />
     <property name="apkbuilder" location="${env.ANDROID_HOME}/tools/apkbuilder${bat}" />
 
-    <property name="android.lib" location="${env.ANDROID_HOME}/platforms/android-4/android.jar"/>
+    <property name="android.lib" location="${env.ANDROID_HOME}/platforms/android-${android.api.level}/android.jar"/>
     <path id="android.antlibs">
         <pathelement path="${env.ANDROID_HOME}/tools/lib/anttasks.jar" />
     </path>
@@ -42,7 +42,7 @@
     </path>
     
     <path id="android.target.classpath">
-      <fileset dir="${env.ANDROID_HOME}/platforms/android-8/" includes="*.jar"/>
+      <fileset dir="${env.ANDROID_HOME}/platforms/android-${android.api.level}/" includes="*.jar"/>
     </path>
 
     <target name="test" description="Run test features" depends="package">

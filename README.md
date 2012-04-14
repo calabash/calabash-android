@@ -49,6 +49,8 @@ Change the following value in the `build.properties` file:
 * `tested.main_activity` the fully qualified name of your main activity.
 * `tested.project.apk` path to the APK you want to test.
 
+You might have to change `android.api.level` if you do not have api level 8 installed.
+
 **Notice:** Make sure that the app you are trying to test is signed with the `key.store` certificate.
 
 
