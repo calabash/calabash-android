@@ -69,21 +69,23 @@ public class TestHelpers {
         return null;
     }
 
-    public static View getViewById(String idString) {
-    	for (View v : InstrumentationBackend.solo.getCurrentViews()) {
-    		if (resourceNamesToIds.get(idString) == v.getId()) {
-    			return v;
-    		}
-    	}
-    	System.out.println("Did not find view " + idString);
-    	System.out.println("Found these views:");
-    	for (View v : InstrumentationBackend.solo.getCurrentViews()) {
-    		System.out.println(v.getId());
-    		if (resourceIdsToNames.containsKey(v.getId())) {
-    			System.out.println(resourceIdsToNames.get(v.getId()));
-    		}
-    	}
-    	return null;
+    public static View getViewById(String resName) {
+        Integer intID = resourceNamesToIds.get(resName);
+        System.out.println("getViewById: Looking for view " + resName + " as id " + intID);
+        if (intID == null) {
+            throw new RuntimeException("getViewById: Looking for view " + resName + " which does not have an id");
+        }
+        int id = intID.intValue();
+        View view = InstrumentationBackend.solo.getCurrentActivity().findViewById(id);
+        if (view != null) {
+            if (id == view.getId()) {
+                System.out.println("Did find view " + resName + ".");
+                return view;
+            }
+            System.out.println("Did find view " + resName + " but getId returned: " + view.getId());
+        }
+        System.out.println("Did not find view " + resName);
+        return view;
     }
 
     public static int[] parseTime(String timeString) {
