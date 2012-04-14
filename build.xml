@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="" default="test" basedir=".">
     <description>
-      Bits and pices plucked out of $ANDROID_HOME/tools/ant/build.xml
+      Bits and pieces plucked out of $ANDROID_HOME/tools/ant/build.xml
     </description>
 
     <property name="adb.device.arg" value="" />

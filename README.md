@@ -25,7 +25,15 @@ The `json` gem is also required
 
     gem install json
 
-You should have the Android SDK install and `$ANDROID_HOME` should be pointing to it.
+You should have the Android SDK installed and the environment variable `ANDROID_HOME` should be pointing to it.
+
+Finally, you need the `git` tool to obtain the source.
+
+* [Installing git on windows](http://msysgit.github.com/)
+
+* [Installing git on Linux](http://help.github.com/linux-set-up-git/) (you only need the first step: First: Download and Install Git).
+
+* [Installing git on MacOS](http://git-scm.com/)
 
 ### Installation
 
@@ -33,12 +41,10 @@ You can obtain the newest version of Calabash-Android by cloning it using the fo
 
     git clone git://github.com/calabash/calabash-android.git
 
-And to fetch `calabash-js` which is the a shared project with `calabash-ios` you have to run
-    
+Change directory to into the cloned directory: calabash-android. Fetch `calabash-js` which is a shared project with [calabash-ios](https://github.com/calabash/calabash-ios):
+
     git submodule init
     git submodule update
-
-
 
 
 Configuration
