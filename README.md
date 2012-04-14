@@ -25,6 +25,9 @@ The `json` gem is also required
 
     gem install json
 
+<<<<<<< HEAD
+You should have the Android SDK installed and `$ANDROID_HOME` should be pointing to it.
+=======
 You should have the Android SDK installed and the environment variable `ANDROID_HOME` should be pointing to it.
 
 Finally, you need the `git` tool to obtain the source.
@@ -34,6 +37,7 @@ Finally, you need the `git` tool to obtain the source.
 * [Installing git on Linux](http://help.github.com/linux-set-up-git/) (you only need the first step: First: Download and Install Git).
 
 * [Installing git on MacOS](http://git-scm.com/)
+>>>>>>> 6f33153e3cd6d76b56fb5c114f6c2e090a85ba15
 
 ### Installation
 
@@ -54,6 +58,7 @@ Change the following value in the `build.properties` file:
 * `tested.package_name` the package name from your AndroidManifest.xml.
 * `tested.main_activity` the fully qualified name of your main activity.
 * `tested.project.apk` path to the APK you want to test.
+* Optionally, set the `TEST_ARTIFACTS_DIR` to point to where you want test artifacts such as screenshots to be put. If this is not set, test artifacts are put in a directory called "./results". The TEST_ARTIFACTS_DIR directory is DELETED on every test run and replaced with the new test artifacts.
 
 You might have to change `android.api.level` if you do not have api level 8 installed.
 

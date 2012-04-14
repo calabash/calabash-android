@@ -37,7 +37,7 @@ public class WaitForScreen implements Action {
             }
         }
         default:
-            return new Result(false, "Too many argument supplied to wait_for_screen!");
+            return new Result(false, "Too many arguments supplied to wait_for_screen!");
         }
     }
 
