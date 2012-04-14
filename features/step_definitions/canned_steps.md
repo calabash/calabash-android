@@ -157,6 +157,9 @@ Waits for a button with the specified text to appear.
     Then /^I wait for the "([^\"]*)" screen to appear$/ 
 Waits for a particular screen (Android Activity) to appear.
 
+    Then /^I wait for the view with id "([^\"]*)" to appear$/ do |text|
+Waits for a view view that id to appear.
+
     Then /^I wait upto (\d+) seconds for the "([^\"]*)" screen to appear$/ 
 Waits for a particular screen (Android Activity) to appear with a timeout.
 
