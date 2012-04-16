@@ -54,8 +54,7 @@ Change the following value in the `build.properties` file:
 * `tested.package_name` the package name from your AndroidManifest.xml.
 * `tested.main_activity` the fully qualified name of your main activity.
 * `tested.project.apk` path to the APK you want to test.
-
-You might have to change `android.api.level` if you do not have api level 8 installed.
+* Optionally, set the `TEST_ARTIFACTS_DIR` environment variable to point to where you want test artifacts such as screenshots to be put. If this is not set, test artifacts are put in a directory called "./results". The TEST_ARTIFACTS_DIR directory is DELETED on every test run and replaced with the new test artifacts.
 
 **Notice:** Make sure that the app you are trying to test is signed with the `key.store` certificate.
 
