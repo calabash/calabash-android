@@ -20,8 +20,8 @@ def print_usage
       generate a features folder structure.
     setup (EXPERIMENTAL) [opt path]?
       setup your project for calabash-android
-    submit [ipapath] [secret] [opt_features path]?
-      submits an ipa and features folder to www.lesspainful.com
+    submit [path] [secret] [opt_features path]?
+      submits an apk and features folder to www.lesspainful.com
 EOF
 end
 
