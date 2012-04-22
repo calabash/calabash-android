@@ -1,3 +1,5 @@
+require 'calabash-android/management/app_installation'
+
 AfterConfiguration do |config|
 	FeatureNameMemory.feature_name = nil
 end
