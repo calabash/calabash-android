@@ -36,7 +36,6 @@ public class CalabashChromeClient extends WebChromeClient {
 	
 	@Override
 	public boolean onJsPrompt(WebView view, String url, String message,	String defaultValue, JsPromptResult r) {
-		System.out.println("message: " + message);
 		if (message != null && message.startsWith("calabash:")) {
 			r.confirm("CALABASH_ACK");
 			System.out.println("onJsPrompt: " + message);
