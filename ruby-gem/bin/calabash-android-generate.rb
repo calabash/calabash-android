@@ -17,10 +17,8 @@ def calabash_scaffold
   FileUtils.mv "#{@features_dir}/irb_android.sh", "."
 
   msg("Info") do
-    #TODO Jonas
     puts "features subdirectory created. \n"
-    puts "Try executing \n\nDEVICE=iphone OS=ios5 cucumber"
-    puts "\n (replace ios5 with ios4 if running iOS 4.x simulator.\nReplace iphone with ipad if running iPad simulator.).\n"
+    puts "Try executing \n\ncalabash-android run"
   end
 
 end

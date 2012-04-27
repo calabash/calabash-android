@@ -9,7 +9,6 @@ def msg(title, &block)
   puts "-"*10 + "-------" + "-"*10 + "\n"
 end
 
-#TODO Jonas
 def print_usage
   puts <<EOF
   Usage: calabash-android <command-name> [parameters]
@@ -18,10 +17,13 @@ def print_usage
       prints more detailed help information.
     gen
       generate a features folder structure.
-    setup
-      setup your project for calabash
-    submit [path] [secret] [opt_features path]?
-      submits an apk and features folder to www.lesspainful.com
+    setup will ask you some questions about you application, development
+      environment and key store to user for signing.
+
+    build builds the test server that will be used when testing the app.
+      You need to run this command everytime you make changes to app.
+
+    run runs Cucumber in the current folder with the enviroment needed.
 EOF
 end
 

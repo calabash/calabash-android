@@ -1,4 +1,3 @@
-#TODO Jonas
 Usage: calabash-android <command-name> [parameters]
   <command-name> can be one of
     help
@@ -18,4 +17,4 @@ Usage: calabash-android <command-name> [parameters]
   build builds the test server that will be used when testing the app.
       You need to run this command everytime you make changes to app.
 
-  run runs cucumber in the current folder with the enviroment needed.
+  run runs Cucumber in the current folder with the enviroment needed.
