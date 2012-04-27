@@ -15,50 +15,69 @@ You can run your Calabash features on multiple devices using [LessPainful.com](h
 Installation
 ------------
 ### Prerequisites
-You need to have `cucumber`, Ruby 1.9.2+ installed, and a recent RubyGems installation.
-
-You can install `cucumber` like this:
-
-    gem install cucumber
-
-The `json` gem is also required
-
-    gem install json
+You need to have Ruby installed. Verify your installation by running ruby -v in a terminal - it should print "ruby 1.8.7" (or higher)
 
 You should have the Android SDK installed and the environment variable `ANDROID_HOME` should be pointing to it.
 
-Finally, you need the `git` tool to obtain the source.
-
-* [Installing git on windows](http://msysgit.github.com/)
-
-* [Installing git on Linux](http://help.github.com/linux-set-up-git/) (you only need the first step: First: Download and Install Git).
-
-* [Installing git on MacOS](http://git-scm.com/)
-
 ### Installation
 
-You can obtain the newest version of Calabash-Android by cloning it using the following command
+Install `calabash-android` by running
 
-    git clone git://github.com/calabash/calabash-android.git
-
-Change directory to into the cloned directory: calabash-android. Fetch `calabash-js` which is a shared project with [calabash-ios](https://github.com/calabash/calabash-ios):
-
-    git submodule init
-    git submodule update
-
+    - `gem install calabash-android`
+    - You might have to run `sudo gem install calabash-android` if you do not have the right permissions.
 
 Configuration
 -------------
-Change the following value in the `build.properties` file:
+To configure calabash run `calabash-android setup`. You will be asked a series of questions about your app and environment.
+Here is an example (without any answers):
+  
+    When you are through this setup your settings will be saved to .calabash_settings. You can edit this file if you have the need.
+    What is the package name of the app? You can find the package name in AndroidManifest.xml
 
-* `tested.package_name` the package name from your AndroidManifest.xml.
-* `tested.main_activity` the fully qualified name of your main activity.
-* `tested.project.apk` path to the APK you want to test.
+    What is the fully qualified name of the main activity?
 
-You might have to change `android.api.level` if you do not have api level 8 installed.
+    What is the path to the app?
 
-**Notice:** Make sure that the app you are trying to test is signed with the `key.store` certificate.
+    Which api level do you want to use?
+    It looks like you have the following versions installed:
+    4, 7, 8, 10, 15
 
+    Do you want to specify a keystore for signing the test app?
+    If now we will be using /Users/jml/.android/debug.keystore
+    Please answer yes (y) or no (n)
+    y
+    Please enter keystore location
+     
+    Please enter the password for the keystore
+
+    Please enter the alias
+
+    Please enter the password for the alias
+
+    Saved your settings to .calabash_settings. You can edit the settings manually or run this setup script again
+
+You can always run `calabash-android setup` again or change the file manually.
+
+
+**Notice:** Make sure that the app you are trying to test is signed with the key store you just selected in the setup.
+
+
+Generate a Cucumber skeleton
+------------------------
+To get started with calabash it might be a good idea to run `calabash-android gen`. It will create a Cucumber skeleton
+in the current folder like this:
+
+    features
+    |_support
+    | |_app_installation_hooks.rb
+    | |_app_life_cycle_hooks.rb
+    | |_env.rb
+    | |_hooks.rb
+    |_step_definitions
+    | |_calabash_steps.rb
+    |_my_first.feature
+
+In this skeleton you find all the predefined steps that comes with calabash. Try to take a look `my_first.feature` and change it to fit your app.
 
 Writing a test
 --------------
@@ -67,16 +86,20 @@ The Cucumber features goes in the `features` library and should have the ".featu
 You can start out by looking at `features/test_dummy.feature`. You can extend this feature or make your own using some of the [predefined steps](https://github.com/calabash/calabash-android/blob/master/features/step_definitions/canned_steps.md) that comes with Calabash.
 
 
+Building the test server
+------------------------
+Calabash will install an instrumentation along with your app on the device to run the test. Because of some app specific information we need to build the test server based on the input you provided during setup. Please note that you need to rebuild
+the test server everytime you change the app.
+
+You build the test server like this:
+
+    cucumber-android build
+
 Running test
 ------------
 To run your test:
 
-    ant clean test
-
-To specify on which device the test should run (if you have both an emulator running and a device attached), pass the `adb.device.arg` system property (`-e` or `-d`) like so:
-
-    ant clean test -Dadb.device.arg=-e
-
+    cucumber-android run
 
 Predefined steps
 -----------------

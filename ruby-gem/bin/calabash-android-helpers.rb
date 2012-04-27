@@ -18,8 +18,8 @@ def print_usage
       prints more detailed help information.
     gen
       generate a features folder structure.
-    setup (EXPERIMENTAL) [opt path]?
-      setup your project for calabash-android
+    setup
+      setup your project for calabash
     submit [path] [secret] [opt_features path]?
       submits an apk and features folder to www.lesspainful.com
 EOF

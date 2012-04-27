@@ -4,10 +4,12 @@ require 'fileutils'
 
 require File.join(File.dirname(__FILE__), "calabash-android-helpers")
 require File.join(File.dirname(__FILE__), "calabash-android-generate")
+require File.join(File.dirname(__FILE__), "calabash-android-build")
+require File.join(File.dirname(__FILE__), "calabash-android-run")
 require File.join(File.dirname(__FILE__), "calabash-android-setup")
-require File.join(File.dirname(__FILE__),"calabash-android-sim")
 
 @features_dir = File.join(FileUtils.pwd, "features")
+@support_dir = File.join(@features_dir, "support")
 @source_dir = File.join(File.dirname(__FILE__), '..', 'features-skeleton')
 @script_dir = File.join(File.dirname(__FILE__), '..', 'scripts')
 
@@ -19,6 +21,12 @@ cmd = ARGV.shift
 if cmd == 'help'
   print_help
   exit 0
+elsif cmd == 'build'
+  calabash_build(ARGV)
+  exit 0
+elsif cmd == 'run'
+  calabash_run(ARGV)
+  exit 0
 elsif cmd == 'gen'
   calabash_scaffold
   exit 0
@@ -28,26 +36,6 @@ elsif cmd == 'setup'
 elsif cmd == 'submit'
   calabash_submit(ARGV)
   exit 0
-#elsif cmd == 'sim'
-#  if ARGV.length == 0
-#    print_usage
-#    exit 0
-#  end
-#  subcmd = ARGV.shift
-#
-#  if subcmd == 'reset'
-#    calabash_sim_reset
-#  elsif subcmd == 'acc'
-#    calabash_sim_accessibility
-#  elsif subcmd == 'locale'
-#    calabash_sim_locale(ARGV)
-#  elsif subcmd == 'device'
-#    calabash_sim_device(ARGV)
-#  else
-#    print_usage
-#  end
 else
   print_usage
 end
-
-

@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.com/calabash"
   s.summary     = %q{Client for calabash-android for automated functional testing on Android}
   s.description = %q{calabash-android drives tests for native  and hybrid Android apps. }
-  s.files         = `git ls-files`.split("\n")
+  s.files         = `git ls-files`.split("\n") + Dir["test-server/calabash-js/src/*.js"]
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = "calabash-android"
   s.require_paths = ["lib"]

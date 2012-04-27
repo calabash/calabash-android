@@ -3,78 +3,19 @@ Usage: calabash-android <command-name> [parameters]
   <command-name> can be one of
     help
     gen
-    setup (EXPERIMENTAL) [opt path]?
-    download [opt path]?
-    check (EXPERIMENTAL) [opt path to .ipa/.app]?
-    sim locale [lang] [regional]?
-    sim reset
-    sim acc
-    sim device [iPad, iPhone, iPhone_Retina]
+    setup
+    build
+    run [parameters]
 
   Commands:
   gen creates a skeleton features dir. This is usually used once when
       setting up calabash to ensure that the features folder contains
       the right step definitions and environment to run with cucumber.
 
-  setup [path]? (EXPERIMENTAL) Automates setting up your iOS Xcode project
-        with calabash-android-server. It is your responsibility to ensure
-        that your production build does not link with calabash.framework.
-        setup will try to ensure this, but you should check manually.
+  setup will ask you some questions about you application, development
+      environment and key store to user for signing.
 
-        setup will download calabash.framework and modify you Xcode project
-        file. The parameter [path] is optional (default is the current dir).
-        If specified [path] should be the path to your iOS Xcode project
-        (i.e., the folder which contains projectname.xcodeproj).
+  build builds the test server that will be used when testing the app.
+      You need to run this command everytime you make changes to app.
 
-        The following modifications are made
-          - duplicate an existing target of your choice
-          - add the calabash.framework to your Frameworks folder
-          - add $(SRCROOT) to framework search path
-          - link with calabash.framework in duped target
-          - link with Apple's CFNetwork.framework in duped target
-          - setup special linker options to ensure calabash is loaded
-
-        Your Xcode project file will be backed up as project.pbxproj.bak.
-        The backup is placed in the .xcodeproj folder for your project.
-        If something goes wrong. Close Xcode and copy project.pbxproj.bak
-        to project.pbxproj inside your .xcodeproj folder.
-
-  download [opt_path]?
-        downloads latest compatible version of calabash.framework.
-        It should be run from a directory containing an Xcode project,
-        or optionally opt_path should be supplied and pointing to a
-        directory containing an Xcode project.
-        Download will download the latest version that matches the
-        currently installed calabash-android gem.
-        To update Calabash for your project run
-
-        gem update calabash-android
-        calabash-android download
-
-  check (EXPERIMENTAL) [.app or .ipa]?
-        check whether an app or ipa is linked with calabash.framework
-        if called without parameter [.app or .ipa] then pwd should be
-        a directory containing an xcodeproj. In this case we'll check
-        the default Xcode simulator build path for a Debug and Calabash
-        build configurations. We check that Debug doesn't link with
-        calabash.framework but Calabash does.
-
-  submit [ipapath] [secret] [opt_features path]?
-        submits an ipa and features folder to www.lesspainful.com
-        [ipapath] should be a path to a build .ipa file which is
-        linked with calabash.framework. [secret] should be an account
-        secret created with your LessPainful account.
-        [op_features path] is optional (default is current working dir)
-        If specified it should be the path to the features folder
-        you want to send.
-
-  sim locale  [lang] [regional]? Changes the regional settings
-      for the iOS Simulators. You must ensure the correct format
-      for the optional regional parameter, for example,
-      da_DK, en_US.
-
-  sim reset (EXPERIMENTAL) Will select "Reset Content and Settings"
-      in the iOS Simulators using AppleScript.
-
-  sim device [device] Will set the default iOS Simulator device.
-      [device] can be one of iPad, iPhone, iPhone_Retina.
+  run runs cucumber in the current folder with the enviroment needed.
