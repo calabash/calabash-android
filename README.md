@@ -23,8 +23,8 @@ You should have the Android SDK installed and the environment variable `ANDROID_
 
 Install `calabash-android` by running
 
-    - `gem install calabash-android`
-    - You might have to run `sudo gem install calabash-android` if you do not have the right permissions.
+- `gem install calabash-android`
+- You might have to run `sudo gem install calabash-android` if you do not have the right permissions.
 
 Configuration
 -------------
