@@ -68,6 +68,34 @@ def calabash_submit(args)
   else
     puts result
   end
+end
 
+
+def run_build_if_test_server_does_not_exist
+  unless File.exists?(File.join(@support_dir, "Test.apk"))
+    puts "Could not find the test server"
+    puts "Should I run calabash-android build for you?"
+    puts "Please answer yes (y) or no (n)"
+    if ['yes', 'y'].include? STDIN.gets.chomp
+      calabash_build([])
+    else
+      puts "Please run: calabash-android build"
+      exit 1
+    end
+  end
+end
+
+def run_setup_if_settings_does_not_exist
+  unless File.exists?(".calabash_settings")
+    puts "Could not find .calabash_settings."
+    puts "Should I run calabash-android setup for you?"
+    puts "Please answer yes (y) or no (n)"
+    if ['yes', 'y'].include? STDIN.gets.chomp
+      calabash_setup
+    else
+      puts "Please run: calabash-android setup"
+      exit 1
+    end
+  end
 end
 

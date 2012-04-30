@@ -1,9 +1,7 @@
 def calabash_run(args)
-  unless File.exists?(".calabash_settings")
-    puts "Could not find .calabash_settings"
-    puts "Please run: calabash-android setup"
-    exit 1
-  end
+  run_build_if_test_server_does_not_exist
+
+
   settings = JSON.parse(IO.read(".calabash_settings"))
   
   env ={"PACKAGE_NAME" => settings["package_name"],

@@ -1,4 +1,6 @@
 def calabash_build(args)
+  run_setup_if_settings_does_not_exist
+
   @settings = JSON.parse(IO.read(".calabash_settings"))  
     test_server_template_dir = File.join(File.dirname(__FILE__), '..', 'test-server')
   

@@ -31,7 +31,7 @@ elsif cmd == 'gen'
   calabash_scaffold
   exit 0
 elsif cmd == 'setup'
-  calabash_setup(ARGV)
+  calabash_setup
   exit 0
 elsif cmd == 'submit'
   calabash_submit(ARGV)
