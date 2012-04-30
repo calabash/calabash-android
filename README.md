@@ -93,13 +93,13 @@ the test server everytime you change the app.
 
 You build the test server like this:
 
-    cucumber-android build
+    calabash-android build
 
 Running test
 ------------
 To run your test:
 
-    cucumber-android run
+    calabash-android run
 
 Predefined steps
 -----------------
