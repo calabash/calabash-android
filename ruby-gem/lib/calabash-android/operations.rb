@@ -75,14 +75,14 @@ module Operations
   end
 
   def query(uiquery, *args)
-    raise "Currently only queries are only supported for webviews" unless q.start_with? "webView"
+    raise "Currently only queries are only supported for webviews" unless uiquery.start_with? "webView"
 
-    q.slice!(0, "webView".length)
-    if q =~ /(css|xpath):\s*(.*)/
+    uiquery.slice!(0, "webView".length)
+    if uiquery =~ /(css|xpath):\s*(.*)/
       r = performAction("query", $1, $2)
       JSON.parse(r["message"])
     else
-     raise "Invalid query #{q}"
+     raise "Invalid query #{uiquery}"
     end
   end
 
