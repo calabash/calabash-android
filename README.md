@@ -28,7 +28,7 @@ Install `calabash-android` by running
 
 Configuration
 -------------
-To configure calabash run `calabash-android setup`. You will be asked a series of questions about your app and environment.
+To configure calabash run `calabash-android setup` in the folder you want to use for your Calabash project. You will be asked a series of questions about your app and environment.
 Here is an example (without any answers):
   
     When you are through this setup your settings will be saved to .calabash_settings. You can edit this file if you have the need.
