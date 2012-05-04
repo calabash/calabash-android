@@ -1,6 +1,6 @@
 Calabash-Android
 ================
-Calabash-Android lets you run [Cucumber](http://cukes.info) features on your Android device or emulator.
+Calabash-Android lets you run [Cucumber](http://cukes.info) features on your Android device or emulator. A Cucumber feature could look something like this:
 
     Feature: Login feature
       Scenario: As a valid user I can log into my app
@@ -85,6 +85,16 @@ The Cucumber features goes in the `features` library and should have the ".featu
 
 You can start out by looking at `features/test_dummy.feature`. You can extend this feature or make your own using some of the [predefined steps](https://github.com/calabash/calabash-android/blob/master/features/step_definitions/canned_steps.md) that comes with Calabash.
 
+Running test
+------------
+To run your test:
+
+    calabash-android run
+
+If you run the test for the first time you have to build the test server before running the test
+(see below). `calabash-android run` will run `calabash-android build` if it cannot find a test server.
+
+
 
 Building the test server
 ------------------------
@@ -93,12 +103,6 @@ Calabash will install an instrumentation along with your app on the device to ru
 You build the test server like this:
 
     calabash-android build
-
-Running test
-------------
-To run your test:
-
-    calabash-android run
 
 Predefined steps
 -----------------
