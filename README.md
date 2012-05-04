@@ -88,8 +88,7 @@ You can start out by looking at `features/test_dummy.feature`. You can extend th
 
 Building the test server
 ------------------------
-Calabash will install an instrumentation along with your app on the device to run the test. Because of some app specific information we need to build the test server based on the input you provided during setup. Please note that you need to rebuild
-the test server everytime you change the app.
+Calabash will install an instrumentation along with your app on the device to run the test. Because of some app specific information we need to build the test server based on the input you provided during setup. Please note that you need to rebuild the test server every time you change the app.
 
 You build the test server like this:
 

@@ -9,9 +9,10 @@ def calabash_build(args)
     @test_server_dir = File.join(workspace_dir, 'test-server')
     FileUtils.cp_r(test_server_template_dir, workspace_dir)
     
+    ant_executable = (is_windows? ? "ant.bat" : "ant")
     Dir.chdir(@test_server_dir) {
       args = [
-        "ant",
+        ant_executable,
         "clean", 
         "package",
         "-Dtested.package_name=#{@settings["package_name"]}",
@@ -33,7 +34,11 @@ def calabash_build(args)
     }
 
     test_apk = File.join(@test_server_dir, "bin", "Test.apk")
-    FileUtils.cp(test_apk, @support_dir)
+    FileUtils.cp(test_apk, File.join(@support_dir, "Test.apk"))
     puts "Done building the test server. Moved it to features/support/Test.apk"
   end
+end
+
+def is_windows?
+  ENV["OS"] == "Windows_NT"
 end

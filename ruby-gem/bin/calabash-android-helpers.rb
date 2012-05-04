@@ -17,13 +17,16 @@ def print_usage
       prints more detailed help information.
     gen
       generate a features folder structure.
-    setup will ask you some questions about you application, development
+    setup 
+      sets up the current folder to run calabash against your 
+      application.
+      Will ask you some questions about you application, development
       environment and key store to user for signing.
-
-    build builds the test server that will be used when testing the app.
-      You need to run this command everytime you make changes to app.
-
-    run runs Cucumber in the current folder with the enviroment needed.
+    build 
+      builds the test server that will be used when testing the app.
+      You need to run this command every time you make changes to the app.
+    run
+      runs Cucumber in the current folder with the enviroment needed.
 EOF
 end
 
