@@ -1,1 +1,1 @@
-1.0.0: Initial calabash release
+0.0.6: Introducing the CHANGES file
