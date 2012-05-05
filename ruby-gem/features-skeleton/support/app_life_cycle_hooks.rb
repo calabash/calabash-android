@@ -1,3 +1,5 @@
+require 'calabash-android/management/adb'
+
 Before do |scenario|
 
   return if scenario.failed? #No need to start the server is anything before this has failed.

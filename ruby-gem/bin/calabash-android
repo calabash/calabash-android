@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+
+require File.join(File.dirname(__FILE__), "calabash-android-helpers")
+require File.join(File.dirname(__FILE__), "calabash-android-generate")
+require File.join(File.dirname(__FILE__), "calabash-android-build")
+require File.join(File.dirname(__FILE__), "calabash-android-run")
+require File.join(File.dirname(__FILE__), "calabash-android-setup")
+
+@features_dir = File.join(FileUtils.pwd, "features")
+@support_dir = File.join(@features_dir, "support")
+@source_dir = File.join(File.dirname(__FILE__), '..', 'features-skeleton')
+@script_dir = File.join(File.dirname(__FILE__), '..', 'scripts')
+
+if (ARGV.length == 0)
+  print_usage
+  exit 0
+end
+cmd = ARGV.shift
+if cmd == 'help'
+  print_help
+  exit 0
+elsif cmd == 'build'
+  calabash_build(ARGV)
+  exit 0
+elsif cmd == 'run'
+  calabash_run(ARGV)
+  exit 0
+elsif cmd == 'gen'
+  calabash_scaffold
+  exit 0
+elsif cmd == 'setup'
+  calabash_setup
+  exit 0
+elsif cmd == 'submit'
+  calabash_submit(ARGV)
+  exit 0
+else
+  print_usage
+end

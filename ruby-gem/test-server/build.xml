@@ -14,7 +14,7 @@
     <property name="dex.file" location="${bin.dir}/classes.dex"/>
     <property name="test.app.unsigned" location="${bin.dir}/Test_unsigned.apk"/>
     <property name="test.app.signed" location="${bin.dir}/Test.apk"/>
-    <property name="calabashjs.dir" location="instrumentation_backend/calabash-js/src"/>
+    <property name="calabashjs.dir" location="calabash-js/src"/>
 
 
     <!-- Windows support -->
@@ -62,15 +62,12 @@
       <available file="${calabashjs.dir}" type="dir" property="doesCalabashJsExist" />
       <fail unless="doesCalabashJsExist">
         ${calabashjs.dir} does not exist.
-Try running:
-  git submodule init
-  git submodule update
       </fail>
     </target>
 
     <target name="-init" depends="-check.preconditions">
       <uptodate property="test.app.upto.date" targetfile="${test.app.signed}" >
-        <srcfiles dir= "instrumentation_backend/" includes="**/*"/>
+        <srcfiles dir= "instrumentation-backend/" includes="**/*"/>
         <srcfiles file="build.properties"/>
       </uptodate>
     </target>
@@ -89,7 +86,7 @@ Try running:
 
     <target name="-prepare.testserver" description="Makes sure the testserver matches the tested application by looking at its manifest file">
       <copy todir="${staging.dir}">
-				<fileset dir="instrumentation_backend"/>
+				<fileset dir="instrumentation-backend"/>
       </copy>
       <copy todir="${staging.dir}/assets">
         <fileset dir="${calabashjs.dir}"/>
@@ -162,7 +159,7 @@ Try running:
 
     <target name="-stage.libs">
       <copy todir="${bin.dir}/libs">
-				<fileset dir="instrumentation_backend/libs"/>
+				<fileset dir="instrumentation-backend/libs"/>
       </copy>
     </target>
 
