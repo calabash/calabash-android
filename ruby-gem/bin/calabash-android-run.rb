@@ -11,7 +11,7 @@ def calabash_run(args)
         "TEST_SERVER_PORT=34777"
       
   STDOUT.sync = true
-  cmd = "cucumber #{ARGV.join(" ")} #{env}"
+  cmd = "cucumber -c #{ARGV.join(" ")} #{env}"
   IO.popen(cmd) do |io|
     io.each { |s| print s }
   end
