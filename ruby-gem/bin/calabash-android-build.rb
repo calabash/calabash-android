@@ -24,6 +24,7 @@ def calabash_build(args)
         "-Dkey.alias=#{@settings["keystore_alias"]}",
         "-Dkey.alias.password=#{@settings["keystore_alias_password"]}",
       ]
+      STDOUT.sync = true
       IO.popen(args.join(" ")) do |io|
         io.each { |s| print s }
       end

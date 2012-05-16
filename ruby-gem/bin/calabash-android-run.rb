@@ -10,7 +10,7 @@ def calabash_run(args)
         "TEST_APP_PATH=features/support/Test.apk "\
         "TEST_SERVER_PORT=34777"
       
-      
+  STDOUT.sync = true
   cmd = "cucumber #{ARGV.join(" ")} #{env}"
   IO.popen(cmd) do |io|
     io.each { |s| print s }
