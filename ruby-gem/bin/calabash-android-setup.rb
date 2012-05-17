@@ -23,7 +23,7 @@ def calabash_setup
   @settings[:keystore_alias_password] = "android"
 
   puts "Do you want to specify a keystore for signing the test app?"
-  puts "If now we will be using #{@settings[:keystore_location]}"
+  puts "If not we will be using #{@settings[:keystore_location]}"
   puts "Please answer yes (y) or no (n)"
 
   if ['yes', 'y'].include? STDIN.gets.chomp
