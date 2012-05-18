@@ -1,4 +1,4 @@
-Usage: calabash-android <command-name> [parameters]
+Usage: calabash-android <command-name> [parameters] [options]
   <command-name> can be one of
     help
     gen
@@ -20,3 +20,7 @@ Usage: calabash-android <command-name> [parameters]
       You need to run this command every time you make changes to the app.
 
     run runs Cucumber in the current folder with the enviroment needed.
+
+
+    Options:
+    -v, --verbose  Turns on verbose logging

@@ -11,7 +11,7 @@ end
 
 def print_usage
   puts <<EOF
-  Usage: calabash-android <command-name> [parameters]
+  Usage: calabash-android <command-name> [parameters] [options]
   <command-name> can be one of
     help
       prints more detailed help information.
@@ -27,6 +27,11 @@ def print_usage
       You need to run this command every time you make changes to the app.
     run
       runs Cucumber in the current folder with the enviroment needed.
+
+
+  <options> can be
+    -v, --verbose
+      Turns on verbose logging
 EOF
 end
 
