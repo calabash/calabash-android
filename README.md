@@ -12,6 +12,10 @@ Calabash-Android lets you run [Cucumber](http://cukes.info) features on your And
 
 You can run your Calabash features on multiple devices using [LessPainful.com](https://www.lesspainful.com).
 
+If you have any questions on Calabash-Android, please use the Google group
+
+[http://groups.google.com/group/calabash-android](http://groups.google.com/group/calabash-android)
+
 Installation
 ------------
 ### Prerequisites
