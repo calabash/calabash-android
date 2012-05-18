@@ -95,7 +95,8 @@ To scroll up
     
     Then /^I scroll up$/
 
-Then /^I select "([^\"]*)" from the menu$/
+To open the menu and press the specified text
+    Then /^I select "([^\"]*)" from the menu$/
 
 Touching
 --------
@@ -130,9 +131,10 @@ Will look for the specified text and press it if found.
 
     Then /^I press list item number (\d+)$/
 Will press the specified list item in the first visible list.
+
     Then /^I long press list item number (\d+)$/
 
-Will lon press the specified list item in the first visible list.
+Will long press the specified list item in the first visible list.
 
     Then /^I click on screen (\d+)% from the left and (\d+)% from the top$/
 Simulates a touch on the screen at the specified location.
