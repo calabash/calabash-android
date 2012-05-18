@@ -1,3 +1,6 @@
+0.0.8:
+      Added colors to Cucumber output
+
 0.0.7: Output from the ant build and from running Cucumber is now in sync.
        That means that you can now trust that the output you see is actually
        the most recent output from ant or Cucumber.
