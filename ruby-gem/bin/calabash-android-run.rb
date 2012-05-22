@@ -12,7 +12,10 @@ def calabash_run(args)
       
   STDOUT.sync = true
   cmd = "cucumber -c #{ARGV.join(" ")} #{env}"
+  puts cmd
   IO.popen(cmd) do |io|
     io.each { |s| print s }
   end
+
+  sleep(1)
 end

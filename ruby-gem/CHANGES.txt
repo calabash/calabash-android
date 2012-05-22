@@ -1,6 +1,11 @@
+0.0.11:
+      Added a small delay after executing cucumber from calabash-android-run
+      to make termination prettier.
+
 0.0.10:
       Added -v and --verbose options to calabash-android run.
       This will turn on verbose logging for Calabash as well as Cucumber.
+      Default logging is much less verbose now but can be even better.
 0.0.9:
       Moved from Robotium 2.5 to 3.2.1
 0.0.8:
