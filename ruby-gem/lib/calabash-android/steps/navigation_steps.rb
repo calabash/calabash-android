@@ -6,6 +6,11 @@ Then /^I press the menu key$/ do
   performAction('press_menu')
 end
 
+Then /^I press the enter button$/ do
+  performAction('send_key_enter')
+end
+
+
 Then /^I swipe left$/ do
   performAction('swipe', 'left')
 end

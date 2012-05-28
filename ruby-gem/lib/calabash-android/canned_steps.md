@@ -77,6 +77,10 @@ Simulates that the user pressed the menu button.
 
     Then /^I press the menu key$/
 
+Simulates that the user pressed the enter button on the keyboard.    
+
+    Then /^I press the enter button$/ do
+
 Gestures
 --------
 To swipe left
