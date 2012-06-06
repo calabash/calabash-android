@@ -20,7 +20,7 @@ module Operations
         file_name = "#{ENV['SCREENSHOT_PATH_PREFIX']}screenshot_#{StepCounter.step_line}.png"
         log "Taking screenshoot to #{file_name} from device: #{ENV['ADB_DEVICE_ARG']}"
         system("java -jar #{File.dirname(__FILE__)}/lib/screenShotTaker.jar #{file_name} #{ENV['ADB_DEVICE_ARG']}")
-        log "Screenshot taken"
+        log "Screenshot stored in: #{file_name}"
       end
     rescue Timeout::Error
       raise Exception, "take_screenshot timed out"
