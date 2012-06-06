@@ -98,6 +98,10 @@ To run your test:
 If you run the test for the first time you have to build the test server before running the test
 (see below). `calabash-android run` will run `calabash-android build` if it cannot find a test server.
 
+### Screenshot location
+Screenshots are stored in the `results` folder by default. The location can be changed by setting the `SCREENSHOT_PATH_PREFIX` environment variable.
+
+    SCREENSHOT_PATH_PREFIX=/tmp/foo calabash-android run
 
 
 Building the test server
