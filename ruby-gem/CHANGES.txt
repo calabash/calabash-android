@@ -1,3 +1,6 @@
+0.0.15:
+      Prefixes screenshots with feature name
+
 0.0.14:
       Added 'calabash-android submit'
       Will submit your apk and features to www.lesspainful.com
