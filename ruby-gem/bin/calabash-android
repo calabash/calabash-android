@@ -7,6 +7,7 @@ require File.join(File.dirname(__FILE__), "calabash-android-generate")
 require File.join(File.dirname(__FILE__), "calabash-android-build")
 require File.join(File.dirname(__FILE__), "calabash-android-run")
 require File.join(File.dirname(__FILE__), "calabash-android-setup")
+require File.join(File.dirname(__FILE__), "calabash-android-submit")
 
 @features_dir = File.join(FileUtils.pwd, "features")
 @support_dir = File.join(@features_dir, "support")

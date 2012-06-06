@@ -5,13 +5,14 @@ Usage: calabash-android <command-name> [parameters] [options]
     setup
     build
     run [parameters]
+    submit <path_to_app> <lesspainful_secret>
 
   Commands:
-  gen creates a skeleton features dir. This is usually used once when
+    gen creates a skeleton features dir. This is usually used once when
       setting up calabash to ensure that the features folder contains
       the right step definitions and environment to run with cucumber.
 
-  setup sets up the current folder to run calabash against your 
+    setup sets up the current folder to run calabash against your 
       application.
       Will ask you some questions about you application, development
       environment and key store to user for signing.
@@ -20,6 +21,8 @@ Usage: calabash-android <command-name> [parameters] [options]
       You need to run this command every time you make changes to the app.
 
     run runs Cucumber in the current folder with the enviroment needed.
+
+    submit submits an apk along with your features to www.lesspainful.com
 
 
     Options:

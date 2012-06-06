@@ -1,3 +1,7 @@
+0.0.14:
+      Added 'calabash-android submit'
+      Will submit your apk and features to www.lesspainful.com
+
 0.0.13:
       Added missing file EnterKey.java
 
