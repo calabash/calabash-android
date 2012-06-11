@@ -120,6 +120,8 @@ Presses the image button by index.
     Then /^I press view with id "([^\"]*)"$/
 
 Looks for a view with the provided id. If it is found and visible tries to click it.
+Note that use the short name and not the fully quantified name. That means if your id
+is 'com.foo.R.id.bar_label' you would use 'I press view with id "bar_label"'.
 
     Then /^I press "([^\"]*)"$/ do |identifier|
 Will look for a view in the following order:
@@ -165,6 +167,8 @@ Waits for a particular screen (Android Activity) to appear.
 
     Then /^I wait for the view with id "([^\"]*)" to appear$/ do |text|
 Waits for a view view that id to appear.
+Note that use the short name and not the fully quantified name. That means if your id
+is 'com.foo.R.id.bar_label' you would use 'I press view with id "bar_label"'.
 
     Then /^I wait upto (\d+) seconds for the "([^\"]*)" screen to appear$/ 
 Waits for a particular screen (Android Activity) to appear with a timeout.
