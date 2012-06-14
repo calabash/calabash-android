@@ -1,3 +1,6 @@
+0.0.17:
+      Upgraded to Robotium 3.3
+
 0.0.16:
       Clears text when calling set_text in a webview.
       Added set_text helper method to support.
