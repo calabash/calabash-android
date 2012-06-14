@@ -1,3 +1,7 @@
+0.0.16:
+      Clears text when calling set_text in a webview.
+      Added set_text helper method to support.
+
 0.0.15:
       Prefixes screenshots with feature name
 
