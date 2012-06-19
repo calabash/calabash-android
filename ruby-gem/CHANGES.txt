@@ -1,3 +1,6 @@
+0.0.18:
+      Fixed bug. HTML text fields are now cleared when using set_text.
+
 0.0.17:
       Upgraded to Robotium 3.3
 
