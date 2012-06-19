@@ -16,7 +16,7 @@ module Operations
 
   def take_screenshot
     path = ENV["SCREENSHOT_PATH_PREFIX"] || "results"
-    FileUtils.mkdir_p path unless Dir.exists? path
+    FileUtils.mkdir_p path unless File.exist? path
     filename_prefix = FeatureNameMemory.feature_name.gsub(/\s+/, '_').downcase
     begin
       Timeout.timeout(30) do
