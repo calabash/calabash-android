@@ -9,7 +9,7 @@ def install_app(app_path)
     log "#Failure"
     log "'#{cmd}' said:"
     log result.strip
-    raise "Could not install app #{app_path}"
+    raise "Could not install app #{app_path}: #{result.strip}"
   end
 end
 
