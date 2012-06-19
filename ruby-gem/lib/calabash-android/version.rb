@@ -1,6 +1,6 @@
 module Calabash
   module Android
-    VERSION = "0.0.18"
-    FRAMEWORK_VERSION = "0.0.18"
+    VERSION = "0.0.19"
+    FRAMEWORK_VERSION = "0.0.19"
   end
 end
