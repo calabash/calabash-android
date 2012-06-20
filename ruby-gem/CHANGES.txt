@@ -1,3 +1,11 @@
+0.1.0:
+      Added support for testing Xamarin Mono for Android apps.
+      Currently only Release builds are supported.
+      This new version requires you make changes in
+      features/support/app_life_cycle_hooks.rb.
+      The first time you execute "calabash-android run" upgrade instructions
+      will be displayed.
+
 0.0.19:
       take_screenshot now works with Ruby 1.8.7
 
