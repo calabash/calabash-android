@@ -1,6 +1,17 @@
 def calabash_run(args)
   run_build_if_test_server_does_not_exist
 
+  old_runner = "android.test.InstrumentationTestRunner"
+  new_rummer = "sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
+  f = "features/support/app_life_cycle_hooks.rb"
+
+  if File.exist?(f) and IO.read(f).include? old_runner
+    puts "Calabash has been updated"
+    puts "Please do the following to update your project:"
+    puts "1) Open #{f} in a text editor"
+    puts "2) Replace #{old_runner} with #{new_rummer}"
+    exit
+  end
 
   settings = JSON.parse(IO.read(".calabash_settings"))
   
