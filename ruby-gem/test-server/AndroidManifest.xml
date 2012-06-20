@@ -8,6 +8,6 @@
     <uses-library android:name="android.test.runner" />
     </application>
     <uses-sdk android:minSdkVersion="4" />
-    <instrumentation android:targetPackage="#TESTED_APP_PACKAGE#" android:name="android.test.InstrumentationTestRunner" />
+    <instrumentation android:targetPackage="#TESTED_APP_PACKAGE#" android:name="sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner" />
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest> 
