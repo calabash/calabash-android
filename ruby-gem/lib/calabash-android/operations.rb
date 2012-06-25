@@ -68,13 +68,13 @@ module Operations
   def connect_to_test_server
     puts "Explicit calls to connect_to_test_server should be removed."
     puts "Please take a look in your hooks file for calls to this methods."
-    puts "(Hooks are stored in features/support)")
+    puts "(Hooks are stored in features/support)"
   end
 
   def disconnect_from_test_server
     puts "Explicit calls to disconnect_from_test_server should be removed."
     puts "Please take a look in your hooks file for calls to this methods."
-    puts "(Hooks are stored in features/support)")
+    puts "(Hooks are stored in features/support)"
   end
 
 
