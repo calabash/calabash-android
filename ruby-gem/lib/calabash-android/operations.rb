@@ -15,7 +15,7 @@ module Operations
   end
 
   def take_screenshot
-    Client.default_client.take_screenshot
+    Device.default_device.take_screenshot
   end
 
   def macro(txt)
@@ -27,7 +27,7 @@ module Operations
   end
 
   def performAction(action, arguments)
-    Client.default_client.perform_action(action, arguments)
+    Device.default_device.perform_action(action, arguments)
   end
 
   def wait_for(timeout, &block)
@@ -78,12 +78,12 @@ module Operations
   end
 
 
-  class Client
-    @@default_client = nil
+  class Device
+    @@default_device = nil
 
-    def self.default_client
-      @@default_client = Client.new(ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"]) unless @@default_client
-      @@default_client
+    def self.default_device
+      @@default_device = Device.new(ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"]) unless @@default_device
+      @@default_device
     end
 
     def initialize(serial, server_port)
