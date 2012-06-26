@@ -1,3 +1,9 @@
+0.2.0.pre1:
+      The concept of a Device has been introduced. It will handle all setup
+      and communication with physical devices or emulators.
+      The device class is needed because we want to interact with more than
+      one device at the same time from Calabash.
+
 0.1.0:
       Added support for testing Xamarin Mono for Android apps.
       Currently only Release builds are supported.
