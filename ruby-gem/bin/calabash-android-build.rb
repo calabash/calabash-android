@@ -1,8 +1,10 @@
-def calabash_build(args)
-  run_setup_if_settings_does_not_exist
+def calabash_build(app)
 
-  @settings = JSON.parse(IO.read(".calabash_settings"))  
-    test_server_template_dir = File.join(File.dirname(__FILE__), '..', 'test-server')
+
+
+  keystore = read_keystore_info()
+
+  test_server_template_dir = File.join(File.dirname(__FILE__), '..', 'test-server')
   
   Dir.mktmpdir do |workspace_dir|
     
@@ -15,14 +17,14 @@ def calabash_build(args)
         ant_executable,
         "clean", 
         "package",
-        "-Dtested.package_name=#{@settings["package_name"]}",
-        "-Dtested.main_activity=#{@settings["activity_name"]}",
-        "-Dtested.project.apk=#{@settings["app_path"]}",
-        "-Dandroid.api.level=#{@settings["api_level"]}",
-        "-Dkey.store=#{@settings["keystore_location"]}",
-        "-Dkey.store.password=#{@settings["keystore_password"]}",
-        "-Dkey.alias=#{@settings["keystore_alias"]}",
-        "-Dkey.alias.password=#{@settings["keystore_alias_password"]}",
+        "-Dtested.package_name=#{package_name(app)}",
+        "-Dtested.main_activity=#{main_activity(app)}",
+        "-Dtested.project.apk=#{app}",
+        "-Dandroid.api.level=#{api_level}",
+        "-Dkey.store=#{keystore["keystore_location"]}",
+        "-Dkey.store.password=#{keystore["keystore_password"]}",
+        "-Dkey.alias=#{keystore["keystore_alias"]}",
+        "-Dkey.alias.password=#{keystore["keystore_alias_password"]}",
       ]
       STDOUT.sync = true
       IO.popen(args.join(" ")) do |io|
@@ -37,6 +39,50 @@ def calabash_build(args)
     test_apk = File.join(@test_server_dir, "bin", "Test.apk")
     FileUtils.cp(test_apk, File.join(@support_dir, "Test.apk"))
     puts "Done building the test server. Moved it to features/support/Test.apk"
+  end
+end
+
+def package_name(app)
+  manifest = Document.new(manifest(app))
+  manifest.root.attributes['package']
+end
+
+def main_activity(app)
+  manifest = Document.new(manifest(app))
+  main_activity = manifest.elements["//action[@name='android.intent.action.MAIN']/../.."].attributes['name']
+  #Handle situation where main activity is on the form '.class_name'
+  if main_activity.start_with? "."
+    main_activity = package_name(app) + main_activity
+  elsif not main_activity.include? "." #This is undocumentet behaviour but Android seems to accept shorthand naming that does not start with '.'
+    main_activity = "#{package_name(app)}.#{main_activity}"
+  end
+  main_activity
+end
+
+def api_level
+  "8"
+end
+
+def manifest(app)
+  require 'tmpdir'
+  dir = Dir.mktmpdir
+  FileUtils.cp(app, File.join(dir, "app.apk"))
+
+  system "unzip -d #{dir} #{app} AndroidManifest.xml"
+
+  `java -jar #{File.dirname(__FILE__)}/../lib/calabash-android/lib/AXMLPrinter2.jar #{dir}/AndroidManifest.xml`
+end
+
+def read_keystore_info
+  if File.exist? ".calabash_settings"
+    JSON.parse(IO.read(".calabash_settings"))
+  else
+    {
+    "keystore_location" => "#{ENV["HOME"]}/.android/debug.keystore",
+    "keystore_password" => "android",
+    "keystore_alias" => "androiddebugkey",
+    "keystore_alias_password" => "android"
+    }
   end
 end
 

@@ -1,6 +1,11 @@
 #!/usr/bin/env ruby
 
 require 'fileutils'
+require 'rexml/document'
+require 'rexml/xpath'
+
+include REXML
+
 
 require File.join(File.dirname(__FILE__), "calabash-android-helpers")
 require File.join(File.dirname(__FILE__), "calabash-android-generate")
@@ -14,6 +19,14 @@ require File.join(File.dirname(__FILE__), "calabash-android-submit")
 @source_dir = File.join(File.dirname(__FILE__), '..', 'features-skeleton')
 @script_dir = File.join(File.dirname(__FILE__), '..', 'scripts')
 
+def is_apk_file?(file_path)
+  file_path.end_with? ".apk" and File.exist? file_path
+end
+
+def relative_to_full_path(file_path)
+  File.expand_path(File.join(ENV["PWD"], file_path))
+end
+
 if (ARGV.length == 0)
   print_usage
   exit 0
@@ -23,7 +36,9 @@ if cmd == 'help'
   print_help
   exit 0
 elsif cmd == 'build'
-  calabash_build(ARGV)
+  while not ARGV.empty? and is_apk_file?(ARGV.first)
+    calabash_build(relative_to_full_path(ARGV.shift))
+  end
   exit 0
 elsif cmd == 'run'
   calabash_run(ARGV)
