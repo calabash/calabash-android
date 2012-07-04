@@ -6,6 +6,7 @@
     <application android:label="lesspainfultest">
 
     <uses-library android:name="android.test.runner" />
+    <uses-library android:name="com.google.android.maps" />
     </application>
     
     <instrumentation android:targetPackage="com.lesspainful.simpleui" android:name="android.test.InstrumentationTestRunner" />

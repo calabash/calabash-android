@@ -202,7 +202,7 @@ module Operations
   end
 
   def pinch(in_out,options={})
-    ni
+    performAction("pinch", in_out == 'in' ? 'apart' : 'together' )
   end
 
   def rotate(dir)

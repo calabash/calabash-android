@@ -5,6 +5,11 @@ AfterConfiguration do |config|
 end
 
 Before do |scenario|
+  @scenario_is_outline = (scenario.class == Cucumber::Ast::OutlineTable::ExampleRow) 
+  if @scenario_is_outline 
+    scenario = scenario.scenario_outline 
+  end 
+
   feature_name = scenario.feature.name
   if FeatureNameMemory.feature_name != feature_name
     log "Is first scenario - reinstalling apps"
