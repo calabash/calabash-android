@@ -1,7 +1,7 @@
 def calabash_build(args)
   run_setup_if_settings_does_not_exist
 
-  @settings = JSON.parse(IO.read(".calabash_settings"))  
+  @settings = expand_paths JSON.parse(IO.read(".calabash_settings"))  
     test_server_template_dir = File.join(File.dirname(__FILE__), '..', 'test-server')
   
   Dir.mktmpdir do |workspace_dir|
@@ -38,6 +38,12 @@ def calabash_build(args)
     FileUtils.cp(test_apk, File.join(@support_dir, "Test.apk"))
     puts "Done building the test server. Moved it to features/support/Test.apk"
   end
+end
+
+def expand_paths(settings)
+  settings["app_path"] = File.expand_path settings["app_path"]
+  settings["keystore_location"] = File.expand_path settings["keystore_location"]
+  settings
 end
 
 def is_windows?
