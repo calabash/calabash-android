@@ -8,16 +8,16 @@ import sh.calaba.instrumentationbackend.actions.Action;
  * Center on lat, lon
  * @author Nicholas Albion
  */
-public class SetMapCenter implements Action {
+public class PanMapTo implements Action {
 
     @Override
     public Result execute(String... args) {
-        InstrumentationBackend.solo.setMapCenter( Double.parseDouble(args[0]), Double.parseDouble(args[1]) );
+        InstrumentationBackend.solo.panMapTo( Double.parseDouble(args[0]), Double.parseDouble(args[1]) );
         return Result.successResult();
     }
 
     @Override
     public String key() {
-        return "set_map_center";
+        return "pan_map_to";
     }
 }

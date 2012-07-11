@@ -4,20 +4,16 @@ import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
 
-/**
- * Center on lat, lon
- * @author Nicholas Albion
- */
-public class SetMapCenter implements Action {
+public class GetMapZoom implements Action {
 
-    @Override
+	@Override
     public Result execute(String... args) {
-        InstrumentationBackend.solo.setMapCenter( Double.parseDouble(args[0]), Double.parseDouble(args[1]) );
-        return Result.successResult();
+    	int zoomLevel = InstrumentationBackend.solo.getMapZoom();
+        return new Result(true, Integer.toString(zoomLevel));
     }
 
     @Override
     public String key() {
-        return "set_map_center";
+        return "get_map_zoom";
     }
 }

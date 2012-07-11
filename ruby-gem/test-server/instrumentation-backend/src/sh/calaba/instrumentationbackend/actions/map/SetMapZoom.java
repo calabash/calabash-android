@@ -4,6 +4,9 @@ import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
 
+/**
+ * @author Nicholas Albion
+ */
 public class SetMapZoom implements Action {
 
     @Override

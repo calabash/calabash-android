@@ -28,10 +28,10 @@ public class GetMapMarkers implements Action {
         	if( expectedNumberOfStops != markers.size() ) {
         		result = new Result(false, "Expected " + expectedNumberOfStops + " markers, but found " + markers.size());
         	} else {
-        		result = Result.successResult();
+        		result = new Result(true);
         	}
         } else {
-    		result = Result.successResult();
+    		result = new Result(true);
     	}
         
         for (String markerJson : markers) {
