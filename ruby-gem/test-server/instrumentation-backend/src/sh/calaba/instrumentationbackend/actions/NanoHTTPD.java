@@ -258,47 +258,6 @@ public class NanoHTTPD
 		catch ( InterruptedException e ) {}
 	}
 
-
-	/**
-	 * Starts as a standalone file server and waits for Enter.
-	 */
-	public static void main( String[] args )
-	{
-		myOut.println( "NanoHTTPD 1.25 (C) 2001,2005-2011 Jarno Elonen and (C) 2010 Konstantinos Togias\n" +
-				"(Command line options: [-p port] [-d root-dir] [--licence])\n" );
-
-		// Defaults
-		int port = 80;
-		File wwwroot = new File(".").getAbsoluteFile();
-
-		// Show licence if requested
-		for ( int i=0; i<args.length; ++i )
-		if(args[i].equalsIgnoreCase("-p"))
-			port = Integer.parseInt( args[i+1] );
-		else if(args[i].equalsIgnoreCase("-d"))
-			wwwroot = new File( args[i+1] ).getAbsoluteFile();
-		else if ( args[i].toLowerCase().endsWith( "licence" ))
-		{
-			myOut.println( LICENCE + "\n" );
-			break;
-		}
-
-		try
-		{
-			new NanoHTTPD( port, wwwroot );
-		}
-		catch( IOException ioe )
-		{
-			myErr.println( "Couldn't start server:\n" + ioe );
-			System.exit( -1 );
-		}
-
-		myOut.println( "Now serving files in port " + port + " from \"" + wwwroot + "\"" );
-		myOut.println( "Hit Enter to stop.\n" );
-
-		try { System.in.read(); } catch( Throwable t ) {}
-	}
-
 	/**
 	 * Handles one session, i.e. parses the HTTP request
 	 * and returns the response.

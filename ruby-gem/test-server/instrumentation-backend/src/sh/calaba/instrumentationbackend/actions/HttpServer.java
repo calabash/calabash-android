@@ -1,7 +1,6 @@
 package sh.calaba.instrumentationbackend.actions;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Properties;
 
 import sh.calaba.instrumentationbackend.Command;
@@ -12,20 +11,34 @@ import android.util.Log;
 
 public class HttpServer extends NanoHTTPD {
 	private static final String TAG = "IntrumentationBackend";
+	private boolean running = true;
 	
 	private ObjectMapper mapper;
 
 	public HttpServer() {
-		super(7170, new File("/"));
+		super(7102, new File("/"));
 
 		mapper = createJsonMapper();
 	}
 
 	public Response serve( String uri, String method, Properties header, Properties params, Properties files )
 	{
+		System.out.println("URI: " + uri);
+		if ("/ping".equals(uri)) {
+			return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "pong");
+		} else if ("/kill".equals(uri)) {
+			running = false;
+			System.out.println("Stopping test server");
+			stop();
+			return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "Affirmative!");
+		}
+		
 		String commandString = params.getProperty("command");
-
-		return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, toJson(runCommand(commandString)));
+		System.out.println("command: "+ commandString);
+		String result = toJson(runCommand(commandString));
+		System.out.println("result:" + result);
+		
+		return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, result);
 	}
 
 	private ObjectMapper createJsonMapper() {
@@ -34,41 +47,30 @@ public class HttpServer extends NanoHTTPD {
 		return mapper;
 	}
 
-
 	private String toJson(Result result) {
 		try {
 			return mapper.writeValueAsString(result);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	private Result runCommand(String commandString) {
 		try {
-			System.out.println("CommandString:" + commandString);
 			Command command = mapper.readValue(commandString, Command.class);
 			log("Got command:'" + command);
 			return command.execute();
-			//	           String result = mapper.writeValueAsString(actions.lookup(command.getCommand()).execute(command.getArguments()));
-		} catch (Throwable t) { // Robotium throws AssertionErrors on occations,
-			// we need to catch these and map them to json
-			// results
-			// TODO: Create result from Throwable
+		} catch (Throwable t) {
 			t.printStackTrace();
-			// String jsonResult =
-			// mapper.writeValueAsString(Result.fromThrowable(t));
-			// logError("Returning error:" + jsonResult);
-			// output.println(jsonResult);
-			// output.flush();
 			return Result.fromThrowable(t);
 		}
+	}
+
+	public boolean isRunning() {
+		return running;
 	}
 
 	public static void log(String message) {
 		Log.i(TAG, message);
 	}
-
-
-
 }

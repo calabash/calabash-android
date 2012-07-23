@@ -1,10 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'fileutils'
-require 'rexml/document'
-require 'rexml/xpath'
-
-include REXML
+require 'calabash-android/helpers'
 
 
 require File.join(File.dirname(__FILE__), "calabash-android-helpers")
@@ -36,12 +33,17 @@ if cmd == 'help'
   print_help
   exit 0
 elsif cmd == 'build'
+  puts "Please specify the app you want to test" if (ARGV.empty? or not is_apk_file?(ARGV.first))
   while not ARGV.empty? and is_apk_file?(ARGV.first)
     calabash_build(relative_to_full_path(ARGV.shift))
   end
   exit 0
 elsif cmd == 'run'
-  calabash_run(ARGV)
+  if ARGV.empty? or not is_apk_file?(ARGV.first)
+    calabash_run(nil, ARGV)
+  else
+    calabash_run(ARGV.shift)
+  end
   exit 0
 elsif cmd == 'gen'
   calabash_scaffold

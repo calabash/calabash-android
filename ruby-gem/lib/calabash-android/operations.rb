@@ -1,8 +1,10 @@
 require 'json'
+require 'net/http'
 require 'rubygems'
 require 'json'
 require 'socket'
 require 'timeout'
+require 'calabash-android/helpers'
 
 
 module Calabash module Android
@@ -26,9 +28,23 @@ module Operations
     end
   end
 
-  def performAction(action, arguments)
-    Device.default_device.perform_action(action, arguments)
+  def performAction(action, *arguments)
+    Device.default_device.perform_action(action, *arguments)
   end
+
+  def install_app(app_path)
+    Device.default_device.install_app(app_path)
+  end
+
+  def uninstall_apps
+    Device.default_device.uninstall_app(ENV["TEST_PACKAGE_NAME"])
+    Device.default_device.uninstall_app(ENV["PACKAGE_NAME"])
+  end
+
+  def start_test_server_in_background
+    Device.default_device.start_test_server_in_background()
+  end
+
 
   def wait_for(timeout, &block)
     begin
@@ -77,44 +93,75 @@ module Operations
     puts "(Hooks are stored in features/support)"
   end
 
-
   class Device
     @@default_device = nil
 
     def self.default_device
-      @@default_device = Device.new(ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"]) unless @@default_device
+      unless @@default_device
+        @@default_device = Device.new(ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"], ENV["APP_PATH"], ENV["TEST_APP_PATH"])
+      end
       @@default_device
     end
 
-    def initialize(serial, server_port)
+    def make_default_device
+      @@default_device = self
+    end
 
+    def initialize(serial, server_port, app_path, test_server_path)
       @serial = serial
-      log `#{adb_command} forward tcp:#{server_port} tcp:7101`
-      sleep 2
-      @connection = TCPSocket.open('127.0.0.1', server_port)
+      @server_port = server_port
+      @app_path = app_path
+      @test_server_path = test_server_path
 
-      end_time = Time.now + 60
+      puts "#{adb_command} forward tcp:b#{server_port} tcp:7102"
+      log `#{adb_command} forward tcp:#{server_port} tcp:7102`
+=begin
       begin
-        Timeout.timeout(10) do
-          @connection.send("Ping!\n",0)
-          log "Got '#{@connection.readline.strip}' from testserver"
+        Timeout::timeout(15) do
+          puts http("/ping")           
         end
-      rescue Exception => e
-        log "Got exception:#{e}. Retrying!"
-        sleep(1)
-        retry unless Time.now > end_time
+      rescue Timeout::Error
+        msg = "Unable to make connection to Calabash Test Server at http://127.0.0.1:#{@server_port}/\n"
+        msg << "Please check the logcat output for more info about what happened\n"
+        raise msg
       end
+=end
+    end
+
+    def reinstall_apps()
+      uninstall_app(package_name(@app_path))
+      install_app(@app_path)
+      uninstall_app(package_name(@test_server_path))
+      install_app(@test_server_path)
+    end
+
+    def install_app(app_path)
+      cmd = "#{adb_command} install #{app_path}"
+      log "Installing: #{app_path}"
+      result = `#{cmd}`
+      if result.include? "Success"
+        log "Success"
+      else
+        log "#Failure"
+        log "'#{cmd}' said:"
+        log result.strip
+        raise "Could not install app #{app_path}: #{result.strip}"
+      end
+    end
+
+    def uninstall_app(package_name)
+      log "Uninstalling: #{package_name}"
+      log `#{adb_command} uninstall #{package_name}`
     end
 
     def perform_action(action, *arguments)
       log "Action: #{action} - Params: #{arguments.join(', ')}"
 
-      action = {"command" => action, "arguments" => arguments}
+      params = {"command" => action, "arguments" => arguments}
 
       Timeout.timeout(300) do
         begin
-          @connection.send(action.to_json + "\n", 0) #force_encoding('UTF-8') seems to be missing from JRuby
-          result = @connection.readline
+          result = http("/", params)
         rescue Exception => e
           log "Error communicating with test server: #{e}"
           raise e
@@ -132,6 +179,17 @@ module Operations
       raise Exception, "Step timed out"
     end
 
+    def http(path, data = {})
+      begin
+        http = Net::HTTP.new "127.0.0.1", @server_port
+        resp, data = http.post(path, "command=#{data.to_json}", {})
+        data
+      rescue EOFError
+        sleep 0.5
+        retry
+      end
+    end
+
     def take_screenshot
       path = ENV["SCREENSHOT_PATH_PREFIX"] || "results"
       FileUtils.mkdir_p path unless File.exist? path
@@ -139,8 +197,8 @@ module Operations
       begin
         Timeout.timeout(30) do
           file_name = "#{path}/#{filename_prefix}_#{StepCounter.step_line}.png"
-          log "Taking screenshoot to #{file_name} from device: #{ENV['ADB_DEVICE_ARG']}"
-          system("java -jar #{File.dirname(__FILE__)}/lib/screenShotTaker.jar #{file_name} #{ENV['ADB_DEVICE_ARG']}")
+          log "Taking screenshoot to #{file_name} from device: #{@serial}"
+          system("java -jar #{File.dirname(__FILE__)}/lib/screenShotTaker.jar #{file_name} #{device_args}")
           log "Screenshot stored in: #{file_name}"
         end
       rescue Timeout::Error
@@ -150,9 +208,33 @@ module Operations
 
     def adb_command
       if is_windows?
-        %Q("#{ENV["ANDROID_HOME"]}\\platform-tools\\adb.exe" #{@serial})
+        %Q("#{ENV["ANDROID_HOME"]}\\platform-tools\\adb.exe" #{device_args})
       else
-        %Q(#{ENV["ANDROID_HOME"]}/platform-tools/adb #{@serial})
+        %Q(#{ENV["ANDROID_HOME"]}/platform-tools/adb #{device_args})
+      end
+    end
+
+    def device_args
+      if @serial
+        "-s #{@serial}"
+      else
+        ""
+      end
+    end
+
+    def is_windows?
+      ENV["OS"] == "Windows_NT"
+    end
+
+    def start_test_server_in_background
+      test_server_package = package_name(@test_server_path)
+      cmd = "#{adb_command} shell am instrument -w -e class sh.calaba.instrumentationbackend.InstrumentationBackend #{test_server_package}/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
+      log "Starting test server using:"
+      log cmd
+      if is_windows?
+        system(%Q(start /MIN cmd /C #{cmd}))
+      else
+        `#{cmd} 1>&2 &`
       end
     end
 
@@ -194,7 +276,6 @@ module Operations
   def html(q)
     query(q).map {|e| e['html']}
   end
-
 
   def set_text(uiquery, txt)
     raise "Currently queries are only supported for webviews" unless uiquery.start_with? "webView"

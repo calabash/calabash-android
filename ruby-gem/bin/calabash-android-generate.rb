@@ -2,7 +2,6 @@
 def calabash_scaffold
   if File.exists?(@features_dir)
     puts "A features directory already exists. Stopping..."
-    #puts "Run calabash-android update for update instructions."
     exit 1
   end
   msg("Question") do
