@@ -1,3 +1,7 @@
+0.2.0.pre2:
+      A HTTP server has been introduced in the test server so that we no 
+      longer use socket for communication.
+
 0.2.0.pre1:
       The concept of a Device has been introduced. It will handle all setup
       and communication with physical devices or emulators.
