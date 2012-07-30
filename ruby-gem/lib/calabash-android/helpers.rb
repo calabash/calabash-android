@@ -37,13 +37,7 @@ def api_level
 end
 
 def manifest(app)
-  require 'tmpdir'
-  dir = Dir.mktmpdir
-  FileUtils.cp(app, File.join(dir, "app.apk"))
-
-  system "unzip -d #{dir} #{app} AndroidManifest.xml"
-
-  `java -jar #{File.dirname(__FILE__)}/lib/AXMLPrinter2.jar #{dir}/AndroidManifest.xml`
+  `java -jar #{File.dirname(__FILE__)}/lib/manifest_extractor.jar #{app}`
 end
 
 def checksum(file_path)

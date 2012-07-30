@@ -1,3 +1,7 @@
+0.2.0.pre5:
+      Added jar file to extract manifest from apk to avoid using unzip.
+      This is first attempt at supporting Windows in 0.2.0
+
 0.2.0.pre4:
       It is no longer needed to do the separate build step.
       If no test server is found calabash-android will now attempt build it.

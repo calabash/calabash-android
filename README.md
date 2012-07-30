@@ -19,7 +19,9 @@ If you have any questions on Calabash-Android, please use the Google group
 Installation
 ------------
 ### Prerequisites
-You need to have Ruby installed. Verify your installation by running ruby -v in a terminal - it should print "ruby 1.8.7" (or higher)
+You need to have Ruby installed. Verify your installation by running ruby -v in a terminal - it should print "ruby 1.8.7" (or higher).
+
+If you are on Windows you can get Ruby from [RubyInstaller.org](http://rubyinstaller.org/)
 
 You should have the Android SDK installed and the environment variable `ANDROID_HOME` should be pointing to it.
 
@@ -29,38 +31,6 @@ Install `calabash-android` by running
 
 - `gem install calabash-android`
 - You might have to run `sudo gem install calabash-android` if you do not have the right permissions.
-
-Configuration
--------------
-To configure calabash run `calabash-android setup` in the folder you want to use for your Calabash project. You will be asked a series of questions about your app and environment.
-Here is an example (without any answers):
-  
-    When you are through this setup your settings will be saved to .calabash_settings. You can edit this file if you have the need.
-    What is the package name of the app? You can find the package name in AndroidManifest.xml
-
-    What is the fully qualified name of the main activity?
-
-    What is the path to the app?
-
-    Which api level do you want to use?
-    It looks like you have the following versions installed:
-    4, 7, 8, 10, 15
-
-    Do you want to specify a keystore for signing the test app?
-    If now we will be using /Users/jml/.android/debug.keystore
-    Please answer yes (y) or no (n)
-    y
-    Please enter keystore location
-     
-    Please enter the password for the keystore
-
-    Please enter the alias
-
-    Please enter the password for the alias
-
-    Saved your settings to .calabash_settings. You can edit the settings manually or run this setup script again
-
-You can always run `calabash-android setup` again or change the file manually.
 
 
 **Notice:** Make sure that the app you are trying to test is signed with the key store you just selected in the setup.
@@ -93,24 +63,16 @@ Running test
 ------------
 To run your test:
 
-    calabash-android run
+    calabash-android run <apk>
 
-If you run the test for the first time you have to build the test server before running the test
-(see below). `calabash-android run` will run `calabash-android build` if it cannot find a test server.
+Calabash-android will install an intrumentation next along with your app when executing the app. We call this instrumentation for "test server". The "test server" has special permission that allows it to interact very closely with your app during test.
+Everytime you test a new binary or use an upgraded version of calabash a new test server will be build.
+The test server is an intrumentation that will run along with your app on the device to execute the test.
 
 ### Screenshot location
 Screenshots are stored in the `results` folder by default. The location can be changed by setting the `SCREENSHOT_PATH_PREFIX` environment variable.
 
     SCREENSHOT_PATH_PREFIX=/tmp/foo calabash-android run
-
-
-Building the test server
-------------------------
-Calabash will install an instrumentation along with your app on the device to run the test. Because of some app specific information we need to build the test server based on the input you provided during setup. Please note that you need to rebuild the test server every time you change the app.
-
-You build the test server like this:
-
-    calabash-android build
 
 Predefined steps
 -----------------
