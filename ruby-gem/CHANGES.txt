@@ -1,3 +1,7 @@
+0.2.0.pre3:
+      Reintroduced lib/calabash-android/management/app_installation.rb
+      to stay backwards compatible with generated skeletons.
+
 0.2.0.pre2:
       A HTTP server has been introduced in the test server so that we no 
       longer use socket for communication.
