@@ -42,7 +42,7 @@ elsif cmd == 'run'
   if ARGV.empty? or not is_apk_file?(ARGV.first)
     calabash_run(nil, ARGV)
   else
-    calabash_run(ARGV.shift)
+    calabash_run(relative_to_full_path(ARGV.shift))
   end
   exit 0
 elsif cmd == 'gen'

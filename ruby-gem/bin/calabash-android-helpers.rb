@@ -22,10 +22,10 @@ def print_usage
       application.
       Will ask you some questions about you application, development
       environment and key store to user for signing.
-    build 
+    build <apk>
       builds the test server that will be used when testing the app.
       You need to run this command every time you make changes to the app.
-    run
+    run <apk>
       runs Cucumber in the current folder with the enviroment needed.
     submit
       submits an apk along with your features to www.lesspainful.com

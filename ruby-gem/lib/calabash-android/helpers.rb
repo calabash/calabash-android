@@ -51,4 +51,8 @@ def checksum(file_path)
   Digest::MD5.hexdigest(File.read(file_path))
 end
 
+def test_server_path(apk_file_path)
+  "test_servers/#{checksum(apk_file_path)}_#{Calabash::Android::VERSION}.apk"
+end
+
 

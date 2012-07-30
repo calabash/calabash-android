@@ -36,10 +36,12 @@ def calabash_build(app)
       end
     }
 
+    FileUtils.mkdir_p "test_servers" unless File.exist? "test_servers"
+
     test_apk = File.join(@test_server_dir, "bin", "Test.apk")
-    test_server_file_name = "#{checksum(app)}.apk"
-    FileUtils.cp(test_apk, File.join(@support_dir, test_server_file_name))
-    puts "Done building the test server. Moved it to features/support/#{test_server_file_name}"
+    test_server_file_name = test_server_path(app)
+    FileUtils.cp(test_apk, test_server_file_name)
+    puts "Done building the test server. Moved it to #{test_server_file_name}"
   end
 end
 

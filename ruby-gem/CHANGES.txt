@@ -1,3 +1,6 @@
+0.2.0.pre4:
+      It is no longer needed to do the separate build step.
+      If no test server is found calabash-android will now attempt build it.
 0.2.0.pre3:
       Reintroduced lib/calabash-android/management/app_installation.rb
       to stay backwards compatible with generated skeletons.
