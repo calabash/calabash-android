@@ -25,6 +25,8 @@ If you are on Windows you can get Ruby from [RubyInstaller.org](http://rubyinsta
 
 You should have the Android SDK installed and the environment variable `ANDROID_HOME` should be pointing to it.
 
+You also need to have Ant installed and added to your path
+
 ### Installation
 
 Install `calabash-android` by running
