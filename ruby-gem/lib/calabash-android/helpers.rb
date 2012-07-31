@@ -24,7 +24,8 @@ def main_activity(app)
 end
 
 def api_level
-  api_levels = Dir["#{ENV["ANDROID_HOME"]}/platforms/android-*"].collect{|platform| platform.split("-").last.to_i}.sort
+  formatted_android_home = ENV["ANDROID_HOME"].gsub("\\", "/")
+  api_levels = Dir["#{formatted_android_home}/platforms/android-*"].collect{|platform| platform.split("-").last.to_i}.sort
   if api_levels.empty?
     raise "Android SDK not found. Please install one of more using #{ENV["ANDROID_HOME"]}/tools/android"
   end

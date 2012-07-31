@@ -1,3 +1,6 @@
+0.2.0.pre7:
+      Fixing api-level lookup on windows.
+
 0.2.0.pre6:
       Replaced ENV["PWD"] with FileUtils.pwd to support Windows
 
