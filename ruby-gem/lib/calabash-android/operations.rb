@@ -182,9 +182,9 @@ module Operations
     def http(path, data = {})
       begin
         http = Net::HTTP.new "127.0.0.1", @server_port
-        resp, data = http.post(path, "command=#{data.to_json}", {})
-        data
-      rescue EOFError
+        resp = http.post(path, "command=#{data.to_json}", {})
+        resp.body
+      rescue
         sleep 0.5
         retry
       end
