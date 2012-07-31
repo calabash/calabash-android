@@ -1,4 +1,7 @@
 0.2.0.pre7:
+      Adding target version to javac in order to work with Java 7.
+
+0.2.0.pre7:
       Fixing api-level lookup on windows.
 
 0.2.0.pre6:

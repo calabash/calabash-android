@@ -110,6 +110,8 @@
 	       srcdir="${staging.dir}/src"
 	       destdir="${bin.dir}"
 	       verbose="${verbose}"
+         source="1.6"
+         target="1.6"
 	       bootclasspathref="android.target.classpath"
 	       classpath="${extensible.classpath}"
 	       classpathref="jar.libs.ref">
@@ -178,14 +180,22 @@
 
 
     <target name ="-sign">
-      <signjar
-	  jar="${test.app.unsigned}"
-	  signedjar="${test.app.signed}"
-	  keystore="${key.store}"
-	  storepass="${key.store.password}"
-	  alias="${key.alias}"
-	  keypass="${key.alias.password}"
-	  verbose="false"/>
+      <exec executable="jarsigner">
+        <arg value="-sigalg" />
+        <arg value="MD5withRSA" />
+        <arg value="-digestalg" />
+        <arg value="SHA1" />
+        <arg value="-signedjar" />
+        <arg file="${test.app.signed}" />
+        <arg value="-storepass" />
+        <arg value="${key.store.password}" />
+        <arg value="-keystore" />
+        <arg file="${key.store}" />
+        
+        <arg file="${test.app.unsigned}" />
+        <arg value="${key.alias}" />
+
+      </exec>
     </target>
 
 </project>
