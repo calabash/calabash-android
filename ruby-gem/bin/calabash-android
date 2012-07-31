@@ -21,7 +21,7 @@ def is_apk_file?(file_path)
 end
 
 def relative_to_full_path(file_path)
-  File.expand_path(File.join(ENV["PWD"], file_path))
+  File.expand_path(File.join(FileUtils.pwd, file_path))
 end
 
 if (ARGV.length == 0)
