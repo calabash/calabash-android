@@ -1,4 +1,7 @@
-0.2.0.pre10
+0.2.0
+      No changes from 0.2.0.pre10.
+
+0.2.0.pre10:
       Now accepts full app paths as well as paths with spaces.
 
 0.2.0.pre9:
