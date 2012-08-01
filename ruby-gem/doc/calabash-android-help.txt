@@ -12,14 +12,10 @@ Usage: calabash-android <command-name> [parameters] [options]
       setting up calabash to ensure that the features folder contains
       the right step definitions and environment to run with cucumber.
 
-    setup sets up the current folder to run calabash against your 
-      application.
-      Will ask you some questions about you application, development
-      environment and key store to user for signing.
+    setup sets up a non-default keystore to use with this test project.
 
     build builds the test server that will be used when testing the app.
-      You need to run this command every time you make changes to the app.
-
+      
     run runs Cucumber in the current folder with the enviroment needed.
 
     submit submits an apk along with your features to www.lesspainful.com

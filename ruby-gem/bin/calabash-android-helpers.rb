@@ -18,13 +18,9 @@ def print_usage
     gen
       generate a features folder structure.
     setup 
-      sets up the current folder to run calabash against your 
-      application.
-      Will ask you some questions about you application, development
-      environment and key store to user for signing.
+      sets up a non-default keystore to use with this test project.
     build <apk>
       builds the test server that will be used when testing the app.
-      You need to run this command every time you make changes to the app.
     run <apk>
       runs Cucumber in the current folder with the enviroment needed.
     submit
@@ -46,18 +42,3 @@ end
 def is_json?(str)
   str[0..0] == '{'
 end
-
-def run_setup_if_settings_does_not_exist
-  unless File.exists?(".calabash_settings")
-    puts "Could not find .calabash_settings."
-    puts "Should I run calabash-android setup for you?"
-    puts "Please answer yes (y) or no (n)"
-    if ['yes', 'y'].include? STDIN.gets.chomp
-      calabash_setup
-    else
-      puts "Please run: calabash-android setup"
-      exit 1
-    end
-  end
-end
-

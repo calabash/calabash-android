@@ -1,4 +1,8 @@
-0.2.0
+0.2.1:
+      Path to custom keystores can now be relative.
+      Setup only deals with custom keystores.
+
+0.2.0:
       No changes from 0.2.0.pre10.
 
 0.2.0.pre10:
