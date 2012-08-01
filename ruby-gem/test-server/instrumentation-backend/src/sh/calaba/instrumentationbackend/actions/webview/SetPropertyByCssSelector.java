@@ -1,6 +1,7 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
 
+import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.TestHelpers;
 import sh.calaba.instrumentationbackend.actions.Action;
@@ -16,26 +17,34 @@ public class SetPropertyByCssSelector implements Action {
     	String value = args[2];
     	                         
     	for (CalabashChromeClient ccc : CalabashChromeClient.findAndPrepareWebViews()) {
-    		WebView webView = ccc.getWebView();
+    		final WebView webView = ccc.getWebView();
 			
-    		String assignment = "document.querySelector(\"" + cssSelector + "\")." + propertyName + " = " + value + ";";
+    		final String assignment = "document.querySelector(\"" + cssSelector + "\")." + propertyName + " = " + value + ";";
     		System.out.println(assignment);
-			webView.loadUrl("javascript:(function() {" +
-				assignment +
-				"prompt('calabash:true');" + 
-				"})()");
 
-			String r = ccc.getResult();
-			System.out.println("setPropertyByCssSelector: " + r);
-			if ("true".equals(r)) {
-				TestHelpers.wait(0.3);
-				return Result.successResult();
-			}	
-		}
-		return new Result(false, "");
-    }
+            InstrumentationBackend.solo.getCurrentActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
-    @Override
+                    webView.loadUrl("javascript:(function() {" +
+                               assignment +
+                               "prompt('calabash:true');" +
+                               "})()");
+
+                }
+            });
+            String r = ccc.getResult();
+            System.out.println("setPropertyByCssSelector: " + r);
+            if ("true".equals(r)) {
+                TestHelpers.wait(0.3);
+                return Result.successResult();
+            }
+        }
+
+       return new Result(false,"No WebView found");
+   }
+
+            @Override
     public String key() {
         return "set_property_by_css_selector";
     }

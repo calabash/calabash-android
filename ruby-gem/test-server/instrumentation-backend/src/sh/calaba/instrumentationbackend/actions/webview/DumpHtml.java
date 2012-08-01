@@ -1,6 +1,7 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
 
+import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
 import android.webkit.WebView;
@@ -12,21 +13,27 @@ public class DumpHtml implements Action {
     	                         
     	Result result = Result.successResult();
     	for (CalabashChromeClient ccc : CalabashChromeClient.findAndPrepareWebViews()) {
-    		WebView webView = ccc.getWebView();
-			
-			webView.loadUrl("javascript:(function() {" +
-				"prompt('calabash:' + document.body.parentNode.innerHTML);" + 
-				"})()");
+    		final WebView webView = ccc.getWebView();
 
-			String r = ccc.getResult();
-			System.out.println("Html:");
-			System.out.println("" + r);
-			result.addBonusInformation(r);
-		}
-    	return result;
+            InstrumentationBackend.solo.getCurrentActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    webView.loadUrl("javascript:(function() {" +
+                               "prompt('calabash:' + document.body.parentNode.innerHTML);" +
+                               "})()");
+                }
+            });
+            String r = ccc.getResult();
+            System.out.println("Html:");
+            System.out.println("" + r);
+            result.addBonusInformation(r);
+        }
+
+        return result;
     }
 
-    @Override
+            @Override
     public String key() {
         return "dump_html";
     }
