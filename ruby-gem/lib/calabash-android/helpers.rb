@@ -38,7 +38,7 @@ def api_level
 end
 
 def manifest(app)
-  `java -jar #{File.dirname(__FILE__)}/lib/manifest_extractor.jar #{app}`
+  `java -jar "#{File.dirname(__FILE__)}/lib/manifest_extractor.jar" "#{app}"`
 end
 
 def checksum(file_path)

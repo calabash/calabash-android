@@ -136,7 +136,7 @@ module Operations
     end
 
     def install_app(app_path)
-      cmd = "#{adb_command} install #{app_path}"
+      cmd = "#{adb_command} install '#{app_path}'"
       log "Installing: #{app_path}"
       result = `#{cmd}`
       if result.include? "Success"

@@ -1,5 +1,8 @@
+0.2.0.pre10
+      Now accepts full app paths as well as paths with spaces.
+
 0.2.0.pre9:
-      Fixing connection issue on Windows
+      Fixing connection issue on Windows.
 
 0.2.0.pre8:
       Adding target version to javac in order to work with Java 7.
