@@ -1,3 +1,7 @@
+0.2.3:
+      The 0.2.2 gem was broken :(
+      Making a new release
+
 0.2.2:
       Fixed path problems with Ant on Windows.
 
