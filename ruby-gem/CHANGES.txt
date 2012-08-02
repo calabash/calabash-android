@@ -1,3 +1,6 @@
+0.2.2:
+      Fixed path problems with Ant on Windows.
+
 0.2.1:
       Path to custom keystores can now be relative.
       Setup only deals with custom keystores.
