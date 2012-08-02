@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -18,9 +19,9 @@ import android.widget.TextView;
  *   <li>1-based row index (returns all rows if &lt;=0 or not specified)</li>
  * </ul>
  * 
- * eg: (all items of 1st list) <code>performAction( 'get_list_item_text )</code>
- * eg: (all items of 2nd list) <code>performAction( 'get_list_item_text, '2' )</code>
- * eg: (1st item of 2nd list) <code>performAction( 'get_list_item_text, '2' , '1' )</code>
+ * eg: (all items of 1st list) <code>performAction( 'get_list_item_text' )</code>
+ * eg: (all items of 2nd list) <code>performAction( 'get_list_item_text', '2' )</code>
+ * eg: (1st item of 2nd list) <code>performAction( 'get_list_item_text', '2' , '1' )</code>
  * 
  * @return <code>bonusInformation</code> contain an array of Strings, one for each row in the list (or only for the specified row):
  *   eg: {"title":"My Title", "subtitle":"Another text field for the same list item"}
@@ -55,6 +56,7 @@ public class GetListItemText implements Action {
 		
 				
 		ArrayList<ListView> listViews = InstrumentationBackend.solo.getCurrentListViews();
+		Log.d("GetListItemText", "Found " + listViews.size() + " list views");
 		if( listViews == null || listViews.size() <= listIndex ) {
 			return new Result(false, "Could not find list #" + (listIndex + 1));
 		}
@@ -64,6 +66,7 @@ public class GetListItemText implements Action {
 		
 		if( rowIndex < 0 ) {
 			int count = list.getChildCount();
+			Log.d("GetListItemText", "Found " + count + " list items");
 			for( int i = 0; i < count; i++ ) {
 				result.addBonusInformation( getListItemString( list.getChildAt(i) ) );
 			}

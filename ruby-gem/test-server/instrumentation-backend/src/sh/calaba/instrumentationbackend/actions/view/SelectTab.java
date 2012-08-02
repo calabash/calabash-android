@@ -24,6 +24,14 @@ public class SelectTab implements Action {
 	public Result execute(String... args) {
 		
 		Activity currentActivity = InstrumentationBackend.solo.getCurrentActivity();
+		
+		if( currentActivity instanceof TabActivity == false ) {
+			Activity parent = currentActivity.getParent();
+			if( parent != null ) {
+				currentActivity = parent;
+			}
+		}
+		
 		if( currentActivity instanceof TabActivity ) {
 			final TabHost tabHost = ((TabActivity)currentActivity).getTabHost();
 			

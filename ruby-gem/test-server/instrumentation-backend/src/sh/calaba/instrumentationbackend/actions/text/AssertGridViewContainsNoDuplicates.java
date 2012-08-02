@@ -11,7 +11,7 @@ import sh.calaba.instrumentationbackend.actions.Action;
 
 /**
  * Optional arg is 1-based index - eg: assert_no_duplicates_in_grid, "1" examines the first grid
- * @author AlbionN
+ * @author Nicholas Albion
  */
 public class AssertGridViewContainsNoDuplicates implements Action {
 

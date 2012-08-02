@@ -67,6 +67,9 @@ public class AssertViewProperty extends GetViewProperty implements Action {
 			value = "null";
 		} else if( "drawable".equals(propertyName) ) {
 			Drawable actualDrawable = (Drawable)propertyValue; //  ((ImageButton)view).getDrawable();
+			if( actualDrawable instanceof DrawableContainer ) {
+				actualDrawable = ((DrawableContainer)actualDrawable).getCurrent();
+			}
 			Drawable expectedDrawable = TestHelpers.getDrawableById(expected);
 			return assertSameDrawables( propertyName, expectedDrawable, actualDrawable );
 		} else {
