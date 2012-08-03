@@ -171,7 +171,10 @@ module Operations
         result = JSON.parse(result)
         if not result["success"] then
           take_screenshot
-          raise result["message"].to_s
+          if result["bonusInformation"] && result["bonusInformation"].size > 0 && result["bonusInformation"][0].include?("Exception")
+            log result["bonusInformation"][0]
+          end
+          raise "Step unsuccessful: #{result["message"]}"
         end
         return result
       end
