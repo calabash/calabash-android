@@ -1,3 +1,13 @@
+0.2.4:
+      Added three actions by Sampo Niskanen for interaction with WebViews:
+        * Executing arbitrary javascript in WebView
+        * Get the current url
+        * Detect the page load status
+
+      Fixed bug in features-skeleton/support/app_installation_hooks.rb
+
+      Fixed minor bugs
+      
 0.2.3:
       The 0.2.2 gem was broken :(
       Making a new release
