@@ -1,5 +1,8 @@
 package sh.calaba.instrumentationbackend;
 
+import java.io.BufferedWriter;
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +54,11 @@ public class Result {
     }
         
     public static Result fromThrowable(Throwable t) {
-    	return new Result(false, t.getMessage());
+    	Result r = new Result(false, t.getMessage());
+    	CharArrayWriter caw = new CharArrayWriter();
+    	t.printStackTrace(new PrintWriter(caw));
+    	r.addBonusInformation("Exception stack trace:\n" + caw.toString());
+    	return r;
     }
     
     public static Result successResult() {

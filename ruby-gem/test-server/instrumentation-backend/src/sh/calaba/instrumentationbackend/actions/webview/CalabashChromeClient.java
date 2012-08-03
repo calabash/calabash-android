@@ -39,7 +39,7 @@ public class CalabashChromeClient extends WebChromeClient {
 		if (message != null && message.startsWith("calabash:")) {
 			r.confirm("CALABASH_ACK");
 			System.out.println("onJsPrompt: " + message);
-			result.message = message.replace("calabash:", "");
+			result.message = message.replaceFirst("calabash:", "");
 			eventHandled.open();
 			
 			return true;
