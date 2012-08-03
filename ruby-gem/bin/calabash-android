@@ -40,7 +40,7 @@ elsif cmd == 'build'
   exit 0
 elsif cmd == 'run'
   if ARGV.empty? or not is_apk_file?(ARGV.first)
-    calabash_run(nil, ARGV)
+    calabash_run()
   else
     calabash_run(relative_to_full_path(ARGV.shift))
   end

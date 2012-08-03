@@ -1,4 +1,4 @@
-def calabash_run(app_path)
+def calabash_run(app_path = nil)
 
   old_runner = "android.test.InstrumentationTestRunner"
   new_rummer = "sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
@@ -12,14 +12,12 @@ def calabash_run(app_path)
     exit
   end
 
-
-  unless File.exist?(test_server_path(app_path))
-    puts "No test server found for this combination of app and calabash version. Rebuilding test server."
-    calabash_build(app_path)
-  end
-
-
   if app_path
+    unless File.exist?(test_server_path(app_path))
+      puts "No test server found for this combination of app and calabash version. Rebuilding test server."
+      calabash_build(app_path)
+    end
+
     test_server_path = test_server_path(app_path)
     env = "PACKAGE_NAME=#{package_name(app_path)} "\
           "TEST_PACKAGE_NAME=#{package_name(test_server_path)} "\
