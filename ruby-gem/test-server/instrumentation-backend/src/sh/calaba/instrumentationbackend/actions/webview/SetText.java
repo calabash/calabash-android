@@ -31,9 +31,9 @@ public class SetText implements Action {
 			//TODO: Hack! Should be serialized instead of removed
 			firstElement.remove("class");
 			firstElement.remove("html");
-			String firstElemntJson = QueryHelper.toJsonString(firstElement);
+			String firstElementJson = QueryHelper.toJsonString(firstElement);
 			
-			String result = QueryHelper.executeJavascriptInWebview("set_text.js", firstElemntJson, args[2]);
+			String result = QueryHelper.executeJavascriptInWebview("set_text.js", firstElementJson, args[2]);
 	    	return new Result(true, result);
     	} catch (Exception e) {
     		throw new RuntimeException(e);
