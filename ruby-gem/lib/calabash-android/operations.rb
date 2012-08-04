@@ -1,5 +1,6 @@
 require 'json'
 require 'net/http'
+require 'open-uri'
 require 'rubygems'
 require 'json'
 require 'socket'
@@ -183,12 +184,17 @@ module Operations
     end
 
     def http(path, data = {})
+      retries = 0
       begin
         http = Net::HTTP.new "127.0.0.1", @server_port
-        resp = http.post(path, "command=#{data.to_json}", {})
+        cmd = "command=#{data.to_json}"
+        cmd = cmd.gsub("+", "%2B")
+        resp = http.post(path, cmd, {})
         resp.body
-      rescue
+      rescue Exception => e
+        raise e if retries > 20
         sleep 0.5
+        retries += 1
         retry
       end
     end

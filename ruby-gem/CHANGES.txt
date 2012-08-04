@@ -1,3 +1,6 @@
+0.2.5:
+      Will now escape '+' as %2B in arguments
+
 0.2.4:
       Added three actions by Sampo Niskanen for interaction with WebViews:
         * Executing arbitrary javascript in WebView
@@ -7,7 +10,7 @@
       Fixed bug in features-skeleton/support/app_installation_hooks.rb
 
       Fixed minor bugs
-      
+
 0.2.3:
       The 0.2.2 gem was broken :(
       Making a new release
