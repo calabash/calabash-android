@@ -7,7 +7,7 @@ end
 Before do |scenario|
   feature_name = scenario.feature.name
   if FeatureNameMemory.feature_name != feature_name
-    log "Is first scenario - reinstalling apps"
+    log "First scenario in feature - reinstalling apps"
     
     uninstall_apps
     install_app(ENV["TEST_APP_PATH"])
