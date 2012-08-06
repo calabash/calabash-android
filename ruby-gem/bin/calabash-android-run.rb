@@ -21,8 +21,8 @@ def calabash_run(app_path = nil)
     test_server_path = test_server_path(app_path)
     env = "PACKAGE_NAME=#{package_name(app_path)} "\
           "TEST_PACKAGE_NAME=#{package_name(test_server_path)} "\
-          "APP_PATH='#{app_path}' "\
-          "TEST_APP_PATH='#{test_server_path}' "\
+          "APP_PATH=\"#{app_path}\" "\
+          "TEST_APP_PATH=\"#{test_server_path}\" "\
           "TEST_SERVER_PORT=34777"
   else
     env = ""
