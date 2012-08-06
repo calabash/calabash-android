@@ -1,3 +1,6 @@
+0.2.7:
+      Fixed path on Windows - Really!
+
 0.2.6:
       Fixed path on Windows.
 
