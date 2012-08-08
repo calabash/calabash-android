@@ -112,6 +112,7 @@
 	       verbose="${verbose}"
          source="1.6"
          target="1.6"
+         debug="true"
 	       bootclasspathref="android.target.classpath"
 	       classpath="${extensible.classpath}"
 	       classpathref="jar.libs.ref">
