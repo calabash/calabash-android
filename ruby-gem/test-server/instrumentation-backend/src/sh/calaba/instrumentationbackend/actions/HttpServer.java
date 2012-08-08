@@ -13,12 +13,10 @@ public class HttpServer extends NanoHTTPD {
 	private static final String TAG = "IntrumentationBackend";
 	private boolean running = true;
 	
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper = createJsonMapper();
 
 	public HttpServer() {
 		super(7102, new File("/"));
-
-		mapper = createJsonMapper();
 	}
 
 	public Response serve( String uri, String method, Properties header, Properties params, Properties files )
