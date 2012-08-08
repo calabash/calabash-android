@@ -116,17 +116,6 @@ module Operations
 
       puts "#{adb_command} forward tcp:b#{server_port} tcp:7102"
       log `#{adb_command} forward tcp:#{server_port} tcp:7102`
-=begin
-      begin
-        Timeout::timeout(15) do
-          puts http("/ping")           
-        end
-      rescue Timeout::Error
-        msg = "Unable to make connection to Calabash Test Server at http://127.0.0.1:#{@server_port}/\n"
-        msg << "Please check the logcat output for more info about what happened\n"
-        raise msg
-      end
-=end
     end
 
     def reinstall_apps()
@@ -244,6 +233,16 @@ module Operations
         system(%Q(start /MIN cmd /C #{cmd}))
       else
         `#{cmd} 1>&2 &`
+      end
+
+      begin
+        Timeout::timeout(15) do
+          puts http("/ping")
+        end
+      rescue Timeout::Error
+        msg = "Unable to make connection to Calabash Test Server at http://127.0.0.1:#{@server_port}/\n"
+        msg << "Please check the logcat output for more info about what happened\n"
+        raise msg
       end
     end
 
