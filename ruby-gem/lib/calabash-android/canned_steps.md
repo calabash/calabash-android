@@ -170,6 +170,7 @@ Waits for a view view that id to appear.
 Note that use the short name and not the fully quantified name. That means if your id
 is 'com.foo.R.id.bar_label' you would use 'I press view with id "bar_label"'.
 
+    Then /^I wait up to (\d+) seconds for the "([^\"]*)" screen to appear$/ 
     Then /^I wait upto (\d+) seconds for the "([^\"]*)" screen to appear$/ 
 Waits for a particular screen (Android Activity) to appear with a timeout.
 
