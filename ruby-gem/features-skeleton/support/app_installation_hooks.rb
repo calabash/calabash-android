@@ -17,7 +17,8 @@ Before do |scenario|
 end
 
 at_exit do
-#	uninstall_apps
+  require 'net/http'
+  Net::HTTP.get(URI.parse("http://127.0.0.1:34777/kill"))
 end
 
 FeatureNameMemory = Class.new
