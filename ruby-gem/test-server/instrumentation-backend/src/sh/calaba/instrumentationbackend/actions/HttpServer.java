@@ -1,9 +1,14 @@
 package sh.calaba.instrumentationbackend.actions;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Properties;
 
+import android.graphics.Bitmap;
+import android.view.View;
 import sh.calaba.instrumentationbackend.Command;
+import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.org.codehaus.jackson.map.DeserializationConfig.Feature;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
@@ -22,14 +27,25 @@ public class HttpServer extends NanoHTTPD {
 	public Response serve( String uri, String method, Properties header, Properties params, Properties files )
 	{
 		System.out.println("URI: " + uri);
-		if ("/ping".equals(uri)) {
+		if (uri.endsWith("/ping")) {
 			return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "pong");
-		} else if ("/kill".equals(uri)) {
+		} else if (uri.endsWith("/kill")) {
 			running = false;
 			System.out.println("Stopping test server");
 			stop();
 			return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "Affirmative!");
-		}
+
+		} else if (uri.endsWith("/screenshot")) {
+            Bitmap bitmap;
+            View v1 = InstrumentationBackend.solo.getViews().get(0).getRootView();
+            v1.setDrawingCacheEnabled(true);
+            bitmap = Bitmap.createBitmap(v1.getDrawingCache());
+            v1.setDrawingCacheEnabled(false);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+            return new NanoHTTPD.Response( HTTP_OK, "image/png", new ByteArrayInputStream(out.toByteArray()));
+        }
 		
 		String commandString = params.getProperty("command");
 		System.out.println("command: "+ commandString);
