@@ -12,13 +12,12 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
     public static final String TARGET_PACKAGE = "#ACTIVITY_PACKAGE#"; //Set from Ant at compile time
     private static final String LAUNCHER_ACTIVITY_FULL_CLASSNAME = "#ACTIVITY_QUALIFIED_NAME#"; //Set from Ant at compile time
     
-    private static final String TAG = "IntrumentationBackend";
+    private static final String TAG = "InstrumentationBackend";
     
     public static Instrumentation instrumentation;
     public static Solo solo;
     public static Actions actions;
-	private HttpServer httpServer;
-    
+
     private static Class getActivityClass() {
     	try {
 			return Class.forName(LAUNCHER_ACTIVITY_FULL_CLASSNAME);
@@ -45,18 +44,18 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
      * Here to have JUnit3 start the instrumentationBackend
      */
     public void testHook() throws Exception {
-    	 httpServer = new HttpServer();
-         while(httpServer.isRunning()) {
-             Thread.sleep(500);
-         }
+        HttpServer httpServer = HttpServer.getInstance();
+        httpServer.setReady();
+        while(httpServer.isRunning()) {
+            Thread.sleep(500);
+        }
     }
 
     @Override
     public void tearDown() throws Exception {
-    	
-    	if (httpServer != null) {
-    		httpServer.stop();
-    	}
+        HttpServer httpServer = HttpServer.getInstance();
+        httpServer.stop();
+
         System.out.println("Finishing");
         try {
             solo.finalize();
