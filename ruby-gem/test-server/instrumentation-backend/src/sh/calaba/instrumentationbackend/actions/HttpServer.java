@@ -4,6 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Properties;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import android.graphics.Bitmap;
 import android.view.View;
@@ -18,6 +21,9 @@ public class HttpServer extends NanoHTTPD {
 	private static final String TAG = "InstrumentationBackend";
     private boolean running = true;
     private boolean ready = false;
+
+    private final Lock lock = new ReentrantLock();
+    private final Condition shutdownCondition = lock.newCondition();
 
 	private final ObjectMapper mapper = createJsonMapper();
 
@@ -57,11 +63,19 @@ public class HttpServer extends NanoHTTPD {
 		System.out.println("URI: " + uri);
 		if (uri.endsWith("/ping")) {
 			return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "pong");
-		} else if (uri.endsWith("/kill")) {
-			running = false;
-			System.out.println("Stopping test server");
-			stop();
-			return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "Affirmative!");
+
+        } else if (uri.endsWith("/kill")) {
+            lock.lock();
+            try {
+                running = false;
+                System.out.println("Stopping test server");
+                stop();
+
+                shutdownCondition.signal();
+                return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "Affirmative!");
+            } finally {
+                lock.unlock();
+            }
 
         } else if ("/ready".equals(uri)) {
             return new Response(HTTP_OK, MIME_HTML, Boolean.toString(ready));
@@ -112,9 +126,16 @@ public class HttpServer extends NanoHTTPD {
 		}
 	}
 
-	public boolean isRunning() {
-		return running;
-	}
+    public void waitUntilShutdown() throws InterruptedException {
+        lock.lock();
+        try {
+            while(running) {
+                shutdownCondition.await();
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
 
 	public static void log(String message) {
 		Log.i(TAG, message);

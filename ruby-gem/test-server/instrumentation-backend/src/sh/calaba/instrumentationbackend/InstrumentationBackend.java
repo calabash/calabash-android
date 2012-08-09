@@ -46,9 +46,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
     public void testHook() throws Exception {
         HttpServer httpServer = HttpServer.getInstance();
         httpServer.setReady();
-        while(httpServer.isRunning()) {
-            Thread.sleep(500);
-        }
+        httpServer.waitUntilShutdown();
     }
 
     @Override
