@@ -1,3 +1,11 @@
+0.2.8:
+      Added /screenshot to test server.
+      Calabash will now kill the test server at exit.
+      Test server is now compiled with the debug flag which means better
+      stacktraces.
+
+      Bug fixes.
+
 0.2.7:
       Fixed path on Windows - Really!
 
