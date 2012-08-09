@@ -1,3 +1,7 @@
+0.2.9:
+      Moving to the new http screenshot method.
+      screenshottaker.jar and the use of ddmlib will be phased out.
+
 0.2.8:
       Added /screenshot to test server.
       Calabash will now kill the test server at exit.
