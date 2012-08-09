@@ -29,6 +29,10 @@ module Operations
     end
   end
 
+  def shutdown_test_server
+    Device.default_device.http('/kill', {})
+  end
+
   def performAction(action, *arguments)
     Device.default_device.perform_action(action, *arguments)
   end
