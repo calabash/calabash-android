@@ -40,6 +40,11 @@ Then /^I wait for the view with id "([^\"]*)" to appear$/ do |text|
   performAction('wait_for_view_by_id', text)
 end
 
+Then /^I wait for the "([^\"]*)" view to appear$/ do |text|
+  performAction('wait_for_view', text)
+end
+
+
 Then /^I wait for the "([^\"]*)" screen to appear$/ do |text|
     performAction('wait_for_screen', text)
 end
