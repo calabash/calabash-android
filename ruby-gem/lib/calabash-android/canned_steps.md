@@ -159,6 +159,10 @@ Waits for the current dialog to close.
     Then /^I wait to see "([^\"]*)"$/
 Waits for the specified text to appear.
 
+    Then /^I wait up to (\d+) seconds for "([^\"]*)" to appear$/
+    Then /^I wait up to (\d+) seconds to see "([^\"]*)"$/
+Waits for the specified text to appear, with a custom timeout
+
     Then /^I wait for the "([^\"]*)" button to appear$/
 Waits for a button with the specified text to appear.
 
@@ -170,6 +174,7 @@ Waits for a view view that id to appear.
 Note that use the short name and not the fully quantified name. That means if your id
 is 'com.foo.R.id.bar_label' you would use 'I press view with id "bar_label"'.
 
+    Then /^I wait up to (\d+) seconds for the "([^\"]*)" screen to appear$/ 
     Then /^I wait upto (\d+) seconds for the "([^\"]*)" screen to appear$/ 
 Waits for a particular screen (Android Activity) to appear with a timeout.
 
