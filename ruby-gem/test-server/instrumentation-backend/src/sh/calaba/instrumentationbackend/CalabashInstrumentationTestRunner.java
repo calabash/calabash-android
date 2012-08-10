@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import android.content.Context;
 import android.os.Bundle;
 import android.test.InstrumentationTestRunner;
+import sh.calaba.instrumentationbackend.actions.HttpServer;
 
 public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner {
 	@Override
@@ -18,6 +19,10 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
 		} catch (Exception e) {
 			System.out.println("Calabash could not load Mono");
 		}
+
+        // Start the HttpServer as soon as possible in a not-ready state
+        HttpServer.instantiate();
+
         super.onCreate(arguments);
 	}	
 }
