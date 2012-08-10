@@ -31,7 +31,7 @@ module Operations
   end
 
   def shutdown_test_server
-    Device.default_device.http('/kill', {})
+    Device.default_device.shutdown_test_server
   end
 
   def performAction(action, *arguments)
@@ -144,6 +144,10 @@ module Operations
     def uninstall_app(package_name)
       log "Uninstalling: #{package_name}"
       log `#{adb_command} uninstall #{package_name}`
+    end
+
+    def shutdown_test_server
+      http("/kill")
     end
 
     def perform_action(action, *arguments)
