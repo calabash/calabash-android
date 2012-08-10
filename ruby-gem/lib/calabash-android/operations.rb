@@ -6,6 +6,7 @@ require 'json'
 require 'socket'
 require 'timeout'
 require 'calabash-android/helpers'
+require 'retriable'
 
 
 module Calabash module Android
@@ -242,10 +243,19 @@ module Operations
       end
 
       begin
-        Timeout::timeout(15) do
-          puts http("/ping")
+        retriable :tries => 10, :interval => 3 do
+            log "Checking if instrumentation backend is ready"
+            ready = http("/ready")
+
+            if ready != "true"
+              log "Instrumentation backend not yet ready"
+              raise "Not ready"
+            else
+              log "Instrumentation backend is ready!"
+            end
         end
-      rescue Timeout::Error
+
+      rescue
         msg = "Unable to make connection to Calabash Test Server at http://127.0.0.1:#{@server_port}/\n"
         msg << "Please check the logcat output for more info about what happened\n"
         raise msg
