@@ -19,5 +19,6 @@ Gem::Specification.new do |s|
   s.add_dependency( "cucumber" )
   s.add_dependency( "json" )
   s.add_dependency( "slowhandcuke" )
+  s.add_dependency( "retriable" )
 
 end

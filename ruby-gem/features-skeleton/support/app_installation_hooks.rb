@@ -6,19 +6,19 @@ end
 
 Before do |scenario|
   feature_name = scenario.feature.name
-  if FeatureNameMemory.feature_name != feature_name
-    log "Is first scenario - reinstalling apps"
+  if FeatureNameMemory.feature_name != feature_name \
+      or ENV["RESET_BETWEEN_SCENARIOS"] == "1"
+    if ENV["RESET_BETWEEN_SCENARIOS"] == "1"
+      log "New scenario - reinstalling apps"
+    else
+      log "First scenario in feature - reinstalling apps"
+    end
     
     uninstall_apps
     install_app(ENV["TEST_APP_PATH"])
     install_app(ENV["APP_PATH"])
     FeatureNameMemory.feature_name = feature_name
 	end
-end
-
-at_exit do
-  require 'net/http'
-  Net::HTTP.get(URI.parse("http://127.0.0.1:34777/kill"))
 end
 
 FeatureNameMemory = Class.new

@@ -4,6 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Properties;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import android.graphics.Bitmap;
 import android.view.View;
@@ -15,12 +18,43 @@ import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import android.util.Log;
 
 public class HttpServer extends NanoHTTPD {
-	private static final String TAG = "IntrumentationBackend";
-	private boolean running = true;
-	
+	private static final String TAG = "InstrumentationBackend";
+    private boolean running = true;
+    private boolean ready = false;
+
+    private final Lock lock = new ReentrantLock();
+    private final Condition shutdownCondition = lock.newCondition();
+
 	private final ObjectMapper mapper = createJsonMapper();
 
-	public HttpServer() {
+    private static HttpServer instance;
+
+    /**
+     * Creates and returns the singleton instance for HttpServer.
+     *
+     * Can only be called once. Otherwise, you'll get an IllegalStateException.
+     */
+    public synchronized static HttpServer instantiate() {
+        if(instance != null) {
+            throw new IllegalStateException("Can only instantiate once!");
+        }
+        instance = new HttpServer();
+        return instance;
+    }
+
+    /**
+     * Returns the singleton instance for HttpServer.
+     *
+     * If {@link #instantiate()} hasn't already been called, an IllegalStateException is thrown.
+     */
+    public synchronized static HttpServer getInstance() {
+        if(instance == null) {
+            throw new IllegalStateException("Must be initialized!");
+        }
+        return instance;
+    }
+
+	private HttpServer() {
 		super(7102, new File("/"));
 	}
 
@@ -29,11 +63,23 @@ public class HttpServer extends NanoHTTPD {
 		System.out.println("URI: " + uri);
 		if (uri.endsWith("/ping")) {
 			return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "pong");
-		} else if (uri.endsWith("/kill")) {
-			running = false;
-			System.out.println("Stopping test server");
-			stop();
-			return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "Affirmative!");
+
+        } else if (uri.endsWith("/kill")) {
+            lock.lock();
+            try {
+                running = false;
+                System.out.println("Stopping test server");
+                stop();
+
+                shutdownCondition.signal();
+                return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "Affirmative!");
+            } finally {
+                lock.unlock();
+            }
+
+        } else if ("/ready".equals(uri)) {
+            return new Response(HTTP_OK, MIME_HTML, Boolean.toString(ready));
+
 
 		} else if (uri.endsWith("/screenshot")) {
             Bitmap bitmap;
@@ -80,11 +126,22 @@ public class HttpServer extends NanoHTTPD {
 		}
 	}
 
-	public boolean isRunning() {
-		return running;
-	}
+    public void waitUntilShutdown() throws InterruptedException {
+        lock.lock();
+        try {
+            while(running) {
+                shutdownCondition.await();
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
 
 	public static void log(String message) {
 		Log.i(TAG, message);
 	}
+
+    public void setReady() {
+        ready = true;
+    }
 }

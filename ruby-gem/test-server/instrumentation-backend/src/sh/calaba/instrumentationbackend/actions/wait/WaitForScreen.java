@@ -25,7 +25,8 @@ public class WaitForScreen implements Action {
             int timeout = DEFAULT_TIMEOUT;
             
             try {
-                timeout = Integer.parseInt(args[1]);
+                // given seconds; want milliseconds
+                timeout = 1000 * Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
                 return new Result(false, "Invalid timeout supplied. Should be an integer!"); 
             }
