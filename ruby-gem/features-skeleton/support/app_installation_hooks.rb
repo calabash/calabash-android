@@ -16,11 +16,6 @@ Before do |scenario|
 	end
 end
 
-at_exit do
-  require 'net/http'
-  Net::HTTP.get(URI.parse("http://127.0.0.1:34777/kill"))
-end
-
 FeatureNameMemory = Class.new
 class << FeatureNameMemory
   @feature_name = nil
