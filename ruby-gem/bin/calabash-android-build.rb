@@ -57,7 +57,3 @@ def read_keystore_info
     }
   end
 end
-
-def is_windows?
-  ENV["OS"] == "Windows_NT"
-end

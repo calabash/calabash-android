@@ -76,9 +76,6 @@ module Operations
     raise "Not yet implemented."
   end
 
-  def is_windows?
-     ENV["OS"] == "Windows_NT"
-  end
   ###
 
   ### app life cycle
@@ -220,10 +217,6 @@ module Operations
       else
         ""
       end
-    end
-
-    def is_windows?
-      ENV["OS"] == "Windows_NT"
     end
 
     def start_test_server_in_background

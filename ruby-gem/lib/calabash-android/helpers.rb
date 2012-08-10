@@ -50,4 +50,9 @@ def test_server_path(apk_file_path)
   "test_servers/#{checksum(apk_file_path)}_#{Calabash::Android::VERSION}.apk"
 end
 
+def is_windows?
+  require 'rbconfig'
+  (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
+end
+
 
