@@ -1,5 +1,4 @@
 *.class
-bin
 gen
 staging
 instrumentation_backend/.settings
