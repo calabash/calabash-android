@@ -47,6 +47,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
         HttpServer httpServer = HttpServer.getInstance();
         httpServer.setReady();
         httpServer.waitUntilShutdown();
+        solo.finishOpenedActivities();
     }
 
     @Override

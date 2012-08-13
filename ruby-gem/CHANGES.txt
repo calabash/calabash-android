@@ -1,3 +1,13 @@
+0.2.10:
+      Various small improvements and bug fixes.
+
+      Default behavior is now to shutdown the test server after scenario.
+      calabash-android now waits for the test server to be ready before sending
+      the first command.
+
+      If the environment variable RESET_BETWEEN_SCENARIOS is "1" the app will
+      be reinstalled between scenarios and not just between features.
+
 0.2.9:
       Moving to the new http screenshot method.
       screenshottaker.jar and the use of ddmlib will be phased out.
