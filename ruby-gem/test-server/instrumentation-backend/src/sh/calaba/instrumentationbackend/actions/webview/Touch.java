@@ -16,25 +16,25 @@ public class Touch implements Action {
 
     @Override
     public Result execute(String... args) {
-    	
-    	try {
-    		String queryResult = QueryHelper.executeJavascriptInWebview("calabash.js", args[1], args[0]);
-    		List<HashMap<String,Object>> p = new ObjectMapper().readValue(queryResult, new TypeReference<List<HashMap<String,Object>>>(){});
-    		
-    		if (p.isEmpty()) {
-    			throw new RuntimeException("No element found");
-    		}
-    		
-    		Map<String, Object> firstRect = QueryHelper.findFirstVisibleRectangle(p);
-    		
-    		float[] screenCoordinates = QueryHelper.getScreenCoordinatesForCenter(firstRect);
-    		
-    		InstrumentationBackend.solo.clickOnScreen(screenCoordinates[0], screenCoordinates[1]);
-    	} catch (Exception e) {
-    		throw new RuntimeException(e);
-    	}
 
-		return new Result(true, "");
+        try {
+            String queryResult = QueryHelper.executeJavascriptInWebview("calabash.js", args[1], args[0]);
+            List<HashMap<String,Object>> p = new ObjectMapper().readValue(queryResult, new TypeReference<List<HashMap<String,Object>>>(){});
+
+            if (p.isEmpty()) {
+                throw new RuntimeException("No element found");
+            }
+
+            Map<String, Object> firstRect = QueryHelper.findFirstVisibleRectangle(p);
+
+            float[] screenCoordinates = QueryHelper.getScreenCoordinatesForCenter(firstRect);
+
+            InstrumentationBackend.solo.clickOnScreen(screenCoordinates[0], screenCoordinates[1]);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return new Result(true, "");
     }
 
     @Override
