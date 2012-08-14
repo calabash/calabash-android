@@ -13,9 +13,16 @@ public class ExecuteJavascript implements Action {
 		CalabashChromeClient ccc = CalabashChromeClient.findAndPrepareWebViews().get(0);
 		final WebView webView = ccc.getWebView();
 		final String script = "javascript:(function() {"
-				+ "var result;"
+				+ " var r;"
+				+ " try {"
+				+ "  r = (function() {"
 				+ args[0] + ";"
-				+ "prompt('calabash:'+result);" + "})()";
+				+ "  }());"
+				+ " } catch (e) {"
+				+ "  r = 'Exception: ' + e;"
+				+ " }"
+				+ " prompt('calabash:'+r);" 
+				+ "}())";
 
 		System.out.println("execute javascript: " + script);
 		
@@ -30,7 +37,12 @@ public class ExecuteJavascript implements Action {
 		String r = ccc.getResult();
 		System.out.println("javascript result: " + r);
 
-		return new Result(true, r);
+		boolean success = true;
+		if (r.startsWith("Exception:")) {
+			success = false;
+		}
+
+		return new Result(success, r);
 	}
 
 	@Override
