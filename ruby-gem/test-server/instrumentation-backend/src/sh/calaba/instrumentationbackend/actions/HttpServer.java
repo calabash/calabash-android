@@ -77,7 +77,7 @@ public class HttpServer extends NanoHTTPD {
                 lock.unlock();
             }
 
-        } else if ("/ready".equals(uri)) {
+        } else if (uri.endsWith("/ready")) {
             return new Response(HTTP_OK, MIME_HTML, Boolean.toString(ready));
 
 
