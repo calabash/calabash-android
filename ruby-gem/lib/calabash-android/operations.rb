@@ -200,7 +200,7 @@ module Operations
       filename_prefix = FeatureNameMemory.feature_name.gsub(/\s+/, '_').downcase
       begin
         Timeout.timeout(30) do
-          file_name = "#{path}/#{filename_prefix}_#{FeatureNameMemory.invocation}_#{StepCounter.step_line}.png"
+          file_name = "#{path}/#{filename_prefix}_#{StepCounter.step_line}.png"
           image = http("/screenshot")
           open(file_name ,"wb") { |file|
             file.write(image)
