@@ -90,10 +90,6 @@
       <copy todir="${staging.dir}">
 				<fileset dir="instrumentation-backend"/>
       </copy>
-	  <copy todir="${staging.dir}/libs">
-          <!-- There may be a better way of doing this, but it works -->
-	      <fileset dir="${env.ANDROID_HOME}/add-ons/addon-google_apis-google-${android.api.level}/libs"/>
-      </copy>
       <copy todir="${staging.dir}/assets">
         <fileset dir="${calabashjs.dir}"/>
       </copy>

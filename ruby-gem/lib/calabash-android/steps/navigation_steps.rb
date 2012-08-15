@@ -30,14 +30,3 @@ end
 Then /^I scroll up$/ do
   performAction('scroll_up')
 end
-
-##pinch##
-Then /^I pinch to zoom (in|out)$/ do |in_out|
-  pinch(in_out)
-#  sleep(STEP_PAUSE)
-end
-
-#Then /^I pinch to zoom (in|out) on "([^\"]*)"$/ do |in_out, name|
-#  pinch(in_out,{:query => "view marked:'#{name}'"})
-#  sleep(STEP_PAUSE)
-#end
