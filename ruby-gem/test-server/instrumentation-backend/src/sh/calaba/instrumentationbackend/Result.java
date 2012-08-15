@@ -64,6 +64,14 @@ public class Result {
     public static Result successResult() {
     	return successResult;
     }
+
+    public static Result failedResult() {
+        return new Result(false);
+    }
+
+    public static Result failedResult(final String message) {
+        return new Result(false, message);
+    }
     
     public String toString() {
         return "Success: " + success + ", message: " + message;
