@@ -69,6 +69,21 @@ public class TestHelpers {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <ViewType extends View> ViewType getViewById(String resName, Class<? extends View> expectedViewType) {
+        final View theView = getViewById(resName);
+
+        if (null == theView) {
+            return null;
+        }
+
+        if (!expectedViewType.isInstance(theView)) {
+            throw new RuntimeException(String.format("getViewById:  Expected to find a View of type %s but found one of type %s", expectedViewType.getClass().getName(), theView.getClass().getName()));
+        }
+        
+        return (ViewType) theView;
+    }
+
     public static View getViewById(String resName) {
         Integer intID = resourceNamesToIds.get(resName);
         System.out.println("getViewById: Looking for view " + resName + " as id " + intID);
