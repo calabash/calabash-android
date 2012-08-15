@@ -64,8 +64,3 @@ end
 Then /^I wait up to (\d+) seconds for the "([^\"]*)" screen to appear$/ do |timeout, text|
     performAction('wait_for_screen', text, timeout)
 end
-
-# @param - the "tag" associated with the tab, or the text within the tab label
-Then /^I wait for the "([^\"]*)" tab to appear$/ do | tab |
-  performAction('wait_for_tab', tab)
-end

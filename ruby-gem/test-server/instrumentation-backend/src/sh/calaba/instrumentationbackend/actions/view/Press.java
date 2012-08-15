@@ -29,7 +29,7 @@ public class Press implements Action {
             }
         }
 
-        // Try to press view with content description
+        // Try to pres view with content description
         if (viewToPress == null) {
             helpText += "Content descriptions:\n";
             for (View view : InstrumentationBackend.solo.getCurrentViews()) {
