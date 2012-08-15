@@ -10,7 +10,6 @@ import android.graphics.Rect;
 import android.graphics.Region;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.View;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
