@@ -13,13 +13,13 @@ Before do |scenario|
     else
       log "First scenario in feature - reinstalling apps"
     end
-    
     uninstall_apps
     install_app(ENV["TEST_APP_PATH"])
     install_app(ENV["APP_PATH"])
     FeatureNameMemory.feature_name = feature_name
-	end
+  end
 end
+
 
 FeatureNameMemory = Class.new
 class << FeatureNameMemory
