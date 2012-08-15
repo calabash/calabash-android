@@ -4,8 +4,7 @@
       android:versionCode="2"
       android:versionName="0.2.11">
     <application android:label="instrumentation_backend">
-
-    <uses-library android:name="android.test.runner" />
+        <uses-library android:name="android.test.runner" />
     </application>
     <uses-sdk android:minSdkVersion="4" />
     <instrumentation android:targetPackage="#TESTED_APP_PACKAGE#" android:name="sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner" />

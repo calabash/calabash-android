@@ -4,7 +4,10 @@ package sh.calaba.instrumentationbackend.actions.wait;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
+import android.app.Activity;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.ProgressBar;
 
 
