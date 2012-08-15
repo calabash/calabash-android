@@ -32,14 +32,7 @@ public class ClickOnViewById implements Action {
 			System.out.println(xy[0]);
 			System.out.println(xy[1]);
 			
-			//InstrumentationBackend.solo.clickOnView(view);		
-			if (view.isClickable()) {
-				InstrumentationBackend.solo.getCurrentActivity().runOnUiThread(new Runnable() {
-					public void run() {
-						view.performClick();
-					}	
-				});
-			}
+			InstrumentationBackend.solo.clickOnView(view);		
 		} catch(junit.framework.AssertionFailedError e) {
 			System.out.println("solo.clickOnView failed - using fallback");
 			if (view.isClickable()) {
