@@ -6,7 +6,6 @@ import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 
-import com.jayway.android.robotium.solo.Solo;
 import com.jayway.android.robotium.solo.SoloEnhanced;
 
 public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {

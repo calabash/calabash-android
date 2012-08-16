@@ -76,7 +76,7 @@ public class TestHelpers {
             throw new RuntimeException("getViewById: Looking for view " + resName + " which does not have an id");
         }
         int id = intID.intValue();
-        View view = InstrumentationBackend.solo.getCurrentActivity().findViewById(id);
+        View view = InstrumentationBackend.solo.getView(id);
         if (view != null) {
             if (id == view.getId()) {
                 System.out.println("Did find view " + resName + ".");
