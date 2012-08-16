@@ -1,4 +1,4 @@
-package sh.calaba.instrumentationbackend.actions.view;
+package sh.calaba.instrumentationbackend.actions.wait;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
