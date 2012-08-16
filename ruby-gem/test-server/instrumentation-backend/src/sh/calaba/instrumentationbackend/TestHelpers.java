@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.res.Resources.NotFoundException;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.TextView;
 
@@ -86,6 +88,39 @@ public class TestHelpers {
         }
         System.out.println("Did not find view " + resName);
         return view;
+    }
+    
+    public static Drawable getDrawableById(String resName) {
+    	int id;
+// This would probably work too...
+if( true ) {
+    	try {
+//    		if( resName.startsWith("drawable/") == false ) {
+//    			resName = "drawable/" + resName;
+//    		}
+//    		TypedValue outValue = new TypedValue();
+//    		InstrumentationBackend.solo.getCurrentActivity().getResources().getValue( resName, outValue, false );
+//    		id = outValue.resourceId;
+    		id = InstrumentationBackend.solo.getCurrentActivity().getResources().getIdentifier( resName, "drawable", InstrumentationBackend.solo.getCurrentActivity().getPackageName() );
+    	} catch( NotFoundException e ) {
+    		throw new RuntimeException("getDrawableById: Looking for drawable " + resName + " but was not found");
+    	}
+} else {
+    	Integer intID = resourceNamesToIds.get(resName);
+        System.out.println("getDrawableById: Looking for drawable " + resName + " as id " + intID);
+        if (intID == null) {
+            throw new RuntimeException("getDrawableById: Looking for drawable " + resName + " which does not have an id");
+        }
+        id = intID.intValue();
+}
+        Drawable drawable = InstrumentationBackend.solo.getCurrentActivity().getResources().getDrawable(id);
+        if (drawable != null) {
+            System.out.println("Did find drawable " + resName + ": " + drawable);
+            return drawable;
+        } else {
+        	System.out.println("Did not find drawable " + resName);
+        	return drawable;
+        }
     }
 
     public static int[] parseTime(String timeString) {
