@@ -71,11 +71,21 @@ public class GetViewProperty extends WaitForViewById implements Action {
 		} else {
 			// resort to reflection
 			Class<? extends View> clazz = view.getClass();
-			String methodName = "get" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
-    		Method method = clazz.getMethod( methodName );
-    		Object valueObj = method.invoke(view);
-    		
-    		return processProperty( propertyName, valueObj, args );
+			Method method = null;
+			try {
+				String methodName = propertyName;
+				method = clazz.getMethod( methodName );
+			} catch( NoSuchMethodException e ) {
+				try {
+					String methodName = "get" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
+					method = clazz.getMethod( methodName );
+				} catch( NoSuchMethodException e2 ) {
+					String methodName = "is" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
+					method = clazz.getMethod( methodName );
+				}
+			}
+			Object valueObj = method.invoke(view);
+			return processProperty( propertyName, valueObj, args );
 		}
 	}
 	
