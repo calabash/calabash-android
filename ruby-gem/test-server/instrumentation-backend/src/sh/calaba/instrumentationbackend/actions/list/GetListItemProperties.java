@@ -1,5 +1,6 @@
 package sh.calaba.instrumentationbackend.actions.list;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
@@ -103,7 +104,12 @@ public class GetListItemProperties implements Action {
 		json.append(", \"color\":").append( view.getCurrentTextColor() );
 		Drawable background = view.getBackground();
 		if( background instanceof ColorDrawable ) {
-			json.append(", \"background\":").append( ((ColorDrawable)background).getColor() );
+			try {
+				// As pointed out by kbielenberg, ColorDrawable.getColor() was only added in level 11/Android 3/Honeycomb
+				Method getColor = ColorDrawable.class.getMethod("getColor");
+				Integer color = (Integer)getColor.invoke(background);
+				json.append(", \"background\":").append( color );
+			} catch (Exception e) {}
 		}
 
 		StringBuilder compoundStr = new StringBuilder();
