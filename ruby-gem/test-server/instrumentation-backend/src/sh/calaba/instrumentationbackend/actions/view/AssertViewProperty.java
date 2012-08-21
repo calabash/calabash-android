@@ -1,10 +1,13 @@
 package sh.calaba.instrumentationbackend.actions.view;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.DrawableContainer;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import sh.calaba.instrumentationbackend.Result;
@@ -20,6 +23,7 @@ import sh.calaba.instrumentationbackend.actions.Action;
  * @author Nicholas Albion
  */
 public class AssertViewProperty extends GetViewProperty implements Action {
+	private static final String TAG = "assert_view_property";
 
 	@Override
 	protected Result getPropertyValue( String propertyName, View view, String[] args ) throws NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
@@ -106,7 +110,26 @@ public class AssertViewProperty extends GetViewProperty implements Action {
 			actual = ((DrawableContainer)actual).getCurrent();
 		}
 		if( (expected instanceof BitmapDrawable) && (actual instanceof BitmapDrawable) ) {
-			return ((BitmapDrawable)expected).getBitmap().sameAs( ((BitmapDrawable)actual).getBitmap() );
+			Bitmap expectedBitmap = ((BitmapDrawable)expected).getBitmap();
+			Bitmap actualBitmap = ((BitmapDrawable)actual).getBitmap();
+			try {
+				// As pointed out by kbielenberg, Bitmap.sameAs() was only added in level 12/Android 3.1/Honeycomb MR1
+				Method sameAs = Bitmap.class.getMethod("sameAs", Bitmap.class);
+				return (Boolean)sameAs.invoke( expectedBitmap, actualBitmap );
+			} catch (Exception e) {
+				if( expectedBitmap.getWidth() != actualBitmap.getWidth() ) { return false; }
+				if( expectedBitmap.getHeight() != actualBitmap.getHeight() ) { return false; }
+				if( expectedBitmap.getConfig() != actualBitmap.getConfig() ) { return false; }
+				boolean bitmapsEqual = expectedBitmap.equals(actualBitmap);
+				if( !bitmapsEqual ) {
+					Log.i(TAG, "Bitmaps are not equal");
+				}
+				boolean drawablesEqual = expected.equals(actual);
+				if( !drawablesEqual ) {
+					Log.i(TAG, "Drawables are not equal");
+				}
+				return bitmapsEqual && drawablesEqual;
+			}
 		}
 		return false;
 	}
