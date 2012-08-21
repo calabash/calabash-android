@@ -1,0 +1,8 @@
+package_name: com.sample.namespace
+activity_name: com.sample.namespace.mainActivity
+app_path: /path/to/apk
+api_level: 15
+keystore_location: "~/.android/debug.keystore"
+keystore_password: "android"
+keystore_alias: "androiddebugkey"
+keystore_alias_password: "android"

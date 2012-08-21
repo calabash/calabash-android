@@ -16,6 +16,8 @@ require File.join(File.dirname(__FILE__), "calabash-android-submit")
 @source_dir = File.join(File.dirname(__FILE__), '..', 'features-skeleton')
 @script_dir = File.join(File.dirname(__FILE__), '..', 'scripts')
 
+config = get_config()
+
 def is_apk_file?(file_path)
   file_path.end_with? ".apk" and File.exist? file_path
 end
@@ -33,16 +35,17 @@ if cmd == 'help'
   print_help
   exit 0
 elsif cmd == 'build'
-  puts "Please specify the app you want to test" if (ARGV.empty? or not is_apk_file?(ARGV.first))
-  while not ARGV.empty? and is_apk_file?(ARGV.first)
-    calabash_build(relative_to_full_path(ARGV.shift))
+  if !config['app_path'].empty? and is_apk_file?(config['app_path'])
+    calabash_build(config['app_path'])
+  else
+    puts "It looks like you did not fill out the build.yml config!"
   end
   exit 0
 elsif cmd == 'run'
-  if ARGV.empty? or not is_apk_file?(ARGV.first)
-    calabash_run()
+  if !config['app_path'].empty? and is_apk_file?(config['app_path'])
+    calabash_run(config['app_path'])
   else
-    calabash_run(relative_to_full_path(ARGV.shift))
+    puts "It looks like you did not fill out the build.yml config!"
   end
   exit 0
 elsif cmd == 'gen'
