@@ -62,9 +62,9 @@ public class QueryHelper {
 			int[] webviewLocation = new int[2];
 			webView.getLocationOnScreen(webviewLocation);
 			
-			//TODO: Exception if center_x or center_y are not integers
-			float x = webviewLocation[0] + (Integer)rectangle.get("center_x") * scale;
-			float y = webviewLocation[1] + (Integer)rectangle.get("center_y") * scale;
+			//TODO: Exception if center_x or center_y are not numbers
+			float x = webviewLocation[0] + ((Number)rectangle.get("center_x")).floatValue() * scale;
+			float y = webviewLocation[1] + ((Number)rectangle.get("center_y")).floatValue() * scale;
 			return new float[]{x, y};
 		} catch (Exception e) {
 			throw new RuntimeException(e);
