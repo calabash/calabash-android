@@ -277,7 +277,7 @@ NEXT_Y:
 				 						.append("\", \"longitude\":\"").append( Double.toString( point.getLongitudeE6() / 1E6 ))
 				 						.append("\", \"title\":\"").append( item.getTitle().replaceAll("\"", "\\\"") );
 		String snippet = item.getSnippet();
-		if( snippet != null && !snippet.isEmpty() ) { 
+		if( snippet != null && snippet.length() != 0 ) { 
 			str.append("\", \"snippet\":\"").append( snippet.replaceAll("\"", "\\\"") );
 		}
 		if( isLastFocused ) {
