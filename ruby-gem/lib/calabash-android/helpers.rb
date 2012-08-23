@@ -10,7 +10,7 @@ def package_name(app)
   manifest = Document.new(manifest(app))
   manifest.root.attributes['package']
 end
-  
+
 def main_activity(app)
   manifest = Document.new(manifest(app))
   main_activity = manifest.elements["//action[@name='android.intent.action.MAIN']/../.."].attributes['name']
@@ -55,4 +55,15 @@ def is_windows?
   (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
 end
 
-
+def get_config
+  if File.exist? "build.yml"
+    YAML::load_file("build.yml");
+  else
+    {
+    "keystore_location" => "#{ENV["HOME"]}/.android/debug.keystore",
+    "keystore_password" => "android",
+    "keystore_alias" => "androiddebugkey",
+    "keystore_alias_password" => "android"
+    }
+  end
+end
