@@ -6,7 +6,7 @@ import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 
-import com.jayway.android.robotium.solo.Solo;
+import com.jayway.android.robotium.solo.SoloEnhanced;
 
 public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
     public static final String TARGET_PACKAGE = "#ACTIVITY_PACKAGE#"; //Set from Ant at compile time
@@ -15,7 +15,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
     private static final String TAG = "InstrumentationBackend";
     
     public static Instrumentation instrumentation;
-    public static Solo solo;
+    public static SoloEnhanced solo;
     public static Actions actions;
 
     private static Class getActivityClass() {
@@ -34,7 +34,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
     protected void setUp() throws Exception {
         super.setUp();
         
-        solo = new Solo(getInstrumentation(), this.getActivity());
+        solo = new SoloEnhanced(getInstrumentation(), this.getActivity());
         actions = new Actions(getInstrumentation(), this);
         instrumentation = getInstrumentation();
         TestHelpers.loadIds(instrumentation.getContext());
