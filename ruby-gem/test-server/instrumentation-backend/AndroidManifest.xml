@@ -8,7 +8,7 @@
 
     <application android:label="CalabashTestServer" >
         <uses-library android:name="android.test.runner" />
-        <uses-library android:name="com.google.android.maps" />
+        <uses-library android:name="com.google.android.maps" android:required="false" />
     </application>
 
     <instrumentation
