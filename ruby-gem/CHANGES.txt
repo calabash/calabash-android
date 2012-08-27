@@ -1,3 +1,9 @@
+0.2.12:
+      Various small improvements and bug fixes.
+
+      Fixed support for scenario outline.
+      Added support for interacting with Google Maps.
+
 0.2.11:
       Added is_enabled action that determines if a view is enabled.
 
