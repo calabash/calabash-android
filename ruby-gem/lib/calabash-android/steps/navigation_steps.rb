@@ -39,3 +39,8 @@ end
 Then /^I scroll up$/ do
   performAction('scroll_up')
 end
+
+Then /^I drag from (\d+):(\d+) to (\d+):(\d+) with (\d+) steps$/ do |fromX, fromY, toX, toY, steps|
+  performAction('drag',fromX,toX,fromY,toY,steps)
+end
+   
