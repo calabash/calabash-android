@@ -93,7 +93,12 @@ public class HttpServer extends NanoHTTPD {
             return new NanoHTTPD.Response( HTTP_OK, "image/png", new ByteArrayInputStream(out.toByteArray()));
         }
 		
-		String commandString = params.getProperty("command");
+        System.out.println("header: "+ header);
+        System.out.println("params: "+ params);
+        System.out.println("files: "+ files);
+
+
+        String commandString = params.getProperty("json");
 		System.out.println("command: "+ commandString);
 		String result = toJson(runCommand(commandString));
 		System.out.println("result:" + result);

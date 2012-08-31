@@ -182,9 +182,7 @@ module Operations
       retries = 0
       begin
         http = Net::HTTP.new "127.0.0.1", @server_port
-        cmd = "command=#{data.to_json}"
-        cmd = cmd.gsub("+", "%2B")
-        resp = http.post(path, cmd, {})
+        resp = http.post(path, "#{data.to_json}", {"Content-Type" => "application/json;charset=utf-8"})
         resp.body
       rescue Exception => e
         raise e if retries > 20

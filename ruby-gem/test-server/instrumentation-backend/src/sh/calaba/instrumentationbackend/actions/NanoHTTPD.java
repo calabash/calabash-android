@@ -352,7 +352,7 @@ public class NanoHTTPD
 
 				// Create a BufferedReader for easily reading it as string.
 				ByteArrayInputStream bin = new ByteArrayInputStream(fbuf);
-				BufferedReader in = new BufferedReader( new InputStreamReader(bin));
+				BufferedReader in = new BufferedReader( new InputStreamReader(bin, "UTF-8"));
 
 				// If the method is POST, there may be parameters
 				// in data section, too, read it:
@@ -378,6 +378,16 @@ public class NanoHTTPD
 						String boundary = st.nextToken();
 
 						decodeMultipartData(boundary, fbuf, in, parms, files);
+					}
+					else if (contentType.toLowerCase().startsWith("application/json")) 
+					{
+						StringBuffer sb = new StringBuffer();
+						String line = null;
+						while ((line = in.readLine()) != null) 
+						{
+							sb.append(line + "\n");
+						}
+						parms.put("json", sb.toString());
 					}
 					else
 					{
