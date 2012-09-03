@@ -5,7 +5,7 @@ Usage: calabash-android <command-name> [parameters] [options]
     setup
     build
     run [parameters]
-    submit <path_to_app> <lesspainful_secret>
+    version
 
   Commands:
     gen creates a skeleton features dir. This is usually used once when
@@ -18,7 +18,7 @@ Usage: calabash-android <command-name> [parameters] [options]
       
     run runs Cucumber in the current folder with the enviroment needed.
 
-    submit submits an apk along with your features to www.lesspainful.com
+    version prints the gem version
 
 
     Options:

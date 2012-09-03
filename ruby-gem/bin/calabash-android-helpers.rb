@@ -23,8 +23,8 @@ def print_usage
       builds the test server that will be used when testing the app.
     run <apk>
       runs Cucumber in the current folder with the enviroment needed.
-    submit
-      submits an apk along with your features to www.lesspainful.com
+    version
+      prints the gem version
 
   <options> can be
     -v, --verbose
