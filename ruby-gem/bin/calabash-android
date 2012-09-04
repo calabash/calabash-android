@@ -32,7 +32,7 @@ if cmd == 'help'
   print_help
   exit 0
 elsif cmd == 'build'
-  puts "Please specify the app you want to test" if (ARGV.empty? or not is_apk_file?(ARGV.first))
+  puts "Please specify the app you want to build a test server for" if (ARGV.empty? or not is_apk_file?(ARGV.first))
   while not ARGV.empty? and is_apk_file?(ARGV.first)
     calabash_build(relative_to_full_path(ARGV.shift))
   end

@@ -1,3 +1,7 @@
+0.2.15:
+      Fixed bug related to Google maps api add-on being located at different location
+      in different api versions.
+
 0.2.14:
       Removed calabash-android submit. Tools for interacting with lesspainful.com
       will be extracted into a seperate gem.
