@@ -29,7 +29,7 @@ def calabash_run(app_path = nil)
   end
 
   STDOUT.sync = true
-  cmd = "cucumber -c #{ARGV.join(" ")} #{env}"
+  cmd = "cucumber #{ARGV.join(" ")} #{env} #{"-c" unless is_windows?}"
   puts cmd
   IO.popen(cmd) do |io|
     io.each { |s| print s }
