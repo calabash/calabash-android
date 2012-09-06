@@ -88,7 +88,10 @@
 
     <target name="-prepare.testserver" description="Makes sure the testserver matches the tested application by looking at its manifest file">
       <copy todir="${staging.dir}">
-				<fileset dir="instrumentation-backend"/>
+				<fileset dir="instrumentation-backend">
+          <exclude name="src/sh/calaba/instrumentationbackend/actions/map_unsupported/*.java" if="${google_maps_support}"/>
+          <exclude name="src/sh/calaba/instrumentationbackend/actions/map/*.java" unless="${google_maps_support}"/>
+        </fileset> 
       </copy>
       <copy todir="${staging.dir}/libs">
         <fileset erroronmissingdir="false" dir="${env.ANDROID_HOME}/add-ons/addon-google_apis-google_inc_-${android.api.level}/libs"/>

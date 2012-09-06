@@ -29,6 +29,8 @@ def print_usage
   <options> can be
     -v, --verbose
       Turns on verbose logging
+    --google-maps-support
+      Adds supports for Google Maps to the test server
 EOF
 end
 

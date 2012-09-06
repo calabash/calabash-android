@@ -1,3 +1,11 @@
+0.2.16:
+      Added --google-maps-support option.
+      By default no actions from sh.calaba.instrumentationbackend.actions.map
+      will be available. By adding the --google-maps-support all actions will
+      be baked into the test server.
+
+      Removed colors from cucumber output on Windows
+
 0.2.15:
       Fixed bug related to Google maps api add-on being located at different location
       in different api versions.

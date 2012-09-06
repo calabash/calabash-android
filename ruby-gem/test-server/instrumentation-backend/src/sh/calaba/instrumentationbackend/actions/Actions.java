@@ -43,8 +43,7 @@ public class Actions {
                 }
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -57,13 +56,9 @@ public class Actions {
     }
 
     @SuppressWarnings("rawtypes")
-    private boolean isAction(Class action) {
-        for (Class i : action.getInterfaces()) {
-            if (i.equals(Action.class)) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isAction(Class actionCandidate) {
+        boolean isImplementation = !actionCandidate.isInterface();
+        return isImplementation && Action.class.isAssignableFrom(actionCandidate);
     }
 
     private void put(Action action) {
@@ -71,8 +66,12 @@ public class Actions {
             Action duplicate = getActions().get(action.key());
             throw new RuntimeException("Found duplicate action key:'" + action.key() + "'. [" + duplicate.getClass().getName() + "," + action.getClass().getName() + "]");
         }
-        InstrumentationBackend.log("Added:'" + action.getClass().getSimpleName() + "', with key:'" + action.key() + "'");
-        getActions().put(action.key(), action);
+        if (action.key() == null) {
+            System.out.println("Skipping " + action.getClass() + ". Key is null.");
+        } else {
+            InstrumentationBackend.log("Added:'" + action.getClass().getSimpleName() + "', with key:'" + action.key() + "'");
+            getActions().put(action.key(), action);
+        }
     }
 
     public Action lookup(String key) {
