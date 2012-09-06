@@ -56,6 +56,18 @@ elsif cmd == 'gen'
 elsif cmd == 'setup'
   calabash_setup
   exit 0
+elsif cmd == 'extract-manifest'
+  if ARGV.empty?
+    puts "Please specify an app"
+    exit 1
+  end
+  unless File.exist? ARGV.first
+    puts "No such file #{ARGV.first}"
+    exit 1
+  end
+
+  puts manifest ARGV.first
+  exit 0
 elsif cmd == 'version'
   puts Calabash::Android::VERSION
   exit 0
