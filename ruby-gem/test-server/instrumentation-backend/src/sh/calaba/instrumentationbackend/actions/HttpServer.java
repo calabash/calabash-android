@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Properties;
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -83,10 +84,10 @@ public class HttpServer extends NanoHTTPD {
 
 		} else if (uri.endsWith("/screenshot")) {
             Bitmap bitmap;
-            View v1 = InstrumentationBackend.solo.getViews().get(0).getRootView();
-            v1.setDrawingCacheEnabled(true);
-            bitmap = Bitmap.createBitmap(v1.getDrawingCache());
-            v1.setDrawingCacheEnabled(false);
+            View rootView = getRootView();
+            rootView.setDrawingCacheEnabled(true);
+            bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+            rootView.setDrawingCacheEnabled(false);
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
@@ -105,6 +106,23 @@ public class HttpServer extends NanoHTTPD {
 		
 		return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, result);
 	}
+
+    private View getRootView() {
+        for ( int i = 0; i < 25; i++) {
+            try {
+                View rootView = InstrumentationBackend.solo.getCurrentActivity().getWindow().getDecorView();
+                if (rootView != null) {
+                    return rootView;
+                }
+                System.out.println("Retry: " + i);
+            
+                Thread.sleep(200);
+            } catch (Exception e) {
+            }
+        }
+        
+        throw new RuntimeException("Could not find any views");
+    }
 
 	private ObjectMapper createJsonMapper() {
 		ObjectMapper mapper = new ObjectMapper();
