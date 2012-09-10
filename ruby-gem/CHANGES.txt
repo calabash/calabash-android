@@ -1,3 +1,8 @@
+0.2.18:
+      Various small improvements and bug fixes.
+
+      Screenshots are now embedded into the test report using Cucumbers embed method.
+
 0.2.17:
       Added calabash-android extract-manifest that will print the manifest of any apk file.
 
