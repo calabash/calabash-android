@@ -19,7 +19,7 @@ module Operations
   end
 
   def take_screenshot
-    Device.default_device.take_screenshot
+    default_device.take_screenshot
   end
 
   def macro(txt)
@@ -29,28 +29,38 @@ module Operations
       Then(txt)
     end
   end
+  def default_device
+    Device.default_device(self)
+  end
 
   def shutdown_test_server
-    Device.default_device.shutdown_test_server
+    default_device.shutdown_test_server
   end
 
   def performAction(action, *arguments)
-    Device.default_device.perform_action(action, *arguments)
+    default_device.perform_action(action, *arguments)
   end
 
   def install_app(app_path)
-    Device.default_device.install_app(app_path)
+    default_device.install_app(app_path)
   end
 
   def uninstall_apps
-    Device.default_device.uninstall_app(ENV["TEST_PACKAGE_NAME"])
-    Device.default_device.uninstall_app(ENV["PACKAGE_NAME"])
+    default_device.uninstall_app(ENV["TEST_PACKAGE_NAME"])
+    default_device.uninstall_app(ENV["PACKAGE_NAME"])
   end
 
   def start_test_server_in_background
-    Device.default_device.start_test_server_in_background()
+    default_device.start_test_server_in_background()
   end
 
+  def screenshot_embed(options={:prefix => nil, :name => nil, :label => nil})
+    default_device.screenshot_embed(options)
+  end
+
+  def screenshot(options={:prefix => nil, :name => nil})
+    default_device.screenshot(options)
+  end
 
   def wait_for(timeout, &block)
     begin
@@ -99,9 +109,9 @@ module Operations
   class Device
     @@default_device = nil
 
-    def self.default_device
+    def self.default_device(cucumber_world)
       unless @@default_device
-        @@default_device = Device.new(ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"], ENV["APP_PATH"], ENV["TEST_APP_PATH"])
+        @@default_device = Device.new(cucumber_world, ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"], ENV["APP_PATH"], ENV["TEST_APP_PATH"])
       end
       @@default_device
     end
@@ -110,7 +120,8 @@ module Operations
       @@default_device = self
     end
 
-    def initialize(serial, server_port, app_path, test_server_path)
+    def initialize(cucumber_world, serial, server_port, app_path, test_server_path)
+      @cucumber_world = cucumber_world
       @serial = serial
       @server_port = server_port
       @app_path = app_path
@@ -166,7 +177,7 @@ module Operations
         raise "Empty result from TestServer" if result.chomp.empty?
         result = JSON.parse(result)
         if not result["success"] then
-          take_screenshot
+          screenshot_embed
           if result["bonusInformation"] && result["bonusInformation"].size > 0 && result["bonusInformation"][0].include?("Exception")
             log result["bonusInformation"][0]
           end
@@ -193,6 +204,7 @@ module Operations
     end
 
     def take_screenshot
+      puts "take_screenshot is deprecated. Use screenshot_embed instead."
       path = ENV["SCREENSHOT_PATH_PREFIX"] || "results"
       FileUtils.mkdir_p path unless File.exist? path
       filename_prefix = FeatureNameMemory.feature_name.gsub(/\s+/, '_').downcase
@@ -203,11 +215,39 @@ module Operations
           open(file_name ,"wb") { |file|
             file.write(image)
           }
-          log "Screenshot stored in: #{file_name}"
+          log "Screenshot stored in: #{file_name}!!!"
         end
       rescue Timeout::Error
         raise Exception, "take_screenshot timed out"
       end
+    end
+
+    def screenshot_embed(options={:prefix => nil, :name => nil, :label => nil})
+      path = screenshot(options)
+      @cucumber_world.embed(path, "image/png", options[:label] || File.basename(path))
+    end
+
+    def screenshot(options={:prefix => nil, :name => nil})
+      prefix = options[:prefix] || ENV['SCREENSHOT_PATH'] || ""
+      name = options[:name]
+
+      if name.nil?
+        name = "screenshot"
+      else
+        if File.extname(name).downcase == ".png"
+          name = name.split(".png")[0]
+        end
+      end
+
+      @@screenshot_count ||= 0
+      res = http("/screenshot")
+
+      path = "#{prefix}#{name}_#{@@screenshot_count}.png"
+      File.open(path, 'wb') do |f|
+        f.write res
+      end
+      @@screenshot_count += 1
+      path
     end
 
     def adb_command
@@ -283,7 +323,7 @@ module Operations
   end
 
   def screenshot_and_raise(msg)
-    take_screenshot
+    screenshot_embed
     sleep 5
     raise(msg)
   end
@@ -392,10 +432,6 @@ module Operations
   end
 
   def backdoor(sel, arg)
-    ni
-  end
-
-  def screenshot
     ni
   end
   

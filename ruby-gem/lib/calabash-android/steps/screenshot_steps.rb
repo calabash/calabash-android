@@ -1,11 +1,11 @@
 Then /^take picture$/ do
-	take_screenshot
+  screenshot_embed
 end
 
 Then /^I take a picture$/ do
-	take_screenshot
+  screenshot_embed
 end
 
 Then /^I take a screenshot$/ do
-	take_screenshot
+  screenshot_embed
 end
