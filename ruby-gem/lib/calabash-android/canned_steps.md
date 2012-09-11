@@ -100,8 +100,14 @@ To scroll up
     Then /^I scroll up$/
 
 To open the menu and press the specified text
-    Then /^I select "([^\"]*)" from the menu$/
 
+    Then /^I select "([^\"]*)" from the menu$/
+    
+To drag from one point on the screen to another. 
+
+	Then /^I drag from (\d+):(\d+) to (\d+):(\d+) moving with (\d+) steps$/ 
+Note: x:y co-ordinates are expressed as percentages of the screen width:height
+    
 Touching
 --------
     
