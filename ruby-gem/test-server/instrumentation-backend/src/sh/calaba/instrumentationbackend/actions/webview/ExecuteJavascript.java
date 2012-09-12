@@ -1,5 +1,7 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
+import java.util.List;
+
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
@@ -10,7 +12,12 @@ public class ExecuteJavascript implements Action {
 	@Override
 	public Result execute(String... args) {
 
-		CalabashChromeClient ccc = CalabashChromeClient.findAndPrepareWebViews().get(0);
+		List<CalabashChromeClient> list = CalabashChromeClient.findAndPrepareWebViews();
+		if (list.isEmpty()) {
+			return new Result(false, "No WebView component found");
+		}
+		
+		CalabashChromeClient ccc = list.get(0);
 		final WebView webView = ccc.getWebView();
 		final String script = "javascript:(function() {"
 				+ " var r;"
