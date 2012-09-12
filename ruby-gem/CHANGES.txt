@@ -1,3 +1,8 @@
+0.2.19:
+      New actions:
+      Drag action
+      Press image button by content description
+
 0.2.18:
       Various small improvements and bug fixes.
 
