@@ -220,6 +220,23 @@ To use a set of concrete GPS cordinates
     Then /^I am at ([-+]?[0-9]*\.?[0-9]+), ([-+]?[0-9]*\.?[0-9]+)$/ do |latitude, longitude|
     Then /^I go to ([-+]?[0-9]*\.?[0-9]+), ([-+]?[0-9]*\.?[0-9]+)$/ do |latitude, longitude|
 
+Internationalization
+--------------------
+
+	Then /^I press text of translated l10key (\d+)$/ 
+Simulates that the user pressed the text of the l10nkey.	
+
+	Then /^I press button of translated l10key (\d+)$/
+Simulates that the user pressed the button with the label text of the l10nkey.
+
+	Then /^I press menu item of translated l10key (\d+)$/
+Simulates that the user pressed the menu item with the label text of the l10nkey.
+
+	Then /^I press toggle button of translated l10key (\d+)$/ 
+Simulates that the user pressed the toggle button with the label text of the l10nkey.	
+
+	Then /^I wait for the translated "([^\"]*)" l10nkey to appear$/ 
+Waits until the text of the translated l10nkey is displayed.
 
 Rotation
 --------
