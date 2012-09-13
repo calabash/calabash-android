@@ -71,9 +71,11 @@ Everytime you test a new binary or use an upgraded version of calabash a new tes
 The test server is an intrumentation that will run along with your app on the device to execute the test.
 
 ### Screenshot location
-Screenshots are stored in the `results` folder by default. The location can be changed by setting the `SCREENSHOT_PATH_PREFIX` environment variable.
+Screenshots are placed in the current working directory by default. The location can be changed by setting the `SCREENSHOT_PATH` environment variable.
 
-    SCREENSHOT_PATH_PREFIX=/tmp/foo calabash-android run
+    SCREENSHOT_PATH=/tmp/foo/ calabash-android run
+
+would cause the first screenshot to appear at `/tmp/foo/screenshot_0.png`.
 
 Predefined steps
 -----------------
