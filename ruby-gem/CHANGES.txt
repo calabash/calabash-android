@@ -1,3 +1,6 @@
+0.2.20:
+      Added click_on_view_by_description action
+
 0.2.19:
       New actions:
       Drag action
