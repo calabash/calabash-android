@@ -17,7 +17,6 @@ def calabash_scaffold
 
   msg("Info") do
     puts "features subdirectory created. \n"
-    puts "Try executing \n\ncalabash-android run"
   end
 
 end
