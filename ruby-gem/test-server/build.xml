@@ -46,7 +46,7 @@
     <path id="android.target.classpath">
       <fileset dir="${env.ANDROID_HOME}/platforms/android-${android.api.level}/" includes="*.jar"/>
     </path>
-    
+
     <target name="-check.preconditions">
       <available file="${tested.project.apk}" property="tested.apk.found" />
       <fail unless="tested.apk.found" message="Tested apk: '${tested.project.apk}' could not be found"/>
@@ -177,7 +177,7 @@
 
 
     <target name ="-sign">
-      <exec executable="jarsigner">
+      <exec executable="jarsigner" failonerror="true">
         <arg value="-sigalg" />
         <arg value="MD5withRSA" />
         <arg value="-digestalg" />
