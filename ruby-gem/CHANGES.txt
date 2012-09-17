@@ -1,3 +1,6 @@
+0.2.21:
+      Various bug fixes related to keystore.
+
 0.2.20:
       Added click_on_view_by_description action
 
