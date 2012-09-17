@@ -12,20 +12,20 @@ def calabash_build(app)
     FileUtils.cp_r(test_server_template_dir, workspace_dir)
     
     ant_executable = (is_windows? ? "ant.bat" : "ant")
+    args = [
+      ant_executable,
+      "clean", 
+      "package",
+      "-Dtested.package_name=#{package_name(app)}",
+      "-Dtested.main_activity=#{main_activity(app)}",
+      "-Dtested.project.apk=\"#{app}\"",
+      "-Dandroid.api.level=#{api_level}",
+      "-Dkey.store=\"#{File.expand_path keystore["keystore_location"]}\"",
+      "-Dkey.store.password=#{keystore["keystore_password"]}",
+      "-Dkey.alias=#{keystore["keystore_alias"]}",
+      "-Dkey.alias.password=#{keystore["keystore_alias_password"]}",
+    ]
     Dir.chdir(@test_server_dir) {
-      args = [
-        ant_executable,
-        "clean", 
-        "package",
-        "-Dtested.package_name=#{package_name(app)}",
-        "-Dtested.main_activity=#{main_activity(app)}",
-        "-Dtested.project.apk=\"#{app}\"",
-        "-Dandroid.api.level=#{api_level}",
-        "-Dkey.store=\"#{File.expand_path keystore["keystore_location"]}\"",
-        "-Dkey.store.password=#{keystore["keystore_password"]}",
-        "-Dkey.alias=#{keystore["keystore_alias"]}",
-        "-Dkey.alias.password=#{keystore["keystore_alias_password"]}",
-      ]
       STDOUT.sync = true
       IO.popen(args.join(" ")) do |io|
         io.each { |s| print s }
