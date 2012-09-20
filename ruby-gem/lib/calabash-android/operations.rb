@@ -62,6 +62,14 @@ module Operations
     default_device.screenshot(options)
   end
 
+  def set_gps_coordinates_from_location(location)
+    default_device.set_gps_coordinates_from_location(location)
+  end
+
+  def set_gps_coordinates(latitude, longitude)
+    default_device.set_gps_coordinates(latitude, longitude)
+  end
+
   def wait_for(timeout, &block)
     begin
       Timeout::timeout(timeout) do
