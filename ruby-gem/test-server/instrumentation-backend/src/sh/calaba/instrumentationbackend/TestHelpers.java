@@ -18,36 +18,7 @@ import android.view.View;
 import android.widget.TextView;
 
 public class TestHelpers {
-	private static Map<String, Integer> resourceNamesToIds = new HashMap<String, Integer>();
-	private static Map<Integer, String> resourceIdsToNames = new HashMap<Integer, String>();
-	
-	 public static void loadIds(Context context) {
-		 
-		 resourceNamesToIds = new HashMap<String, Integer>();
-    	try {
-			InputStream is = context.getResources().getAssets().open("ids.txt");
-			BufferedReader input =  new BufferedReader(new InputStreamReader(is));
-			String line = null;
-			while (( line = input.readLine()) != null){
-				line = line.trim();
-				if (line.contains(InstrumentationBackend.TARGET_PACKAGE + ":id/")) {
-					if (line.startsWith("resource")) {
-						String[] tokens = line.split(" ");
-						String name = tokens[2];
-						name = name.replace(InstrumentationBackend.TARGET_PACKAGE + ":id/", "");
-						name = name.replace(":", "");
-							
-						resourceNamesToIds.put(name, Integer.parseInt(tokens[1].substring(2), 16));
-						resourceIdsToNames.put(Integer.parseInt(tokens[1].substring(2), 16), name);
-					}
-				}
-			}
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
-	
+
     public static TextView getTextViewByDescription(String description) {
         View view = getViewByDescription(description);
         if (view != null && view instanceof TextView) {
@@ -87,55 +58,28 @@ public class TestHelpers {
     }
 
     public static View getViewById(String resName) {
-        Integer intID = resourceNamesToIds.get(resName);
-        System.out.println("getViewById: Looking for view " + resName + " as id " + intID);
-        if (intID == null) {
-            throw new RuntimeException("getViewById: Looking for view " + resName + " which does not have an id");
+        int id = InstrumentationBackend.solo.getCurrentActivity().getResources().getIdentifier(resName, "id", InstrumentationBackend.solo.getCurrentActivity().getPackageName());
+        if (id == 0) {
+            return null;
         }
-        int id = intID.intValue();
-        View view = InstrumentationBackend.solo.getView(id);
-        if (view != null) {
-            if (id == view.getId()) {
-                System.out.println("Did find view " + resName + ".");
-                return view;
-            }
-            System.out.println("Did find view " + resName + " but getId returned: " + view.getId());
-        }
-        System.out.println("Did not find view " + resName);
-        return view;
+
+        return InstrumentationBackend.solo.getView(id);
     }
     
     public static Drawable getDrawableById(String resName) {
-    	int id;
-// This would probably work too...
-if( true ) {
-    	try {
-//    		if( resName.startsWith("drawable/") == false ) {
-//    			resName = "drawable/" + resName;
-//    		}
-//    		TypedValue outValue = new TypedValue();
-//    		InstrumentationBackend.solo.getCurrentActivity().getResources().getValue( resName, outValue, false );
-//    		id = outValue.resourceId;
-    		id = InstrumentationBackend.solo.getCurrentActivity().getResources().getIdentifier( resName, "drawable", InstrumentationBackend.solo.getCurrentActivity().getPackageName() );
+        int id;
+        try {
+    	    id = InstrumentationBackend.solo.getCurrentActivity().getResources().getIdentifier(resName, "drawable", InstrumentationBackend.solo.getCurrentActivity().getPackageName());
     	} catch( NotFoundException e ) {
     		throw new RuntimeException("getDrawableById: Looking for drawable " + resName + " but was not found");
     	}
-} else {
-    	Integer intID = resourceNamesToIds.get(resName);
-        System.out.println("getDrawableById: Looking for drawable " + resName + " as id " + intID);
-        if (intID == null) {
-            throw new RuntimeException("getDrawableById: Looking for drawable " + resName + " which does not have an id");
-        }
-        id = intID.intValue();
-}
         Drawable drawable = InstrumentationBackend.solo.getCurrentActivity().getResources().getDrawable(id);
         if (drawable != null) {
             System.out.println("Did find drawable " + resName + ": " + drawable);
-            return drawable;
         } else {
         	System.out.println("Did not find drawable " + resName);
-        	return drawable;
         }
+        return drawable;
     }
 
     public static int[] parseTime(String timeString) {
