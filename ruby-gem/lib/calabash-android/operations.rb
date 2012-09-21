@@ -275,8 +275,7 @@ module Operations
     end
 
     def start_test_server_in_background
-      test_server_package = package_name(@test_server_path)
-      cmd = "#{adb_command} shell am instrument -w -e class sh.calaba.instrumentationbackend.InstrumentationBackend #{test_server_package}/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
+      cmd = "#{adb_command} shell am instrument -w -e target_package #{ENV["PACKAGE_NAME"]} -e main_activity #{ENV["MAIN_ACTIVITY"]} -e class sh.calaba.instrumentationbackend.InstrumentationBackend sh.calaba.android.test/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
       log "Starting test server using:"
       log cmd
       if is_windows?

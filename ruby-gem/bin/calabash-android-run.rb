@@ -14,7 +14,7 @@ def calabash_run(app_path = nil)
 
   if app_path
     unless File.exist?(test_server_path(app_path))
-      puts "No test server found for this combination of app and calabash version. Rebuilding test server."
+      puts "No test server found for this combination of app and calabash version. Recreating test server."
       calabash_build(app_path)
     end
 
@@ -25,6 +25,7 @@ def calabash_run(app_path = nil)
       test_server_port = "34777"
     end
     env = "PACKAGE_NAME=#{package_name(app_path)} "\
+          "MAIN_ACTIVITY=#{main_activity(app_path)} "\
           "TEST_PACKAGE_NAME=#{package_name(test_server_path)} "\
           "APP_PATH=\"#{app_path}\" "\
           "TEST_APP_PATH=\"#{test_server_path}\" "\

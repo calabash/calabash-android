@@ -9,11 +9,9 @@
     <property file="build.properties"/>
     <property name="staging.dir" location="staging"/>
     <property name="bin.dir" location="bin"/>
-    <property name="test.app" location="${bin.dir}/Test.apk"/>
     <property name="test.app.aapt" location="${bin.dir}/Test_aapt.apk"/>
     <property name="dex.file" location="${bin.dir}/classes.dex"/>
     <property name="test.app.unsigned" location="${bin.dir}/Test_unsigned.apk"/>
-    <property name="test.app.signed" location="${bin.dir}/Test.apk"/>
     <property name="calabashjs.dir" location="calabash-js/src"/>
 
 
@@ -48,31 +46,16 @@
     </path>
 
     <target name="-check.preconditions">
-      <available file="${tested.project.apk}" property="tested.apk.found" />
-      <fail unless="tested.apk.found" message="Tested apk: '${tested.project.apk}' could not be found"/>
       <available file="${calabashjs.dir}" type="dir" property="doesCalabashJsExist" />
       <fail unless="doesCalabashJsExist">
         ${calabashjs.dir} does not exist.
       </fail>
     </target>
 
-    <target name="-init" depends="-check.preconditions">
-      <uptodate property="test.app.upto.date" targetfile="${test.app.signed}" >
-        <srcfiles dir= "instrumentation-backend/" includes="**/*"/>
-        <srcfiles file="build.properties"/>
-      </uptodate>
-    </target>
-    
     <target name="-stage">
       <mkdir dir="${staging.dir}"/>
       <mkdir dir="${bin.dir}"/>
-      <antcall target="-prepare.manifest"/>
       <antcall target="-prepare.testserver"/>
-    </target>
-
-    <target name="-prepare.manifest" description="Makes sure the manifest matches the tested application by looking at its manifest file">
-      <copy file="AndroidManifest.xml" todir="${staging.dir}"/>
-      <replace file="${staging.dir}/AndroidManifest.xml" token="#TESTED_APP_PACKAGE#" value="${tested.package_name}"/>
     </target>
 
     <target name="-prepare.testserver" description="Makes sure the testserver matches the tested application by looking at its manifest file">
@@ -89,14 +72,6 @@
       <copy todir="${staging.dir}/assets">
         <fileset dir="${calabashjs.dir}"/>
       </copy>
-      <replace file="${staging.dir}/src/sh/calaba/instrumentationbackend/InstrumentationBackend.java" token="#ACTIVITY_PACKAGE#" value="${tested.package_name}"/>
-
-      <replace file="${staging.dir}/src/sh/calaba/instrumentationbackend/InstrumentationBackend.java" token="#ACTIVITY_QUALIFIED_NAME#" value="${tested.main_activity}"/>
-			<exec executable="${env.ANDROID_HOME}/platform-tools/aapt" failonerror="true" output="${staging.dir}/assets/ids.txt">
-				<arg value="dump" />
-        <arg value="resources" />
-        <arg file="${tested.project.apk}" />
-			</exec>
     </target>
 
 
@@ -116,12 +91,11 @@
     </target>
 
     
-    <target name="package" depends="-init" unless="test.app.upto.date">
+    <target name="package" depends="-check.preconditions">
       <antcall target="-compile" />
       <antcall target="-aapt" />
       <antcall target="-dex" />
       <antcall target="-apk" />
-      <antcall target="-sign" />
     </target>
 
     
@@ -149,19 +123,15 @@
     </target>
 
     <target name="-dex">
-      <antcall target="-stage.libs"/>
+      <copy todir="${bin.dir}/libs">
+        <fileset dir="instrumentation-backend/libs"/>
+      </copy>
       <exec executable="${dx}" failonerror="yes">
         <arg value="--dex" />
         <arg value="--output" />
         <arg file="${dex.file}" />
         <arg path="${bin.dir}" />
       </exec>
-    </target>
-
-    <target name="-stage.libs">
-      <copy todir="${bin.dir}/libs">
-				<fileset dir="instrumentation-backend/libs"/>
-      </copy>
     </target>
 
     <target name="-apk">
@@ -172,26 +142,6 @@
         <arg file="${test.app.aapt}" />
         <arg value="-f" />
         <arg file="${dex.file}" />
-      </exec>
-    </target>
-
-
-    <target name ="-sign">
-      <exec executable="jarsigner" failonerror="true">
-        <arg value="-sigalg" />
-        <arg value="MD5withRSA" />
-        <arg value="-digestalg" />
-        <arg value="SHA1" />
-        <arg value="-signedjar" />
-        <arg file="${test.app.signed}" />
-        <arg value="-storepass" />
-        <arg value="${key.store.password}" />
-        <arg value="-keystore" />
-        <arg file="${key.store}" />
-        
-        <arg file="${test.app.unsigned}" />
-        <arg value="${key.alias}" />
-
       </exec>
     </target>
 
