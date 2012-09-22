@@ -36,11 +36,9 @@ def calabash_run(app_path = nil)
 
   STDOUT.sync = true
   arguments = ARGV - ["--google-maps-support"]
-  cmd = "cucumber #{arguments.join(" ")} #{env} #{"-c" unless is_windows?}"
+  cmd = "cucumber #{arguments.join(" ")} #{env}"
   puts cmd
-  IO.popen(cmd) do |io|
-    io.each { |s| print s }
-  end
+  system cmd
 
   sleep(1)
 end
