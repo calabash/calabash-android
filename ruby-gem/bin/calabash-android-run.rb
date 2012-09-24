@@ -9,7 +9,7 @@ def calabash_run(app_path = nil)
     puts "Please do the following to update your project:"
     puts "1) Open #{f} in a text editor"
     puts "2) Replace #{old_runner} with #{new_rummer}"
-    exit
+    exit 1
   end
 
   if app_path
@@ -38,7 +38,8 @@ def calabash_run(app_path = nil)
   arguments = ARGV - ["--google-maps-support"]
   cmd = "cucumber #{arguments.join(" ")} #{env}"
   puts cmd
-  system cmd
+  exit_code = system(cmd)
 
   sleep(1)
+  exit_code
 end
