@@ -35,9 +35,6 @@ Install `calabash-android` by running
 - You might have to run `sudo gem install calabash-android` if you do not have the right permissions.
 
 
-**Notice:** Make sure that the app you are trying to test is signed with the key store you just selected in the setup.
-
-
 Generate a Cucumber skeleton
 ------------------------
 To get started with calabash it might be a good idea to run `calabash-android gen`. It will create a Cucumber skeleton
