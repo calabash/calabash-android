@@ -26,7 +26,6 @@ def calabash_run(app_path = nil)
     end
     env = "PACKAGE_NAME=#{package_name(app_path)} "\
           "MAIN_ACTIVITY=#{main_activity(app_path)} "\
-          "TEST_PACKAGE_NAME=#{package_name(test_server_path)} "\
           "APP_PATH=\"#{app_path}\" "\
           "TEST_APP_PATH=\"#{test_server_path}\" "\
           "TEST_SERVER_PORT=#{test_server_port}"
