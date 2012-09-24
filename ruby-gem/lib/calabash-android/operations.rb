@@ -46,7 +46,7 @@ module Operations
   end
 
   def uninstall_apps
-    default_device.uninstall_app(ENV["TEST_PACKAGE_NAME"])
+    default_device.uninstall_app("sh.calaba.android.test")
     default_device.uninstall_app(ENV["PACKAGE_NAME"])
   end
 
