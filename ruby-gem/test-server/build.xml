@@ -108,8 +108,6 @@
       <exec executable="${env.ANDROID_HOME}/platform-tools/aapt" failonerror="yes">
         <arg value="package" />
         <arg value="-f" />
-        <arg value="-M" />
-        <arg file="${staging.dir}/AndroidManifest.xml" />
         <arg value="-F" />
         <arg file="${test.app.aapt}" />
         <arg value="-I" />
