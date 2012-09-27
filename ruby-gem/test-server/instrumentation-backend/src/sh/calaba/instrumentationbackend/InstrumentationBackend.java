@@ -9,8 +9,8 @@ import android.util.Log;
 import com.jayway.android.robotium.solo.SoloEnhanced;
 
 public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
-    public static final String TARGET_PACKAGE = "#ACTIVITY_PACKAGE#"; //Set from Ant at compile time
-    private static final String LAUNCHER_ACTIVITY_FULL_CLASSNAME = "#ACTIVITY_QUALIFIED_NAME#"; //Set from Ant at compile time
+    public static String testPackage;
+    public static Class mainActivity;
     
     private static final String TAG = "InstrumentationBackend";
     
@@ -18,16 +18,8 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
     public static SoloEnhanced solo;
     public static Actions actions;
 
-    private static Class getActivityClass() {
-    	try {
-			return Class.forName(LAUNCHER_ACTIVITY_FULL_CLASSNAME);
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-    }
-    
     public InstrumentationBackend() {
-        super(TARGET_PACKAGE, getActivityClass());
+        super(testPackage, mainActivity);
     }
 
     @Override
@@ -37,7 +29,6 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
         solo = new SoloEnhanced(getInstrumentation(), this.getActivity());
         actions = new Actions(getInstrumentation(), this);
         instrumentation = getInstrumentation();
-        TestHelpers.loadIds(instrumentation.getContext());
     }
 
     /**

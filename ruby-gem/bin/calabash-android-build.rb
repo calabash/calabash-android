@@ -1,49 +1,31 @@
+require 'zip/zip'
 def calabash_build(app)
-
-
-
   keystore = read_keystore_info()
 
-  test_server_template_dir = File.join(File.dirname(__FILE__), '..', 'test-server')
-  
+  test_server_file_name = test_server_path(app)
+  unsigned_test_apk = File.join(File.dirname(__FILE__), '..', 'lib/calabash-android/lib/TestServer.apk')
+  android_platform = Dir["#{ENV["ANDROID_HOME"]}/platforms/android-*"].last
+
   Dir.mktmpdir do |workspace_dir|
-    
-    @test_server_dir = File.join(workspace_dir, 'test-server')
-    FileUtils.cp_r(test_server_template_dir, workspace_dir)
-    
-    ant_executable = (is_windows? ? "ant.bat" : "ant")
-    Dir.chdir(@test_server_dir) {
-      args = [
-        ant_executable,
-        "clean", 
-        "package",
-        "-Dtested.package_name=#{package_name(app)}",
-        "-Dtested.main_activity=#{main_activity(app)}",
-        "-Dtested.project.apk=\"#{app}\"",
-        "-Dandroid.api.level=#{api_level}",
-        "-Dkey.store=\"#{File.expand_path keystore["keystore_location"]}\"",
-        "-Dkey.store.password=#{keystore["keystore_password"]}",
-        "-Dkey.alias=#{keystore["keystore_alias"]}",
-        "-Dkey.alias.password=#{keystore["keystore_alias_password"]}",
-      ]
-      STDOUT.sync = true
-      IO.popen(args.join(" ")) do |io|
-        io.each { |s| print s }
-      end
-      if $?.exitstatus != 0
-        puts "Could not build the test server. Please see the output above."
-        exit $?.exitstatus
-      end
-    }
+    Dir.chdir(workspace_dir) do
+      FileUtils.cp(unsigned_test_apk, "TestServer.apk")
+      FileUtils.cp(File.join(File.dirname(__FILE__), '..', 'test-server/AndroidManifest.xml'), "AndroidManifest.xml")
 
-    FileUtils.mkdir_p "test_servers" unless File.exist? "test_servers"
+      system  %Q{ruby -pi.bak -e "gsub(/#targetPackage#/, '#{package_name(app)}')" AndroidManifest.xml}
+      
+      system("#{ENV["ANDROID_HOME"]}/platform-tools/aapt package -M AndroidManifest.xml  -I #{android_platform}/android.jar -F dummy.apk")
 
-    test_apk = File.join(@test_server_dir, "bin", "Test.apk")
-    test_server_file_name = test_server_path(app)
-    FileUtils.cp(test_apk, test_server_file_name)
-    puts "Done building the test server. Moved it to #{test_server_file_name}"
+      Zip::ZipFile.new("dummy.apk").extract("AndroidManifest.xml","customAndroidManifest.xml")
+      Zip::ZipFile.open("TestServer.apk") do |zip_file|
+        zip_file.add("AndroidManifest.xml", "customAndroidManifest.xml")  
+      end
+    end
+    cmd = "jarsigner -sigalg MD5withRSA -digestalg SHA1 -signedjar #{test_server_file_name} -storepass #{keystore["keystore_password"]} -keystore \"#{File.expand_path keystore["keystore_location"]}\" #{workspace_dir}/TestServer.apk #{keystore["keystore_alias"]}"
+    system(cmd)
   end
+  puts "Done signing the test server. Moved it to #{test_server_file_name}"
 end
+
 
 def read_keystore_info
   if File.exist? ".calabash_settings"

@@ -7,7 +7,7 @@ import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
 import android.webkit.WebView;
 
-public class ExecuteJavascript implements Action {
+public class ExecuteAsyncJavascript implements Action {
 
 	@Override
 	public Result execute(String... args) {
@@ -20,15 +20,16 @@ public class ExecuteJavascript implements Action {
 		CalabashChromeClient ccc = list.get(0);
 		final WebView webView = ccc.getWebView();
 		final String script = "javascript:(function() {"
-				+ " var r;"
-				+ " try {"
-				+ "  r = (function() {"
-				+ args[0] + ";"
-				+ "  }());"
-				+ " } catch (e) {"
-				+ "  r = 'Exception: ' + e;"
+				+ " function cb(ret) {"
+				+ "  prompt('calabash:'+ret);"
 				+ " }"
-				+ " prompt('calabash:'+r);" 
+				+ " try {"
+				+ "  (function(returnValue) {"
+				+ args[0] + ";"
+				+ "  }(cb));"
+				+ " } catch (e) {"
+				+ "  prompt('calabash:Exception: ' + e);"
+				+ " }"
 				+ "}())";
 
 		System.out.println("execute javascript: " + script);
@@ -54,7 +55,7 @@ public class ExecuteJavascript implements Action {
 
 	@Override
 	public String key() {
-		return "execute_javascript";
+		return "execute_async_javascript";
 	}
 
 }

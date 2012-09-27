@@ -9,12 +9,12 @@ def calabash_run(app_path = nil)
     puts "Please do the following to update your project:"
     puts "1) Open #{f} in a text editor"
     puts "2) Replace #{old_runner} with #{new_rummer}"
-    exit
+    exit 1
   end
 
   if app_path
     unless File.exist?(test_server_path(app_path))
-      puts "No test server found for this combination of app and calabash version. Rebuilding test server."
+      puts "No test server found for this combination of app and calabash version. Recreating test server."
       calabash_build(app_path)
     end
 
@@ -25,7 +25,7 @@ def calabash_run(app_path = nil)
       test_server_port = "34777"
     end
     env = "PACKAGE_NAME=#{package_name(app_path)} "\
-          "TEST_PACKAGE_NAME=#{package_name(test_server_path)} "\
+          "MAIN_ACTIVITY=#{main_activity(app_path)} "\
           "APP_PATH=\"#{app_path}\" "\
           "TEST_APP_PATH=\"#{test_server_path}\" "\
           "TEST_SERVER_PORT=#{test_server_port}"
@@ -35,11 +35,10 @@ def calabash_run(app_path = nil)
 
   STDOUT.sync = true
   arguments = ARGV - ["--google-maps-support"]
-  cmd = "cucumber #{arguments.join(" ")} #{env} #{"-c" unless is_windows?}"
+  cmd = "cucumber #{arguments.join(" ")} #{env}"
   puts cmd
-  IO.popen(cmd) do |io|
-    io.each { |s| print s }
-  end
+  exit_code = system(cmd)
 
   sleep(1)
+  exit_code
 end

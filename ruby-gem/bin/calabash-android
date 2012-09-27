@@ -45,11 +45,10 @@ elsif cmd == 'build'
 elsif cmd == 'run'
   raise_if_android_home_not_set
   if ARGV.empty? or not is_apk_file?(ARGV.first)
-    calabash_run()
+    exit calabash_run()
   else
-    calabash_run(relative_to_full_path(ARGV.shift))
+    exit calabash_run(relative_to_full_path(ARGV.shift))
   end
-  exit 0
 elsif cmd == 'gen'
   calabash_scaffold
   exit 0
