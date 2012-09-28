@@ -42,3 +42,9 @@ Then /^the "([^\"]*)" activity should be open$/ do | expected_activity |
   actual_activity = performAction('get_activity_name')['message']
   raise "The current activity is #{actual_activity}" unless( actual_activity == expected_activity || actual_activity == expected_activity + 'Activity' )
 end
+
+
+Then /^I see in html the text "([^\"]*)"$/ do |text|
+	html_body = performAction('dump_body_html')['bonusInformation'][0]
+	if (html_body.match(text) == nil) then raise "Text not found in html" end
+end

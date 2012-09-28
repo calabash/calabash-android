@@ -33,3 +33,7 @@ end
 Then /^I long press list item number (\d+)$/ do |line_index|
   performAction('long_press_list_item', line_index, 0)
 end
+
+Then /^I press image view number (\d+)$/ do |imageNumber|
+  performAction('press_image_view_number', imageNumber) 
+end
