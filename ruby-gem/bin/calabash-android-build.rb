@@ -4,8 +4,7 @@ def calabash_build(app)
 
   test_server_file_name = test_server_path(app)
   unsigned_test_apk = File.join(File.dirname(__FILE__), '..', 'lib/calabash-android/lib/TestServer.apk')
-  android_platform = Dir["#{ENV["ANDROID_HOME"]}/platforms/android-*"].last
-
+  android_platform = Dir["#{ENV["ANDROID_HOME"].gsub("\\", "/")}/platforms/android-*"].last
   Dir.mktmpdir do |workspace_dir|
     Dir.chdir(workspace_dir) do
       FileUtils.cp(unsigned_test_apk, "TestServer.apk")
