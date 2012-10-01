@@ -23,8 +23,14 @@ def calabash_build(app)
         zip_file.add("AndroidManifest.xml", "customAndroidManifest.xml")  
       end
     end
+    # when there is no test_servers directory, the jarsigner command fails with no explanation
+    # so here we are trying to create the test_servers if it does not exist before
+    Dir::mkdir("test_servers") unless File.exists?("test_servers")
     cmd = "jarsigner -sigalg MD5withRSA -digestalg SHA1 -signedjar #{test_server_file_name} -storepass #{keystore["keystore_password"]} -keystore \"#{File.expand_path keystore["keystore_location"]}\" #{workspace_dir}/TestServer.apk #{keystore["keystore_alias"]}"
     unless system(cmd)
+      unless File.exists?("test_servers")
+        raise "test_servers directory does not exist"
+      end
       raise "Could not sign test server"
     end
   end

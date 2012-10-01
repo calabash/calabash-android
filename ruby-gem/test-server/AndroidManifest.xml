@@ -6,6 +6,15 @@
     <application android:label="instrumentation_backend">
       <uses-library android:name="android.test.runner" />
       <uses-library android:name="com.google.android.maps" android:required="false" />
+      <activity
+              android:name="sh.calaba.instrumentationbackend.WakeUp"
+              android:label="WakeUp"
+              android:exported="true"
+              android:launchMode="singleInstance"
+              android:finishOnTaskLaunch="true"
+              android:stateNotNeeded="true"
+              android:noHistory="false"
+              android:excludeFromRecents="true"/>
     </application>
     <uses-sdk android:minSdkVersion="4" />
     <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner" />

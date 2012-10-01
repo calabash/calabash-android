@@ -275,6 +275,15 @@ module Operations
     end
 
     def start_test_server_in_background
+      cmd = "#{adb_command} shell am start -a android.intent.action.MAIN -n sh.calaba.android.test/sh.calaba.instrumentationbackend.WakeUp"
+      log "Starting wake up activity using:"
+      log cmd
+      if is_windows?
+        system(%Q(start /MIN cmd /C #{cmd}))
+      else
+        `#{cmd} 1>&2 &`
+      end
+
       cmd = "#{adb_command} shell am instrument -w -e target_package #{ENV["PACKAGE_NAME"]} -e main_activity #{ENV["MAIN_ACTIVITY"]} -e class sh.calaba.instrumentationbackend.InstrumentationBackend sh.calaba.android.test/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
       log "Starting test server using:"
       log cmd
