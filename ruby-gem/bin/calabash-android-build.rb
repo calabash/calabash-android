@@ -14,7 +14,7 @@ def calabash_build(app)
         raise "Could not replace package name in manifest"
       end
 
-      unless system("#{ENV["ANDROID_HOME"]}/platform-tools/aapt package -M AndroidManifest.xml  -I #{android_platform}/android.jar -F dummy.apk")
+      unless system("\"#{ENV["ANDROID_HOME"]}/platform-tools/aapt\" package -M AndroidManifest.xml  -I #{android_platform}/android.jar -F dummy.apk")
         raise "Could not create dummy.apk"
       end
 
@@ -24,7 +24,7 @@ def calabash_build(app)
       end
     end
     if is_windows?
-      jarsigner_path = "#{ENV["JAVA_HOME"]}/bin/jarsigner.exe"
+      jarsigner_path = "\"#{ENV["JAVA_HOME"]}/bin/jarsigner.exe\""
     else
       jarsigner_path = "jarsigner"
     end
