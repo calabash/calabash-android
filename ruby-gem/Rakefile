@@ -14,7 +14,7 @@ def build
       ant_executable,
       "clean", 
       "package",
-      "-Dandroid.api.level=#{api_level}",
+      "-Dandroid.api.level=16",
     ]
     Dir.chdir(@test_server_dir) do
       STDOUT.sync = true

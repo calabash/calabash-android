@@ -1,5 +1,6 @@
 package sh.calaba.instrumentationbackend.actions.search;
 
+import android.widget.SearchView;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
