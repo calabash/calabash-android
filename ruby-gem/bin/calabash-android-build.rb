@@ -5,6 +5,7 @@ def calabash_build(app)
   test_server_file_name = test_server_path(app)
   unsigned_test_apk = File.join(File.dirname(__FILE__), '..', 'lib/calabash-android/lib/TestServer.apk')
   android_platform = Dir["#{ENV["ANDROID_HOME"].gsub("\\", "/")}/platforms/android-*"].last
+  raise "No Android SDK found in #{ENV["ANDROID_HOME"].gsub("\\", "/")}/platforms/" unless android_platform
   Dir.mktmpdir do |workspace_dir|
     Dir.chdir(workspace_dir) do
       FileUtils.cp(unsigned_test_apk, "TestServer.apk")
@@ -31,6 +32,7 @@ def calabash_build(app)
 
     cmd = "#{jarsigner_path} -sigalg MD5withRSA -digestalg SHA1 -signedjar #{test_server_file_name} -storepass #{keystore["keystore_password"]} -keystore \"#{File.expand_path keystore["keystore_location"]}\" #{workspace_dir}/TestServer.apk #{keystore["keystore_alias"]}"           
     unless system(cmd)
+      puts "jarsigner command: #{cmd}"
       raise "Could not sign test server"
     end
   end

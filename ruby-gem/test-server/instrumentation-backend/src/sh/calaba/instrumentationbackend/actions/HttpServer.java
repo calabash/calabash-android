@@ -86,6 +86,7 @@ public class HttpServer extends NanoHTTPD {
             Bitmap bitmap;
             View rootView = getRootView();
             rootView.setDrawingCacheEnabled(true);
+            rootView.buildDrawingCache(true);
             bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
             rootView.setDrawingCacheEnabled(false);
 
