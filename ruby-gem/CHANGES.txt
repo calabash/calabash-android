@@ -1,3 +1,12 @@
+0.3.0:
+      The test server is no longer build from source by calabash-android.
+      Calabash-android now comes with a half-done test server that is missing an 
+      AndroidManifest.xml and a signature.
+      We will now inject a special crafted manifest that works with the app under test
+      into the test server apk and sign it with the appropiate certificate.
+
+      Fixed several bugs.
+
 0.2.22:
       Removed incorrect text when running calabash-anroid gen.
 
