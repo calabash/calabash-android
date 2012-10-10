@@ -3,6 +3,8 @@ def calabash_build(app)
   keystore = read_keystore_info()
 
   test_server_file_name = test_server_path(app)
+  FileUtils.mkdir_p File.dirname(test_server_file_name) unless File.exist? File.dirname(test_server_file_name)
+
   unsigned_test_apk = File.join(File.dirname(__FILE__), '..', 'lib/calabash-android/lib/TestServer.apk')
   android_platform = Dir["#{ENV["ANDROID_HOME"].gsub("\\", "/")}/platforms/android-*"].last
   raise "No Android SDK found in #{ENV["ANDROID_HOME"].gsub("\\", "/")}/platforms/" unless android_platform
