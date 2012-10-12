@@ -165,10 +165,6 @@ module Operations
       log `#{adb_command} uninstall #{package_name}`
     end
 
-    def shutdown_test_server
-      http("/kill")
-    end
-
     def perform_action(action, *arguments)
       log "Action: #{action} - Params: #{arguments.join(', ')}"
 
@@ -275,14 +271,10 @@ module Operations
     end
 
     def start_test_server_in_background
-      cmd = "#{adb_command} shell am instrument -w -e target_package #{ENV["PACKAGE_NAME"]} -e main_activity #{ENV["MAIN_ACTIVITY"]} -e class sh.calaba.instrumentationbackend.InstrumentationBackend sh.calaba.android.test/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
+      cmd = "#{adb_command} shell am instrument -e target_package #{ENV["PACKAGE_NAME"]} -e main_activity #{ENV["MAIN_ACTIVITY"]} -e class sh.calaba.instrumentationbackend.InstrumentationBackend sh.calaba.android.test/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
       log "Starting test server using:"
       log cmd
-      if is_windows?
-        system(%Q(start /MIN cmd /C #{cmd}))
-      else
-        `#{cmd} 1>&2 &`
-      end
+      raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
 
       begin
         retriable :tries => 10, :interval => 3 do
@@ -302,6 +294,10 @@ module Operations
         msg << "Please check the logcat output for more info about what happened\n"
         raise msg
       end
+    end
+
+    def shutdown_test_server
+      http("/kill")
     end
 
     def log(message)
