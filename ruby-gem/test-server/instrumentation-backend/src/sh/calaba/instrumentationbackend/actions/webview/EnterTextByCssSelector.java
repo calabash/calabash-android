@@ -14,7 +14,7 @@ public class EnterTextByCssSelector implements Action {
     public Result execute(String... args) {
     	final String cssSelector = args[0];
     	final String value = args[1];
-    	
+
     	for (CalabashChromeClient ccc : CalabashChromeClient.findAndPrepareWebViews()) {
     		final WebView webView = ccc.getWebView();
 			
@@ -72,10 +72,10 @@ public class EnterTextByCssSelector implements Action {
                                     "            fireHTMLEvent(elem, 'blur');\n" +
                                     "        }\n" +
                                     "";
-                    
+
                     webView.loadUrl("javascript:(function() {" +
                     		functions +
-                    		"var elem = document.getElementById('" + cssSelector + "'); selectInputField(elem); enterTextIntoInputField(elem, '" + value + "'); deselectInputField(elem); " +
+                    		"var elem = document.querySelector(\"" + cssSelector + "\"); selectInputField(elem); enterTextIntoInputField(elem, '" + value + "'); deselectInputField(elem); " +
                             "prompt('calabash:true');" +
                             "})()");
                 }
