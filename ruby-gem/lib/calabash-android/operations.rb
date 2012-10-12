@@ -33,10 +33,6 @@ module Operations
     Device.default_device(self)
   end
 
-  def shutdown_test_server
-    default_device.shutdown_test_server
-  end
-
   def performAction(action, *arguments)
     default_device.perform_action(action, *arguments)
   end
@@ -50,8 +46,16 @@ module Operations
     default_device.uninstall_app(ENV["PACKAGE_NAME"])
   end
 
+  def wake_up
+    default_device.wake_up()
+  end
+
   def start_test_server_in_background
     default_device.start_test_server_in_background()
+  end
+
+  def shutdown_test_server
+    default_device.shutdown_test_server
   end
 
   def screenshot_embed(options={:prefix => nil, :name => nil, :label => nil})
@@ -268,6 +272,13 @@ module Operations
       else
         ""
       end
+    end
+
+    def wake_up
+      wake_up_cmd = "#{adb_command} shell am start -a android.intent.action.MAIN -n sh.calaba.android.test/sh.calaba.instrumentationbackend.WakeUp"
+      log "Waking up device using:"
+      log wake_up_cmd
+      raise "Could not wake up the device" unless system(wake_up_cmd)
     end
 
     def start_test_server_in_background
