@@ -30,7 +30,7 @@ module Operations
     end
   end
   def default_device
-    Device.default_device(self)
+    Device.default_device
   end
 
   def performAction(action, *arguments)
@@ -59,7 +59,8 @@ module Operations
   end
 
   def screenshot_embed(options={:prefix => nil, :name => nil, :label => nil})
-    default_device.screenshot_embed(options)
+    path = default_device.screenshot(options)
+    embed(path, "image/png", options[:label] || File.basename(path))
   end
 
   def screenshot(options={:prefix => nil, :name => nil})
@@ -121,9 +122,9 @@ module Operations
   class Device
     @@default_device = nil
 
-    def self.default_device(cucumber_world)
+    def self.default_device
       unless @@default_device
-        @@default_device = Device.new(cucumber_world, ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"], ENV["APP_PATH"], ENV["TEST_APP_PATH"])
+        @@default_device = Device.new(ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"], ENV["APP_PATH"], ENV["TEST_APP_PATH"])
       end
       @@default_device
     end
@@ -132,15 +133,15 @@ module Operations
       @@default_device = self
     end
 
-    def initialize(cucumber_world, serial, server_port, app_path, test_server_path)
-      @cucumber_world = cucumber_world
+    def initialize(serial, server_port, app_path, test_server_path)
       @serial = serial
       @server_port = server_port
       @app_path = app_path
       @test_server_path = test_server_path
 
-      puts "#{adb_command} forward tcp:b#{server_port} tcp:7102"
-      log `#{adb_command} forward tcp:#{server_port} tcp:7102`
+      forward_cmd = "#{adb_command} forward tcp:#{server_port} tcp:7102"
+      log forward_cmd
+      log `#{forward_cmd}`
     end
 
     def reinstall_apps()
@@ -230,11 +231,6 @@ module Operations
       end
     end
 
-    def screenshot_embed(options={:prefix => nil, :name => nil, :label => nil})
-      path = screenshot(options)
-      @cucumber_world.embed(path, "image/png", options[:label] || File.basename(path))
-    end
-
     def screenshot(options={:prefix => nil, :name => nil})
       prefix = options[:prefix] || ENV['SCREENSHOT_PATH'] || ""
       name = options[:name]
@@ -309,10 +305,6 @@ module Operations
 
     def shutdown_test_server
       http("/kill")
-    end
-
-    def log(message)
-      $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}" if (ARGV.include? "-v" or ARGV.include? "--verbose")
     end
 
     ##location

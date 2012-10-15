@@ -41,7 +41,7 @@ def calabash_run(app_path = nil)
   STDOUT.sync = true
   arguments = ARGV - ["--google-maps-support", "--no-build"]
   cmd = "cucumber #{arguments.join(" ")} #{env}"
-  puts cmd
+  log cmd
   exit_code = system(cmd)
 
   sleep(1)

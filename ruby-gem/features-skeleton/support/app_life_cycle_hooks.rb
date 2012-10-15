@@ -3,7 +3,7 @@ require 'calabash-android/operations'
 include Calabash::Android::Operations
 
 AfterConfiguration do |config|
-  wake_up
+  wake_up unless config.dry_run?
 end
 
 Before do |scenario|
