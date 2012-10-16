@@ -244,12 +244,24 @@ module Operations
       end
 
       @@screenshot_count ||= 0
-      res = http("/screenshot")
-
       path = "#{prefix}#{name}_#{@@screenshot_count}.png"
-      File.open(path, 'wb') do |f|
-        f.write res
+
+      if ENV["SCREENSHOT_VIA_USB"] == "true"
+        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenShotTaker.jar')} #{path}"
+        log screenshot_cmd
+        raise "Could not take screenshot" unless system(screenshot_cmd)
+      else
+        begin
+          res = http("/screenshot")
+        rescue EOFError
+          raise "Could not take screenshot. App is most likely not running anymore."
+        end
+        File.open(path, 'wb') do |f|
+          f.write res
+        end
       end
+
+
       @@screenshot_count += 1
       path
     end
@@ -304,7 +316,11 @@ module Operations
     end
 
     def shutdown_test_server
-      http("/kill")
+      begin
+        http("/kill")
+      rescue EOFError
+        log ("Could not kill app. App is most likely not running anymore.")
+      end
     end
 
     ##location
