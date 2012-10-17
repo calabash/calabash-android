@@ -30,7 +30,10 @@ module Operations
     end
   end
   def default_device
-    Device.default_device
+    unless @default_device
+      @default_device = Device.new(self, ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"], ENV["APP_PATH"], ENV["TEST_APP_PATH"])
+    end
+    @default_device
   end
 
   def performAction(action, *arguments)
@@ -120,20 +123,13 @@ module Operations
   end
 
   class Device
-    @@default_device = nil
-
-    def self.default_device
-      unless @@default_device
-        @@default_device = Device.new(ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"], ENV["APP_PATH"], ENV["TEST_APP_PATH"])
-      end
-      @@default_device
-    end
 
     def make_default_device
-      @@default_device = self
+      @cucumber_world.default_device = self
     end
 
-    def initialize(serial, server_port, app_path, test_server_path)
+    def initialize(cucumber_world, serial, server_port, app_path, test_server_path)
+      @cucumber_world = cucumber_world
       @serial = serial
       @server_port = server_port
       @app_path = app_path
@@ -186,7 +182,7 @@ module Operations
         raise "Empty result from TestServer" if result.chomp.empty?
         result = JSON.parse(result)
         if not result["success"] then
-          screenshot_embed
+          @cucumber_world.screenshot_embed
           if result["bonusInformation"] && result["bonusInformation"].size > 0 && result["bonusInformation"][0].include?("Exception")
             log result["bonusInformation"][0]
           end
