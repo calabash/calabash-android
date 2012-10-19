@@ -14,3 +14,5 @@ IRB.conf[:HISTORY_FILE] = ".irb-history"
 
 require 'calabash-android/operations'
 include Calabash::Android::Operations
+
+start_test_server_in_background
