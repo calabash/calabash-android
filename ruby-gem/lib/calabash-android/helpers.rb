@@ -29,7 +29,7 @@ end
 
 def checksum(file_path)
   require 'digest/md5'
-  Digest::MD5.hexdigest(File.read(file_path))
+  Digest::MD5.file(file_path).hexdigest
 end
 
 def test_server_path(apk_file_path)
