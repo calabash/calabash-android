@@ -52,36 +52,12 @@ public class CalabashChromeClient extends WebChromeClient {
 		}
 	}
 
-	public float getScale() {
-        if (Build.VERSION.SDK_INT >= 16) { // jelly bean
-            return webView.getScale();
-        }
-		try {
-			Field mActualScaleField = null;
-			Object targetObject = webView;
-
-			if (Build.VERSION.SDK_INT < 14) { //before Ice cream sandwich
-				mActualScaleField = WebView.class.getDeclaredField("mActualScale");
-			} else {
-				Field zoomManagerField = WebView.class.getDeclaredField("mZoomManager");
-				zoomManagerField.setAccessible(true);
-				targetObject = zoomManagerField.get(webView);
-
-				mActualScaleField = Class.forName("android.webkit.ZoomManager").getDeclaredField("mActualScale");
-			}
-			mActualScaleField.setAccessible(true);
-			return mActualScaleField.getFloat(targetObject);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	public WebView getWebView() {
 		return webView;
 	}
 
 	public String getResult() {
-		eventHandled.block(30000);
+		eventHandled.block(3000);
 		if (result.message == null) {
 			throw new RuntimeException("Timed out waiting for result for JavaScript");
 		}

@@ -55,14 +55,12 @@ public class ScrollTo implements Action {
 		}
 
 	}
-    
-    
-    
+
     private boolean isVisible(Map<String, Object> rectangle, CalabashChromeClient calabashChromeClient) {
     	WebView webView = calabashChromeClient.getWebView();
     	int windowTop = webView.getScrollY();
     	int windowBottom = webView.getScrollY() + webView.getHeight();
-    	int centerY = (int) ((Integer)rectangle.get("center_y") * calabashChromeClient.getScale());
+    	int centerY = (int) ((Integer)rectangle.get("center_y") * calabashChromeClient.getWebView().getScale());
 
     	return windowTop < centerY && centerY < windowBottom;  	
     }

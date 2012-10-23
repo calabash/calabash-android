@@ -56,7 +56,7 @@ public class QueryHelper {
 			CalabashChromeClient calabashChromeClient = CalabashChromeClient.findAndPrepareWebViews().get(0);
 		
 			WebView webView = calabashChromeClient.getWebView();
-			float scale = calabashChromeClient.getScale();
+			float scale = calabashChromeClient.getWebView().getScale();
 			
 			System.out.println("scale: " + scale);
 			int[] webviewLocation = new int[2];
