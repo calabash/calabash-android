@@ -395,7 +395,7 @@ module Operations
     ni
   end
 
-  def background(secs)
+  def app_to_background(secs)
     ni
   end
 
