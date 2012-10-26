@@ -266,7 +266,7 @@ module Operations
       if is_windows?
         %Q("#{ENV["ANDROID_HOME"]}\\platform-tools\\adb.exe" #{device_args})
       else
-        %Q(#{ENV["ANDROID_HOME"]}/platform-tools/adb #{device_args})
+        %Q("#{ENV["ANDROID_HOME"]}/platform-tools/adb" #{device_args})
       end
     end
 
