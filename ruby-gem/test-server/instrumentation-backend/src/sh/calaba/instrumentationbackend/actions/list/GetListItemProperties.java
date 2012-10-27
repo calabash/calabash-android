@@ -90,7 +90,6 @@ public class GetListItemProperties implements Action {
 			addViewInfo( json, (ViewGroup)row );
 		}
 
-		json.deleteCharAt( json.length() - 1 );		// remove the last comma
 		json.append('}');
 		return json.toString();
 	}
@@ -99,8 +98,8 @@ public class GetListItemProperties implements Action {
 		int resId = view.getId();
 		String resIdName = view.getResources().getResourceEntryName(resId);
 
-		json.append("\"id\":\"").append(resIdName).append("\", \"text:\"").append( ((TextView)view).getText() ).append("\"");
-
+		json.append("\"id\":\"").append(resIdName).append("\", \"text\":\"").append( ((TextView)view).getText() ).append("\"");
+		
 		json.append(", \"color\":").append( view.getCurrentTextColor() );
 		Drawable background = view.getBackground();
 		if( background instanceof ColorDrawable ) {
