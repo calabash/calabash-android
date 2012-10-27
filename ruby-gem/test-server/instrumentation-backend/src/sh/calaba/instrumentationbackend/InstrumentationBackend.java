@@ -2,8 +2,11 @@ package sh.calaba.instrumentationbackend;
 
 import sh.calaba.instrumentationbackend.actions.Actions;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
+import android.app.Activity;
 import android.app.Instrumentation;
+import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
+import android.location.LocationManager;
 import android.util.Log;
 
 import com.jayway.android.robotium.solo.SoloEnhanced;
@@ -53,6 +56,8 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
             e.printStackTrace();
         }
 
+        removeTestLocationProviders(this.getActivity());
+
         this.getActivity().finish();
         super.tearDown();
 
@@ -64,5 +69,13 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
 
     public static void logError(String message) {
         Log.e(TAG, message);
+    }
+
+    private static void removeTestLocationProviders(Activity activity) {
+        final LocationManager locationService =
+            (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        locationService.removeTestProvider(LocationManager.GPS_PROVIDER);
+        locationService.removeTestProvider(LocationManager.NETWORK_PROVIDER);
+        locationService.removeTestProvider(LocationManager.PASSIVE_PROVIDER);
     }
 }
