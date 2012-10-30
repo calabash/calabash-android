@@ -74,8 +74,8 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
     private static void removeTestLocationProviders(Activity activity) {
         final LocationManager locationService =
             (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-        locationService.removeTestProvider(LocationManager.GPS_PROVIDER);
-        locationService.removeTestProvider(LocationManager.NETWORK_PROVIDER);
-        locationService.removeTestProvider(LocationManager.PASSIVE_PROVIDER);
+        for (final String provider : locationService.getAllProviders()) {
+            locationService.removeTestProvider(provider);
+        }
     }
 }
