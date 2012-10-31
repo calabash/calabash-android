@@ -78,3 +78,18 @@ Predefined steps
 -----------------
 
 The predefined steps are located in the `features/step_definitions` folder. A compiled list of predefined steps with comments is available [here](https://github.com/calabash/calabash-android/blob/master/ruby-gem/lib/calabash-android/canned_steps.md)
+
+Troubleshooting
+---------------
+
+### Problems clicking on buttons and text
+
+If it seems that buttons/text aren't being clicked properly, you need to add the following xml to your AndroidManifest.xml:
+
+```
+<uses-sdk android:targetSdkVersion="SDK_VERSION" />
+```
+
+Where SDK_VERSION is the version of the Android SDK you are using. Version numbers can be found [here](http://developer.android.com/reference/android/os/Build.VERSION_CODES.html)
+
+For example, Android 4.0 uses version 14, Android 4.0.3 uses version 15 and Android 4.1 uses version 16.
