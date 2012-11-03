@@ -60,7 +60,7 @@ public class ScrollTo implements Action {
     	WebView webView = calabashChromeClient.getWebView();
     	int windowTop = webView.getScrollY();
     	int windowBottom = webView.getScrollY() + webView.getHeight();
-    	int centerY = (int) ((Integer)rectangle.get("center_y") * calabashChromeClient.getWebView().getScale());
+    	int centerY = (int) ((Integer)rectangle.get("center_y") * webView.getScale());
 
     	return windowTop < centerY && centerY < windowBottom;  	
     }

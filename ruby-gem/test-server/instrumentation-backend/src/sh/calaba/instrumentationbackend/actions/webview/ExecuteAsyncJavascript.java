@@ -18,7 +18,7 @@ public class ExecuteAsyncJavascript implements Action {
 		}
 		
 		CalabashChromeClient ccc = list.get(0);
-		final WebView webView = ccc.getWebView();
+		WebView webView = ccc.getWebView();
 		final String script = "javascript:(function() {"
 				+ " function cb(ret) {"
 				+ "  prompt('calabash:'+ret);"
@@ -33,14 +33,8 @@ public class ExecuteAsyncJavascript implements Action {
 				+ "}())";
 
 		System.out.println("execute javascript: " + script);
-		
-		InstrumentationBackend.solo.getCurrentActivity().runOnUiThread(
-				new Runnable() {
-					@Override
-					public void run() {
-						webView.loadUrl(script);
-					}
-				});
+
+        webView.loadUrl(script);
 
 		String r = ccc.getResult();
 		System.out.println("javascript result: " + r);

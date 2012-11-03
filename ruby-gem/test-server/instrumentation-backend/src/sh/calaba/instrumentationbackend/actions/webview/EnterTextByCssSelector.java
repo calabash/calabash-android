@@ -16,17 +16,13 @@ public class EnterTextByCssSelector implements Action {
     	final String value = args[1];
 
     	for (CalabashChromeClient ccc : CalabashChromeClient.findAndPrepareWebViews()) {
-    		final WebView webView = ccc.getWebView();
-			
-    		
-            InstrumentationBackend.solo.getCurrentActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                	String functions = "        function simulateKeyEvent(elem, character) {\n" +
+    		WebView webView = ccc.getWebView();
+
+            String functions = "        function simulateKeyEvent(elem, character) {\n" +
                     "            var ch = character.charCodeAt(0);\n" +
                     "\n" +
                     "            var evt;\n" +
-                            "\n" +
+                    "\n" +
                     "            evt = document.createEvent('KeyboardEvent');\n" +
                     "            evt.initKeyboardEvent('keydown', true, true, window, 0, 0, 0, 0, 0, ch);\n" +
                     "            elem.dispatchEvent(evt);\n" +
@@ -41,8 +37,8 @@ public class EnterTextByCssSelector implements Action {
                     "        }\n" +
                     "";
 
-                    functions +=
-                            "        function enterTextIntoInputField(elem, text) {\n" +
+            functions +=
+                    "        function enterTextIntoInputField(elem, text) {\n" +
                             "            for (var i = 0; i < text.length; i++) {\n" +
                             "                var ch = text.charAt(i);\n" +
                             "                elem.value += ch;\n" +
@@ -51,35 +47,33 @@ public class EnterTextByCssSelector implements Action {
                             "        }\n" +
                             "";
 
-                    functions +=
-                            "        function fireHTMLEvent(elem, eventName) {\n" +
+            functions +=
+                    "        function fireHTMLEvent(elem, eventName) {\n" +
                             "            var evt = document.createEvent(\"HTMLEvents\");\n" +
                             "            evt.initEvent(eventName, true, true );\n" +
                             "            return !elem.dispatchEvent(evt);\n" +
                             "        }\n" +
                             "";
 
-                    functions +=
-                            "        function selectInputField(elem) {\n" +
+            functions +=
+                    "        function selectInputField(elem) {\n" +
                             "            elem.click();\n" +
                             "            elem.focus();\n" +
                             "        }\n" +
                             "";
 
-                    functions +=
-                            "        function deselectInputField(elem) {\n" +
-                                    "            fireHTMLEvent(elem, 'change');\n" +
-                                    "            fireHTMLEvent(elem, 'blur');\n" +
-                                    "        }\n" +
-                                    "";
+            functions +=
+                    "        function deselectInputField(elem) {\n" +
+                            "            fireHTMLEvent(elem, 'change');\n" +
+                            "            fireHTMLEvent(elem, 'blur');\n" +
+                            "        }\n" +
+                            "";
 
-                    webView.loadUrl("javascript:(function() {" +
-                    		functions +
-                    		"var elem = document.querySelector(\"" + cssSelector + "\"); selectInputField(elem); enterTextIntoInputField(elem, '" + value + "'); deselectInputField(elem); " +
-                            "prompt('calabash:true');" +
-                            "})()");
-                }
-            });
+            webView.loadUrl("javascript:(function() {" +
+                    functions +
+                    "var elem = document.querySelector(\"" + cssSelector + "\"); selectInputField(elem); enterTextIntoInputField(elem, '" + value + "'); deselectInputField(elem); " +
+                    "prompt('calabash:true');" +
+                    "})()");
     		
 			String r = ccc.getResult();
 			System.out.println("enterTextIntoInputField: " + r);

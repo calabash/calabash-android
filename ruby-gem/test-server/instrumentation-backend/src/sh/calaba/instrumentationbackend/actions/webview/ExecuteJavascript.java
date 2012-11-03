@@ -18,28 +18,21 @@ public class ExecuteJavascript implements Action {
 		}
 		
 		CalabashChromeClient ccc = list.get(0);
-		final WebView webView = ccc.getWebView();
-		final String script = "javascript:(function() {"
-				+ " var r;"
-				+ " try {"
-				+ "  r = (function() {"
-				+ args[0] + ";"
-				+ "  }());"
-				+ " } catch (e) {"
-				+ "  r = 'Exception: ' + e;"
-				+ " }"
-				+ " prompt('calabash:'+r);" 
-				+ "}())";
+		WebView webView = ccc.getWebView();
+		String script = "javascript:(function() {"
+            + " var r;"
+            + " try {"
+            + "  r = (function() {"
+            + args[0] + ";"
+            + "  }());"
+            + " } catch (e) {"
+            + "  r = 'Exception: ' + e;"
+            + " }"
+            + " prompt('calabash:'+r);"
+            + "}())";
 
 		System.out.println("execute javascript: " + script);
-		
-		InstrumentationBackend.solo.getCurrentActivity().runOnUiThread(
-				new Runnable() {
-					@Override
-					public void run() {
-						webView.loadUrl(script);
-					}
-				});
+        webView.loadUrl(script);
 
 		String r = ccc.getResult();
 		System.out.println("javascript result: " + r);

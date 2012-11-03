@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import android.os.Build;
@@ -52,9 +53,9 @@ public class CalabashChromeClient extends WebChromeClient {
 		}
 	}
 
-	public WebView getWebView() {
-		return webView;
-	}
+    public WebView getWebView() {
+        return webView;
+    }
 
 	public String getResult() {
 		eventHandled.block(3000);
@@ -64,7 +65,7 @@ public class CalabashChromeClient extends WebChromeClient {
 		return result.message;
 	}
 
-	private class Result {
+    private class Result {
 		String message;
 	}
 

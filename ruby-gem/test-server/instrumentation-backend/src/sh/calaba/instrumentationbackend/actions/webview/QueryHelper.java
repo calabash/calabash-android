@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
@@ -15,10 +16,10 @@ import android.webkit.WebView;
 
 public class QueryHelper {
 
-	public static String executeJavascriptInWebview(String scriptPath, String... args) {
+    public static String executeJavascriptInWebview(String scriptPath, String... args) {
 		
 		String script = readJavascriptFromAsset(scriptPath);
-		
+
 		for (String arg : args) {
 			script = script.replaceFirst("%@", arg);
 		}
@@ -27,14 +28,8 @@ public class QueryHelper {
     	List<CalabashChromeClient> webViews = CalabashChromeClient.findAndPrepareWebViews();
 
     	for (CalabashChromeClient ccc : webViews) {
-    		final WebView webView = ccc.getWebView();
-    		InstrumentationBackend.solo.getCurrentActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                	webView.loadUrl("javascript:calabash_result = " + myScript + ";prompt('calabash:' + calabash_result);");
-                }
-    		});
-    		
+    	    WebView webView = ccc.getWebView();
+            webView.loadUrl("javascript:calabash_result = " + myScript + ";prompt('calabash:' + calabash_result);");
 			return ccc.getResult();
 		}
     	throw new RuntimeException("No webviews found");
@@ -56,8 +51,11 @@ public class QueryHelper {
 			CalabashChromeClient calabashChromeClient = CalabashChromeClient.findAndPrepareWebViews().get(0);
 		
 			WebView webView = calabashChromeClient.getWebView();
-			float scale = calabashChromeClient.getWebView().getScale();
-			
+
+
+            float scale = webView.getScale();
+
+
 			System.out.println("scale: " + scale);
 			int[] webviewLocation = new int[2];
 			webView.getLocationOnScreen(webviewLocation);

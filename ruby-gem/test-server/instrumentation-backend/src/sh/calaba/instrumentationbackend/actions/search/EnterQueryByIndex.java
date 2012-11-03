@@ -12,13 +12,7 @@ public class EnterQueryByIndex implements Action {
         final String query = args[0];
         final SearchView view = (SearchView) InstrumentationBackend.solo.getView(
                 SearchView.class, Integer.parseInt(args[1]) - 1);
-
-        InstrumentationBackend.instrumentation.runOnMainSync(new Runnable() {
-            @Override
-            public void run() {
-                view.setQuery(query, true);
-            }
-        });
+        view.setQuery(query, true);
 
         return Result.successResult();
     }

@@ -13,16 +13,10 @@ public class DumpBodyHtml implements Action {
     	                         
     	final Result result = Result.successResult();
     	for (CalabashChromeClient ccc : CalabashChromeClient.findAndPrepareWebViews()) {
-    		final WebView webView = ccc.getWebView();
-            InstrumentationBackend.solo.getCurrentActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    webView.loadUrl("javascript:(function() {" +
-                             "prompt('calabash:' + document.body.innerHTML);" +
-                             "})()");
-                 }
-             });
+    		WebView webView = ccc.getWebView();
+            webView.loadUrl("javascript:(function() {" +
+                    "prompt('calabash:' + document.body.innerHTML);" +
+                    "})()");
             String r = ccc.getResult();
             System.out.println("Html:");
             System.out.println("" + r);

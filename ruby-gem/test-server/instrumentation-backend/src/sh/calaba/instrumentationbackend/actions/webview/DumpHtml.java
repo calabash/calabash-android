@@ -14,16 +14,9 @@ public class DumpHtml implements Action {
     	Result result = Result.successResult();
     	for (CalabashChromeClient ccc : CalabashChromeClient.findAndPrepareWebViews()) {
     		final WebView webView = ccc.getWebView();
-
-            InstrumentationBackend.solo.getCurrentActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    webView.loadUrl("javascript:(function() {" +
-                               "prompt('calabash:' + document.body.parentNode.innerHTML);" +
-                               "})()");
-                }
-            });
+            webView.loadUrl("javascript:(function() {" +
+                    "prompt('calabash:' + document.body.parentNode.innerHTML);" +
+                    "})()");
             String r = ccc.getResult();
             System.out.println("Html:");
             System.out.println("" + r);

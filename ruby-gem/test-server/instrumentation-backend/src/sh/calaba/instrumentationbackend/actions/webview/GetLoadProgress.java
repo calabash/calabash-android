@@ -9,9 +9,8 @@ public class GetLoadProgress implements Action {
 	@Override
 	public Result execute(String... args) {
 		CalabashChromeClient ccc = CalabashChromeClient.findAndPrepareWebViews().get(0);
-		final WebView webView = ccc.getWebView();
-		int p = webView.getProgress();
-		return new Result(true, "" + p);
+		WebView webView = ccc.getWebView();
+		return new Result(true, "" + webView.getProgress());
 	}
 
 	@Override

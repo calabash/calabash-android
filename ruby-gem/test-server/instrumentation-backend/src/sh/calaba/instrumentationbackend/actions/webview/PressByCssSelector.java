@@ -13,24 +13,18 @@ public class PressByCssSelector implements Action {
     @Override
     public Result execute(final String... args) {
     	for (CalabashChromeClient ccc : CalabashChromeClient.findAndPrepareWebViews()) {
-    		final WebView webView = ccc.getWebView();
-            InstrumentationBackend.solo.getCurrentActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+    		WebView webView = ccc.getWebView();
 
-
-                    webView.loadUrl("javascript:(function() {" +
-                           "var element = document.querySelector(\"" + args[0] + "\");" +
-                           "if (element != null) {" +
-                           "	var oEvent = document.createEvent ('MouseEvent');" +
-                           "	oEvent.initMouseEvent('click', true, true,window, 1, 1, 1, 1, 1, false, false, false, false, 0, element);" +
-                           "	element.dispatchEvent( oEvent );" +
-                           "	prompt('calabash:true');" +
-                           "}" +
-                           "prompt('calabash:false');" +
-                           "})()");
-                }
-            });
+            webView.loadUrl("javascript:(function() {" +
+                    "var element = document.querySelector(\"" + args[0] + "\");" +
+                    "if (element != null) {" +
+                    "	var oEvent = document.createEvent ('MouseEvent');" +
+                    "	oEvent.initMouseEvent('click', true, true,window, 1, 1, 1, 1, 1, false, false, false, false, 0, element);" +
+                    "	element.dispatchEvent( oEvent );" +
+                    "	prompt('calabash:true');" +
+                    "}" +
+                    "prompt('calabash:false');" +
+                    "})()");
 
            String r = ccc.getResult();
            System.out.println("clickOnSelector: " + r);
