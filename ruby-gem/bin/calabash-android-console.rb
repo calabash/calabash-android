@@ -1,4 +1,4 @@
-def calabash_shell(app_path = nil)
+def calabash_console(app_path = nil)
   test_server_path = test_server_path(app_path)
 
   unless ENV["TEST_SERVER_PORT"]
@@ -6,7 +6,7 @@ def calabash_shell(app_path = nil)
   end
 
   unless ENV["IRBRC"]
-    ENV["IRBRC"] = File.join(File.dirname(__FILE__), '..', '.irbrc')
+    ENV["IRBRC"] = File.join(File.dirname(__FILE__), '..', 'irbrc')
   end
 
   unless ENV["PACKAGE_NAME"]
