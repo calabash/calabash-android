@@ -243,7 +243,8 @@ module Operations
       path = "#{prefix}#{name}_#{@@screenshot_count}.png"
 
       if ENV["SCREENSHOT_VIA_USB"] == "true"
-        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenShotTaker.jar')} #{path}"
+        device_args = "-s #{@serial}" if @serial
+        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenShotTaker.jar')} #{path} #{device_args}"
         log screenshot_cmd
         raise "Could not take screenshot" unless system(screenshot_cmd)
       else
