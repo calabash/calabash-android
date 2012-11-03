@@ -9,6 +9,7 @@ require File.join(File.dirname(__FILE__), "calabash-android-generate")
 require File.join(File.dirname(__FILE__), "calabash-android-build")
 require File.join(File.dirname(__FILE__), "calabash-android-run")
 require File.join(File.dirname(__FILE__), "calabash-android-setup")
+require File.join(File.dirname(__FILE__), "calabash-android-console")
 
 @features_dir = File.join(FileUtils.pwd, "features")
 @support_dir = File.join(@features_dir, "support")
@@ -51,6 +52,17 @@ elsif cmd == 'run'
   end
 elsif cmd == 'gen'
   calabash_scaffold
+  exit 0
+elsif cmd == 'console'
+  if ARGV.empty?
+    puts "Please specify an app"
+    exit 1
+  end
+  unless File.exist? ARGV.first
+    puts "No such file #{ARGV.first}"
+    exit 1
+  end
+  calabash_console ARGV.first
   exit 0
 elsif cmd == 'setup'
   calabash_setup
