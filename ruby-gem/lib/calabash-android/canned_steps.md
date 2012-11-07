@@ -1,7 +1,7 @@
 Canned steps
 ============
 Calabash Android comes with the following set of predefined steps.
-You can add you own steps or change the ones you see here.
+You can add your own steps or change the ones you see here.
 
 Assertion steps
 ---------------
