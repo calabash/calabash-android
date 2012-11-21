@@ -1,9 +1,12 @@
+0.3.3:
+      A series of bugfixes.
+
 0.3.1:
       Will now create test_servers dir if it doesn't exist.
 
 0.3.0:
       The test server is no longer build from source by calabash-android.
-      Calabash-android now comes with a half-done test server that is missing an 
+      Calabash-android now comes with a half-done test server that is missing an
       AndroidManifest.xml and a signature.
       We will now inject a special crafted manifest that works with the app under test
       into the test server apk and sign it with the appropiate certificate.
@@ -146,7 +149,7 @@
       to stay backwards compatible with generated skeletons.
 
 0.2.0.pre2:
-      A HTTP server has been introduced in the test server so that we no 
+      A HTTP server has been introduced in the test server so that we no
       longer use socket for communication.
 
 0.2.0.pre1:
