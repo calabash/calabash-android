@@ -1,3 +1,16 @@
+0.4.1:
+      No longer takes screenshots when perform_action fails.
+      If you want to take screenshots when a scenario fails you can use a hook:
+
+      After do |scenario|
+        if scenario.failed?
+          screenshot_embed
+        end
+      end
+
+      This hook is now part of the generated skeleton.
+
+
 0.3.4:
       Removed maps_unsupported
       The test will fail at run time if the device does not have

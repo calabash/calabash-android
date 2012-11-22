@@ -182,13 +182,9 @@ module Operations
         raise "Empty result from TestServer" if result.chomp.empty?
         result = JSON.parse(result)
         if not result["success"] then
-          @cucumber_world.screenshot_embed
-          if result["bonusInformation"] && result["bonusInformation"].size > 0 && result["bonusInformation"][0].include?("Exception")
-            log result["bonusInformation"][0]
-          end
           raise "Step unsuccessful: #{result["message"]}"
         end
-        return result
+        result
       end
     rescue Timeout::Error
       raise Exception, "Step timed out"
@@ -453,7 +449,7 @@ module Operations
   def backdoor(sel, arg)
     ni
   end
-  
+
   def map( query, method_name, *method_args )
     ni
   end

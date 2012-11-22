@@ -10,6 +10,12 @@ Before do |scenario|
   start_test_server_in_background
 end
 
+After do |scenario|
+  if scenario.failed?
+    screenshot_embed
+  end
+end
+
 After do
     shutdown_test_server
 end
