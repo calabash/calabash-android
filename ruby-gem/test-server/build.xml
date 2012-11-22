@@ -5,7 +5,7 @@
     </description>
 
     <property name="adb.device.arg" value="" />
-    <property environment="env"/>    
+    <property environment="env"/>
     <property file="build.properties"/>
     <property name="staging.dir" location="staging"/>
     <property name="bin.dir" location="bin"/>
@@ -31,7 +31,7 @@
     <taskdef name="apkbuilder" classname="com.android.ant.ApkBuilderTask" classpathref="android.antlibs" />
 
 
-    
+
 
     <path id="jar.libs.ref">
       <fileset dir="${staging.dir}/libs/" includes="*.jar" />
@@ -40,7 +40,7 @@
     <path id="cucumber.path">
       <fileset dir="cucumber/" includes="*.jar" />
     </path>
-    
+
     <path id="android.target.classpath">
       <fileset dir="${env.ANDROID_HOME}/platforms/android-${android.api.level}/" includes="*.jar"/>
     </path>
@@ -60,10 +60,7 @@
 
     <target name="-prepare.testserver" description="Makes sure the testserver matches the tested application by looking at its manifest file">
       <copy todir="${staging.dir}">
-				<fileset dir="instrumentation-backend">
-          <exclude name="src/sh/calaba/instrumentationbackend/actions/map_unsupported/*.java" if="${google_maps_support}"/>
-          <exclude name="src/sh/calaba/instrumentationbackend/actions/map/*.java" unless="${google_maps_support}"/>
-        </fileset> 
+				<fileset dir="instrumentation-backend" />
       </copy>
       <copy todir="${staging.dir}/libs">
         <fileset erroronmissingdir="false" dir="${env.ANDROID_HOME}/add-ons/addon-google_apis-google_inc_-${android.api.level}/libs"/>
@@ -77,7 +74,7 @@
 
     <target name="-compile">
       <antcall target="-stage" />
-      <javac 
+      <javac
 	       srcdir="${staging.dir}/src"
 	       destdir="${bin.dir}"
 	       verbose="${verbose}"
@@ -90,7 +87,7 @@
       </javac>
     </target>
 
-    
+
     <target name="package" depends="-check.preconditions">
       <antcall target="-compile" />
       <antcall target="-aapt" />
@@ -98,7 +95,7 @@
       <antcall target="-apk" />
     </target>
 
-    
+
     <target name="clean" description="clean up">
       <delete dir="${staging.dir}"/>
       <delete dir="${bin.dir}"/>

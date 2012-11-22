@@ -17,7 +17,7 @@ def print_usage
       prints more detailed help information.
     gen
       generate a features folder structure.
-    setup 
+    setup
       sets up a non-default keystore to use with this test project.
     build <apk>
       builds the test server that will be used when testing the app.
@@ -29,8 +29,6 @@ def print_usage
   <options> can be
     -v, --verbose
       Turns on verbose logging
-    --google-maps-support
-      Adds supports for Google Maps to the test server
 EOF
 end
 
