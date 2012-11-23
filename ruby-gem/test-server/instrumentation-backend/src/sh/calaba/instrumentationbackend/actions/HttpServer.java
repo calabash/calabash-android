@@ -1,6 +1,7 @@
 package sh.calaba.instrumentationbackend.actions;
 
 import java.io.*;
+import java.util.Map;
 import java.util.Properties;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
@@ -16,9 +17,12 @@ import android.view.View;
 import sh.calaba.instrumentationbackend.Command;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
+import sh.calaba.instrumentationbackend.query.QueryResult;
+import sh.calaba.instrumentationbackend.query.Query;
 import sh.calaba.org.codehaus.jackson.map.DeserializationConfig.Feature;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import android.util.Log;
+import sh.calaba.org.codehaus.jackson.type.TypeReference;
 
 public class HttpServer extends NanoHTTPD {
 	private static final String TAG = "InstrumentationBackend";
@@ -67,6 +71,17 @@ public class HttpServer extends NanoHTTPD {
         if (uri.endsWith("/ping")) {
             return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "pong");
 
+        } else if (uri.endsWith("/query")) {
+            try {
+                String commandString = params.getProperty("json");
+                ObjectMapper mapper = new ObjectMapper();
+                Map<String, String> command = mapper.readValue(commandString, new TypeReference<Map<String, String>>() {});
+                QueryResult result = new Query(command.get("query")).execute();
+                return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, result.asJson());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT, "Could not parse arguments as JSON");
+            }
         } else if (uri.endsWith("/kill")) {
             lock.lock();
             try {

@@ -96,14 +96,16 @@ module Operations
   end
 
   def query(uiquery, *args)
-    raise "Currently queries are only supported for webviews" unless uiquery.start_with? "webView"
-
-    uiquery.slice!(0, "webView".length)
-    if uiquery =~ /(css|xpath):\s*(.*)/
-      r = performAction("query", $1, $2)
-      JSON.parse(r["message"])
+    if uiquery.start_with? "webView"
+      uiquery.slice!(0, "webView".length)
+      if uiquery =~ /(css|xpath):\s*(.*)/
+        r = performAction("query", $1, $2)
+        JSON.parse(r["message"])
+      else
+       raise "Invalid query #{uiquery}"
+      end
     else
-     raise "Invalid query #{uiquery}"
+      JSON.parse(http("/query", {"query" => uiquery}))
     end
   end
 
@@ -380,7 +382,19 @@ module Operations
   end
 
   def touch(uiquery,options={})
-    ni
+    if uiquery.instance_of? String
+      elements = query(uiquery, options)
+      raise "No elements found" if elements.empty?
+      element = elements.first
+    else
+      element = uiquery
+    end
+
+    performAction("touch_coordinate", element["frame"]["x"], element["frame"]["y"])
+  end
+
+  def http(options, data=nil)
+    default_device.http(options, data)
   end
 
   def html(q)
@@ -489,11 +503,6 @@ module Operations
   def map( query, method_name, *method_args )
     ni
   end
-
-  def http(options, data=nil)
-    ni
-  end
-
 
   def url_for( verb )
     ni
