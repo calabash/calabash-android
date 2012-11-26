@@ -14,9 +14,4 @@
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
         android:targetPackage="sh.calaba" />
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
 </manifest>
