@@ -1,4 +1,4 @@
-0.4.1:
+0.3.5:
       No longer takes screenshots when perform_action fails.
       If you want to take screenshots when a scenario fails you can use a hook:
 
@@ -9,6 +9,10 @@
       end
 
       This hook is now part of the generated skeleton.
+
+      Upgraded to Robotium 3.6 to support api level 17.
+
+      Fixed mock location.
 
 
 0.3.4:
