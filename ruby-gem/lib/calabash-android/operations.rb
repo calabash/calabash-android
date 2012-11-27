@@ -151,13 +151,13 @@ module Operations
       cmd = "#{adb_command} install \"#{app_path}\""
       log "Installing: #{app_path}"
       result = `#{cmd}`
-      if result.include? "Success"
-        log "Success"
-      else
-        log "#Failure"
-        log "'#{cmd}' said:"
-        log result.strip
-        raise "Could not install app #{app_path}: #{result.strip}"
+      log result
+      pn = package_name(app_path)
+      succeeded = `#{adb_command} shell pm list packages`.include?("package:#{pn}")
+
+      unless succeeded
+        Cucumber.wants_to_quit = true
+        raise "#{pn} did not get installed. Aborting!"
       end
     end
 
@@ -283,6 +283,8 @@ module Operations
     end
 
     def start_test_server_in_background
+      raise "Will not start test server because of previous failures." if Cucumber.wants_to_quit
+
       cmd = "#{adb_command} shell am instrument -e target_package #{ENV["PACKAGE_NAME"]} -e main_activity #{ENV["MAIN_ACTIVITY"]} -e class sh.calaba.instrumentationbackend.InstrumentationBackend sh.calaba.android.test/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
       log "Starting test server using:"
       log cmd
