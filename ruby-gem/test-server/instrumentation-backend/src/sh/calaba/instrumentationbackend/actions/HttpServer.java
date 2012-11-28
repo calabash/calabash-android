@@ -1,14 +1,16 @@
 package sh.calaba.instrumentationbackend.actions;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
+import java.io.*;
 import java.util.Properties;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.view.View;
 import sh.calaba.instrumentationbackend.Command;
@@ -59,11 +61,11 @@ public class HttpServer extends NanoHTTPD {
 		super(7102, new File("/"));
 	}
 
-	public Response serve( String uri, String method, Properties header, Properties params, Properties files )
-	{
-		System.out.println("URI: " + uri);
-		if (uri.endsWith("/ping")) {
-			return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "pong");
+    public Response serve( String uri, String method, Properties header, Properties params, Properties files )
+    {
+        System.out.println("URI: " + uri);
+        if (uri.endsWith("/ping")) {
+            return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "pong");
 
         } else if (uri.endsWith("/kill")) {
             lock.lock();
@@ -83,16 +85,23 @@ public class HttpServer extends NanoHTTPD {
 
 
 		} else if (uri.endsWith("/screenshot")) {
-            Bitmap bitmap;
-            View rootView = getRootView();
-            rootView.setDrawingCacheEnabled(true);
-            rootView.buildDrawingCache(true);
-            bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
-            rootView.setDrawingCacheEnabled(false);
+            try {
+                Bitmap bitmap;
+                View rootView = getRootView();
+                rootView.setDrawingCacheEnabled(true);
+                rootView.buildDrawingCache(true);
+                bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+                rootView.setDrawingCacheEnabled(false);
 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-            return new NanoHTTPD.Response( HTTP_OK, "image/png", new ByteArrayInputStream(out.toByteArray()));
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                return new NanoHTTPD.Response( HTTP_OK, "image/png", new ByteArrayInputStream(out.toByteArray()));
+            } catch (Exception e) {
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                return new NanoHTTPD.Response( HTTP_INTERNALERROR, null, sw.toString());
+            }
         }
 		
         System.out.println("header: "+ header);
@@ -111,9 +120,12 @@ public class HttpServer extends NanoHTTPD {
     private View getRootView() {
         for ( int i = 0; i < 25; i++) {
             try {
-                View rootView = InstrumentationBackend.solo.getCurrentActivity().getWindow().getDecorView();
-                if (rootView != null) {
-                    return rootView;
+                View decorView = InstrumentationBackend.solo.getCurrentActivity().getWindow().getDecorView();
+                if (decorView != null) {
+                    View rootView = decorView.findViewById(android.R.id.content);
+                    if (rootView != null) {
+                        return rootView;
+                    }
                 }
                 System.out.println("Retry: " + i);
             
