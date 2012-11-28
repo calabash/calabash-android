@@ -166,6 +166,10 @@ module Operations
       log `#{adb_command} uninstall #{package_name}`
     end
 
+    def app_running?
+      `#{adb_command} shell ps`.include?(package_name(@app_path))
+    end
+
     def perform_action(action, *arguments)
       log "Action: #{action} - Params: #{arguments.join(', ')}"
 
@@ -173,7 +177,7 @@ module Operations
 
       Timeout.timeout(300) do
         begin
-          result = http("/", params)
+          result = http("/", params, {:read_timeout => 350})
         rescue Exception => e
           log "Error communicating with test server: #{e}"
           raise e
@@ -190,17 +194,19 @@ module Operations
       raise Exception, "Step timed out"
     end
 
-    def http(path, data = {})
-      retries = 0
+    def http(path, data = {}, options = {})
       begin
         http = Net::HTTP.new "127.0.0.1", @server_port
+        http.open_timeout = options[:open_timeout] if options[:open_timeout]
+        http.read_timeout = options[:read_timeout] if options[:read_timeout]
         resp = http.post(path, "#{data.to_json}", {"Content-Type" => "application/json;charset=utf-8"})
         resp.body
       rescue Exception => e
-        raise e if retries > 20
-        sleep 0.5
-        retries += 1
-        retry
+        if app_running?
+          raise e
+        else
+          raise "App no longer running"
+        end
       end
     end
 
@@ -290,11 +296,14 @@ module Operations
       log cmd
       raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
 
+      raise "App did not start" unless app_running?
+
       begin
         retriable :tries => 10, :interval => 3 do
             log "Checking if instrumentation backend is ready"
-            ready = http("/ready")
 
+            log "Is app running? #{app_running?}"
+            ready = http("/ready", {}, {:read_timeout => 1})
             if ready != "true"
               log "Instrumentation backend not yet ready"
               raise "Not ready"
