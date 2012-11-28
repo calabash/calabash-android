@@ -170,6 +170,12 @@ module Operations
       `#{adb_command} shell ps`.include?(package_name(@app_path))
     end
 
+    def keyguard_enabled?
+      dumpsys = `#{adb_command} shell dumpsys window windows`
+      #If a line containing mCurrentFocus and Keyguard exists the keyguard is enabled
+      dumpsys.lines.any? { |l| l.include?("mCurrentFocus") and l.include?("Keyguard")}
+    end
+
     def perform_action(action, *arguments)
       log "Action: #{action} - Params: #{arguments.join(', ')}"
 
@@ -286,10 +292,18 @@ module Operations
       log "Waking up device using:"
       log wake_up_cmd
       raise "Could not wake up the device" unless system(wake_up_cmd)
+
+      retriable :tries => 10, :interval => 1 do
+        raise "Could not remove the keyguard" if keyguard_enabled?
+      end
     end
 
     def start_test_server_in_background
       raise "Will not start test server because of previous failures." if Cucumber.wants_to_quit
+
+      if keyguard_enabled?
+        wake_up
+      end
 
       cmd = "#{adb_command} shell am instrument -e target_package #{ENV["PACKAGE_NAME"]} -e main_activity #{ENV["MAIN_ACTIVITY"]} -e class sh.calaba.instrumentationbackend.InstrumentationBackend sh.calaba.android.test/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
       log "Starting test server using:"

@@ -18,3 +18,18 @@ include Calabash::Android::Operations
 def embed(*args)
   puts "Embed is a Cucumber method and is not available in this console."
 end
+
+
+
+#Virker det her?
+module Calabash
+  module Android
+    module Operations
+      class Cucumber
+        def self.wants_to_quit
+          false
+        end
+      end
+    end
+  end
+end
