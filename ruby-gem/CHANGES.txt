@@ -1,3 +1,14 @@
+0.3.6:
+      Will fail if the keyguard cannot be disabled when starting the app.
+
+      If the app is not running calabash will now die instead of running around
+      like a serverless chicking.
+
+      On-device screenshots are still unstable but will no longer crash the app
+      if they fail.
+
+      Much better Cucumber output if the app is no longer running.
+
 0.3.5:
       No longer takes screenshots when perform_action fails.
       If you want to take screenshots when a scenario fails you can use a hook:
