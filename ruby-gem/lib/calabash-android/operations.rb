@@ -310,7 +310,9 @@ module Operations
       log cmd
       raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
 
-      raise "App did not start" unless app_running?
+      retriable :tries => 10, :interval => 1 do
+        raise "App did not start" unless app_running?
+      end
 
       begin
         retriable :tries => 10, :interval => 3 do
