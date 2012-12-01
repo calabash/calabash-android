@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Result {
-	private static Result successResult = new Result(true);
 	
     boolean success;
     String message;
@@ -62,7 +61,7 @@ public class Result {
     }
     
     public static Result successResult() {
-    	return successResult;
+    	return new Result(true);
     }
 
     public static Result failedResult() {
