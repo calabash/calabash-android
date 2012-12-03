@@ -13,7 +13,6 @@ module Calabash module Android
 
 module Operations
 
-
   def log(message)
     $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}" if (ARGV.include? "-v" or ARGV.include? "--verbose")
   end
@@ -55,6 +54,10 @@ module Operations
 
   def start_test_server_in_background
     default_device.start_test_server_in_background()
+  end
+
+  def clear_app_data
+    default_device.clear_app_data
   end
 
   def shutdown_test_server
@@ -356,9 +359,11 @@ module Operations
     def set_gps_coordinates(latitude, longitude)
       perform_action('set_gps_coordinates', latitude, longitude)
     end
+
+    def clear_app_data
+      perform_action 'clear_app_data'
+    end
   end
-
-
 
   def label(uiquery)
     ni
