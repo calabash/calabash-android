@@ -167,7 +167,7 @@ module Operations
     end
 
     def app_running?
-      `#{adb_command} shell ps`.include?(package_name(@app_path))
+      `#{adb_command} shell ps`.include?(ENV["PROCESS_NAME"] || package_name(@app_path))
     end
 
     def keyguard_enabled?
