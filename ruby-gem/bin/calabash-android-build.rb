@@ -1,4 +1,3 @@
-require 'zip/zip'
 def calabash_build(app)
   keystore = read_keystore_info()
 
@@ -23,34 +22,16 @@ def calabash_build(app)
 
       Zip::ZipFile.new("dummy.apk").extract("AndroidManifest.xml","customAndroidManifest.xml")
       Zip::ZipFile.open("TestServer.apk") do |zip_file|
-        zip_file.add("AndroidManifest.xml", "customAndroidManifest.xml")  
+        zip_file.add("AndroidManifest.xml", "customAndroidManifest.xml")
       end
     end
-    if is_windows?
-      jarsigner_path = "\"#{ENV["JAVA_HOME"]}/bin/jarsigner.exe\""
-    else
-      jarsigner_path = "jarsigner"
-    end
+    sign_apk("#{workspace_dir}/TestServer.apk", test_server_file_name)
+    begin
 
-    cmd = "#{jarsigner_path} -sigalg MD5withRSA -digestalg SHA1 -signedjar #{test_server_file_name} -storepass #{keystore["keystore_password"]} -keystore \"#{File.expand_path keystore["keystore_location"]}\" #{workspace_dir}/TestServer.apk #{keystore["keystore_alias"]}"           
-    unless system(cmd)
-      puts "jarsigner command: #{cmd}"
+    rescue Exception => e
+      log e
       raise "Could not sign test server"
     end
   end
   puts "Done signing the test server. Moved it to #{test_server_file_name}"
-end
-
-
-def read_keystore_info
-  if File.exist? ".calabash_settings"
-    JSON.parse(IO.read(".calabash_settings"))
-  else
-    {
-    "keystore_location" => "#{ENV["HOME"]}/.android/debug.keystore",
-    "keystore_password" => "android",
-    "keystore_alias" => "androiddebugkey",
-    "keystore_alias_password" => "android"
-    }
-  end
 end
