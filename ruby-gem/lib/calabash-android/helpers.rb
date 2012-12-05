@@ -38,31 +38,37 @@ def test_server_path(apk_file_path)
   "test_servers/#{checksum(apk_file_path)}_#{Calabash::Android::VERSION}.apk"
 end
 
+def resign_apk(app_path)
+  log "Resign apk"
+  #Delete META-INF/*
+  unsigned_path = Tempfile.new('unsigned.apk').path
+  FileUtils.cp(app_path, unsigned_path)
+
+  to_remove = Zip::ZipFile.foreach(unsigned_path).find_all { |e| /^META-INF\// =~ e.name}.collect &:name
+
+  Zip::ZipFile.open(unsigned_path) do |zip_file|
+    to_remove.each do |x|
+      log "Removing #{x}"
+      zip_file.remove x
+    end
+  end
+  sign_apk(unsigned_path, app_path)
+end
+
 def sign_apk(app_path, dest_path)
-  unaligned_path = Tempfile.new('unaligned.apk').path
   keystore = read_keystore_info()
 
   if is_windows?
     jarsigner_path = "\"#{ENV["JAVA_HOME"]}/bin/jarsigner.exe\""
-    zipalign_path = "\"#{ENV["ANDROID_HOME"]}/tools/zipalign.exe\""
   else
     jarsigner_path = "jarsigner"
-    zipalign_path = "\"#{ENV["ANDROID_HOME"]}/tools/zipalign\""
   end
 
-
-  cmd = "#{jarsigner_path} -sigalg MD5withRSA -digestalg SHA1 -signedjar #{unaligned_path} -storepass #{keystore["keystore_password"]} -keystore \"#{File.expand_path keystore["keystore_location"]}\" #{app_path} #{keystore["keystore_alias"]}"
+  cmd = "#{jarsigner_path} -sigalg MD5withRSA -digestalg SHA1 -signedjar #{dest_path} -storepass #{keystore["keystore_password"]} -keystore \"#{File.expand_path keystore["keystore_location"]}\" #{app_path} #{keystore["keystore_alias"]}"
   log cmd
   unless system(cmd)
     puts "jarsigner command: #{cmd}"
     raise "Could not sign app (#{app_path}"
-  end
-
-  cmd = "#{zipalign_path} 4 #{unaligned_path} #{dest_path}"
-  log cmd
-  unless system(cmd)
-    puts cmd
-    raise "Could not sign app. Zipalign failed"
   end
 end
 

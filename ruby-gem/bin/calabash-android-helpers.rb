@@ -19,6 +19,8 @@ def print_usage
       generate a features folder structure.
     setup
       sets up a non-default keystore to use with this test project.
+    resign <apk>
+      resigns the app with the currently configured keystore.
     build <apk>
       builds the test server that will be used when testing the app.
     run <apk>
