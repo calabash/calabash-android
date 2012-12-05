@@ -51,6 +51,9 @@ Find the datepicker by content description and changes the date.
     Then /^I enter "([^\"]*)" into input field number (\d+)$/ do |text, number|
 Enters the specified text into the input field with index `number`.
 
+    Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, view_id|
+Enters Text into the input field with id `view_id`.
+
     Then /^I enter "([^\"]*)" as "([^\"]*)"$/ do |text, target|
     Then /^I enter "([^\"]*)" into "([^\"]*)"$/ do |text, target|
 Enters the specified text into the input field that has a content desciption that matches the provided target.
