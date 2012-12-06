@@ -1,3 +1,12 @@
+0.3.7:
+      Added calabash-android resign command
+
+      Fixed bug: No longer reuses a single result for every success result
+
+      Will give the app a few seconds to get up and running before failing
+
+      Fixed skeleton app_life_cycle_hook so screenshots are now taken before the app is shut down
+
 0.3.6:
       Will fail if the keyguard cannot be disabled when starting the app.
 
