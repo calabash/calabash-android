@@ -19,14 +19,16 @@ public class ClearAppData extends InstrumentationTestRunner {
         }
 	}
 
-    private void delete(File file_or_directory) {
+    /** Deletes the file or all the files contained in a folder recursively. **/
+    private static void delete(File file_or_directory) {
         if (file_or_directory == null) {
             return;
         }
 
         if (file_or_directory.isDirectory()) {
-            if (file_or_directory.listFiles() != null) {
-                for(File f : file_or_directory.listFiles()) {
+            Files[] files = file_or_directory.listFiles();
+            if (files != null) {
+                for(File f : files) {
                     delete(f);
                 }
             }
