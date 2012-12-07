@@ -8,6 +8,8 @@ import java.io.File;
 
 import android.util.DisplayMetrics;
 import android.content.Context;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 
 /*
  *
@@ -99,6 +101,16 @@ public class ClearAppData implements Action {
       // Delete contents of app folder on external storage.
       final File externalApp = new File(externalCache.getParent());
       deleteDirectoryContents(externalApp);
+    }
+
+    // Delete accounts
+    final AccountManager manager = AccountManager.get(targetContext);
+    final Account[] accounts = manager.getAccounts();
+
+    for (Account account : accounts) {
+      try {
+        manager.removeAccount(account, null, null);
+      } catch (Exception e) {}
     }
 
 		return Result.successResult();
