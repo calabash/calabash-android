@@ -53,6 +53,10 @@ module Operations
     default_device.wake_up()
   end
 
+  def clear_app_data
+    default_device.clear_app_data
+  end
+
   def start_test_server_in_background
     default_device.start_test_server_in_background()
   end
@@ -296,6 +300,11 @@ module Operations
       retriable :tries => 10, :interval => 1 do
         raise "Could not remove the keyguard" if keyguard_enabled?
       end
+    end
+
+    def clear_app_data
+      cmd = "#{adb_command} shell am instrument sh.calaba.android.test/sh.calaba.instrumentationbackend.ClearAppData"
+      raise "Could not clear data" unless system(cmd)
     end
 
     def start_test_server_in_background
