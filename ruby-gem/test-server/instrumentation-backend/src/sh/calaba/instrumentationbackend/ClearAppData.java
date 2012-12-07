@@ -18,7 +18,9 @@ public class ClearAppData extends InstrumentationTestRunner {
             delete(cacheDir().getParentFile());
         }
 	}
-
+	
+    //If provided a file will delete it. 
+    //If provided a directory will recursively delete files but preserve directories
     private void delete(File file_or_directory) {
         if (file_or_directory == null) {
             return;
