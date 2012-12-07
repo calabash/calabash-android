@@ -43,8 +43,6 @@ public class Actions {
                     addAction(element);
                 }
             }
-            // Inject targetContext
-            ((ClearAppData)getActions().get("sh.calaba.instrumentationbackend.actions.delete.ClearAppData")).targetContext = targetContext;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -54,7 +52,11 @@ public class Actions {
     private void addAction(String className) throws Exception {
         Class action = Class.forName(className);
         if (isAction(action)) {
-            put((Action) action.newInstance());
+            final Action act = (Action) action.newInstance();
+            if (className.startsWith("sh.calaba.instrumentationbackend.actions.delete.ClearAppData")) {
+              ((ClearAppData)act).targetContext = targetContext;
+            }
+            put(act);
         }
     }
 
