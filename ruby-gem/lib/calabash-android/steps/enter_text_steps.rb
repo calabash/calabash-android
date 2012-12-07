@@ -18,6 +18,10 @@ Then /^I clear input field number (\d+)$/ do |number|
   performAction('clear_numbered_field',number)
 end
 
+Then /^I clear input field with id "([^\"]*)"$/ do |view_id|
+  performAction('clear_id_field', view_id)
+end
+
 Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, view_id|
   performAction('enter_text_into_id_field', text, view_id)
 end
