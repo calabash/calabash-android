@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import sh.calaba.instrumentationbackend.actions.delete.ClearAppData;
 import android.app.Instrumentation;
 import android.content.ComponentName;
 import android.content.Context;
@@ -51,7 +52,11 @@ public class Actions {
     private void addAction(String className) throws Exception {
         Class action = Class.forName(className);
         if (isAction(action)) {
-            put((Action) action.newInstance());
+            final Action act = (Action) action.newInstance();
+            if (className.startsWith("sh.calaba.instrumentationbackend.actions.delete.ClearAppData")) {
+              ((ClearAppData)act).targetContext = targetContext;
+            }
+            put(act);
         }
     }
 

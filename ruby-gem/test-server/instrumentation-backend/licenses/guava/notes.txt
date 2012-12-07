@@ -1,0 +1,6 @@
+Guava revision 8d3f84c2785acd666707d57d4f58090b670b8c7b is used.
+
+These methods are based on Guava sources.
+
+  deleteDirectoryContents
+  deleteRecursively
