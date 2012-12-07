@@ -80,11 +80,11 @@ elsif cmd == 'extract-manifest'
   puts manifest ARGV.first
   exit 0
 elsif cmd == 'resign'
-  unless File.exist? ARGV.first
+  unless File.exist?(File.expand_path(ARGV.first))
     puts "No such file #{ARGV.first}"
     exit 1
   end
-  resign_apk(ARGV.first)
+  resign_apk(File.expand_path(ARGV.first))
 
 elsif cmd == 'version'
   puts Calabash::Android::VERSION

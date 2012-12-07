@@ -39,20 +39,23 @@ def test_server_path(apk_file_path)
 end
 
 def resign_apk(app_path)
-  log "Resign apk"
-  #Delete META-INF/*
-  unsigned_path = Tempfile.new('unsigned.apk').path
-  FileUtils.cp(app_path, unsigned_path)
+  Dir.mktmpdir do |tmp_dir|
+    log "Resign apk"
+    unsigned_path = File.join(tmp_dir, 'unsigned.apk')
+    FileUtils.cp(app_path, unsigned_path)
 
-  to_remove = Zip::ZipFile.foreach(unsigned_path).find_all { |e| /^META-INF\// =~ e.name}.collect &:name
+    #Delete META-INF/*
+    to_remove = Zip::ZipFile.foreach(unsigned_path).find_all { |e| /^META-INF\// =~ e.name}.collect &:name
 
-  Zip::ZipFile.open(unsigned_path) do |zip_file|
-    to_remove.each do |x|
-      log "Removing #{x}"
-      zip_file.remove x
+    Zip::ZipFile.open(unsigned_path) do |zip_file|
+      to_remove.each do |x|
+        log "Removing #{x}"
+        zip_file.remove x
+      end
+      zip_file.commit
     end
+    sign_apk(unsigned_path, app_path)
   end
-  sign_apk(unsigned_path, app_path)
 end
 
 def sign_apk(app_path, dest_path)
