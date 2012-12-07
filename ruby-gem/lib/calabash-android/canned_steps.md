@@ -66,6 +66,9 @@ Finds a input field by index and blanks its value.
     Then /^I clear "([^\"]*)"$/ do |name|
 Finds a input field with matching content description and blanks its value.
 
+    Then /^I clear input field with id "([^\"]*)"$/ do |view_id|
+Finds the input field with id `view_id` and clears the text from it.
+
     Then /^I select "([^\"]*)" from "([^\"]*)"$/ do |item_text, spinner_content_description|
 Finds the Spinner by 'spinner_content_description' and selects the item with the matching 'item_text'
 
