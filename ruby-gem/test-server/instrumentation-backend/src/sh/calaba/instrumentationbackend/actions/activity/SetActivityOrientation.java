@@ -8,7 +8,7 @@ public class SetActivityOrientation implements Action {
 
     @Override
     public Result execute(String... args) {
-        if (args.length == 0) {
+        if (args == null || args.length == 0) {
             throw new IllegalArgumentException("No orientation provided. Use 'landscape' or 'portrait'");
         }
         String orientation = args[0].toLowerCase();
