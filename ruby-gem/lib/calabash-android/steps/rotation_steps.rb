@@ -5,4 +5,3 @@ end
 Then /^I rotate the device to portrait$/ do
   rotate_phone(0)
 end
-
