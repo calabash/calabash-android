@@ -90,7 +90,6 @@ module Operations
         end
       end
     rescue Exception => e
-      take_screenshot
       raise e
     end
   end
