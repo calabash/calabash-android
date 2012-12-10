@@ -390,7 +390,10 @@ module Operations
       element = uiquery
     end
 
-    performAction("touch_coordinate", element["frame"]["x"], element["frame"]["y"])
+
+    center_x = element["frame"]["x"] + element["frame"]["width"] / 2
+    center_y = element["frame"]["y"] + element["frame"]["height"] / 2
+    performAction("touch_coordinate", center_x, center_y)
   end
 
   def http(options, data=nil)
