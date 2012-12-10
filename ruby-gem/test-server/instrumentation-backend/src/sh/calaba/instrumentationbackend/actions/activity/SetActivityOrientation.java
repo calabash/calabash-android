@@ -13,14 +13,12 @@ public class SetActivityOrientation implements Action {
         }
         String orientation = args[0].toLowerCase();
 
-        if (orientation != "landscape" && orientation != "portrait") {
-            throw new IllegalArgumentException("Invalid orientation '" + orientation + "'. Use 'landscape' or 'portrait'");
-        }
-
-        if (orientation == "landscape") {
+        if (orientation.equals("landscape")) {
             InstrumentationBackend.solo.setActivityOrientation(0);
-        } else {
+        } else if(orientation.equals("portrait")) {
             InstrumentationBackend.solo.setActivityOrientation(1);
+        } else {
+            throw new IllegalArgumentException("Invalid orientation '" + orientation + "'. Use 'landscape' or 'portrait'");
         }
         // Wait 100ms for orientation change to happen.
         sleep(100);
