@@ -428,10 +428,6 @@ module Operations
     ni
   end
 
-  def set_activity_orientation(orientation)
-    performAction('set_orientation', orientation)
-  end
-
   def app_to_background(secs)
     ni
   end
