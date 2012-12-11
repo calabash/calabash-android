@@ -87,6 +87,38 @@ def read_keystore_info
   end
 end
 
+def fingerprint_from_keystore
+  keystore_info = read_keystore_info
+
+  fingerprints = `keytool -list -alias #{keystore_info["keystore_alias"]} -keystore #{keystore_info["keystore_location"]} -storepass #{keystore_info["keystore_password"]}`
+  m = fingerprints.scan(/MD5\):\s+((\h\h:){15}\h\h)/)
+  md5_fingerprint = m.last.first
+  log "MD5 fingerprint for #{keystore_info["keystore_location"]}: #{md5_fingerprint}"
+  md5_fingerprint
+end
+
+def fingerprint_from_apk(app_path)
+  Dir.mktmpdir do |tmp_dir|
+    Dir.chdir(tmp_dir) do
+      FileUtils.cp(app_path, "app.apk")
+      FileUtils.mkdir("META-INF")
+      Zip::ZipFile.foreach("app.apk") do |z|
+        z.extract if /^META-INF\/\w+.(RSA|rsa)/ =~ z.name
+      end
+      rsa_files = Dir["#{tmp_dir}/META-INF/*"]
+      raise "No RSA file found in META-INF. Cannot proceed." if rsa_files.empty?
+      raise "More than one RSA file found in META-INF. Cannot proceed." if rsa_files.length > 1
+
+      fingerprints = `keytool -printcert -file #{rsa_files.first}`
+      m = fingerprints.scan(/MD5:\s+((\h\h:){15}\h\h)/)
+      md5_fingerprint = m.last.first
+      log "MD5 fingerprint for signing cert (#{app_path}): #{md5_fingerprint}"
+
+      md5_fingerprint
+    end
+  end
+end
+
 def is_windows?
   require 'rbconfig'
   (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
