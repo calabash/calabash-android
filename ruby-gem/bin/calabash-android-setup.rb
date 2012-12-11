@@ -8,12 +8,11 @@ def calabash_setup
   @settings = {}
 
   puts "Please enter keystore information to use a custom keystore instead of the default"
-  
+
   ask_for_setting(:keystore_location, "Please enter keystore location")
   ask_for_setting(:keystore_password, "Please enter the password for the keystore")
   ask_for_setting(:keystore_alias, "Please enter the alias")
-  ask_for_setting(:keystore_alias_password, "Please enter the password for the alias")
-  
+
   open('.calabash_settings', 'w') do |f|
     f.puts @settings.to_json
   end

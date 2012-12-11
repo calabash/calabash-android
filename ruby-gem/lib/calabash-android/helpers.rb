@@ -83,7 +83,6 @@ def read_keystore_info
     "keystore_location" => "#{ENV["HOME"]}/.android/debug.keystore",
     "keystore_password" => "android",
     "keystore_alias" => "androiddebugkey",
-    "keystore_alias_password" => "android"
     }
   end
 end
