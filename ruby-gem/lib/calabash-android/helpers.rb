@@ -87,17 +87,37 @@ def read_keystore_info
   end
 end
 
+def sha1_fingerprint fingerprints
+  return nil if fingerprints.nil?
+  m = fingerprints.match(/SHA1\):\s+((?:\h\h:){19}\h\h)/)
+  return nil if m.nil? || m.length < 2
+  m[1]
+end
+
+def md5_fingerprint fingerprints
+  return nil if fingerprints.nil?
+  m = fingerprints.match(/MD5\):\s+((?:\h\h:){15}\h\h)/)
+  return nil if m.nil? || m.length < 2
+  m[1]
+end
+
 def fingerprint_from_keystore
   keystore_info = read_keystore_info
 
-  fingerprints = `keytool -list -alias #{keystore_info["keystore_alias"]} -keystore #{keystore_info["keystore_location"]} -storepass #{keystore_info["keystore_password"]}`
-  m = fingerprints.scan(/MD5\):\s+((\h\h:){15}\h\h)/)
-  md5_fingerprint = m.last.first
-  log "MD5 fingerprint for #{keystore_info["keystore_location"]}: #{md5_fingerprint}"
-  md5_fingerprint
+  command = "keytool -list -alias #{keystore_info["keystore_alias"]} -keystore #{keystore_info["keystore_location"]} -storepass #{keystore_info["keystore_password"]}"
+
+  fingerprints = `#{command}`
+  log 'fingerprint_from_keystore'
+  log command
+  log fingerprints
+
+  fingerprint = md5_fingerprint(fingerprints) || sha1_fingerprint(fingerprints)
+
+  log "fingerprint for #{keystore_info["keystore_location"]}: #{fingerprint}"
+  fingerprint
 end
 
-def fingerprint_from_apk(app_path)
+def fingerprint_from_apk_match_keystore(app_path)
   Dir.mktmpdir do |tmp_dir|
     Dir.chdir(tmp_dir) do
       FileUtils.cp(app_path, "app.apk")
@@ -109,12 +129,26 @@ def fingerprint_from_apk(app_path)
       raise "No RSA file found in META-INF. Cannot proceed." if rsa_files.empty?
       raise "More than one RSA file found in META-INF. Cannot proceed." if rsa_files.length > 1
 
-      fingerprints = `keytool -printcert -file #{rsa_files.first}`
-      m = fingerprints.scan(/MD5:\s+((\h\h:){15}\h\h)/)
-      md5_fingerprint = m.last.first
-      log "MD5 fingerprint for signing cert (#{app_path}): #{md5_fingerprint}"
+      command = "keytool -printcert -file #{rsa_files.first}"
 
-      md5_fingerprint
+      fingerprints = `#{command}`
+
+      log 'fingerprint_from_apk_match_keystore'
+      log command
+      log fingerprints
+
+      # keystore is MD5 or SHA1
+      keystore = fingerprint_from_keystore
+
+      # APK includes MD5, SHA1, SHA256
+      # SHA256 is not currently supported
+      apk_md5  = md5_fingerprint(fingerprints)
+      apk_sha1 = sha1_fingerprint(fingerprints)
+
+      log "MD5 fingerprint for signing cert (#{app_path}): #{apk_md5}"
+      log "SHA1 fingerprint for signing cert (#{app_path}): #{apk_sha1}"
+
+      return keystore == apk_md5 || keystore == apk_sha1
     end
   end
 end

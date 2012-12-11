@@ -1,11 +1,9 @@
 def calabash_build(app)
   keystore = read_keystore_info()
-  if fingerprint_from_keystore != fingerprint_from_apk(app)
+  if fingerprint_from_apk_match_keystore(app)
     puts "#{app} is not signed with the configured keystore '#{keystore["keystore_location"]}' Aborting!"
     exit 1
   end
-
-
 
   test_server_file_name = test_server_path(app)
   FileUtils.mkdir_p File.dirname(test_server_file_name) unless File.exist? File.dirname(test_server_file_name)
