@@ -3,6 +3,8 @@ package sh.calaba.instrumentationbackend;
 import android.content.Context;
 import android.os.Bundle;
 import android.test.InstrumentationTestRunner;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
 
 import java.io.File;
@@ -17,8 +19,22 @@ public class ClearAppData extends InstrumentationTestRunner {
         if (cacheDir() != null) {
             delete(cacheDir().getParentFile());
         }
+        try {
+            final AccountManager manager = AccountManager.get(getTargetContext());
+            final Account[] accounts = manager.getAccounts();
+
+            for (Account account : accounts) {
+                try {
+                    manager.removeAccount(account, null, null);
+                } catch (Exception e) {
+                    System.out.println("Unable to remove " + account.name + " of type " + account.type);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error removing accounts");
+        }
 	}
-	
+
     //If provided a file will delete it. 
     //If provided a directory will recursively delete files but preserve directories
     private void delete(File file_or_directory) {
