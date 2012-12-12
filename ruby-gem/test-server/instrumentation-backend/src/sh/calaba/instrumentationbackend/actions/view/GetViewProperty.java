@@ -23,13 +23,7 @@ public class GetViewProperty extends WaitForViewById implements Action {
         try {
         	View view = getViewById(viewId, 60000);
         	if( view != null ) {
-//        		Result result = new Result(true);
-//        		
-//        		String propertyName = args[1].toLowerCase();
-//        		String value = getPropertyValue(propertyName, view, args);
-//        		result.setMessage( value );
-        		
-        		String propertyName = args[1].toLowerCase();
+        		String propertyName = args[1];
         		return getPropertyValue(propertyName, view, args);
         	} else {
         		return new Result(false, "Timed out while waiting for view with id:'" + viewId + "'");
