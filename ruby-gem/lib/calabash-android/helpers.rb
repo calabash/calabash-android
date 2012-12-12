@@ -109,7 +109,7 @@ def fingerprint_from_apk(app_path)
       raise "No RSA file found in META-INF. Cannot proceed." if rsa_files.empty?
       raise "More than one RSA file found in META-INF. Cannot proceed." if rsa_files.length > 1
 
-      fingerprints = `keytool -printcert -file #{rsa_files.first}`
+      fingerprints = `keytool -v -printcert -file #{rsa_files.first}`
       m = fingerprints.scan(/MD5:\s+((\h\h:){15}\h\h)/)
       md5_fingerprint = m.last.first
       log "MD5 fingerprint for signing cert (#{app_path}): #{md5_fingerprint}"
