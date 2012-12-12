@@ -89,11 +89,9 @@ end
 
 def fingerprint_from_keystore
   keystore_info = read_keystore_info
-
-  fingerprints = `keytool -list -alias #{keystore_info["keystore_alias"]} -keystore #{keystore_info["keystore_location"]} -storepass #{keystore_info["keystore_password"]}`
-  m = fingerprints.scan(/MD5\):\s+((\h\h:){15}\h\h)/)
-  md5_fingerprint = m.last.first
-  log "MD5 fingerprint for #{keystore_info["keystore_location"]}: #{md5_fingerprint}"
+  fingerprints = `keytool -v -list -alias #{keystore_info["keystore_alias"]} -keystore #{keystore_info["keystore_location"]} -storepass #{keystore_info["keystore_password"]}`
+  md5_fingerprint = extract_md5_fingerprint(fingerprints)
+  log "MD5 fingerprint for keystore (#{keystore_info["keystore_location"]}): #{md5_fingerprint}"
   md5_fingerprint
 end
 
@@ -110,13 +108,17 @@ def fingerprint_from_apk(app_path)
       raise "More than one RSA file found in META-INF. Cannot proceed." if rsa_files.length > 1
 
       fingerprints = `keytool -v -printcert -file #{rsa_files.first}`
-      m = fingerprints.scan(/MD5:\s+((\h\h:){15}\h\h)/)
-      md5_fingerprint = m.last.first
+      md5_fingerprint = extract_md5_fingerprint(fingerprints)
       log "MD5 fingerprint for signing cert (#{app_path}): #{md5_fingerprint}"
-
       md5_fingerprint
     end
   end
+end
+
+def extract_md5_fingerprint(fingerprints)
+  m = fingerprints.scan(/MD5:\s+((\h\h:){15}\h\h)/)
+  raise "No MD5 fingerprint found:\n #{fingerprints}" unless m
+  m.last.first
 end
 
 def is_windows?
