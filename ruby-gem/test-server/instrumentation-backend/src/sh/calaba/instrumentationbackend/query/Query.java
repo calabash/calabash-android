@@ -33,7 +33,7 @@ public class Query {
             }
 
             if (queryString != null) {
-                if (!queryString.isEmpty()) {
+                if (!queryString.trim().equals("")) {
                     if (!queryString.equalsIgnoreCase(v.getClass().getSimpleName())) {
                         continue;
                     }

@@ -33,6 +33,15 @@
 
 
      <target name="test" depends="compile">
+         <javac 
+            sourcepath="" 
+            srcdir="${test.dir}"
+            classpathref="classpath"
+            includeantruntime="false"
+			destdir="${build.dir}" >
+			    <include name="sh/calaba/instrumentationbackend/query/**/*.java"/>
+			     
+			  </javac>
         <junit showoutput="true" >
             <classpath>
                 <path refid="classpath"/>  
