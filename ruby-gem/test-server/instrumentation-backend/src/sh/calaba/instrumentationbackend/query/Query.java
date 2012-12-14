@@ -1,84 +1,52 @@
 package sh.calaba.instrumentationbackend.query;
 
-import android.content.res.Resources;
-import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.TextView;
-import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import static sh.calaba.instrumentationbackend.InstrumentationBackend.viewFetcher;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-import static sh.calaba.instrumentationbackend.InstrumentationBackend.*;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryEvaluator;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
+import android.view.View;
 
 public class Query {
 
     private String queryString;
+	@SuppressWarnings("rawtypes")
+	private List arguments;
 
-    public Query(String queryString) {
-        System.out.println("CREATED QUERY: " + queryString);
+    public Query(String queryString) {        
         this.queryString = queryString;
+        this.arguments = Collections.EMPTY_LIST;
+        if (this.queryString == null || this.queryString.trim().equals("")) 
+        {
+        	throw new IllegalArgumentException("Illegal query: "+this.queryString);
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+	public Query(String queryString,List args) {
+        this(queryString);
+        this.arguments = args;
     }
 
 
-    public QueryResult execute() {
-        List<Map<?,?>> result = new ArrayList<Map<?, ?>>();
-        for (View v : allVisibleViews()) {
-
-            if (!v.isShown() ) {
-                continue;
+    @SuppressWarnings({"unchecked", "rawtypes" })
+	public QueryResult execute() {
+        List result = new ArrayList();
+        List<View> all = rootViews();
+                
+        List queryResults = UIQueryEvaluator.evaluateQueryWithOptions(this.queryString, all, this.arguments);
+                     
+        for (Object v : queryResults) {
+            if (UIQueryUtils.isVisible(v)) {
+            	System.out.println("Query result: "+v);
+            	result.add(ViewMapper.extractDataFromView(v));
             }
-
-            if (queryString != null) {
-                if (!queryString.isEmpty()) {
-                    if (!queryString.equalsIgnoreCase(v.getClass().getSimpleName())) {
-                        continue;
-                    }
-                }
-            }
-
-            System.out.println(v.getClass().getSimpleName().toString());
-            Map view = new HashMap();
-            view.put("class", v.getClass().getSimpleName());
-            view.put("description", v.toString());
-            view.put("contentDescription", v.getContentDescription());
-            view.put("enabled", v.isEnabled());
-            String id = null;
-            try {
-                id = InstrumentationBackend.solo.getCurrentActivity().getResources().getResourceEntryName(v.getId());
-            } catch (Resources.NotFoundException e) {
-                System.out.println("Resource not found for " + v.getId() + ". Moving on.");
-            }
-            view.put("id", id);
-
-            Map frame = new HashMap();
-            int[] location = new int[2];
-            v.getLocationOnScreen(location);
-
-            frame.put("x", location[0]);
-            frame.put("y", location[1]);
-            frame.put("width", v.getWidth());
-            frame.put("height", v.getHeight());
-
-            view.put("frame", frame);
-
-            if (v instanceof Button) {
-                Button b = (Button)v;
-                view.put("text", b.getText().toString());
-            }
-            if (v instanceof CheckBox) {
-                CheckBox c = (CheckBox)v;
-                view.put("checked", c.isChecked());
-            }
-            if (v instanceof TextView) {
-                TextView t = (TextView)v;
-                view.put("text", t.getText().toString());
-            }
-
-            result.add(view);
+            
         }
         return new QueryResult(result);
     }
@@ -86,5 +54,16 @@ public class Query {
 
     public List<View> allVisibleViews() {
         return viewFetcher.getAllViews(false);
+    }
+
+    public List<View> rootViews() {
+    	Set<View> parents = new HashSet<View>(8);
+    	for (View v : allVisibleViews()) 
+    	{
+    		parents.add(viewFetcher.getTopParent(v));
+    	}
+    	List<View> results = new ArrayList<View>();
+    	results.addAll(parents);
+    	return results;
     }
 }

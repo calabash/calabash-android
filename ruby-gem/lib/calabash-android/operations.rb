@@ -104,7 +104,10 @@ module Operations
        raise "Invalid query #{uiquery}"
       end
     else
-      JSON.parse(http("/query", {"query" => uiquery}))
+      arguments = [*args]
+      operation = {"method_name"=>"query", "arguments" => arguments}
+      data = {"query" => uiquery, "operation" => operation}
+      JSON.parse(http("/map",data))
     end
   end
 
@@ -380,9 +383,9 @@ module Operations
     raise(msg)
   end
 
-  def touch(uiquery,options={})
+  def touch(uiquery,*args)
     if uiquery.instance_of? String
-      elements = query(uiquery, options)
+      elements = query(uiquery, *args)
       raise "No elements found" if elements.empty?
       element = elements.first
     else

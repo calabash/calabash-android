@@ -1,156 +1,195 @@
 package sh.calaba.instrumentationbackend.actions;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.view.View;
 import sh.calaba.instrumentationbackend.Command;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
-import sh.calaba.instrumentationbackend.query.QueryResult;
 import sh.calaba.instrumentationbackend.query.Query;
+import sh.calaba.instrumentationbackend.query.QueryResult;
 import sh.calaba.org.codehaus.jackson.map.DeserializationConfig.Feature;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
-import android.util.Log;
 import sh.calaba.org.codehaus.jackson.type.TypeReference;
+import android.graphics.Bitmap;
+import android.util.Log;
+import android.view.View;
 
 public class HttpServer extends NanoHTTPD {
 	private static final String TAG = "InstrumentationBackend";
-    private boolean running = true;
-    private boolean ready = false;
+	private boolean running = true;
+	private boolean ready = false;
 
-    private final Lock lock = new ReentrantLock();
-    private final Condition shutdownCondition = lock.newCondition();
+	private final Lock lock = new ReentrantLock();
+	private final Condition shutdownCondition = lock.newCondition();
 
 	private final ObjectMapper mapper = createJsonMapper();
 
-    private static HttpServer instance;
+	private static HttpServer instance;
 
-    /**
-     * Creates and returns the singleton instance for HttpServer.
-     *
-     * Can only be called once. Otherwise, you'll get an IllegalStateException.
-     */
-    public synchronized static HttpServer instantiate() {
-        if(instance != null) {
-            throw new IllegalStateException("Can only instantiate once!");
-        }
-        instance = new HttpServer();
-        return instance;
-    }
+	/**
+	 * Creates and returns the singleton instance for HttpServer.
+	 * 
+	 * Can only be called once. Otherwise, you'll get an IllegalStateException.
+	 */
+	public synchronized static HttpServer instantiate() {
+		if (instance != null) {
+			throw new IllegalStateException("Can only instantiate once!");
+		}
+		instance = new HttpServer();
+		return instance;
+	}
 
-    /**
-     * Returns the singleton instance for HttpServer.
-     *
-     * If {@link #instantiate()} hasn't already been called, an IllegalStateException is thrown.
-     */
-    public synchronized static HttpServer getInstance() {
-        if(instance == null) {
-            throw new IllegalStateException("Must be initialized!");
-        }
-        return instance;
-    }
+	/**
+	 * Returns the singleton instance for HttpServer.
+	 * 
+	 * If {@link #instantiate()} hasn't already been called, an
+	 * IllegalStateException is thrown.
+	 */
+	public synchronized static HttpServer getInstance() {
+		if (instance == null) {
+			throw new IllegalStateException("Must be initialized!");
+		}
+		return instance;
+	}
 
 	private HttpServer() {
 		super(7102, new File("/"));
 	}
 
-    public Response serve( String uri, String method, Properties header, Properties params, Properties files )
-    {
-        System.out.println("URI: " + uri);
-        if (uri.endsWith("/ping")) {
-            return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "pong");
+	@SuppressWarnings("rawtypes")
+	public Response serve(String uri, String method, Properties header,
+			Properties params, Properties files) {
+		System.out.println("URI: " + uri);
+		if (uri.endsWith("/ping")) {
+			return new NanoHTTPD.Response(HTTP_OK, MIME_HTML, "pong");
 
-        } else if (uri.endsWith("/query")) {
-            try {
-                String commandString = params.getProperty("json");
-                ObjectMapper mapper = new ObjectMapper();
-                Map<String, String> command = mapper.readValue(commandString, new TypeReference<Map<String, String>>() {});
-                QueryResult result = new Query(command.get("query")).execute();
-                return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, result.asJson());
-            } catch (IOException e) {
-                e.printStackTrace();
-                return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT, "Could not parse arguments as JSON");
-            }
-        } else if (uri.endsWith("/kill")) {
-            lock.lock();
-            try {
-                running = false;
-                System.out.println("Stopping test server");
-                stop();
+		} else if (uri.endsWith("/map")) {
+			try {
+				String commandString = params.getProperty("json");
+				ObjectMapper mapper = new ObjectMapper();
+				Map command = mapper.readValue(commandString, Map.class);
+				
+				String uiQuery = (String) command.get("query");
+				Map op = (Map) command.get("operation");
+				String methodName = (String) op.get("method_name");
+				List arguments = (List) op.get("arguments");
+				
+				
+				
+				
 
-                shutdownCondition.signal();
-                return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, "Affirmative!");
-            } finally {
-                lock.unlock();
-            }
+				System.out.println(methodName);
+				System.out.println(uiQuery);
+				System.out.println(arguments);
+				
+				QueryResult queryResult = new Query(uiQuery,arguments).execute();
+				
 
-        } else if (uri.endsWith("/ready")) {
-            return new Response(HTTP_OK, MIME_HTML, Boolean.toString(ready));
+				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
+						queryResult.asJson());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
+		} else if (uri.endsWith("/query")) {
+			try {
+				String commandString = params.getProperty("json");
+				ObjectMapper mapper = new ObjectMapper();
+				Map<String, String> command = mapper.readValue(commandString,
+						new TypeReference<Map<String, String>>() {
+						});
+				QueryResult result = new Query(command.get("query")).execute();
+				return new NanoHTTPD.Response(HTTP_OK, MIME_HTML,
+						result.asJson());
+			} catch (IOException e) {
+				e.printStackTrace();
+				return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT,
+						"Could not parse arguments as JSON");
+			}
+		} else if (uri.endsWith("/kill")) {
+			lock.lock();
+			try {
+				running = false;
+				System.out.println("Stopping test server");
+				stop();
+
+				shutdownCondition.signal();
+				return new NanoHTTPD.Response(HTTP_OK, MIME_HTML,
+						"Affirmative!");
+			} finally {
+				lock.unlock();
+			}
+
+		} else if (uri.endsWith("/ready")) {
+			return new Response(HTTP_OK, MIME_HTML, Boolean.toString(ready));
 
 		} else if (uri.endsWith("/screenshot")) {
-            try {
-                Bitmap bitmap;
-                View rootView = getRootView();
-                rootView.setDrawingCacheEnabled(true);
-                rootView.buildDrawingCache(true);
-                bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
-                rootView.setDrawingCacheEnabled(false);
+			try {
+				Bitmap bitmap;
+				View rootView = getRootView();
+				rootView.setDrawingCacheEnabled(true);
+				rootView.buildDrawingCache(true);
+				bitmap = Bitmap.createBitmap(rootView.getDrawingCache());
+				rootView.setDrawingCacheEnabled(false);
 
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-                return new NanoHTTPD.Response( HTTP_OK, "image/png", new ByteArrayInputStream(out.toByteArray()));
-            } catch (Exception e) {
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-                return new NanoHTTPD.Response( HTTP_INTERNALERROR, null, sw.toString());
-            }
-        }
-		
-        System.out.println("header: "+ header);
-        System.out.println("params: "+ params);
-        System.out.println("files: "+ files);
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+				return new NanoHTTPD.Response(HTTP_OK, "image/png",
+						new ByteArrayInputStream(out.toByteArray()));
+			} catch (Exception e) {
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				return new NanoHTTPD.Response(HTTP_INTERNALERROR, null,
+						sw.toString());
+			}
+		}
 
+		System.out.println("header: " + header);
+		System.out.println("params: " + params);
+		System.out.println("files: " + files);
 
-        String commandString = params.getProperty("json");
-		System.out.println("command: "+ commandString);
+		String commandString = params.getProperty("json");
+		System.out.println("command: " + commandString);
 		String result = toJson(runCommand(commandString));
 		System.out.println("result:" + result);
-		
-		return new NanoHTTPD.Response( HTTP_OK, MIME_HTML, result);
+
+		return new NanoHTTPD.Response(HTTP_OK, MIME_HTML, result);
 	}
 
-    private View getRootView() {
-        for ( int i = 0; i < 25; i++) {
-            try {
-                View decorView = InstrumentationBackend.solo.getCurrentActivity().getWindow().getDecorView();
-                if (decorView != null) {
-                    View rootView = decorView.findViewById(android.R.id.content);
-                    if (rootView != null) {
-                        return rootView;
-                    }
-                }
-                System.out.println("Retry: " + i);
-            
-                Thread.sleep(200);
-            } catch (Exception e) {
-            }
-        }
-        
-        throw new RuntimeException("Could not find any views");
-    }
+	private View getRootView() {
+		for (int i = 0; i < 25; i++) {
+			try {
+				View decorView = InstrumentationBackend.solo
+						.getCurrentActivity().getWindow().getDecorView();
+				if (decorView != null) {
+					View rootView = decorView
+							.findViewById(android.R.id.content);
+					if (rootView != null) {
+						return rootView;
+					}
+				}
+				System.out.println("Retry: " + i);
+
+				Thread.sleep(200);
+			} catch (Exception e) {
+			}
+		}
+
+		throw new RuntimeException("Could not find any views");
+	}
 
 	private ObjectMapper createJsonMapper() {
 		ObjectMapper mapper = new ObjectMapper();
@@ -177,22 +216,22 @@ public class HttpServer extends NanoHTTPD {
 		}
 	}
 
-    public void waitUntilShutdown() throws InterruptedException {
-        lock.lock();
-        try {
-            while(running) {
-                shutdownCondition.await();
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
+	public void waitUntilShutdown() throws InterruptedException {
+		lock.lock();
+		try {
+			while (running) {
+				shutdownCondition.await();
+			}
+		} finally {
+			lock.unlock();
+		}
+	}
 
 	public static void log(String message) {
 		Log.i(TAG, message);
 	}
 
-    public void setReady() {
-        ready = true;
-    }
+	public void setReady() {
+		ready = true;
+	}
 }

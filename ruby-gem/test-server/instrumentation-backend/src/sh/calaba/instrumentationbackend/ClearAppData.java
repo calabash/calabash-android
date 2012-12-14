@@ -1,14 +1,13 @@
 package sh.calaba.instrumentationbackend;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.test.InstrumentationTestRunner;
+import java.io.File;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import sh.calaba.instrumentationbackend.actions.HttpServer;
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.test.InstrumentationTestRunner;
 
-import java.io.File;
-import java.lang.reflect.Method;
 
 public class ClearAppData extends InstrumentationTestRunner {
 	@Override
@@ -52,8 +51,8 @@ public class ClearAppData extends InstrumentationTestRunner {
             file_or_directory.delete();
         }
     }
-
-    private File externalCacheDir() {
+    
+	private File externalCacheDir() { 
         return getTargetContext().getExternalCacheDir();
     }
 
