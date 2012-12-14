@@ -18,8 +18,10 @@ public class ViewMapper {
 		View v = (View) obj;
 		Map data = new HashMap();
 		data.put("class", v.getClass().getSimpleName());
+		data.put("qualified_class", v.getClass().getName());
 		data.put("description", v.toString());
-		data.put("contentDescription", v.getContentDescription());
+		CharSequence description = v.getContentDescription();
+		data.put("contentDescription", description != null ? description.toString() : null);
 		data.put("enabled", v.isEnabled());
 		String id = null;
 		try {

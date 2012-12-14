@@ -124,8 +124,7 @@ public class UIQueryEvaluator {
 
 		List currentResult = inputViews;
 		UIQueryDirection currentDirection = UIQueryDirection.DESCENDANT;
-		for (UIQueryAST step : queryPath) {
-			System.out.println(step);
+		for (UIQueryAST step : queryPath) {			
 			if (isDirection(step)) {
 				currentDirection = directionFromAst(step);
 			} else {

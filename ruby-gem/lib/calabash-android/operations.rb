@@ -383,9 +383,9 @@ module Operations
     raise(msg)
   end
 
-  def touch(uiquery,options={})
+  def touch(uiquery,*args)
     if uiquery.instance_of? String
-      elements = query(uiquery, options)
+      elements = query(uiquery, *args)
       raise "No elements found" if elements.empty?
       element = elements.first
     else

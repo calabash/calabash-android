@@ -1,4 +1,4 @@
-// $ANTLR 3.4 antlr/UIQuery.g 2012-12-11 22:53:48
+// $ANTLR 3.4 antlr/UIQuery.g 2012-12-14 14:03:36
 
     package sh.calaba.instrumentationbackend.query.antlr;
 
@@ -11,16 +11,18 @@ import java.util.ArrayList;
 @SuppressWarnings({"all", "warnings", "unchecked"})
 public class UIQueryLexer extends Lexer {
     public static final int EOF=-1;
-    public static final int ESC_SEQ=4;
-    public static final int FILTER_COLON=5;
-    public static final int HEX_DIGIT=6;
-    public static final int INT=7;
-    public static final int NAME=8;
-    public static final int OCTAL_ESC=9;
-    public static final int QUALIFIED_NAME=10;
-    public static final int STRING=11;
-    public static final int UNICODE_ESC=12;
-    public static final int WHITE=13;
+    public static final int BOOL=4;
+    public static final int ESC_SEQ=5;
+    public static final int FILTER_COLON=6;
+    public static final int HEX_DIGIT=7;
+    public static final int INT=8;
+    public static final int NAME=9;
+    public static final int NIL=10;
+    public static final int OCTAL_ESC=11;
+    public static final int QUALIFIED_NAME=12;
+    public static final int STRING=13;
+    public static final int UNICODE_ESC=14;
+    public static final int WHITE=15;
 
     // delegates
     // delegators
@@ -114,90 +116,27 @@ public class UIQueryLexer extends Lexer {
     }
     // $ANTLR end "FILTER_COLON"
 
-    // $ANTLR start "NAME"
-    public final void mNAME() throws RecognitionException {
-        try {
-            int _type = NAME;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:32:7: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
-            // antlr/UIQuery.g:32:9: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
-            {
-            if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
-                input.consume();
-            }
-            else {
-                MismatchedSetException mse = new MismatchedSetException(null,input);
-                recover(mse);
-                throw mse;
-            }
-
-
-            // antlr/UIQuery.g:32:33: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
-            loop2:
-            do {
-                int alt2=2;
-                int LA2_0 = input.LA(1);
-
-                if ( ((LA2_0 >= '0' && LA2_0 <= '9')||(LA2_0 >= 'A' && LA2_0 <= 'Z')||LA2_0=='_'||(LA2_0 >= 'a' && LA2_0 <= 'z')) ) {
-                    alt2=1;
-                }
-
-
-                switch (alt2) {
-            	case 1 :
-            	    // antlr/UIQuery.g:
-            	    {
-            	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
-            	        input.consume();
-            	    }
-            	    else {
-            	        MismatchedSetException mse = new MismatchedSetException(null,input);
-            	        recover(mse);
-            	        throw mse;
-            	    }
-
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop2;
-                }
-            } while (true);
-
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        	// do for sure before leaving
-        }
-    }
-    // $ANTLR end "NAME"
-
     // $ANTLR start "INT"
     public final void mINT() throws RecognitionException {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:35:5: ( ( '0' .. '9' )+ )
-            // antlr/UIQuery.g:35:7: ( '0' .. '9' )+
+            // antlr/UIQuery.g:33:5: ( ( '0' .. '9' )+ )
+            // antlr/UIQuery.g:33:7: ( '0' .. '9' )+
             {
-            // antlr/UIQuery.g:35:7: ( '0' .. '9' )+
-            int cnt3=0;
-            loop3:
+            // antlr/UIQuery.g:33:7: ( '0' .. '9' )+
+            int cnt2=0;
+            loop2:
             do {
-                int alt3=2;
-                int LA3_0 = input.LA(1);
+                int alt2=2;
+                int LA2_0 = input.LA(1);
 
-                if ( ((LA3_0 >= '0' && LA3_0 <= '9')) ) {
-                    alt3=1;
+                if ( ((LA2_0 >= '0' && LA2_0 <= '9')) ) {
+                    alt2=1;
                 }
 
 
-                switch (alt3) {
+                switch (alt2) {
             	case 1 :
             	    // antlr/UIQuery.g:
             	    {
@@ -215,12 +154,12 @@ public class UIQueryLexer extends Lexer {
             	    break;
 
             	default :
-            	    if ( cnt3 >= 1 ) break loop3;
+            	    if ( cnt2 >= 1 ) break loop2;
                         EarlyExitException eee =
-                            new EarlyExitException(3, input);
+                            new EarlyExitException(2, input);
                         throw eee;
                 }
-                cnt3++;
+                cnt2++;
             } while (true);
 
 
@@ -235,42 +174,220 @@ public class UIQueryLexer extends Lexer {
     }
     // $ANTLR end "INT"
 
+    // $ANTLR start "BOOL"
+    public final void mBOOL() throws RecognitionException {
+        try {
+            int _type = BOOL;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // antlr/UIQuery.g:36:6: ( 'true' | 'false' )
+            int alt3=2;
+            int LA3_0 = input.LA(1);
+
+            if ( (LA3_0=='t') ) {
+                alt3=1;
+            }
+            else if ( (LA3_0=='f') ) {
+                alt3=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 3, 0, input);
+
+                throw nvae;
+
+            }
+            switch (alt3) {
+                case 1 :
+                    // antlr/UIQuery.g:36:8: 'true'
+                    {
+                    match("true"); 
+
+
+
+                    }
+                    break;
+                case 2 :
+                    // antlr/UIQuery.g:36:17: 'false'
+                    {
+                    match("false"); 
+
+
+
+                    }
+                    break;
+
+            }
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "BOOL"
+
+    // $ANTLR start "NIL"
+    public final void mNIL() throws RecognitionException {
+        try {
+            int _type = NIL;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // antlr/UIQuery.g:39:5: ( 'nil' | 'null' )
+            int alt4=2;
+            int LA4_0 = input.LA(1);
+
+            if ( (LA4_0=='n') ) {
+                int LA4_1 = input.LA(2);
+
+                if ( (LA4_1=='i') ) {
+                    alt4=1;
+                }
+                else if ( (LA4_1=='u') ) {
+                    alt4=2;
+                }
+                else {
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 4, 1, input);
+
+                    throw nvae;
+
+                }
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 4, 0, input);
+
+                throw nvae;
+
+            }
+            switch (alt4) {
+                case 1 :
+                    // antlr/UIQuery.g:39:7: 'nil'
+                    {
+                    match("nil"); 
+
+
+
+                    }
+                    break;
+                case 2 :
+                    // antlr/UIQuery.g:39:15: 'null'
+                    {
+                    match("null"); 
+
+
+
+                    }
+                    break;
+
+            }
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "NIL"
+
+    // $ANTLR start "NAME"
+    public final void mNAME() throws RecognitionException {
+        try {
+            int _type = NAME;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // antlr/UIQuery.g:42:7: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
+            // antlr/UIQuery.g:42:9: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            {
+            if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
+                input.consume();
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;
+            }
+
+
+            // antlr/UIQuery.g:42:33: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            loop5:
+            do {
+                int alt5=2;
+                int LA5_0 = input.LA(1);
+
+                if ( ((LA5_0 >= '0' && LA5_0 <= '9')||(LA5_0 >= 'A' && LA5_0 <= 'Z')||LA5_0=='_'||(LA5_0 >= 'a' && LA5_0 <= 'z')) ) {
+                    alt5=1;
+                }
+
+
+                switch (alt5) {
+            	case 1 :
+            	    // antlr/UIQuery.g:
+            	    {
+            	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
+            	        input.consume();
+            	    }
+            	    else {
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;
+            	    }
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop5;
+                }
+            } while (true);
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "NAME"
+
     // $ANTLR start "STRING"
     public final void mSTRING() throws RecognitionException {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:39:5: ( '\\'' ( ESC_SEQ |~ ( '\\\\' | '\"' ) )* '\\'' )
-            // antlr/UIQuery.g:39:8: '\\'' ( ESC_SEQ |~ ( '\\\\' | '\"' ) )* '\\''
+            // antlr/UIQuery.g:46:5: ( '\\'' ( ESC_SEQ |~ ( '\\\\' | '\"' ) )* '\\'' )
+            // antlr/UIQuery.g:46:8: '\\'' ( ESC_SEQ |~ ( '\\\\' | '\"' ) )* '\\''
             {
             match('\''); 
 
-            // antlr/UIQuery.g:39:13: ( ESC_SEQ |~ ( '\\\\' | '\"' ) )*
-            loop4:
+            // antlr/UIQuery.g:46:13: ( ESC_SEQ |~ ( '\\\\' | '\"' ) )*
+            loop6:
             do {
-                int alt4=3;
-                int LA4_0 = input.LA(1);
+                int alt6=3;
+                int LA6_0 = input.LA(1);
 
-                if ( (LA4_0=='\'') ) {
-                    int LA4_1 = input.LA(2);
+                if ( (LA6_0=='\'') ) {
+                    int LA6_1 = input.LA(2);
 
-                    if ( ((LA4_1 >= '\u0000' && LA4_1 <= '!')||(LA4_1 >= '#' && LA4_1 <= '\uFFFF')) ) {
-                        alt4=2;
+                    if ( ((LA6_1 >= '\u0000' && LA6_1 <= '!')||(LA6_1 >= '#' && LA6_1 <= '\uFFFF')) ) {
+                        alt6=2;
                     }
 
 
                 }
-                else if ( (LA4_0=='\\') ) {
-                    alt4=1;
+                else if ( (LA6_0=='\\') ) {
+                    alt6=1;
                 }
-                else if ( ((LA4_0 >= '\u0000' && LA4_0 <= '!')||(LA4_0 >= '#' && LA4_0 <= '&')||(LA4_0 >= '(' && LA4_0 <= '[')||(LA4_0 >= ']' && LA4_0 <= '\uFFFF')) ) {
-                    alt4=2;
+                else if ( ((LA6_0 >= '\u0000' && LA6_0 <= '!')||(LA6_0 >= '#' && LA6_0 <= '&')||(LA6_0 >= '(' && LA6_0 <= '[')||(LA6_0 >= ']' && LA6_0 <= '\uFFFF')) ) {
+                    alt6=2;
                 }
 
 
-                switch (alt4) {
+                switch (alt6) {
             	case 1 :
-            	    // antlr/UIQuery.g:39:15: ESC_SEQ
+            	    // antlr/UIQuery.g:46:15: ESC_SEQ
             	    {
             	    mESC_SEQ(); 
 
@@ -278,7 +395,7 @@ public class UIQueryLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // antlr/UIQuery.g:39:25: ~ ( '\\\\' | '\"' )
+            	    // antlr/UIQuery.g:46:25: ~ ( '\\\\' | '\"' )
             	    {
             	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '!')||(input.LA(1) >= '#' && input.LA(1) <= '[')||(input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) {
             	        input.consume();
@@ -294,7 +411,7 @@ public class UIQueryLexer extends Lexer {
             	    break;
 
             	default :
-            	    break loop4;
+            	    break loop6;
                 }
             } while (true);
 
@@ -317,10 +434,34 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = WHITE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:42:9: ( ' ' )
-            // antlr/UIQuery.g:42:11: ' '
+            // antlr/UIQuery.g:49:9: ( ( ' ' )* )
+            // antlr/UIQuery.g:49:11: ( ' ' )*
             {
-            match(' '); 
+            // antlr/UIQuery.g:49:11: ( ' ' )*
+            loop7:
+            do {
+                int alt7=2;
+                int LA7_0 = input.LA(1);
+
+                if ( (LA7_0==' ') ) {
+                    alt7=1;
+                }
+
+
+                switch (alt7) {
+            	case 1 :
+            	    // antlr/UIQuery.g:49:11: ' '
+            	    {
+            	    match(' '); 
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop7;
+                }
+            } while (true);
+
 
             }
 
@@ -336,7 +477,7 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "HEX_DIGIT"
     public final void mHEX_DIGIT() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:45:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
+            // antlr/UIQuery.g:52:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
             // antlr/UIQuery.g:
             {
             if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'F')||(input.LA(1) >= 'a' && input.LA(1) <= 'f') ) {
@@ -362,11 +503,11 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "ESC_SEQ"
     public final void mESC_SEQ() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:49:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
-            int alt5=3;
-            int LA5_0 = input.LA(1);
+            // antlr/UIQuery.g:56:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
+            int alt8=3;
+            int LA8_0 = input.LA(1);
 
-            if ( (LA5_0=='\\') ) {
+            if ( (LA8_0=='\\') ) {
                 switch ( input.LA(2) ) {
                 case '\"':
                 case '\'':
@@ -377,12 +518,12 @@ public class UIQueryLexer extends Lexer {
                 case 'r':
                 case 't':
                     {
-                    alt5=1;
+                    alt8=1;
                     }
                     break;
                 case 'u':
                     {
-                    alt5=2;
+                    alt8=2;
                     }
                     break;
                 case '0':
@@ -394,12 +535,12 @@ public class UIQueryLexer extends Lexer {
                 case '6':
                 case '7':
                     {
-                    alt5=3;
+                    alt8=3;
                     }
                     break;
                 default:
                     NoViableAltException nvae =
-                        new NoViableAltException("", 5, 1, input);
+                        new NoViableAltException("", 8, 1, input);
 
                     throw nvae;
 
@@ -408,14 +549,14 @@ public class UIQueryLexer extends Lexer {
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 5, 0, input);
+                    new NoViableAltException("", 8, 0, input);
 
                 throw nvae;
 
             }
-            switch (alt5) {
+            switch (alt8) {
                 case 1 :
-                    // antlr/UIQuery.g:49:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
+                    // antlr/UIQuery.g:56:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
                     {
                     match('\\'); 
 
@@ -432,7 +573,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:50:9: UNICODE_ESC
+                    // antlr/UIQuery.g:57:9: UNICODE_ESC
                     {
                     mUNICODE_ESC(); 
 
@@ -440,7 +581,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // antlr/UIQuery.g:51:9: OCTAL_ESC
+                    // antlr/UIQuery.g:58:9: OCTAL_ESC
                     {
                     mOCTAL_ESC(); 
 
@@ -460,43 +601,43 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "OCTAL_ESC"
     public final void mOCTAL_ESC() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:56:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
-            int alt6=3;
-            int LA6_0 = input.LA(1);
+            // antlr/UIQuery.g:63:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
+            int alt9=3;
+            int LA9_0 = input.LA(1);
 
-            if ( (LA6_0=='\\') ) {
-                int LA6_1 = input.LA(2);
+            if ( (LA9_0=='\\') ) {
+                int LA9_1 = input.LA(2);
 
-                if ( ((LA6_1 >= '0' && LA6_1 <= '3')) ) {
-                    int LA6_2 = input.LA(3);
+                if ( ((LA9_1 >= '0' && LA9_1 <= '3')) ) {
+                    int LA9_2 = input.LA(3);
 
-                    if ( ((LA6_2 >= '0' && LA6_2 <= '7')) ) {
-                        int LA6_4 = input.LA(4);
+                    if ( ((LA9_2 >= '0' && LA9_2 <= '7')) ) {
+                        int LA9_4 = input.LA(4);
 
-                        if ( ((LA6_4 >= '0' && LA6_4 <= '7')) ) {
-                            alt6=1;
+                        if ( ((LA9_4 >= '0' && LA9_4 <= '7')) ) {
+                            alt9=1;
                         }
                         else {
-                            alt6=2;
+                            alt9=2;
                         }
                     }
                     else {
-                        alt6=3;
+                        alt9=3;
                     }
                 }
-                else if ( ((LA6_1 >= '4' && LA6_1 <= '7')) ) {
-                    int LA6_3 = input.LA(3);
+                else if ( ((LA9_1 >= '4' && LA9_1 <= '7')) ) {
+                    int LA9_3 = input.LA(3);
 
-                    if ( ((LA6_3 >= '0' && LA6_3 <= '7')) ) {
-                        alt6=2;
+                    if ( ((LA9_3 >= '0' && LA9_3 <= '7')) ) {
+                        alt9=2;
                     }
                     else {
-                        alt6=3;
+                        alt9=3;
                     }
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("", 6, 1, input);
+                        new NoViableAltException("", 9, 1, input);
 
                     throw nvae;
 
@@ -504,14 +645,14 @@ public class UIQueryLexer extends Lexer {
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 6, 0, input);
+                    new NoViableAltException("", 9, 0, input);
 
                 throw nvae;
 
             }
-            switch (alt6) {
+            switch (alt9) {
                 case 1 :
-                    // antlr/UIQuery.g:56:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
+                    // antlr/UIQuery.g:63:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -548,7 +689,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:57:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
+                    // antlr/UIQuery.g:64:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -575,7 +716,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // antlr/UIQuery.g:58:9: '\\\\' ( '0' .. '7' )
+                    // antlr/UIQuery.g:65:9: '\\\\' ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -604,8 +745,8 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "UNICODE_ESC"
     public final void mUNICODE_ESC() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:63:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
-            // antlr/UIQuery.g:63:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+            // antlr/UIQuery.g:70:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
+            // antlr/UIQuery.g:70:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
             {
             match('\\'); 
 
@@ -634,10 +775,10 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR end "UNICODE_ESC"
 
     public void mTokens() throws RecognitionException {
-        // antlr/UIQuery.g:1:8: ( QUALIFIED_NAME | FILTER_COLON | NAME | INT | STRING | WHITE )
-        int alt7=6;
-        alt7 = dfa7.predict(input);
-        switch (alt7) {
+        // antlr/UIQuery.g:1:8: ( QUALIFIED_NAME | FILTER_COLON | INT | BOOL | NIL | NAME | STRING | WHITE )
+        int alt10=8;
+        alt10 = dfa10.predict(input);
+        switch (alt10) {
             case 1 :
                 // antlr/UIQuery.g:1:10: QUALIFIED_NAME
                 {
@@ -655,31 +796,47 @@ public class UIQueryLexer extends Lexer {
                 }
                 break;
             case 3 :
-                // antlr/UIQuery.g:1:38: NAME
-                {
-                mNAME(); 
-
-
-                }
-                break;
-            case 4 :
-                // antlr/UIQuery.g:1:43: INT
+                // antlr/UIQuery.g:1:38: INT
                 {
                 mINT(); 
 
 
                 }
                 break;
+            case 4 :
+                // antlr/UIQuery.g:1:42: BOOL
+                {
+                mBOOL(); 
+
+
+                }
+                break;
             case 5 :
-                // antlr/UIQuery.g:1:47: STRING
+                // antlr/UIQuery.g:1:47: NIL
+                {
+                mNIL(); 
+
+
+                }
+                break;
+            case 6 :
+                // antlr/UIQuery.g:1:51: NAME
+                {
+                mNAME(); 
+
+
+                }
+                break;
+            case 7 :
+                // antlr/UIQuery.g:1:56: STRING
                 {
                 mSTRING(); 
 
 
                 }
                 break;
-            case 6 :
-                // antlr/UIQuery.g:1:54: WHITE
+            case 8 :
+                // antlr/UIQuery.g:1:63: WHITE
                 {
                 mWHITE(); 
 
@@ -692,63 +849,95 @@ public class UIQueryLexer extends Lexer {
     }
 
 
-    protected DFA7 dfa7 = new DFA7(this);
-    static final String DFA7_eotS =
-        "\1\uffff\1\7\4\uffff\1\7\2\uffff";
-    static final String DFA7_eofS =
-        "\11\uffff";
-    static final String DFA7_minS =
-        "\1\40\1\56\4\uffff\1\56\2\uffff";
-    static final String DFA7_maxS =
-        "\2\172\4\uffff\1\172\2\uffff";
-    static final String DFA7_acceptS =
-        "\2\uffff\1\2\1\4\1\5\1\6\1\uffff\1\3\1\1";
-    static final String DFA7_specialS =
-        "\11\uffff}>";
-    static final String[] DFA7_transitionS = {
-            "\1\5\6\uffff\1\4\10\uffff\12\3\1\2\6\uffff\32\1\4\uffff\1\1"+
-            "\1\uffff\32\1",
-            "\1\10\1\uffff\12\6\7\uffff\32\6\4\uffff\1\6\1\uffff\32\6",
+    protected DFA10 dfa10 = new DFA10(this);
+    static final String DFA10_eotS =
+        "\1\10\1\13\2\uffff\3\13\2\uffff\2\13\2\uffff\5\13\1\26\1\13\1\30"+
+        "\1\13\1\uffff\1\26\1\uffff\1\30";
+    static final String DFA10_eofS =
+        "\32\uffff";
+    static final String DFA10_minS =
+        "\1\47\1\56\2\uffff\3\56\2\uffff\2\56\2\uffff\11\56\1\uffff\1\56"+
+        "\1\uffff\1\56";
+    static final String DFA10_maxS =
+        "\2\172\2\uffff\3\172\2\uffff\2\172\2\uffff\11\172\1\uffff\1\172"+
+        "\1\uffff\1\172";
+    static final String DFA10_acceptS =
+        "\2\uffff\1\2\1\3\3\uffff\1\7\1\10\2\uffff\1\6\1\1\11\uffff\1\5\1"+
+        "\uffff\1\4\1\uffff";
+    static final String DFA10_specialS =
+        "\32\uffff}>";
+    static final String[] DFA10_transitionS = {
+            "\1\7\10\uffff\12\3\1\2\6\uffff\32\6\4\uffff\1\6\1\uffff\5\6"+
+            "\1\4\7\6\1\5\5\6\1\1\6\6",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\21\12"+
+            "\1\11\10\12",
             "",
             "",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\1\15"+
+            "\31\12",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\10\12"+
+            "\1\16\13\12\1\17\5\12",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\32\12",
             "",
             "",
-            "\1\10\1\uffff\12\6\7\uffff\32\6\4\uffff\1\6\1\uffff\32\6",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\24\12"+
+            "\1\20\5\12",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\32\12",
             "",
-            ""
+            "",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\13\12"+
+            "\1\21\16\12",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\13\12"+
+            "\1\22\16\12",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\13\12"+
+            "\1\23\16\12",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\4\12"+
+            "\1\24\25\12",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\22\12"+
+            "\1\25\7\12",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\32\12",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\13\12"+
+            "\1\27\16\12",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\32\12",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\4\12"+
+            "\1\31\25\12",
+            "",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\32\12",
+            "",
+            "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\32\12"
     };
 
-    static final short[] DFA7_eot = DFA.unpackEncodedString(DFA7_eotS);
-    static final short[] DFA7_eof = DFA.unpackEncodedString(DFA7_eofS);
-    static final char[] DFA7_min = DFA.unpackEncodedStringToUnsignedChars(DFA7_minS);
-    static final char[] DFA7_max = DFA.unpackEncodedStringToUnsignedChars(DFA7_maxS);
-    static final short[] DFA7_accept = DFA.unpackEncodedString(DFA7_acceptS);
-    static final short[] DFA7_special = DFA.unpackEncodedString(DFA7_specialS);
-    static final short[][] DFA7_transition;
+    static final short[] DFA10_eot = DFA.unpackEncodedString(DFA10_eotS);
+    static final short[] DFA10_eof = DFA.unpackEncodedString(DFA10_eofS);
+    static final char[] DFA10_min = DFA.unpackEncodedStringToUnsignedChars(DFA10_minS);
+    static final char[] DFA10_max = DFA.unpackEncodedStringToUnsignedChars(DFA10_maxS);
+    static final short[] DFA10_accept = DFA.unpackEncodedString(DFA10_acceptS);
+    static final short[] DFA10_special = DFA.unpackEncodedString(DFA10_specialS);
+    static final short[][] DFA10_transition;
 
     static {
-        int numStates = DFA7_transitionS.length;
-        DFA7_transition = new short[numStates][];
+        int numStates = DFA10_transitionS.length;
+        DFA10_transition = new short[numStates][];
         for (int i=0; i<numStates; i++) {
-            DFA7_transition[i] = DFA.unpackEncodedString(DFA7_transitionS[i]);
+            DFA10_transition[i] = DFA.unpackEncodedString(DFA10_transitionS[i]);
         }
     }
 
-    class DFA7 extends DFA {
+    class DFA10 extends DFA {
 
-        public DFA7(BaseRecognizer recognizer) {
+        public DFA10(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 7;
-            this.eot = DFA7_eot;
-            this.eof = DFA7_eof;
-            this.min = DFA7_min;
-            this.max = DFA7_max;
-            this.accept = DFA7_accept;
-            this.special = DFA7_special;
-            this.transition = DFA7_transition;
+            this.decisionNumber = 10;
+            this.eot = DFA10_eot;
+            this.eof = DFA10_eof;
+            this.min = DFA10_min;
+            this.max = DFA10_max;
+            this.accept = DFA10_accept;
+            this.special = DFA10_special;
+            this.transition = DFA10_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( QUALIFIED_NAME | FILTER_COLON | NAME | INT | STRING | WHITE );";
+            return "1:1: Tokens : ( QUALIFIED_NAME | FILTER_COLON | INT | BOOL | NIL | NAME | STRING | WHITE );";
         }
     }
  
