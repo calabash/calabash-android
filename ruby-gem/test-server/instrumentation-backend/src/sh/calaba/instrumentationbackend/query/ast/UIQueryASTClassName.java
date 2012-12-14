@@ -99,6 +99,17 @@ public class UIQueryASTClassName implements UIQueryAST {
 		return simpleClassName != null && simpleClassName.equalsIgnoreCase(o.getClass().getSimpleName());
 	}
 	
+	public String toString() {
+		if (this.simpleClassName != null) 
+		{
+			return "Class["+this.simpleClassName+"]";	
+		}
+		else 
+		{
+			return "Class["+this.qualifiedClassName+"]";
+		}
+		
+	}
 	
 	
 }

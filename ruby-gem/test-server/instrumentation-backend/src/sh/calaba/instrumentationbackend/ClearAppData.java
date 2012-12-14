@@ -1,12 +1,10 @@
 package sh.calaba.instrumentationbackend;
 
-import android.content.Context;
+import java.io.File;
+
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.test.InstrumentationTestRunner;
-import sh.calaba.instrumentationbackend.actions.HttpServer;
-
-import java.io.File;
-import java.lang.reflect.Method;
 
 public class ClearAppData extends InstrumentationTestRunner {
 	@Override
@@ -37,7 +35,8 @@ public class ClearAppData extends InstrumentationTestRunner {
         }
     }
 
-    private File externalCacheDir() {
+    @SuppressLint("NewApi")
+	private File externalCacheDir() { 
         return getTargetContext().getExternalCacheDir();
     }
 

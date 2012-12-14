@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import android.view.View;
+
 public class UIQueryUtils {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List subviews(Object o)
@@ -110,4 +112,10 @@ public class UIQueryUtils {
 			throw new RuntimeException(e);
 		}
 	}
+
+	public static boolean isVisible(Object v) {
+		if (!(v instanceof View)) { return true; }
+		return ((View) v).isShown();
+	}
+	
 }

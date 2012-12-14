@@ -104,7 +104,10 @@ module Operations
        raise "Invalid query #{uiquery}"
       end
     else
-      JSON.parse(http("/query", {"query" => uiquery}))
+      arguments = [*args]
+      operation = {"method_name"=>"query", "arguments" => arguments}
+      data = {"query" => uiquery, "operation" => operation}
+      JSON.parse(http("/map",data))
     end
   end
 

@@ -8,11 +8,11 @@ import org.antlr.runtime.tree.CommonTree;
 
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
 
-public class UIQueryASTFilter implements UIQueryAST {
+public class UIQueryASTWith implements UIQueryAST {
 	public final String propertyName;	
 	public final Object value;
 	
-	public UIQueryASTFilter(String property, Object value) 
+	public UIQueryASTWith(String property, Object value) 
 	{
 		if (property == null) {throw new IllegalArgumentException("Cannot instantiate Filter with null property name");}
 		this.propertyName = property;
@@ -37,12 +37,19 @@ public class UIQueryASTFilter implements UIQueryAST {
 			else 
 			{
 				Method propertyAccessor = UIQueryUtils.hasProperty(o, this.propertyName);
+				System.out.println("HasProp:"+propertyAccessor);
 				if (propertyAccessor != null)
 				{
 					Object value = UIQueryUtils.getProperty(o, propertyAccessor);
+					System.out.println("HasPropVal:"+value);
+					System.out.println("Compare to:"+this.value);
 					if (value == this.value ||
 							(value != null && value.equals(this.value))) {
+						System.out.println("true");						
 						result.add(o);
+					}
+					else {
+						System.out.println(false);
 					}
 				}	
 			}
@@ -58,21 +65,27 @@ public class UIQueryASTFilter implements UIQueryAST {
 		return false;
 	}
 
-	public static UIQueryASTFilter fromAST(CommonTree step) {
+	public static UIQueryASTWith fromAST(CommonTree step) {
 		CommonTree prop = (CommonTree) step.getChild(0);
 		CommonTree val = (CommonTree) step.getChild(1);
 		
 		switch(val.getType())
 		{
 			case UIQueryParser.STRING:	
-				return new UIQueryASTFilter(prop.getText(), val.getText());
+				return new UIQueryASTWith(prop.getText(), val.getText());
 			case UIQueryParser.INT:
-				return new UIQueryASTFilter(prop.getText(), Integer.parseInt(val.getText(), 10));
+				return new UIQueryASTWith(prop.getText(), Integer.parseInt(val.getText(), 10));
 			default:
 				throw new IllegalArgumentException("Unable to parse value type:" + val.getType()+ " text "+val.getText());
 				
 		}
 		
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "With["+this.propertyName+":"+this.value+"]";
 	}
 	
 }

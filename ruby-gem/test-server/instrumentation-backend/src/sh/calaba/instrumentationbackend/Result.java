@@ -1,6 +1,5 @@
 package sh.calaba.instrumentationbackend;
 
-import java.io.BufferedWriter;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
