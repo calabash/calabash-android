@@ -83,15 +83,17 @@ module Operations
   end
 
   def wait_for(timeout, &block)
+    value = nil
     begin
       Timeout::timeout(timeout) do
-        until block.call
+        until value = block.call
           sleep 0.3
         end
       end
     rescue Exception => e
       raise e
     end
+    value
   end
 
   def query(uiquery, *args)
