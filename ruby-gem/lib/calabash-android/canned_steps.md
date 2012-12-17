@@ -211,7 +211,7 @@ To take a screenshot of the phone while running the test use any of these steps.
 
 Location steps
 --------------
-If you app has the `ALLOW_MOCK_LOCATION` permission you can change the perceived location of the device by using any of these steps.
+If you allow your phone to use mocked locations (configured on your device under development settings) and your app has the `ACCESS_MOCK_LOCATION` permission you can change the perceived location of the device by using any of these steps.
 
 
 You can change the location any address or named location. This is done using the [geocoder gem](http://www.rubygeocoder.com/).

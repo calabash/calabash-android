@@ -8,6 +8,7 @@ import org.antlr.runtime.tree.CommonTree;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
+import android.content.res.Resources.NotFoundException;
 import android.view.View;
 
 public class UIQueryASTWith implements UIQueryAST {
@@ -76,13 +77,17 @@ public class UIQueryASTWith implements UIQueryAST {
 		View view = (View) o;
 		String expected = (String) expectedValue;
 		
-		String id = InstrumentationBackend.solo.getCurrentActivity()
-				.getResources().getResourceEntryName(view.getId());
-		
-		if (id != null && id.equals(expected))  {
-			return true;
+		try {
+			String id = InstrumentationBackend.solo.getCurrentActivity()
+					.getResources().getResourceEntryName(view.getId());
+			
+			if (id != null && id.equals(expected))  {
+				return true;
+			}
 		}
+		catch (NotFoundException e) {}
 		
+			
 		CharSequence contentDescription = view.getContentDescription();		
 		if (contentDescription != null && contentDescription.toString().equals(expected))
 		{
@@ -100,6 +105,7 @@ public class UIQueryASTWith implements UIQueryAST {
 		} catch (Exception e) {}
 		
 		return false;
+		
 	}
 
 	public static UIQueryASTWith fromAST(CommonTree step) {
