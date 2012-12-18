@@ -78,9 +78,15 @@ public class UIQueryUtils {
 	@SuppressWarnings({ "rawtypes" })
 	public static Method hasProperty(Object o, String propertyName) {
 		
-		Class c = o.getClass();
-		Method[] methods = c.getMethods();
-		
+		Class c = o.getClass();		
+		Method method = methodOrNull(c,propertyName);
+		if (method != null) { return method;}
+		method = methodOrNull(c,"get"+captitalize(propertyName));
+		if (method != null) { return method;}
+		method = methodOrNull(c,"is"+captitalize(propertyName));
+		return method;
+				
+/*		
 		for (Method m : methods)
 		{
 			String methodName = m.getName();
@@ -91,11 +97,19 @@ public class UIQueryUtils {
 				return m;
 			}
 		}
+*/
 		
-		return null;
 		
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static Method methodOrNull(Class c, String methodName) {
+		try {
+			return c.getMethod(methodName);
+		} catch (NoSuchMethodException e) {
+			return null;
+		}
+	}
 
 	private static String captitalize(String propertyName) {
 		return propertyName.substring(0,1).toUpperCase() + propertyName.substring(1);

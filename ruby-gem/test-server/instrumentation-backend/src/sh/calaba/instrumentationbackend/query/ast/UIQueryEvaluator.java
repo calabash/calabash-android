@@ -65,7 +65,14 @@ public class UIQueryEvaluator {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List evaluateQueryWithOptions(String query, List inputViews,
 			List options) {
-		List views = evaluateQueryForPath(parseQuery(query), inputViews);
+		
+        long before = System.currentTimeMillis();
+        List views = evaluateQueryForPath(parseQuery(query), inputViews);
+        long after = System.currentTimeMillis();
+        String action = "EvaluateQueryNoOptions";
+        System.out.println(action+ " took: "+ (after-before) + "ms");
+
+		
 
 		List result = views;
 		for (Object methodNameObj : options) {
@@ -73,7 +80,15 @@ public class UIQueryEvaluator {
 			List nextResult = new ArrayList(views.size());
 			for (Object o : result) {
 				try {
+					
+					before = System.currentTimeMillis();
+					
 					Method m = UIQueryUtils.hasProperty(o, propertyName);
+					after = System.currentTimeMillis();
+			        action = "HasProperty";
+			        System.out.println(action+ " took: "+ (after-before) + "ms");
+
+
 					if (m != null) {
 						nextResult.add(m.invoke(o));	
 					}
@@ -128,8 +143,16 @@ public class UIQueryEvaluator {
 			if (isDirection(step)) {
 				currentDirection = directionFromAst(step);
 			} else {
+				System.out.println(step);
+		        long before = System.currentTimeMillis();
+		        		        
+
 				currentResult = step.evaluateWithViewsAndDirection(
 						currentResult, currentDirection);
+				long after = System.currentTimeMillis();
+		        String action = "EvaluateQueryNoOptions" + step.toString();
+		        System.out.println(action+ " took: "+ (after-before) + "ms");
+
 			}
 
 		}

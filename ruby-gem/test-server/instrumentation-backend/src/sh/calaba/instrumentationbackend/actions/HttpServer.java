@@ -93,6 +93,7 @@ public class HttpServer extends NanoHTTPD {
 				System.out.println(uiQuery);
 				System.out.println(arguments);
 				
+				
 				QueryResult queryResult = new Query(uiQuery,arguments).execute();
 				
 
@@ -110,7 +111,7 @@ public class HttpServer extends NanoHTTPD {
 				Map<String, String> command = mapper.readValue(commandString,
 						new TypeReference<Map<String, String>>() {
 						});
-				QueryResult result = new Query(command.get("query")).execute();
+				QueryResult result = new Query(command.get("query")).executeInMainThread();
 				return new NanoHTTPD.Response(HTTP_OK, MIME_HTML,
 						result.asJson());
 			} catch (IOException e) {

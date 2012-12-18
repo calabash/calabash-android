@@ -27,11 +27,15 @@ public class UIQueryASTWith implements UIQueryAST {
 	public List evaluateWithViewsAndDirection(List inputViews,
 			UIQueryDirection direction) {
 		List result = new ArrayList(8);
-				
+					
 		for (int i=0;i<inputViews.size();i++)
 		{
 			Object o = inputViews.get(i);
-			if (this.propertyName.equals("marked") && isMarked(o,this.value))
+			if (this.propertyName.equals("id") && hasId(o,this.value))
+			{
+				result.add(o);
+			}
+			else if (this.propertyName.equals("marked") && isMarked(o,this.value))
 			{
 				result.add(o);
 			}
@@ -41,15 +45,12 @@ public class UIQueryASTWith implements UIQueryAST {
 			}
 			else 
 			{
+								
 				Method propertyAccessor = UIQueryUtils.hasProperty(o, this.propertyName);
 				if (propertyAccessor != null)
-				{
+				{				
 					Object value = UIQueryUtils.getProperty(o, propertyAccessor);
-					System.out.println(this.value);
-					System.out.println(value);
-					System.out.println(this.value.getClass());
-					System.out.println(this.value.getClass());
-					System.out.println(value.toString().equals(this.value));
+
 					if (value == this.value || (value != null && value.equals(this.value))) 
 					{
 						result.add(o);
@@ -58,11 +59,10 @@ public class UIQueryASTWith implements UIQueryAST {
 					{
 						result.add(o);
 					}
-					else {
-						System.out.println(false);
-					}
 					
-				}	
+					
+				}
+				
 			}
 	
 		}
@@ -71,7 +71,7 @@ public class UIQueryASTWith implements UIQueryAST {
 		return result;
 	}
 
-	private boolean isMarked(Object o, Object expectedValue) {
+	private boolean hasId(Object o, Object expectedValue) {
 		if (! (o instanceof View)) { return false; }
 		if (! (expectedValue instanceof String)) { return false; }
 		View view = (View) o;
@@ -86,6 +86,19 @@ public class UIQueryASTWith implements UIQueryAST {
 			}
 		}
 		catch (NotFoundException e) {}
+		return false;
+	}
+
+	private boolean isMarked(Object o, Object expectedValue) {
+		if (! (o instanceof View)) { return false; }
+		if (! (expectedValue instanceof String)) { return false; }
+		View view = (View) o;
+		String expected = (String) expectedValue;
+		
+		if (hasId(o, expectedValue))
+		{
+			return true;
+		}
 		
 			
 		CharSequence contentDescription = view.getContentDescription();		
