@@ -64,7 +64,7 @@ public class Query {
 		if (rootView == null) { throw new IllegalStateException("Unable to find root view."); }
 		
         long before = System.currentTimeMillis();
-        List queryResults = UIQueryEvaluator.evaluateQueryWithOptions(this.queryString, Collections.singletonList(rootView), this.arguments);
+        List queryResults = UIQueryEvaluator.evaluateQueryWithOptions(this.queryString, rootViews(), this.arguments);
         long after = System.currentTimeMillis();
         
         String action = "EvaluateQuery";
