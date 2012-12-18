@@ -85,25 +85,17 @@ public class HttpServer extends NanoHTTPD {
 				String methodName = (String) op.get("method_name");
 				List arguments = (List) op.get("arguments");
 				
-				
-				
-				
-
-				System.out.println(methodName);
-				System.out.println(uiQuery);
-				System.out.println(arguments);
-				
-				
 				QueryResult queryResult = new Query(uiQuery,arguments).execute();
-				
 
 				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
 						queryResult.asJson());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-
+			} catch (Exception e ) {
+                System.err.println("Query failed!");
+                e.printStackTrace();
+            }
+            return new NanoHTTPD.Response(HTTP_INTERNALERROR, MIME_HTML, "Query failed");
 		} else if (uri.endsWith("/query")) {
 			try {
 				String commandString = params.getProperty("json");
