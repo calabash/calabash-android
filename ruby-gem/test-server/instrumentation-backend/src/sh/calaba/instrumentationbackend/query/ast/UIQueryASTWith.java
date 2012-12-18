@@ -27,7 +27,7 @@ public class UIQueryASTWith implements UIQueryAST {
 	public List evaluateWithViewsAndDirection(List inputViews,
 			UIQueryDirection direction) {
 		List result = new ArrayList(8);
-				
+					
 		for (int i=0;i<inputViews.size();i++)
 		{
 			Object o = inputViews.get(i);
@@ -41,15 +41,12 @@ public class UIQueryASTWith implements UIQueryAST {
 			}
 			else 
 			{
+								
 				Method propertyAccessor = UIQueryUtils.hasProperty(o, this.propertyName);
 				if (propertyAccessor != null)
-				{
+				{				
 					Object value = UIQueryUtils.getProperty(o, propertyAccessor);
-					System.out.println(this.value);
-					System.out.println(value);
-					System.out.println(this.value.getClass());
-					System.out.println(this.value.getClass());
-					System.out.println(value.toString().equals(this.value));
+
 					if (value == this.value || (value != null && value.equals(this.value))) 
 					{
 						result.add(o);
@@ -58,11 +55,10 @@ public class UIQueryASTWith implements UIQueryAST {
 					{
 						result.add(o);
 					}
-					else {
-						System.out.println(false);
-					}
 					
-				}	
+					
+				}
+				
 			}
 	
 		}

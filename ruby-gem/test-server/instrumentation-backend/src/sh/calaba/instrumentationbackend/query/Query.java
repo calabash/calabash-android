@@ -39,8 +39,14 @@ public class Query {
         List result = new ArrayList();
         List<View> all = rootViews();
                 
+        long before = System.currentTimeMillis();
         List queryResults = UIQueryEvaluator.evaluateQueryWithOptions(this.queryString, all, this.arguments);
-                     
+        long after = System.currentTimeMillis();
+        String action = "EvaluateQuery";
+        System.out.println(action+ " took: "+ (after-before) + "ms");
+        
+        before = System.currentTimeMillis();
+
         for (Object v : queryResults) {
             if (UIQueryUtils.isVisible(v)) {
             	System.out.println("Query result: "+v);
@@ -48,6 +54,7 @@ public class Query {
             }
             
         }
+               
         return new QueryResult(result);
     }
 

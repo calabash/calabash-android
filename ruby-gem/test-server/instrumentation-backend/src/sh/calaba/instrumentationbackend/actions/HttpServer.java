@@ -93,6 +93,7 @@ public class HttpServer extends NanoHTTPD {
 				System.out.println(uiQuery);
 				System.out.println(arguments);
 				
+				
 				QueryResult queryResult = new Query(uiQuery,arguments).execute();
 				
 
