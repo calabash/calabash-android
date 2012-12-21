@@ -87,9 +87,17 @@ def read_keystore_info
   end
 end
 
+def keytool_path
+  if is_windows?
+    "\"#{ENV["JAVA_HOME"]}/bin/keytool.exe\""
+  else
+    "keytool"
+  end
+end
+
 def fingerprint_from_keystore
   keystore_info = read_keystore_info
-  fingerprints = `keytool -v -list -alias #{keystore_info["keystore_alias"]} -keystore #{keystore_info["keystore_location"]} -storepass #{keystore_info["keystore_password"]}`
+  fingerprints = `#{keytool_path} -v -list -alias #{keystore_info["keystore_alias"]} -keystore #{keystore_info["keystore_location"]} -storepass #{keystore_info["keystore_password"]}`
   md5_fingerprint = extract_md5_fingerprint(fingerprints)
   log "MD5 fingerprint for keystore (#{keystore_info["keystore_location"]}): #{md5_fingerprint}"
   md5_fingerprint
@@ -107,7 +115,7 @@ def fingerprint_from_apk(app_path)
       raise "No RSA file found in META-INF. Cannot proceed." if rsa_files.empty?
       raise "More than one RSA file found in META-INF. Cannot proceed." if rsa_files.length > 1
 
-      fingerprints = `keytool -v -printcert -file #{rsa_files.first}`
+      fingerprints = `#{keytool_path} -v -printcert -file #{rsa_files.first}`
       md5_fingerprint = extract_md5_fingerprint(fingerprints)
       log "MD5 fingerprint for signing cert (#{app_path}): #{md5_fingerprint}"
       md5_fingerprint
