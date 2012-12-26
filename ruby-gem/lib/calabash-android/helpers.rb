@@ -117,7 +117,7 @@ end
 
 def extract_md5_fingerprint(fingerprints)
   m = fingerprints.scan(/MD5:\s+((?:\h\h:){15}\h\h)/)
-  raise "No MD5 fingerprint found:\n #{fingerprints}" unless m
+  raise "No MD5 fingerprint found:\n #{fingerprints}" unless m.first
   m.last.first
 end
 
