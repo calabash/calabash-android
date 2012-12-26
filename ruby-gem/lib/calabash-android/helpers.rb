@@ -44,16 +44,8 @@ def resign_apk(app_path)
     unsigned_path = File.join(tmp_dir, 'unsigned.apk')
     FileUtils.cp(app_path, unsigned_path)
 
-    #Delete META-INF/*
-    to_remove = Zip::ZipFile.foreach(unsigned_path).find_all { |e| /^META-INF\// =~ e.name}.collect &:name
+    `java -jar "#{File.dirname(__FILE__)}/lib/unsign.jar" "#{unsigned_path}"`
 
-    Zip::ZipFile.open(unsigned_path) do |zip_file|
-      to_remove.each do |x|
-        log "Removing #{x}"
-        zip_file.remove x
-      end
-      zip_file.commit
-    end
     sign_apk(unsigned_path, app_path)
   end
 end
