@@ -116,6 +116,7 @@ def fingerprint_from_apk(app_path)
 end
 
 def extract_md5_fingerprint(fingerprints)
+  fingerprints = fingerprints.gsub("\xA0", "")
   m = fingerprints.scan(/MD5\s*:\s*((?:\h\h:){15}\h\h)/).flatten
   raise "No MD5 fingerprint found:\n #{fingerprints}" if m.empty?
   m.first
