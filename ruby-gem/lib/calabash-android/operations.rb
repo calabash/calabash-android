@@ -23,7 +23,7 @@ module Operations
   end
 
   def macro(txt)
-    if self.respond_to?:step
+    if self.respond_to?(:step)
       step(txt)
     else
       Then(txt)
@@ -57,7 +57,7 @@ module Operations
     default_device.clear_app_data
   end
 
-  def start_test_server_in_background
+  def start_test_server_in_background(options={})
     default_device.start_test_server_in_background()
   end
 
@@ -86,7 +86,7 @@ module Operations
     value = nil
     begin
       Timeout::timeout(timeout) do
-        until value = block.call
+        until (value = block.call)
           sleep 0.3
         end
       end
@@ -313,14 +313,30 @@ module Operations
       raise "Could not clear data" unless system(cmd)
     end
 
-    def start_test_server_in_background
+    def start_test_server_in_background(options={})
       raise "Will not start test server because of previous failures." if Cucumber.wants_to_quit
 
       if keyguard_enabled?
         wake_up
       end
 
-      cmd = "#{adb_command} shell am instrument -e target_package #{ENV["PACKAGE_NAME"]} -e main_activity #{ENV["MAIN_ACTIVITY"]} -e class sh.calaba.instrumentationbackend.InstrumentationBackend sh.calaba.android.test/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
+      env_options = {:target_package => options[:target_package] || ENV["PACKAGE_NAME"],
+                     :main_activity => options[:main_activity] || ENV["MAIN_ACTIVITY"],
+                     :debug => options[:debug] || false,
+                     :class => options[:class] || "sh.calaba.instrumentationbackend.InstrumentationBackend"}
+
+      cmd_arr = [adb_command, "shell am instrument"]
+
+      env_options.each_pair do |key, val|
+        cmd_arr << "-e"
+        cmd_arr << key.to_s
+        cmd_arr << val.to_s
+      end
+
+      cmd_arr << "sh.calaba.android.test/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
+
+      cmd = cmd_arr.join(" ")
+
       log "Starting test server using:"
       log cmd
       raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
@@ -453,12 +469,16 @@ module Operations
     ni
   end
 
+  def element_does_not_exist(uiquery)
+    query(uiquery).empty?
+  end
+
   def element_exists(uiquery)
-    !query(uiquery).empty?
+    not element_does_not_exist(uiquery)
   end
 
   def view_with_mark_exists(expected_mark)
-    element_exists( "view marked:'#{expected_mark}'" )
+    element_exists( "android.view.View marked:'#{expected_mark}'" )
   end
 
   def check_element_exists( query )
