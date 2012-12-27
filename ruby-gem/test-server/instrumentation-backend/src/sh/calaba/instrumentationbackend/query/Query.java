@@ -90,7 +90,9 @@ public class Query {
     	Set<View> parents = new HashSet<View>(8);
     	for (View v : allVisibleViews()) 
     	{
-    		parents.add(viewFetcher.getTopParent(v));
+    		View parent = viewFetcher.getTopParent(v);
+    		System.out.println(parent);
+    		parents.add(parent);
     	}
     	List<View> results = new ArrayList<View>();
     	results.addAll(parents);

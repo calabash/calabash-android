@@ -1,4 +1,4 @@
-// $ANTLR 3.4 antlr/UIQuery.g 2012-12-14 14:03:36
+// $ANTLR 3.4 antlr/UIQuery.g 2012-12-27 13:48:21
 
     package sh.calaba.instrumentationbackend.query.antlr;
 
@@ -44,13 +44,13 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = QUALIFIED_NAME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:25:16: ( NAME ( '.' NAME )+ )
-            // antlr/UIQuery.g:25:18: NAME ( '.' NAME )+
+            // antlr/UIQuery.g:43:16: ( NAME ( '.' NAME )+ )
+            // antlr/UIQuery.g:43:18: NAME ( '.' NAME )+
             {
             mNAME(); 
 
 
-            // antlr/UIQuery.g:25:23: ( '.' NAME )+
+            // antlr/UIQuery.g:43:23: ( '.' NAME )+
             int cnt1=0;
             loop1:
             do {
@@ -64,7 +64,7 @@ public class UIQueryLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // antlr/UIQuery.g:25:24: '.' NAME
+            	    // antlr/UIQuery.g:43:24: '.' NAME
             	    {
             	    match('.'); 
 
@@ -100,8 +100,8 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = FILTER_COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:29:15: ( ':' )
-            // antlr/UIQuery.g:29:17: ':'
+            // antlr/UIQuery.g:47:15: ( ':' )
+            // antlr/UIQuery.g:47:17: ':'
             {
             match(':'); 
 
@@ -121,10 +121,10 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:33:5: ( ( '0' .. '9' )+ )
-            // antlr/UIQuery.g:33:7: ( '0' .. '9' )+
+            // antlr/UIQuery.g:51:5: ( ( '0' .. '9' )+ )
+            // antlr/UIQuery.g:51:7: ( '0' .. '9' )+
             {
-            // antlr/UIQuery.g:33:7: ( '0' .. '9' )+
+            // antlr/UIQuery.g:51:7: ( '0' .. '9' )+
             int cnt2=0;
             loop2:
             do {
@@ -179,7 +179,7 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = BOOL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:36:6: ( 'true' | 'false' )
+            // antlr/UIQuery.g:54:6: ( 'true' | 'false' )
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -198,7 +198,7 @@ public class UIQueryLexer extends Lexer {
             }
             switch (alt3) {
                 case 1 :
-                    // antlr/UIQuery.g:36:8: 'true'
+                    // antlr/UIQuery.g:54:8: 'true'
                     {
                     match("true"); 
 
@@ -207,7 +207,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:36:17: 'false'
+                    // antlr/UIQuery.g:54:17: 'false'
                     {
                     match("false"); 
 
@@ -231,7 +231,7 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = NIL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:39:5: ( 'nil' | 'null' )
+            // antlr/UIQuery.g:57:5: ( 'nil' | 'null' )
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -261,7 +261,7 @@ public class UIQueryLexer extends Lexer {
             }
             switch (alt4) {
                 case 1 :
-                    // antlr/UIQuery.g:39:7: 'nil'
+                    // antlr/UIQuery.g:57:7: 'nil'
                     {
                     match("nil"); 
 
@@ -270,7 +270,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:39:15: 'null'
+                    // antlr/UIQuery.g:57:15: 'null'
                     {
                     match("null"); 
 
@@ -294,8 +294,8 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = NAME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:42:7: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
-            // antlr/UIQuery.g:42:9: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // antlr/UIQuery.g:60:7: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
+            // antlr/UIQuery.g:60:9: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
@@ -307,7 +307,7 @@ public class UIQueryLexer extends Lexer {
             }
 
 
-            // antlr/UIQuery.g:42:33: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // antlr/UIQuery.g:60:33: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
             loop5:
             do {
                 int alt5=2;
@@ -357,37 +357,28 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:46:5: ( '\\'' ( ESC_SEQ |~ ( '\\\\' | '\"' ) )* '\\'' )
-            // antlr/UIQuery.g:46:8: '\\'' ( ESC_SEQ |~ ( '\\\\' | '\"' ) )* '\\''
+            // antlr/UIQuery.g:64:5: ( '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\'' )
+            // antlr/UIQuery.g:64:8: '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\''
             {
             match('\''); 
 
-            // antlr/UIQuery.g:46:13: ( ESC_SEQ |~ ( '\\\\' | '\"' ) )*
+            // antlr/UIQuery.g:64:13: ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )*
             loop6:
             do {
                 int alt6=3;
                 int LA6_0 = input.LA(1);
 
-                if ( (LA6_0=='\'') ) {
-                    int LA6_1 = input.LA(2);
-
-                    if ( ((LA6_1 >= '\u0000' && LA6_1 <= '!')||(LA6_1 >= '#' && LA6_1 <= '\uFFFF')) ) {
-                        alt6=2;
-                    }
-
-
-                }
-                else if ( (LA6_0=='\\') ) {
+                if ( (LA6_0=='\\') ) {
                     alt6=1;
                 }
-                else if ( ((LA6_0 >= '\u0000' && LA6_0 <= '!')||(LA6_0 >= '#' && LA6_0 <= '&')||(LA6_0 >= '(' && LA6_0 <= '[')||(LA6_0 >= ']' && LA6_0 <= '\uFFFF')) ) {
+                else if ( ((LA6_0 >= '\u0000' && LA6_0 <= '&')||(LA6_0 >= '(' && LA6_0 <= '[')||(LA6_0 >= ']' && LA6_0 <= '\uFFFF')) ) {
                     alt6=2;
                 }
 
 
                 switch (alt6) {
             	case 1 :
-            	    // antlr/UIQuery.g:46:15: ESC_SEQ
+            	    // antlr/UIQuery.g:64:15: ESC_SEQ
             	    {
             	    mESC_SEQ(); 
 
@@ -395,9 +386,9 @@ public class UIQueryLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // antlr/UIQuery.g:46:25: ~ ( '\\\\' | '\"' )
+            	    // antlr/UIQuery.g:64:25: ~ ( '\\\\' | '\\'' )
             	    {
-            	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '!')||(input.LA(1) >= '#' && input.LA(1) <= '[')||(input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) {
+            	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '&')||(input.LA(1) >= '(' && input.LA(1) <= '[')||(input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) {
             	        input.consume();
             	    }
             	    else {
@@ -434,10 +425,11 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = WHITE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:49:9: ( ( ' ' )* )
-            // antlr/UIQuery.g:49:11: ( ' ' )*
+            // antlr/UIQuery.g:67:9: ( ( ' ' )+ )
+            // antlr/UIQuery.g:67:11: ( ' ' )+
             {
-            // antlr/UIQuery.g:49:11: ( ' ' )*
+            // antlr/UIQuery.g:67:11: ( ' ' )+
+            int cnt7=0;
             loop7:
             do {
                 int alt7=2;
@@ -450,7 +442,7 @@ public class UIQueryLexer extends Lexer {
 
                 switch (alt7) {
             	case 1 :
-            	    // antlr/UIQuery.g:49:11: ' '
+            	    // antlr/UIQuery.g:67:11: ' '
             	    {
             	    match(' '); 
 
@@ -458,8 +450,12 @@ public class UIQueryLexer extends Lexer {
             	    break;
 
             	default :
-            	    break loop7;
+            	    if ( cnt7 >= 1 ) break loop7;
+                        EarlyExitException eee =
+                            new EarlyExitException(7, input);
+                        throw eee;
                 }
+                cnt7++;
             } while (true);
 
 
@@ -477,7 +473,7 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "HEX_DIGIT"
     public final void mHEX_DIGIT() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:52:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
+            // antlr/UIQuery.g:70:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
             // antlr/UIQuery.g:
             {
             if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'F')||(input.LA(1) >= 'a' && input.LA(1) <= 'f') ) {
@@ -503,13 +499,12 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "ESC_SEQ"
     public final void mESC_SEQ() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:56:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
+            // antlr/UIQuery.g:74:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
             int alt8=3;
             int LA8_0 = input.LA(1);
 
             if ( (LA8_0=='\\') ) {
                 switch ( input.LA(2) ) {
-                case '\"':
                 case '\'':
                 case '\\':
                 case 'b':
@@ -556,11 +551,11 @@ public class UIQueryLexer extends Lexer {
             }
             switch (alt8) {
                 case 1 :
-                    // antlr/UIQuery.g:56:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
+                    // antlr/UIQuery.g:74:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\'' | '\\\\' )
                     {
                     match('\\'); 
 
-                    if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
+                    if ( input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
                         input.consume();
                     }
                     else {
@@ -573,7 +568,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:57:9: UNICODE_ESC
+                    // antlr/UIQuery.g:75:9: UNICODE_ESC
                     {
                     mUNICODE_ESC(); 
 
@@ -581,7 +576,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // antlr/UIQuery.g:58:9: OCTAL_ESC
+                    // antlr/UIQuery.g:76:9: OCTAL_ESC
                     {
                     mOCTAL_ESC(); 
 
@@ -601,7 +596,7 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "OCTAL_ESC"
     public final void mOCTAL_ESC() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:63:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
+            // antlr/UIQuery.g:81:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
             int alt9=3;
             int LA9_0 = input.LA(1);
 
@@ -652,7 +647,7 @@ public class UIQueryLexer extends Lexer {
             }
             switch (alt9) {
                 case 1 :
-                    // antlr/UIQuery.g:63:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
+                    // antlr/UIQuery.g:81:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -689,7 +684,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:64:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
+                    // antlr/UIQuery.g:82:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -716,7 +711,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // antlr/UIQuery.g:65:9: '\\\\' ( '0' .. '7' )
+                    // antlr/UIQuery.g:83:9: '\\\\' ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -745,8 +740,8 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "UNICODE_ESC"
     public final void mUNICODE_ESC() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:70:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
-            // antlr/UIQuery.g:70:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+            // antlr/UIQuery.g:88:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
+            // antlr/UIQuery.g:88:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
             {
             match('\\'); 
 
@@ -851,12 +846,12 @@ public class UIQueryLexer extends Lexer {
 
     protected DFA10 dfa10 = new DFA10(this);
     static final String DFA10_eotS =
-        "\1\10\1\13\2\uffff\3\13\2\uffff\2\13\2\uffff\5\13\1\26\1\13\1\30"+
-        "\1\13\1\uffff\1\26\1\uffff\1\30";
+        "\1\uffff\1\13\2\uffff\3\13\2\uffff\2\13\2\uffff\5\13\1\26\1\13\1"+
+        "\30\1\13\1\uffff\1\26\1\uffff\1\30";
     static final String DFA10_eofS =
         "\32\uffff";
     static final String DFA10_minS =
-        "\1\47\1\56\2\uffff\3\56\2\uffff\2\56\2\uffff\11\56\1\uffff\1\56"+
+        "\1\40\1\56\2\uffff\3\56\2\uffff\2\56\2\uffff\11\56\1\uffff\1\56"+
         "\1\uffff\1\56";
     static final String DFA10_maxS =
         "\2\172\2\uffff\3\172\2\uffff\2\172\2\uffff\11\172\1\uffff\1\172"+
@@ -867,8 +862,8 @@ public class UIQueryLexer extends Lexer {
     static final String DFA10_specialS =
         "\32\uffff}>";
     static final String[] DFA10_transitionS = {
-            "\1\7\10\uffff\12\3\1\2\6\uffff\32\6\4\uffff\1\6\1\uffff\5\6"+
-            "\1\4\7\6\1\5\5\6\1\1\6\6",
+            "\1\10\6\uffff\1\7\10\uffff\12\3\1\2\6\uffff\32\6\4\uffff\1\6"+
+            "\1\uffff\5\6\1\4\7\6\1\5\5\6\1\1\6\6",
             "\1\14\1\uffff\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\21\12"+
             "\1\11\10\12",
             "",
