@@ -75,8 +75,6 @@ public class FakeGPSLocation implements Action {
     	
     	private void setLocation(LocationManager locationManager, String locationProvider, double latitude, double longitude) {
 
-    		//locationManager.clearTestProviderLocation(locationProvider);
-
     		Location location = new Location(locationProvider);
     		location.setLatitude(latitude);
     		location.setLongitude(longitude);
