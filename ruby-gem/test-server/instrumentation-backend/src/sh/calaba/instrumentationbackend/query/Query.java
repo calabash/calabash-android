@@ -35,13 +35,14 @@ public class Query {
         this.arguments = args;
     }
 
-    public QueryResult executeInMainThread(final boolean includeInvisible)
+    @SuppressWarnings("rawtypes")
+	public List executeInMainThread(final boolean includeInvisible)
     {
         if ( Looper.getMainLooper().getThread() == Thread.currentThread()) {
             return execute(includeInvisible);
         }
 
-        final AtomicReference<QueryResult> result = new AtomicReference<QueryResult>();
+        final AtomicReference<List> result = new AtomicReference<List>();
         InstrumentationBackend.instrumentation.runOnMainSync(new Runnable() {
             @Override
             public void run() {
@@ -53,7 +54,7 @@ public class Query {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes" })
-	public QueryResult execute(boolean includeInvisible) {
+	public List execute(boolean includeInvisible) {
         List result = new ArrayList();
 		
         long before = System.currentTimeMillis();
@@ -69,7 +70,7 @@ public class Query {
             }            
         }
                
-        return new QueryResult(result);
+        return result;
     }
 
 

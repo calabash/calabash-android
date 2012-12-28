@@ -14,6 +14,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sh.calaba.instrumentationbackend.Command;
+import sh.calaba.instrumentationbackend.FranklyResult;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.query.Query;
@@ -74,7 +75,7 @@ public class HttpServer extends NanoHTTPD {
 			return new NanoHTTPD.Response(HTTP_OK, MIME_HTML, "pong");
 
 		} else if (uri.endsWith("/map")) {
-			String errorMessage = null;
+			FranklyResult errorResult = null;
 			try {
 				String commandString = params.getProperty("json");
 				ObjectMapper mapper = new ObjectMapper();
@@ -90,18 +91,14 @@ public class HttpServer extends NanoHTTPD {
 				boolean includeInVisible = "query_all".equals(methodName);
 				
 				
-				QueryResult queryResult = new Query(uiQuery,arguments).executeInMainThread(includeInVisible);
+				List queryResult = new Query(uiQuery,arguments).executeInMainThread(includeInVisible);
 
-				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
-						queryResult.asJson());
-			} catch (IOException e) {
-				e.printStackTrace();				
-				errorMessage = e.getMessage();
+				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", 
+						FranklyResult.successResult(queryResult).asJson());
 			} catch (Exception e ) {               
-                e.printStackTrace();
-                errorMessage = e.getMessage();
+                errorResult = FranklyResult.fromThrowable(e);
             }
-            return new NanoHTTPD.Response(HTTP_INTERNALERROR, MIME_HTML, "Query failed: " + errorMessage);
+            return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", errorResult.asJson());
 		} else if (uri.endsWith("/query")) {
 			return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT,
 					"/query endpoint is discontinued - use /map with operation query");

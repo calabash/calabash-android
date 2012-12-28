@@ -97,20 +97,11 @@ module Operations
   end
 
   def query(uiquery, *args)
-    if uiquery.start_with? "webView"
-      uiquery.slice!(0, "webView".length)
-      if uiquery =~ /(css|xpath):\s*(.*)/
-        r = performAction("query", $1, $2)
-        JSON.parse(r["message"])
-      else
-       raise "Invalid query #{uiquery}"
-      end
-    else
-      arguments = [*args]
-      operation = {"method_name"=>"query", "arguments" => arguments}
-      data = {"query" => uiquery, "operation" => operation}
-      JSON.parse(http("/map",data))
-    end
+    map(uiquery,:query,*args)
+  end
+
+  def query_all(uiquery, *args)
+    map(uiquery, :query_all, *args)
   end
 
   def ni
@@ -527,8 +518,19 @@ module Operations
     ni
   end
 
-  def map( query, method_name, *method_args )
-    ni
+  def map(query, method_name, *method_args)
+    operation_map = {
+        :method_name => method_name,
+        :arguments => method_args
+    }
+    res = http("/map",
+               {:query => query, :operation => operation_map})
+    res = JSON.parse(res)
+    if res['outcome'] != 'SUCCESS'
+      screenshot_and_raise "map #{query}, #{method_name} failed because: #{res['reason']}\n#{res['details']}"
+    end
+
+    res['results']
   end
 
   def url_for( verb )
