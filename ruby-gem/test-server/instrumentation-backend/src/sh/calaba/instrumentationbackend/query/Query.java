@@ -3,10 +3,9 @@ package sh.calaba.instrumentationbackend.query;
 import static sh.calaba.instrumentationbackend.InstrumentationBackend.viewFetcher;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
@@ -36,17 +35,17 @@ public class Query {
         this.arguments = args;
     }
 
-    public QueryResult executeInMainThread()
+    public QueryResult executeInMainThread(final boolean includeInvisible)
     {
         if ( Looper.getMainLooper().getThread() == Thread.currentThread()) {
-            return execute();
+            return execute(includeInvisible);
         }
 
         final AtomicReference<QueryResult> result = new AtomicReference<QueryResult>();
         InstrumentationBackend.instrumentation.runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                result.set(execute());
+                result.set(execute(includeInvisible));
             }
         });
         return result.get();
@@ -54,14 +53,8 @@ public class Query {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes" })
-	public QueryResult execute() {
+	public QueryResult execute(boolean includeInvisible) {
         List result = new ArrayList();
-		View decorView = InstrumentationBackend.solo
-				.getCurrentActivity().getWindow().getDecorView();
-		if (decorView == null) { throw new IllegalStateException("Unable to find window decorView."); } 
-		View rootView = decorView
-				.findViewById(android.R.id.content);
-		if (rootView == null) { throw new IllegalStateException("Unable to find root view."); }
 		
         long before = System.currentTimeMillis();
         List queryResults = UIQueryEvaluator.evaluateQueryWithOptions(this.queryString, rootViews(), this.arguments);
@@ -71,11 +64,9 @@ public class Query {
         System.out.println(action+ " took: "+ (after-before) + "ms");
                 
         for (Object v : queryResults) {
-            if (UIQueryUtils.isVisible(v)) {
-            	System.out.println("Query result: "+v);
+            if (includeInvisible || UIQueryUtils.isVisible(viewFetcher,v)) {
             	result.add(ViewMapper.extractDataFromView(v));
-            }
-            
+            }            
         }
                
         return new QueryResult(result);
@@ -87,15 +78,6 @@ public class Query {
     }
 
     public List<View> rootViews() {
-    	Set<View> parents = new HashSet<View>(8);
-    	for (View v : allVisibleViews()) 
-    	{
-    		View parent = viewFetcher.getTopParent(v);
-    		System.out.println(parent);
-    		parents.add(parent);
-    	}
-    	List<View> results = new ArrayList<View>();
-    	results.addAll(parents);
-    	return results;
+    	return Arrays.asList(viewFetcher.getWindowDecorViews());
     }
 }

@@ -20,7 +20,6 @@ import sh.calaba.instrumentationbackend.query.Query;
 import sh.calaba.instrumentationbackend.query.QueryResult;
 import sh.calaba.org.codehaus.jackson.map.DeserializationConfig.Feature;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
-import sh.calaba.org.codehaus.jackson.type.TypeReference;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
@@ -75,6 +74,7 @@ public class HttpServer extends NanoHTTPD {
 			return new NanoHTTPD.Response(HTTP_OK, MIME_HTML, "pong");
 
 		} else if (uri.endsWith("/map")) {
+			String errorMessage = null;
 			try {
 				String commandString = params.getProperty("json");
 				ObjectMapper mapper = new ObjectMapper();
@@ -85,32 +85,26 @@ public class HttpServer extends NanoHTTPD {
 				String methodName = (String) op.get("method_name");
 				List arguments = (List) op.get("arguments");
 				
-				QueryResult queryResult = new Query(uiQuery,arguments).execute();
+				//For now we only support query and query_all
+				//query_all includes also invisible views, while query filters them
+				boolean includeInVisible = "query_all".equals(methodName);
+				
+				
+				QueryResult queryResult = new Query(uiQuery,arguments).executeInMainThread(includeInVisible);
 
 				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
 						queryResult.asJson());
 			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (Exception e ) {
-                System.err.println("Query failed!");
+				e.printStackTrace();				
+				errorMessage = e.getMessage();
+			} catch (Exception e ) {               
                 e.printStackTrace();
+                errorMessage = e.getMessage();
             }
-            return new NanoHTTPD.Response(HTTP_INTERNALERROR, MIME_HTML, "Query failed");
+            return new NanoHTTPD.Response(HTTP_INTERNALERROR, MIME_HTML, "Query failed: " + errorMessage);
 		} else if (uri.endsWith("/query")) {
-			try {
-				String commandString = params.getProperty("json");
-				ObjectMapper mapper = new ObjectMapper();
-				Map<String, String> command = mapper.readValue(commandString,
-						new TypeReference<Map<String, String>>() {
-						});
-				QueryResult result = new Query(command.get("query")).executeInMainThread();
-				return new NanoHTTPD.Response(HTTP_OK, MIME_HTML,
-						result.asJson());
-			} catch (IOException e) {
-				e.printStackTrace();
-				return new Response(HTTP_INTERNALERROR, MIME_PLAINTEXT,
-						"Could not parse arguments as JSON");
-			}
+			return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT,
+					"/query endpoint is discontinued - use /map with operation query");
 		} else if (uri.endsWith("/kill")) {
 			lock.lock();
 			try {

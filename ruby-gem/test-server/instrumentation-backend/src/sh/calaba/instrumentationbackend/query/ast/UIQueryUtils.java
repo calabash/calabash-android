@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.jayway.android.robotium.solo.PublicViewFetcher;
+
 import android.view.View;
 
 public class UIQueryUtils {
@@ -127,9 +129,10 @@ public class UIQueryUtils {
 		}
 	}
 
-	public static boolean isVisible(Object v) {
-		if (!(v instanceof View)) { return true; }
-		return ((View) v).isShown();
+	public static boolean isVisible(PublicViewFetcher viewFetcher, Object v) {
+		if (!(v instanceof View)) { return true; }		
+		View view = (View) v;
+		return view.isShown() && viewFetcher.isViewSufficientlyShown(view);
 	}
 	
 }
