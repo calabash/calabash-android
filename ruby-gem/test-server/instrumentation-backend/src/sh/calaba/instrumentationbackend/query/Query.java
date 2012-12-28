@@ -53,7 +53,7 @@ public class Query {
 				}
 			}
 		});
-		if (resultErr.get() != null) {
+		if (resultErr.get() == null) {
 			return result.get();
 		}
 		throw new RuntimeException(resultErr.get());

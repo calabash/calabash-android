@@ -95,7 +95,8 @@ public class HttpServer extends NanoHTTPD {
 
 				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", 
 						FranklyResult.successResult(queryResult).asJson());
-			} catch (Exception e ) {               
+			} catch (Exception e ) {
+				e.printStackTrace();
                 errorResult = FranklyResult.fromThrowable(e);
             }
             return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", errorResult.asJson());
