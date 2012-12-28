@@ -10,6 +10,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 
+import java.lang.reflect.Method;
+
 
 public class FakeGPSLocation implements Action {
 	
@@ -81,7 +83,16 @@ public class FakeGPSLocation implements Action {
     		location.setAccuracy(1);
     		location.setTime(System.currentTimeMillis());
 
-    		locationManager.setTestProviderLocation(locationProvider, location);        
+            try {
+                Method makeComplete = Location.class.getMethod("makeComplete");
+                if (makeComplete != null) {
+                    makeComplete.invoke(location);
+                }
+            } catch (Exception e) {
+                //Method only available in Jelly Bean
+            }
+
+            locationManager.setTestProviderLocation(locationProvider, location);
     	}
 
     	public void finish() {
@@ -93,13 +104,7 @@ public class FakeGPSLocation implements Action {
     public String key() {
         return "set_gps_coordinates";
     }
-    
-    /**
-     * Causes error if Device does not support given provider
-     * 
-     * @param provider
-     * @return 
-     */
+
     private boolean doesDeviceProvideGPS() {
     LocationManager locationManager = (LocationManager) InstrumentationBackend.solo.getCurrentActivity().getSystemService(Context.LOCATION_SERVICE);
     if (locationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
