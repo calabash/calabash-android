@@ -38,7 +38,7 @@ public class Query {
 
     public QueryResult executeInMainThread()
     {
-        if ( Looper.getMainLooper().getThread() != Thread.currentThread()) {
+        if ( Looper.getMainLooper().getThread() == Thread.currentThread()) {
             return execute();
         }
 
