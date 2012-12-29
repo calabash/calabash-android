@@ -12,6 +12,8 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 
+import android.view.View;
+
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryLexer;
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
 
@@ -58,21 +60,41 @@ public class UIQueryEvaluator {
 				try {
 					
 					before = System.currentTimeMillis();
-					
-					Method m = UIQueryUtils.hasProperty(o, propertyName);
-					after = System.currentTimeMillis();
-			        action = "HasProperty";
-			        System.out.println(action+ " took: "+ (after-before) + "ms");
-
-
-					if (m != null) {
-						nextResult.add(m.invoke(o));	
+					if (o instanceof Map)
+					{
+						Map objAsMap = (Map) o;
+						if (objAsMap.containsKey(propertyName))
+						{
+							nextResult.add(objAsMap.get(propertyName));
+						}
+						else 
+						{
+							nextResult.add(UIQueryResultVoid.instance.asMap(propertyName,o,"No key for "+propertyName + ". Keys: "+(objAsMap.keySet().toString())));
+						}						
 					}
 					else 
 					{
-						nextResult.add(UIQueryResultVoid.instance.asMap(propertyName,o,"NO accessor for "+propertyName));
+						if (o instanceof View && "id".equals(propertyName))
+						{
+							nextResult.add(UIQueryUtils.getId((View) o));
+						}
+						else 
+						{
+							Method m = UIQueryUtils.hasProperty(o, propertyName);
+							after = System.currentTimeMillis();
+					        action = "HasProperty";
+					        System.out.println(action+ " took: "+ (after-before) + "ms");
+							if (m != null) {
+								nextResult.add(m.invoke(o));	
+							}
+							else 
+							{
+								nextResult.add(UIQueryResultVoid.instance.asMap(propertyName,o,"NO accessor for "+propertyName));
+							}							
+						}
 					}
 					
+										
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 					nextResult.add(UIQueryResultVoid.instance.asMap(propertyName,o,e.getMessage()));
@@ -93,7 +115,6 @@ public class UIQueryEvaluator {
 		try {
 			q = parser.query();
 		} catch (RecognitionException e) {
-			// TODO Auto-generated catch block
 			throw new InvalidUIQueryException(e.getMessage());
 		}
 		if (q == null) {

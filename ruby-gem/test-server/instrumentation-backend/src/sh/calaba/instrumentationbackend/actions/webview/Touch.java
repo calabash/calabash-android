@@ -18,7 +18,7 @@ public class Touch implements Action {
     public Result execute(String... args) {
 
         try {
-            String queryResult = QueryHelper.executeJavascriptInWebview("calabash.js", args[1], args[0]);
+            String queryResult = QueryHelper.executeJavascriptInWebviews(null,"calabash.js", args[1], args[0]);
             List<HashMap<String,Object>> p = new ObjectMapper().readValue(queryResult, new TypeReference<List<HashMap<String,Object>>>(){});
 
             if (p.isEmpty()) {

@@ -20,7 +20,7 @@ public class ScrollTo implements Action {
     @Override
     public Result execute(String... args) {
     	//TODO: Should do horizontal scrolling if needed
-    	String queryResult = QueryHelper.executeJavascriptInWebview("calabash.js", args[1], args[0]);
+    	String queryResult = QueryHelper.executeJavascriptInWebviews(null,"calabash.js", args[1], args[0]);
 		CalabashChromeClient calabashChromeClient = CalabashChromeClient.findAndPrepareWebViews().get(0);
 		final WebView webView = calabashChromeClient.getWebView();
 		webView.scrollTo(0, 0);

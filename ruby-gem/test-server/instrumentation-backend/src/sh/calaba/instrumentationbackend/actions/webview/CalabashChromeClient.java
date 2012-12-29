@@ -1,10 +1,8 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import android.os.Build;
@@ -74,12 +72,17 @@ public class CalabashChromeClient extends WebChromeClient {
 		ArrayList<View> views = InstrumentationBackend.solo.getCurrentViews();
 		for (View view : views) {
 			if ( view instanceof WebView) {
-				WebView webView = (WebView)view;
-				webViews.add(new CalabashChromeClient(webView));
-				webView.getSettings().setJavaScriptEnabled(true);
+				WebView webView = (WebView)view;				
+				webViews.add(prepareWebView(webView));
 				System.out.println("Setting CalabashChromeClient");
 			}
 		}
 		return webViews;
+	}
+
+	public static CalabashChromeClient prepareWebView(WebView webView) {
+		CalabashChromeClient calabashChromeClient = new CalabashChromeClient(webView);
+		webView.getSettings().setJavaScriptEnabled(true);
+		return calabashChromeClient;
 	}
 }

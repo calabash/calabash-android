@@ -4,11 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
@@ -16,7 +15,7 @@ import android.webkit.WebView;
 
 public class QueryHelper {
 
-    public static String executeJavascriptInWebview(String scriptPath, String... args) {
+	public static String executeJavascriptInWebviews(WebView webViewOrNull, String scriptPath, String... args) {
 		
 		String script = readJavascriptFromAsset(scriptPath);
 
@@ -25,11 +24,20 @@ public class QueryHelper {
 		}
 
 		final String myScript = script;
-    	List<CalabashChromeClient> webViews = CalabashChromeClient.findAndPrepareWebViews();
+    	List<CalabashChromeClient> webViews = null;
+    	if (webViewOrNull == null)
+    	{
+    		webViews = CalabashChromeClient.findAndPrepareWebViews();
+    	}
+    	else 
+    	{
+    		webViews = Collections.singletonList(CalabashChromeClient.prepareWebView(webViewOrNull));	
+    	}
+    	
 
     	for (CalabashChromeClient ccc : webViews) {
-    	    WebView webView = ccc.getWebView();
-            webView.loadUrl("javascript:calabash_result = " + myScript + ";prompt('calabash:' + calabash_result);");
+    	    WebView w = ccc.getWebView();
+            w.loadUrl("javascript:calabash_result = " + myScript + ";prompt('calabash:' + calabash_result);");
 			return ccc.getResult();
 		}
     	throw new RuntimeException("No webviews found");
@@ -45,14 +53,9 @@ public class QueryHelper {
 		return (Map<String, Object>)elements.get(0);	
 	}
 	
-	public static float[] getScreenCoordinatesForCenter(Map<String, Object> rectangle) {
+	public static float[] getScreenCoordinatesForCenter(WebView webView, Map<String, Object> rectangle) {
 		try {
 			
-			CalabashChromeClient calabashChromeClient = CalabashChromeClient.findAndPrepareWebViews().get(0);
-		
-			WebView webView = calabashChromeClient.getWebView();
-
-
             float scale = webView.getScale();
 
 
@@ -68,6 +71,11 @@ public class QueryHelper {
 			throw new RuntimeException(e);
 		}
 	}
+	public static float[] getScreenCoordinatesForCenter(Map<String, Object> rectangle) {
+		WebView webView = CalabashChromeClient.findAndPrepareWebViews().get(0).getWebView();
+		return getScreenCoordinatesForCenter(webView, rectangle);
+	}
+	
 	
 	public static String toJsonString(Object o) {
 		//http://www.mkyong.com/java/how-to-convert-java-map-to-from-json-jackson/

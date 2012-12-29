@@ -2,14 +2,17 @@ package sh.calaba.instrumentationbackend.query.ast;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.antlr.runtime.tree.CommonTree;
 
-import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import sh.calaba.instrumentationbackend.actions.webview.Query;
+import sh.calaba.instrumentationbackend.actions.webview.QueryHelper;
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
-import android.content.res.Resources.NotFoundException;
 import android.view.View;
+import android.webkit.WebView;
 
 public class UIQueryASTWith implements UIQueryAST {
 	public final String propertyName;	
@@ -31,38 +34,14 @@ public class UIQueryASTWith implements UIQueryAST {
 		for (int i=0;i<inputViews.size();i++)
 		{
 			Object o = inputViews.get(i);
-			if (this.propertyName.equals("id") && hasId(o,this.value))
+			
+			if (o instanceof WebView) 
 			{
-				result.add(o);
+				evaluateForWebView((WebView) o,result);
 			}
-			else if (this.propertyName.equals("marked") && isMarked(o,this.value))
+			else
 			{
-				result.add(o);
-			}
-			else if (this.propertyName.equals("index") && this.value.equals(i))
-			{
-				result.add(o);
-			}
-			else 
-			{
-								
-				Method propertyAccessor = UIQueryUtils.hasProperty(o, this.propertyName);
-				if (propertyAccessor != null)
-				{				
-					Object value = UIQueryUtils.getProperty(o, propertyAccessor);
-
-					if (value == this.value || (value != null && value.equals(this.value))) 
-					{
-						result.add(o);
-					} 
-					else if (this.value instanceof String && this.value.equals(value.toString())) 
-					{
-						result.add(o);
-					}
-					
-					
-				}
-				
+				evaluateForObject(o,result,i);
 			}
 	
 		}
@@ -71,22 +50,70 @@ public class UIQueryASTWith implements UIQueryAST {
 		return result;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void evaluateForObject(Object o, List result, int index) {
+		if (this.propertyName.equals("id") && hasId(o,this.value))
+		{
+			result.add(o);
+		}
+		else if (this.propertyName.equals("marked") && isMarked(o,this.value))
+		{
+			result.add(o);
+		}
+		else if (this.propertyName.equals("index") && this.value.equals(index))
+		{
+			result.add(o);
+		}
+		else 
+		{
+							
+			Method propertyAccessor = UIQueryUtils.hasProperty(o, this.propertyName);
+			if (propertyAccessor != null)
+			{				
+				Object value = UIQueryUtils.getProperty(o, propertyAccessor);
+
+				if (value == this.value
+						|| (value != null && value.equals(this.value))) 
+				{
+					result.add(o);
+				} 
+				else if (this.value instanceof String && this.value.equals(value.toString())) 
+				{
+					result.add(o);
+				}							
+			}
+			
+		}
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	private void evaluateForWebView(WebView o, @SuppressWarnings("rawtypes") List result) 
+	{
+		if (!(this.value instanceof String))
+		{
+			return;
+		}
+		List<Map<String, Object>> queryResult = Query.evaluateQueryInWebView(this.propertyName,(String)this.value,o);
+		
+		for (Map<String,Object> res : queryResult)
+		{
+			float[] coords = QueryHelper.getScreenCoordinatesForCenter(o, res);
+			Map<String,Float> center = new HashMap<String,Float>();
+			center.put("X", coords[0]);
+			center.put("Y", coords[1]);
+			res.put("center",center);
+			result.add(res);
+		}			
+	}
+
 	private boolean hasId(Object o, Object expectedValue) {
 		if (! (o instanceof View)) { return false; }
 		if (! (expectedValue instanceof String)) { return false; }
 		View view = (View) o;
 		String expected = (String) expectedValue;
-		
-		try {
-			String id = InstrumentationBackend.solo.getCurrentActivity()
-					.getResources().getResourceEntryName(view.getId());
-			
-			if (id != null && id.equals(expected))  {
-				return true;
-			}
-		}
-		catch (NotFoundException e) {}
-		return false;
+		String id = UIQueryUtils.getId(view);
+		return (id != null && id.equals(expected));
 	}
 
 	private boolean isMarked(Object o, Object expectedValue) {

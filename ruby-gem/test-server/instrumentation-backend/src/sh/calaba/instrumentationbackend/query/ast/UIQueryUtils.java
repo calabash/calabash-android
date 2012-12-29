@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.jayway.android.robotium.solo.PublicViewFetcher;
-
+import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import android.content.res.Resources.NotFoundException;
 import android.view.View;
+
+import com.jayway.android.robotium.solo.PublicViewFetcher;
 
 public class UIQueryUtils {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -133,6 +135,16 @@ public class UIQueryUtils {
 		if (!(v instanceof View)) { return true; }		
 		View view = (View) v;
 		return view.isShown() && viewFetcher.isViewSufficientlyShown(view);
+	}
+
+	public static String getId(View view) {
+		try {
+			return InstrumentationBackend.solo.getCurrentActivity()
+					.getResources().getResourceEntryName(view.getId());			
+	
+		}
+		catch (NotFoundException e) {}
+		return null;
 	}
 	
 }

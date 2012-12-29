@@ -21,7 +21,7 @@ public class SetText implements Action {
     @Override
     public Result execute(String... args) {
     	try {
-	    	String queryResult = QueryHelper.executeJavascriptInWebview("calabash.js", args[1], args[0]);
+	    	String queryResult = QueryHelper.executeJavascriptInWebviews(null,"calabash.js", args[1], args[0]);
 	    	List<HashMap<String,Object>> p = new ObjectMapper().readValue(queryResult, new TypeReference<List<HashMap<String,Object>>>(){});
 			
 			if (p.isEmpty()) {
@@ -33,7 +33,7 @@ public class SetText implements Action {
 			firstElement.remove("html");
 			String firstElementJson = QueryHelper.toJsonString(firstElement);
 			
-			String result = QueryHelper.executeJavascriptInWebview("set_text.js", firstElementJson, args[2]);
+			String result = QueryHelper.executeJavascriptInWebviews(null,"set_text.js", firstElementJson, args[2]);
 	    	return new Result(true, result);
     	} catch (Exception e) {
     		throw new RuntimeException(e);
