@@ -4,6 +4,12 @@ require 'fileutils'
 require 'rbconfig'
 require 'calabash-android/helpers'
 
+# for ruby 1.9.1 and earlier
+unless defined? RbConfig.ruby
+  def RbConfig.ruby
+    File.join(RbConfig::CONFIG["bindir"], RbConfig::CONFIG["ruby_install_name"] + RbConfig::CONFIG["EXEEXT"])
+  end
+end
 
 require File.join(File.dirname(__FILE__), "calabash-android-helpers")
 require File.join(File.dirname(__FILE__), "calabash-android-generate")
