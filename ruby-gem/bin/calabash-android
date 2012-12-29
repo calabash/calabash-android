@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'fileutils'
+require 'rbconfig'
 require 'calabash-android/helpers'
 
 
