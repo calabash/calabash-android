@@ -40,7 +40,7 @@ def calabash_run(app_path = nil)
 
   STDOUT.sync = true
   arguments = ARGV - ["--no-build"]
-  cmd = "cucumber #{arguments.join(" ")} #{env}"
+  cmd = "#{RbConfig.ruby} -S cucumber #{arguments.join(" ")} #{env}"
   log cmd
   exit_code = system(cmd)
 
