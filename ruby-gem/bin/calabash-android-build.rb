@@ -18,7 +18,7 @@ def calabash_build(app)
       FileUtils.cp(unsigned_test_apk, "TestServer.apk")
       FileUtils.cp(File.join(File.dirname(__FILE__), '..', 'test-server/AndroidManifest.xml'), "AndroidManifest.xml")
 
-      unless system %Q{ruby -pi.bak -e "gsub(/#targetPackage#/, '#{package_name(app)}')" AndroidManifest.xml}
+      unless system %Q{"#{RbConfig.ruby}" -pi.bak -e "gsub(/#targetPackage#/, '#{package_name(app)}')" AndroidManifest.xml}
         raise "Could not replace package name in manifest"
       end
 
