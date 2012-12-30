@@ -2,7 +2,6 @@ package sh.calaba.instrumentationbackend.query.ast;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +24,7 @@ public class UIQueryASTWith implements UIQueryAST {
 		this.value = value;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked"})
+	@SuppressWarnings({ "rawtypes"})
 	@Override
 	public List evaluateWithViewsAndDirection(List inputViews,
 			UIQueryDirection direction) {
@@ -98,11 +97,11 @@ public class UIQueryASTWith implements UIQueryAST {
 		
 		for (Map<String,Object> res : queryResult)
 		{
-			float[] coords = QueryHelper.getScreenCoordinatesForCenter(o, res);
-			Map<String,Float> center = new HashMap<String,Float>();
-			center.put("X", coords[0]);
-			center.put("Y", coords[1]);
-			res.put("center",center);
+			Map<String,Object> rect = (Map<String, Object>) res.get("rect");
+			
+			Map<String, Object> newRect = QueryHelper.translateRectToScreenCoordinates(o, rect);
+			res.put("rect",newRect);
+			
 			result.add(res);
 		}			
 	}

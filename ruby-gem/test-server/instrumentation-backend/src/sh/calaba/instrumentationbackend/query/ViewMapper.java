@@ -17,8 +17,7 @@ public class ViewMapper {
 		if (!(obj instanceof View)) {return obj;}
 		View v = (View) obj;
 		Map data = new HashMap();
-		data.put("class", v.getClass().getSimpleName());
-		data.put("qualified_class", v.getClass().getName());
+		data.put("class", v.getClass().getName());		
 		data.put("description", v.toString());
 		CharSequence description = v.getContentDescription();
 		data.put("contentDescription", description != null ? description.toString() : null);
@@ -33,16 +32,20 @@ public class ViewMapper {
 		}
 		data.put("id", id);
 
-		Map frame = new HashMap();
+		Map rect = new HashMap();
 		int[] location = new int[2];
 		v.getLocationOnScreen(location);
 
-		frame.put("x", location[0]);
-		frame.put("y", location[1]);
-		frame.put("width", v.getWidth());
-		frame.put("height", v.getHeight());
+		rect.put("x", location[0]);
+		rect.put("y", location[1]);
+		
+		rect.put("center_x", location[0] + v.getWidth()/2.0);
+		rect.put("center_y", location[1] + v.getHeight()/2.0);
+		
+		rect.put("width", v.getWidth());
+		rect.put("height", v.getHeight());
 
-		data.put("frame", frame);
+		data.put("rect", rect);
 
 		if (v instanceof Button) {
 			Button b = (Button) v;

@@ -53,27 +53,43 @@ public class QueryHelper {
 		return (Map<String, Object>)elements.get(0);	
 	}
 	
-	public static float[] getScreenCoordinatesForCenter(WebView webView, Map<String, Object> rectangle) {
+	public static float translateCoordToScreen(int offset, float scale, Object point) {
+		return offset + ((Number)point).floatValue() *scale;
+	}
+	
+	public static Map<String, Object> translateRectToScreenCoordinates(WebView webView, Map<String, Object> rectangle) {
 		try {
 			
             float scale = webView.getScale();
 
-
-			System.out.println("scale: " + scale);
 			int[] webviewLocation = new int[2];
 			webView.getLocationOnScreen(webviewLocation);
+			//center_x, center_y
+			//left, top, width, height
+			float center_x = translateCoordToScreen(webviewLocation[0], scale,
+					rectangle.get("center_x"));
+			float center_y = translateCoordToScreen(webviewLocation[1], scale,
+					rectangle.get("center_y"));
+									
+			float x = translateCoordToScreen(webviewLocation[0], scale, rectangle.get("left"));
+			float y = translateCoordToScreen(webviewLocation[0], scale, rectangle.get("top"));
+			Map<String,Object> result = new HashMap<String, Object>(rectangle);
 			
-			//TODO: Exception if center_x or center_y are not numbers
-			float x = webviewLocation[0] + ((Number)rectangle.get("center_x")).floatValue() * scale;
-			float y = webviewLocation[1] + ((Number)rectangle.get("center_y")).floatValue() * scale;
-			return new float[]{x, y};
+			result.put("x",x);
+			result.put("y",y);
+			result.put("center_x",center_x);
+			result.put("center_y",center_y);
+			
+			return result;
+			
+	
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	public static float[] getScreenCoordinatesForCenter(Map<String, Object> rectangle) {
+	public static Map<String,Object> translateRectToScreenCoordinates(Map<String, Object> rectangle) {
 		WebView webView = CalabashChromeClient.findAndPrepareWebViews().get(0).getWebView();
-		return getScreenCoordinatesForCenter(webView, rectangle);
+		return translateRectToScreenCoordinates(webView, rectangle);
 	}
 	
 	

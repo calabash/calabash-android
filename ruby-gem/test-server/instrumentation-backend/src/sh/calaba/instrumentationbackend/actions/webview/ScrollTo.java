@@ -23,8 +23,7 @@ public class ScrollTo implements Action {
     	String queryResult = QueryHelper.executeJavascriptInWebviews(null,"calabash.js", args[1], args[0]);
 		CalabashChromeClient calabashChromeClient = CalabashChromeClient.findAndPrepareWebViews().get(0);
 		final WebView webView = calabashChromeClient.getWebView();
-		webView.scrollTo(0, 0);
-		QueryHelper.getScreenCoordinatesForCenter(findFirstRect(queryResult));
+		webView.scrollTo(0, 0);		
 		int scrolledTo = webView.getScrollY();
 		while (!isVisible(findFirstRect(queryResult), calabashChromeClient)) {
 			TouchUtils.dragQuarterScreenUp(Actions.parentTestCase, InstrumentationBackend.solo.getCurrentActivity());

@@ -21,7 +21,7 @@ public class Query implements Action {
 	}
 
 	public static List<Map<String, Object>> evaluateQueryInWebView(String type,
-			String selector, WebView webView) {
+		String selector, WebView webView) {
 		String queryResult = QueryHelper.executeJavascriptInWebviews(webView,
 				"calabash.js", selector, type);
 
