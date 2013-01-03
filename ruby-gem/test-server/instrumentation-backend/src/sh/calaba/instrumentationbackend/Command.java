@@ -45,7 +45,7 @@ public class Command {
     public Result execute() {
         final Action action = InstrumentationBackend.actions.lookup(getCommand());
 
-        if ( Looper.getMainLooper().getThread() != Thread.currentThread()) {
+        if ( Looper.getMainLooper().getThread() == Thread.currentThread()) {
             return action.execute(getArguments());
         }
 
