@@ -393,6 +393,8 @@ module Operations
   end
 
   def touch(uiquery,*args)
+    raise "Cannot touch nil" unless uiquery
+
     if uiquery.instance_of? String
       elements = query(uiquery, *args)
       raise "No elements found" if elements.empty?
