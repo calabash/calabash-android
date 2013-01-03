@@ -36,6 +36,10 @@ module Operations
     @default_device
   end
 
+  def set_default_device(device)
+    @default_device = device
+  end
+
   def performAction(action, *arguments)
     default_device.perform_action(action, *arguments)
   end
@@ -124,10 +128,6 @@ module Operations
   end
 
   class Device
-
-    def make_default_device
-      @cucumber_world.default_device = self
-    end
 
     def initialize(cucumber_world, serial, server_port, app_path, test_server_path)
       @cucumber_world = cucumber_world
