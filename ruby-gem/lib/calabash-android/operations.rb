@@ -405,8 +405,8 @@ module Operations
     end
 
 
-    center_x = element["frame"]["x"] + element["frame"]["width"] / 2
-    center_y = element["frame"]["y"] + element["frame"]["height"] / 2
+    center_x = element["rect"]["center_x"]
+    center_y = element["rect"]["center_y"]
     performAction("touch_coordinate", center_x, center_y)
   end
 
