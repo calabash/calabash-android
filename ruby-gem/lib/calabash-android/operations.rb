@@ -401,6 +401,7 @@ module Operations
       element = elements.first
     else
       element = uiquery
+      element = element.first if element.instance_of?(Array)
     end
 
 
