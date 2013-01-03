@@ -13,7 +13,6 @@ module Calabash module Android
 
 module Operations
 
-
   def log(message)
     $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}" if (ARGV.include? "-v" or ARGV.include? "--verbose")
   end
@@ -29,6 +28,7 @@ module Operations
       Then(txt)
     end
   end
+
   def default_device
     unless @default_device
       @default_device = Device.new(self, ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"], ENV["APP_PATH"], ENV["TEST_APP_PATH"])
