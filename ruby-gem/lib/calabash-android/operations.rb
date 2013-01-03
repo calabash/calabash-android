@@ -311,8 +311,8 @@ module Operations
         wake_up
       end
 
-      env_options = {:target_package => options[:target_package] || ENV["PACKAGE_NAME"],
-                     :main_activity => options[:main_activity] || ENV["MAIN_ACTIVITY"],
+      env_options = {:target_package => options[:target_package] || package_name(@app_path),
+                     :main_activity => options[:main_activity] || main_activity(@app_path),
                      :debug => options[:debug] || false,
                      :class => options[:class] || "sh.calaba.instrumentationbackend.InstrumentationBackend"}
 
