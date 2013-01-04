@@ -5,14 +5,15 @@ import static sh.calaba.instrumentationbackend.InstrumentationBackend.viewFetche
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryEvaluator;
-import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
+import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
+import sh.calaba.org.codehaus.jackson.type.TypeReference;
 import android.os.ConditionVariable;
-import android.os.Looper;
 import android.view.View;
 
 public class Query {
@@ -60,10 +61,32 @@ public class Query {
 
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List postProcessQueryResult(List list) {
-		// TODO Auto-generated method stub
-		return list;
+		List result = new ArrayList();
+		for (Object o : list) {
+			if (o instanceof AtomicReference) {
+				String refVal = ((AtomicReference<String>) o).get();
+				if (refVal == null)
+				{
+					System.err.println("Query produced no results asynchronously");
+					continue;
+				}
+				try {
+					List<HashMap<String, Object>> parsedResult = new ObjectMapper().readValue(refVal,
+							new TypeReference<List<HashMap<String, Object>>>() {});
+					result.addAll(parsedResult);
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				}
+			}
+			else {
+				result.add(o);
+			}
+				
+		}			
+		return result;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
