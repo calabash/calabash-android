@@ -12,6 +12,7 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 
+import android.os.ConditionVariable;
 import android.view.View;
 
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryLexer;
@@ -35,17 +36,12 @@ public class UIQueryEvaluator {
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes" })
-	public static List evaluateQuery(String query, List inputViews) {
-		return evaluateQueryForPath(parseQuery(query), inputViews);
-	}
-
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List evaluateQueryWithOptions(String query, List inputViews,
-			List options) {
+			List options, ConditionVariable computationFinished) {
 		
         long before = System.currentTimeMillis();
-        List views = evaluateQueryForPath(parseQuery(query), inputViews);
+        List views = evaluateQueryForPath(parseQuery(query), inputViews, computationFinished);
         long after = System.currentTimeMillis();
         String action = "EvaluateQueryNoOptions";
         System.out.println(action+ " took: "+ (after-before) + "ms");
@@ -53,6 +49,7 @@ public class UIQueryEvaluator {
 		
 
 		List result = views;
+		/* TODO move to post process
 		for (Object methodNameObj : options) {
 			String propertyName = (String) methodNameObj;
 			List nextResult = new ArrayList(views.size());
@@ -102,6 +99,7 @@ public class UIQueryEvaluator {
 			}
 			result = nextResult;
 		}
+		*/
 		return result;
 
 	}
@@ -132,7 +130,7 @@ public class UIQueryEvaluator {
 
 	@SuppressWarnings("rawtypes")
 	private static List evaluateQueryForPath(List<UIQueryAST> queryPath,
-			List inputViews) {
+			List inputViews, ConditionVariable computationFinished) {
 
 		List currentResult = inputViews;
 		UIQueryDirection currentDirection = UIQueryDirection.DESCENDANT;
@@ -145,7 +143,7 @@ public class UIQueryEvaluator {
 		        		        
 
 				currentResult = step.evaluateWithViewsAndDirection(
-						currentResult, currentDirection);
+						currentResult, currentDirection,computationFinished);
 				long after = System.currentTimeMillis();
 		        String action = "EvaluateQueryNoOptions" + step.toString();
 		        System.out.println(action+ " took: "+ (after-before) + "ms");

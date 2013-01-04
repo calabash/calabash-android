@@ -14,7 +14,7 @@ public class UIQueryTest extends TestCase {
 	@SuppressWarnings("rawtypes")
 	public void testEvaluateQueryOnEmpty() {
 		String query = "button";
-		List res = UIQueryEvaluator.evaluateQuery(query, Collections.EMPTY_LIST);		
+		List res = UIQueryEvaluator.evaluateQueryWithOptions(query, Collections.EMPTY_LIST, null, null);		
 		assertEquals(0, res.size());
 	}
 
@@ -94,11 +94,11 @@ public class UIQueryTest extends TestCase {
 	public void testEvaluateSimpleQuery() throws Exception {
 		List<View> views = setupViews();
 		
-		List evaluateQuery = UIQueryEvaluator.evaluateQuery("subview", views);
+		List evaluateQuery = UIQueryEvaluator.evaluateQueryWithOptions("subview", views, null, null);
 		assertEquals(1, evaluateQuery.size());
 		assertTrue(evaluateQuery.get(0) instanceof SubView);
 		
-		List evaluateQueryButtons = UIQueryEvaluator.evaluateQuery("button", views);
+		List evaluateQueryButtons = UIQueryEvaluator.evaluateQueryWithOptions("button", views, null, null);
 		assertEquals(3, evaluateQueryButtons.size());
 		assertTrue(evaluateQueryButtons.get(0) instanceof Button);
 		assertTrue(evaluateQueryButtons.get(1) instanceof Button);
@@ -113,7 +113,7 @@ public class UIQueryTest extends TestCase {
 		SubView vv = (SubView) views.get(1);
 		Button b = (Button) vv.getChildAt(0);
 		
-		List evaluateQuery = UIQueryEvaluator.evaluateQuery("subview button", views);
+		List evaluateQuery = UIQueryEvaluator.evaluateQueryWithOptions("subview button", views, null, null);
 		assertEquals(1, evaluateQuery.size());
 		assertTrue(evaluateQuery.get(0) instanceof Button);
 		assertEquals(evaluateQuery.get(0), b);

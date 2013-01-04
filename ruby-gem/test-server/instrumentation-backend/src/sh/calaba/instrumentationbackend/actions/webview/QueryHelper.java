@@ -8,15 +8,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
+import android.os.ConditionVariable;
 import android.webkit.WebView;
 
 public class QueryHelper {
 
 	public static String executeJavascriptInWebviews(WebView webViewOrNull, String scriptPath, String... args) {
-		
+		throw new UnsupportedOperationException("Disabled for now");
+		/*
 		String script = readJavascriptFromAsset(scriptPath);
 
 		for (String arg : args) {
@@ -29,10 +32,6 @@ public class QueryHelper {
     	{
     		webViews = CalabashChromeClient.findAndPrepareWebViews();
     	}
-    	else 
-    	{
-    		webViews = Collections.singletonList(CalabashChromeClient.prepareWebView(webViewOrNull));	
-    	}
     	
 
     	for (CalabashChromeClient ccc : webViews) {
@@ -41,6 +40,7 @@ public class QueryHelper {
 			return ccc.getResult();
 		}
     	throw new RuntimeException("No webviews found");
+    	*/
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -118,4 +118,22 @@ public class QueryHelper {
 		}
 		return script.toString();
     }
+
+	public static void executeAsyncJavascriptInWebviews(WebView webView,
+			String scriptPath, String selector, String type,
+			ConditionVariable computationFinished,
+			AtomicReference<String> result) {
+		// TODO Auto-generated method stub
+		String script = readJavascriptFromAsset(scriptPath);
+
+		script = script.replaceFirst("%@", selector);
+		script = script.replaceFirst("%@", type);
+
+		CalabashChromeClient.prepareWebView(webView,computationFinished,result);
+		final String myScript = script;
+        webView.loadUrl("javascript:calabash_result = " + myScript + ";prompt('calabash:' + calabash_result);");
+					
+	}
+
+
 }

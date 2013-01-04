@@ -3,6 +3,8 @@ package sh.calaba.instrumentationbackend.query.ast;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.ConditionVariable;
+
 public class UIQueryASTClassName implements UIQueryAST {
 	public final String simpleClassName;	
 	@SuppressWarnings("rawtypes")
@@ -27,7 +29,7 @@ public class UIQueryASTClassName implements UIQueryAST {
 	@SuppressWarnings({ "rawtypes"})
 	@Override
 	public List evaluateWithViewsAndDirection(List inputViews,
-			UIQueryDirection direction) {
+			UIQueryDirection direction, ConditionVariable computationFinished) {
 		// TODO Auto-generated method stub
 		
 		List result = new ArrayList(8);

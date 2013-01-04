@@ -3,13 +3,13 @@ package sh.calaba.instrumentationbackend.query.ast;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.antlr.runtime.tree.CommonTree;
 
 import sh.calaba.instrumentationbackend.actions.webview.Query;
-import sh.calaba.instrumentationbackend.actions.webview.QueryHelper;
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
+import android.os.ConditionVariable;
 import android.view.View;
 import android.webkit.WebView;
 
@@ -27,7 +27,7 @@ public class UIQueryASTWith implements UIQueryAST {
 	@SuppressWarnings({ "rawtypes"})
 	@Override
 	public List evaluateWithViewsAndDirection(List inputViews,
-			UIQueryDirection direction) {
+			UIQueryDirection direction, ConditionVariable computationFinished) {
 		List result = new ArrayList(8);
 					
 		for (int i=0;i<inputViews.size();i++)
@@ -36,7 +36,7 @@ public class UIQueryASTWith implements UIQueryAST {
 			
 			if (o instanceof WebView) 
 			{
-				evaluateForWebView((WebView) o,result);
+				evaluateForWebView((WebView) o,result,computationFinished);
 			}
 			else
 			{
@@ -87,14 +87,15 @@ public class UIQueryASTWith implements UIQueryAST {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void evaluateForWebView(WebView o, @SuppressWarnings("rawtypes") List result) 
+	private void evaluateForWebView(WebView o, @SuppressWarnings("rawtypes") List result, ConditionVariable computationFinished) 
 	{
 		if (!(this.value instanceof String))
 		{
 			return;
 		}
-		List<Map<String, Object>> queryResult = Query.evaluateQueryInWebView(this.propertyName,(String)this.value,o);
-		
+		AtomicReference<String> resultBox = Query.evaluateQueryInWebView(this.propertyName,(String)this.value,o,computationFinished);
+		result.add(resultBox);
+		/*TODO: postpone to postprocess
 		for (Map<String,Object> res : queryResult)
 		{
 			Map<String,Object> rect = (Map<String, Object>) res.get("rect");
@@ -103,7 +104,10 @@ public class UIQueryASTWith implements UIQueryAST {
 			res.put("rect",newRect);
 			
 			result.add(res);
-		}			
+		}
+		
+		*/
+		
 	}
 
 	private boolean hasId(Object o, Object expectedValue) {

@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryEvaluator;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
+import android.os.ConditionVariable;
 import android.os.Looper;
 import android.view.View;
 
@@ -37,48 +38,53 @@ public class Query {
 
 	@SuppressWarnings("rawtypes")
 	public List executeInMainThread(final boolean includeInvisible) {
-		if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-			return execute(includeInvisible);
-		}
 
 		final AtomicReference<List> result = new AtomicReference<List>();
 		final AtomicReference<Throwable> resultErr = new AtomicReference<Throwable>();
+		final ConditionVariable computationFinished = new ConditionVariable();
 		InstrumentationBackend.instrumentation.runOnMainSync(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					result.set(execute(includeInvisible));
+					result.set(execute(includeInvisible, computationFinished));
 				} catch (Throwable t) {
 					resultErr.set(t);
 				}
 			}
 		});
+		computationFinished.block(10000);
 		if (resultErr.get() == null) {
-			return result.get();
+			return postProcessQueryResult(result.get());
 		}
 		throw new RuntimeException(resultErr.get());
 
 	}
 
+	@SuppressWarnings("rawtypes")
+	private List postProcessQueryResult(List list) {
+		// TODO Auto-generated method stub
+		return list;
+	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List execute(boolean includeInvisible) {
+	public List execute(boolean includeInvisible, ConditionVariable computationFinished) {
 		List result = new ArrayList();
 
 		long before = System.currentTimeMillis();
 		List queryResults = UIQueryEvaluator.evaluateQueryWithOptions(
-				this.queryString, rootViews(), this.arguments);
+				this.queryString, rootViews(), this.arguments, computationFinished);
 		long after = System.currentTimeMillis();
 
 		String action = "EvaluateQuery";
 		System.out.println(action + " took: " + (after - before) + "ms");
 
-		for (Object v : queryResults) {
+/*		for (Object v : queryResults) {
 			if (includeInvisible || UIQueryUtils.isVisible(viewFetcher, v)) {
 				result.add(ViewMapper.extractDataFromView(v));
 			}
 		}
-
-		return result;
+*/
+		return queryResults;//TODO
 	}
 
 	public List<View> allVisibleViews() {

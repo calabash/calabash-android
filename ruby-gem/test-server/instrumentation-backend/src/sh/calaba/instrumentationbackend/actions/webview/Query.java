@@ -1,13 +1,10 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
-import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
-import sh.calaba.org.codehaus.jackson.type.TypeReference;
+import android.os.ConditionVariable;
 import android.webkit.WebView;
 
 public class Query implements Action {
@@ -20,19 +17,12 @@ public class Query implements Action {
 		return new Result(true, result);
 	}
 
-	public static List<Map<String, Object>> evaluateQueryInWebView(String type,
-		String selector, WebView webView) {
-		String queryResult = QueryHelper.executeJavascriptInWebviews(webView,
-				"calabash.js", selector, type);
-
-		try {
-			return new ObjectMapper().readValue(queryResult,
-					new TypeReference<List<HashMap<String, Object>>>() {});
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-
+	public static AtomicReference<String> evaluateQueryInWebView(String type,
+		String selector, WebView webView, ConditionVariable computationFinished) {
+		AtomicReference<String> result = new AtomicReference<String>();
+		QueryHelper.executeAsyncJavascriptInWebviews(webView,
+				"calabash.js", selector, type,computationFinished,result);
+		return result;
 	}
 
 	@Override
