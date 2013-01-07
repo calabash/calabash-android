@@ -6,5 +6,5 @@ import android.os.ConditionVariable;
 
 public interface UIQueryAST {
 	@SuppressWarnings("rawtypes")
-	public List evaluateWithViewsAndDirection(List inputViews, UIQueryDirection direction, ConditionVariable computationFinished);
+	public List evaluateWithViews(List inputViews, UIQueryDirection direction, UIQueryVisibility visibility, ConditionVariable computationFinished);
 }

@@ -35,12 +35,21 @@ query	:	expr (WHITE! expr)*
 		;
 	
 
-expr	:	(className | filter) 
+expr	:	(className | filter | visibility) 
 		;
 
-className   :   (NAME^ | QUALIFIED_NAME^);
+className   :   (WILDCARD^ | NAME^ | QUALIFIED_NAME^);
+
+WILDCARD : '*';
 
 QUALIFIED_NAME : NAME ('.' NAME)+;
+
+visibility   :   (ALL^ | VISIBLE^);
+
+ALL : 'all';
+
+VISIBLE : 'visible';
+
 
 filter : NAME FILTER_COLON^ (INT | STRING | BOOL | NIL);
 

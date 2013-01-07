@@ -1,5 +1,7 @@
 package sh.calaba.instrumentationbackend.query.ast;
 
+import static sh.calaba.instrumentationbackend.InstrumentationBackend.viewFetcher;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -9,8 +11,6 @@ import java.util.List;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import android.content.res.Resources.NotFoundException;
 import android.view.View;
-
-import com.jayway.android.robotium.solo.PublicViewFetcher;
 
 public class UIQueryUtils {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -131,7 +131,7 @@ public class UIQueryUtils {
 		}
 	}
 
-	public static boolean isVisible(PublicViewFetcher viewFetcher, Object v) {
+	public static boolean isVisible(Object v) {
 		if (!(v instanceof View)) { return true; }		
 		View view = (View) v;
 		return view.isShown() && viewFetcher.isViewSufficientlyShown(view);

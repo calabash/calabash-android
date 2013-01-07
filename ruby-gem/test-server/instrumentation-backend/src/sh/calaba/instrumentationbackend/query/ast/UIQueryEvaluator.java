@@ -61,16 +61,21 @@ public class UIQueryEvaluator {
 
 		List currentResult = inputViews;
 		UIQueryDirection currentDirection = UIQueryDirection.DESCENDANT;
+		UIQueryVisibility currentVisibility = UIQueryVisibility.VISIBLE;
+		
 		for (UIQueryAST step : queryPath) {			
 			if (isDirection(step)) {
 				currentDirection = directionFromAst(step);
-			} else {
+			}
+			else if (step instanceof UIQueryVisibility) {
+				currentVisibility = (UIQueryVisibility) step;
+			}
+			else {
 				System.out.println(step);
 		        long before = System.currentTimeMillis();
 		        		        
-
-				currentResult = step.evaluateWithViewsAndDirection(
-						currentResult, currentDirection,computationFinished);
+				currentResult = step.evaluateWithViews(
+						currentResult, currentDirection,currentVisibility,computationFinished);
 				long after = System.currentTimeMillis();
 		        String action = "EvaluateQueryNoOptions" + step.toString();
 		        System.out.println(action+ " took: "+ (after-before) + "ms");
@@ -80,7 +85,7 @@ public class UIQueryEvaluator {
 		}
 		return currentResult;
 	}
-
+	
 	public static UIQueryDirection directionFromAst(UIQueryAST step) {
 		// TODO Auto-generated method stub
 		return null;
@@ -113,9 +118,19 @@ public class UIQueryEvaluator {
 			}
 		case UIQueryParser.NAME:
 			return new UIQueryASTClassName(step.getText());
-
+		
+		case UIQueryParser.WILDCARD:
+			return new UIQueryASTClassName("android.view.View");
+			
 		case UIQueryParser.FILTER_COLON:
 			return UIQueryASTWith.fromAST(step);
+			
+		case UIQueryParser.ALL:
+			return UIQueryVisibility.ALL;	
+			
+		case UIQueryParser.VISIBLE:
+			return UIQueryVisibility.VISIBLE;					
+			
 		default:
 			throw new InvalidUIQueryException("Unknown query: " + stepType
 					+ " with text: " + step.getText());

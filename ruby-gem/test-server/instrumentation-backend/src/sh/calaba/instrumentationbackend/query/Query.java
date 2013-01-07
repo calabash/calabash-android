@@ -167,10 +167,6 @@ public class Query {
 		String action = "EvaluateQuery";
 		System.out.println(action + " took: " + (after - before) + "ms");
 
-		/*
-		 * for (Object v : queryResults) { if (includeInvisible ||
-		 * UIQueryUtils.isVisible(viewFetcher, v)) { result.add(); } }
-		 */
 		return queryResults;// TODO
 	}
 

@@ -28,8 +28,8 @@ public class UIQueryASTClassName implements UIQueryAST {
 
 	@SuppressWarnings({ "rawtypes"})
 	@Override
-	public List evaluateWithViewsAndDirection(List inputViews,
-			UIQueryDirection direction, ConditionVariable computationFinished) {
+	public List evaluateWithViews(List inputViews,
+			UIQueryDirection direction, UIQueryVisibility visibility, ConditionVariable computationFinished) {
 		// TODO Auto-generated method stub
 		
 		List result = new ArrayList(8);
@@ -49,9 +49,8 @@ public class UIQueryASTClassName implements UIQueryAST {
 			
 			
 		}
-		
-		
-		return result;
+			
+		return visibility.evaluateWithViews(result, direction, visibility, computationFinished);
 	}
 
 	@SuppressWarnings("rawtypes")
