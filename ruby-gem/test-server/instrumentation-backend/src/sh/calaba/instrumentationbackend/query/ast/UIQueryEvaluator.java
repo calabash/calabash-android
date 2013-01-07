@@ -120,7 +120,13 @@ public class UIQueryEvaluator {
 			return new UIQueryASTClassName(step.getText());
 		
 		case UIQueryParser.WILDCARD:
-			return new UIQueryASTClassName("android.view.View");
+			try {
+				return new UIQueryASTClassName(Class.forName("android.view.View"));
+			} catch (ClassNotFoundException e) {
+				//Cannot happen
+				throw new IllegalStateException(e);
+			}
+
 			
 		case UIQueryParser.FILTER_COLON:
 			return UIQueryASTWith.fromAST(step);
