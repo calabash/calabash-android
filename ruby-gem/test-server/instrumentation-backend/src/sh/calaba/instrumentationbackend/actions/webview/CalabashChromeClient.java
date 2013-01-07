@@ -57,6 +57,7 @@ public class CalabashChromeClient extends WebChromeClient {
 					Map<String,Object> rect = (Map<String, Object>) data.get("rect");
 					Map <String,Object> updatedRect = QueryHelper.translateRectToScreenCoordinates(view, rect);
 					data.put("rect", updatedRect);
+					data.put("webView", view);
 				}
 				
 				resultBox.set(parsedResult);

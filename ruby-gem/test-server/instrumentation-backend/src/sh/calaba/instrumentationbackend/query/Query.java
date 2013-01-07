@@ -2,18 +2,16 @@ package sh.calaba.instrumentationbackend.query;
 
 import static sh.calaba.instrumentationbackend.InstrumentationBackend.viewFetcher;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import sh.calaba.instrumentationbackend.actions.Operation;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryEvaluator;
-import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import android.os.ConditionVariable;
 import android.view.View;
 
@@ -76,7 +74,7 @@ public class Query {
 
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	private List postProcessQueryResult(final List views) {
 		final AtomicReference<List> resultRef = new AtomicReference<List>();
 		final List methods = this.arguments;
@@ -97,58 +95,24 @@ public class Query {
 		List result = expandedViews;
 		
 
-		for (Object methodNameObj : methods) {
-			String propertyName = (String) methodNameObj;
+		for (Object methodName : methods) {			
 			List nextResult = new ArrayList(result.size());
 			for (Object o : result) {
-				try {
-					if (o instanceof Map) {
-						Map objAsMap = (Map) o;
-						if (objAsMap.containsKey(propertyName)) {
-							Map<String,Object> rect = (Map<String, Object>) objAsMap.get("rect");
-							
-							
-							nextResult.add(objAsMap.get(propertyName));
-						} else {
-							nextResult.add(UIQueryResultVoid.instance.asMap(
-									propertyName, o, "No key for "
-											+ propertyName + ". Keys: "
-											+ (objAsMap.keySet().toString())));
-						}
-					} else {
-						if (o instanceof View && "id".equals(propertyName)) {
-							nextResult.add(UIQueryUtils.getId((View) o));
-						} else {
-							Method m = UIQueryUtils
-									.hasProperty(o, propertyName);
-							if (m != null) {
-								nextResult.add(m.invoke(o));
-							} else {
-								nextResult.add(UIQueryResultVoid.instance
-										.asMap(propertyName, o,
-												"NO accessor for "
-														+ propertyName));
-							}
-						}
-					}
-
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-					nextResult.add(UIQueryResultVoid.instance.asMap(
-							propertyName, o, e.getMessage()));
+				Operation op = null;
+				if (methodName instanceof Operation) {
+					op = (Operation) methodName;												
 				}
+				if (methodName instanceof String) {
+					op = new PropertyOperation((String) methodName);	
+				}					
+				nextResult.add(op.apply(o));								
 			}
 			result = nextResult;
 		}
 		
 		List finalResult = new ArrayList(result.size());
 		for (Object o : result) {
-			if (o instanceof View)  {
-				finalResult.add(ViewMapper.extractDataFromView((View) o));
-			}
-			else {//assume JSON serializable in this case
-				finalResult.add(o);
-			}
+			finalResult.add(ViewMapper.mapView(o));
 		}
 		
 		resultRef.set(finalResult);
@@ -198,22 +162,5 @@ public class Query {
 		return Arrays.asList(viewFetcher.getWindowDecorViews());
 	}
 
-	private static class UIQueryResultVoid {
-		public static final UIQueryResultVoid instance = new UIQueryResultVoid();
-
-		private UIQueryResultVoid() {
-		}
-
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public Object asMap(String methodName, Object receiver,
-				String errorMessage) {
-			Map map = new HashMap();
-			map.put("error", errorMessage);
-			map.put("methodName", methodName);
-			map.put("receiverClass", receiver.getClass().getName());
-			map.put("receiverString", receiver.toString());
-			return map;
-		}
-	}
 
 }
