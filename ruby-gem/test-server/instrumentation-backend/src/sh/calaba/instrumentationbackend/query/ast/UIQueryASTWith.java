@@ -3,6 +3,7 @@ package sh.calaba.instrumentationbackend.query.ast;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.antlr.runtime.tree.CommonTree;
@@ -93,21 +94,8 @@ public class UIQueryASTWith implements UIQueryAST {
 		{
 			return;
 		}
-		AtomicReference<String> resultBox = Query.evaluateQueryInWebView(this.propertyName,(String)this.value,o,computationFinished);
-		result.add(resultBox);
-		/*TODO: postpone to postprocess
-		for (Map<String,Object> res : queryResult)
-		{
-			Map<String,Object> rect = (Map<String, Object>) res.get("rect");
-			
-			Map<String, Object> newRect = QueryHelper.translateRectToScreenCoordinates(o, rect);
-			res.put("rect",newRect);
-			
-			result.add(res);
-		}
-		
-		*/
-		
+		AtomicReference<List<Map<String,Object>>> resultBox = Query.evaluateQueryInWebView(this.propertyName,(String)this.value,o,computationFinished);
+		result.add(resultBox);		
 	}
 
 	private boolean hasId(Object o, Object expectedValue) {

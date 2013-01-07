@@ -1,5 +1,7 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.Result;
@@ -17,9 +19,9 @@ public class Query implements Action {
 		return new Result(true, result);
 	}
 
-	public static AtomicReference<String> evaluateQueryInWebView(String type,
+	public static AtomicReference<List<Map<String,Object>>> evaluateQueryInWebView(String type,
 		String selector, WebView webView, ConditionVariable computationFinished) {
-		AtomicReference<String> result = new AtomicReference<String>();
+		AtomicReference<List<Map<String,Object>>> result = new AtomicReference<List<Map<String,Object>>>();
 		QueryHelper.executeAsyncJavascriptInWebviews(webView,
 				"calabash.js", selector, type,computationFinished,result);
 		return result;

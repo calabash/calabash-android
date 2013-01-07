@@ -14,8 +14,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryEvaluator;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
-import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
-import sh.calaba.org.codehaus.jackson.type.TypeReference;
 import android.os.ConditionVariable;
 import android.view.View;
 
@@ -107,6 +105,9 @@ public class Query {
 					if (o instanceof Map) {
 						Map objAsMap = (Map) o;
 						if (objAsMap.containsKey(propertyName)) {
+							Map<String,Object> rect = (Map<String, Object>) objAsMap.get("rect");
+							
+							
 							nextResult.add(objAsMap.get(propertyName));
 						} else {
 							nextResult.add(UIQueryResultVoid.instance.asMap(
@@ -178,23 +179,14 @@ public class Query {
 		List expandedViews = new ArrayList(inputViews.size());
 		for (Object o : inputViews) {
 			if (o instanceof AtomicReference) {
-				String refVal = ((AtomicReference<String>) o).get();
+				List<Map<String,Object>> refVal = ((AtomicReference<List<Map<String,Object>>>) o).get();
 				if (refVal == null) {
 					System.err
 							.println("Query produced no results asynchronously");
 					continue;
 				}
-				try {
-					List<HashMap<String, Object>> parsedResult = new ObjectMapper()
-							.readValue(
-									refVal,
-									new TypeReference<List<HashMap<String, Object>>>() {
-									});
-					expandedViews.addAll(parsedResult);
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new RuntimeException(e);
-				}
+				expandedViews.addAll(refVal);
+				
 			} else {
 				expandedViews.add(o);
 			}

@@ -121,7 +121,7 @@ public class QueryHelper {
 	public static void executeAsyncJavascriptInWebviews(WebView webView,
 			String scriptPath, String selector, String type,
 			ConditionVariable computationFinished,
-			AtomicReference<String> result) {
+			AtomicReference<List<Map<String, Object>>> result) {
 		// TODO Auto-generated method stub
 		String script = readJavascriptFromAsset(scriptPath);
 
