@@ -104,10 +104,6 @@ module Operations
     map(uiquery,:query,*args)
   end
 
-  def query_all(uiquery, *args)
-    map(uiquery, :query_all, *args)
-  end
-
   def ni
     raise "Not yet implemented."
   end
