@@ -1,11 +1,9 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.actions.Operation;
-import android.os.ConditionVariable;
+import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient.WebFuture;
 import android.webkit.WebView;
 
 public class JavaScriptOperation implements Operation {
@@ -20,7 +18,9 @@ public class JavaScriptOperation implements Operation {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object apply(Object o) {		
+	public Object apply(Object o) {	
+		throw new UnsupportedOperationException("asd");
+		/*
 		Map<String, Object> domEl = (Map<String, Object>) o;
 		
 		WebView webView = (WebView) domEl.get("webView");
@@ -31,16 +31,18 @@ public class JavaScriptOperation implements Operation {
 		
 		String elJson = QueryHelper.toJsonString(domEl);
 
-		ConditionVariable cv = new ConditionVariable();
-		AtomicReference<List<Map<String, Object>>> results = new AtomicReference<List<Map<String, Object>>>();
-
-		QueryHelper.executeAsyncJavascriptInWebviews(webView, this.script,
-						elJson, this.arg, cv, results);
 		
-		//cv.block(10000);
-		return results.get();
-		
-
+		WebFuture asyncRes = QueryHelper.executeAsyncJavascriptInWebviews(webView, this.script,
+						elJson, this.arg);		
+		return asyncRes.getAsString();		
+		*/
 	}
+
+	@Override
+	public String getName() {
+		return "JSOp[script="+this.script+"]";
+	}
+	
+	
 
 }

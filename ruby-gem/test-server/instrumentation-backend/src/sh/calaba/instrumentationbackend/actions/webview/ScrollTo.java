@@ -1,65 +1,62 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
 import sh.calaba.instrumentationbackend.actions.Actions;
-import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
-import sh.calaba.org.codehaus.jackson.type.TypeReference;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import android.test.TouchUtils;
 import android.webkit.WebView;
 
 
 public class ScrollTo implements Action {
 
-    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
     public Result execute(String... args) {
     	//TODO: Should do horizontal scrolling if needed
-    	String queryResult = QueryHelper.executeJavascriptInWebviews(null,"calabash.js", args[1], args[0]);
-		CalabashChromeClient calabashChromeClient = CalabashChromeClient.findAndPrepareWebViews().get(0);
-		final WebView webView = calabashChromeClient.getWebView();
-		webView.scrollTo(0, 0);		
-		int scrolledTo = webView.getScrollY();
-		while (!isVisible(findFirstRect(queryResult), calabashChromeClient)) {
-			TouchUtils.dragQuarterScreenUp(Actions.parentTestCase, InstrumentationBackend.solo.getCurrentActivity());
-			if (scrolledTo != webView.getScrollY()) {
-				scrolledTo = webView.getScrollY();
-			} else {
-				return new Result(false, "Tried scrolling but the center of the element never became visible.");
-			}
+    	final String uiQuery = "webView " + args[0] + ":'"+ args[1] + "'";
+		List queryResult = new sh.calaba.instrumentationbackend.query.Query(uiQuery).executeQuery();
+		if (queryResult.isEmpty()) {
+			return new Result(false,"Query found no elements: "+Arrays.asList(args));
 		}
+		final Map<String, Object> firstVisibleRectangle = QueryHelper.findFirstVisibleRectangle(queryResult);
+		
+		boolean success = (Boolean) UIQueryUtils.evaluateSyncInMainThread(new Callable() {
+			public Object call() throws Exception {
+				CalabashChromeClient calabashChromeClient = CalabashChromeClient.findAndPrepareWebViews().get(0);
+				final WebView webView = calabashChromeClient.getWebView();
+				webView.scrollTo(0, 0);		
+				int scrolledTo = webView.getScrollY();
+				while (!isVisible(firstVisibleRectangle, calabashChromeClient)) {
+					TouchUtils.dragQuarterScreenUp(Actions.parentTestCase, InstrumentationBackend.solo.getCurrentActivity());
+					if (scrolledTo != webView.getScrollY()) {
+						scrolledTo = webView.getScrollY();
+					} else {
+						return false;
+					}
+				}
+				return true;
+			}
+		});
+		
+		
 	
-		return new Result(true, "");
+		return new Result(success, "");
     }
 
-
-
-	private Map<String, Object> findFirstRect(String queryResult) {
-		try {
-			List<HashMap<String,Object>> p = new ObjectMapper().readValue(queryResult, new TypeReference<List<HashMap<String,Object>>>(){});
-			
-			if (p.isEmpty()) {
-				throw new RuntimeException("No element found");
-			}
-			System.out.println(p);
-			final Map<String, Object> firstRect = QueryHelper.findFirstVisibleRectangle(p);
-			return firstRect;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-	}
 
     private boolean isVisible(Map<String, Object> rectangle, CalabashChromeClient calabashChromeClient) {
     	WebView webView = calabashChromeClient.getWebView();
     	int windowTop = webView.getScrollY();
     	int windowBottom = webView.getScrollY() + webView.getHeight();
-    	int centerY = (int) ((Integer)rectangle.get("center_y") * webView.getScale());
+    	int centerY = (int) ((Integer) (Math.round((Float)rectangle.get("center_y"))) * webView.getScale());
 
     	return windowTop < centerY && centerY < windowBottom;  	
     }
