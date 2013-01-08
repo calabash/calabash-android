@@ -2,8 +2,7 @@ package sh.calaba.instrumentationbackend.query.ast;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import android.os.ConditionVariable;
+import java.util.concurrent.Callable;
 
 public class UIQueryASTClassName implements UIQueryAST {
 	public final String simpleClassName;	
@@ -22,35 +21,39 @@ public class UIQueryASTClassName implements UIQueryAST {
 	{
 		if (qualifiedClassName == null) {throw new IllegalArgumentException("Cannot instantiate with null class");}
 		this.qualifiedClassName = qualifiedClassName;
-		this.simpleClassName = null;
-		
+		this.simpleClassName = null;		
 	}
 
 	@SuppressWarnings({ "rawtypes"})
 	@Override
-	public List evaluateWithViews(List inputViews,
-			UIQueryDirection direction, UIQueryVisibility visibility, ConditionVariable computationFinished) {
-		// TODO Auto-generated method stub
+	public List evaluateWithViews(final List inputViews,
+			final UIQueryDirection direction, final UIQueryVisibility visibility) {
 		
-		List result = new ArrayList(8);
-		for (Object o : inputViews) 
-		{			
-			switch(direction) {
-				case DESCENDANT:
-					addDecendantMatchesToResult(o,result);
-					break;
-				case CHILD:
-					addChildMatchesToResult(o,result);
-					break;
-				case PARENT:
-					addParentMatchesToResult(o,result);
-					break;
+		return (List) UIQueryUtils.evaluateSyncInMainThread(new Callable() {		
+			
+			public Object call() throws Exception {
+				List result = new ArrayList(8);				
+				for (Object o : inputViews) 
+				{			
+					switch(direction) {
+						case DESCENDANT:
+							addDecendantMatchesToResult(o,result);
+							break;
+						case CHILD:
+							addChildMatchesToResult(o,result);
+							break;
+						case PARENT:
+							addParentMatchesToResult(o,result);
+							break;
+					}
+					
+					
+				}					
+				return result;
 			}
-			
-			
-		}
-			
-		return visibility.evaluateWithViews(result, direction, visibility, computationFinished);
+		});
+		
+		
 	}
 
 	@SuppressWarnings("rawtypes")

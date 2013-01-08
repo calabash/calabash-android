@@ -3,14 +3,12 @@ package sh.calaba.instrumentationbackend.query.ast;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.os.ConditionVariable;
-
 public enum UIQueryVisibility implements UIQueryAST {
 	ALL {		
 		@Override
 		@SuppressWarnings("rawtypes")
 		public List evaluateWithViews(List inputViews,
-				UIQueryDirection direction, UIQueryVisibility self, ConditionVariable computationFinished) {			
+				UIQueryDirection direction, UIQueryVisibility self) {			
 			return inputViews;
 		} 
 	},
@@ -20,7 +18,7 @@ public enum UIQueryVisibility implements UIQueryAST {
 		@Override
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public List evaluateWithViews(List inputViews,
-				UIQueryDirection direction, UIQueryVisibility self, ConditionVariable computationFinished) {
+				UIQueryDirection direction, UIQueryVisibility self) {
 			List filtered = new ArrayList(inputViews.size());
 			for (Object o : inputViews) {
 				if (UIQueryUtils.isVisible(o)) {

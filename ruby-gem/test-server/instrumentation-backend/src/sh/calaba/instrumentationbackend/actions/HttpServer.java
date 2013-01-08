@@ -91,7 +91,7 @@ public class HttpServer extends NanoHTTPD {
 				boolean includeInVisible = "query_all".equals(methodName);
 				
 				
-				List queryResult = new Query(uiQuery,arguments).executeInMainThread(includeInVisible);
+				List queryResult = new Query(uiQuery,arguments).executeQuery();
 
 				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", 
 						FranklyResult.successResult(queryResult).asJson());

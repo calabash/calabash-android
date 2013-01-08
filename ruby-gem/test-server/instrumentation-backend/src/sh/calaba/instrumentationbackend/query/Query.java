@@ -6,24 +6,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
-import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import org.antlr.runtime.ANTLRStringStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.CommonTree;
+
 import sh.calaba.instrumentationbackend.actions.Operation;
+import sh.calaba.instrumentationbackend.query.antlr.UIQueryLexer;
+import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
+import sh.calaba.instrumentationbackend.query.ast.InvalidUIQueryException;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryAST;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryASTClassName;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryASTWith;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryEvaluator;
-import android.os.ConditionVariable;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryVisibility;
 import android.view.View;
 
 public class Query {
 
 	private String queryString;
 	@SuppressWarnings("rawtypes")
-	private List arguments;
+	private List operations;
 
 	public Query(String queryString) {
 		this.queryString = queryString;
-		this.arguments = Collections.EMPTY_LIST;
+		this.operations = Collections.EMPTY_LIST;
 		if (this.queryString == null || this.queryString.trim().equals("")) {
 			throw new IllegalArgumentException("Illegal query: "
 					+ this.queryString);
@@ -33,125 +41,102 @@ public class Query {
 	@SuppressWarnings("rawtypes")
 	public Query(String queryString, List args) {
 		this(queryString);
-		this.arguments = args;
+		this.operations = args;
 	}
 
 	@SuppressWarnings("rawtypes")
-	public List executeInMainThread(final boolean includeInvisible) {
+	public List executeQuery() {		
+		return UIQueryEvaluator.evaluateQueryWithOptions(parseQuery(this.queryString), rootViews(), parseOperations(this.operations));		
+	}
 
-		final AtomicReference<List> result = new AtomicReference<List>();
-		final AtomicReference<Throwable> resultErr = new AtomicReference<Throwable>();
-
-		final ConditionVariable computationFinished = new ConditionVariable();
-
-		InstrumentationBackend.instrumentation.runOnMainSync(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					List resultList = execute(includeInvisible,
-							computationFinished);
-					result.set(resultList);
-					boolean noAsyncResult = true;
-					for (Object o : resultList) {
-						if (o instanceof AtomicReference) {
-							noAsyncResult = false;
-							break;
-						}
-					}
-					if (noAsyncResult) {
-						computationFinished.open();
-					}
-				} catch (Throwable t) {
-					resultErr.set(t);
-				}
+	@SuppressWarnings("rawtypes")
+	public static List<Operation> parseOperations(List ops) {
+		List<Operation> result = new ArrayList<Operation>(ops.size());
+		for (Object o : ops) {
+			Operation op = null;
+			if (o instanceof Operation) {
+				op = (Operation) o;												
 			}
-		});
-		computationFinished.block(10000);
-		if (resultErr.get() == null) {
-			return postProcessQueryResult(result.get());
+			if (o instanceof String) {
+				op = new PropertyOperation((String) o);	
+			}					
+			result.add(op);								
 		}
-		throw new RuntimeException(resultErr.get());
-
+		return result;
 	}
 
-	@SuppressWarnings({ "rawtypes" })
-	private List postProcessQueryResult(final List views) {
-		final AtomicReference<List> resultRef = new AtomicReference<List>();
-		final List methods = this.arguments;
-		InstrumentationBackend.instrumentation.runOnMainSync(new Runnable() {
-			@Override
-			public void run() {
-				List expandedViews = expandViews(views);
-				mapViews(expandedViews, methods, resultRef);
+	@SuppressWarnings("unchecked")
+	public static List<UIQueryAST> parseQuery(String query) {
+		UIQueryLexer lexer = new UIQueryLexer(new ANTLRStringStream(query));
+		UIQueryParser parser = new UIQueryParser(new CommonTokenStream(lexer));
+
+		UIQueryParser.query_return q;
+		try {
+			q = parser.query();
+		} catch (RecognitionException e) {
+			throw new InvalidUIQueryException(e.getMessage());
+		}
+		if (q == null) {
+			throw new InvalidUIQueryException(query);
+		}
+		CommonTree rootNode = (CommonTree) q.getTree();
+		List<CommonTree> queryPath = rootNode.getChildren();
+
+		if (queryPath == null || queryPath.isEmpty()) {
+			queryPath = Collections.singletonList(rootNode);
+		}
+
+		return mapUIQueryFromAstNodes(queryPath);
+	}
+
+
+	public static List<UIQueryAST> mapUIQueryFromAstNodes(List<CommonTree> nodes) {
+		List<UIQueryAST> mapped = new ArrayList<UIQueryAST>(nodes.size());
+		for (CommonTree t : nodes) {
+			mapped.add(uiQueryFromAst(t));
+		}
+		return mapped;
+	}
+
+	public static UIQueryAST uiQueryFromAst(CommonTree step) {
+		String stepType = UIQueryParser.tokenNames[step.getType()];
+		switch (step.getType()) {
+		case UIQueryParser.QUALIFIED_NAME:
+			try {
+				return new UIQueryASTClassName(Class.forName(step.getText()));
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				throw new InvalidUIQueryException("Qualified class name: "
+						+ step.getText() + " not found. (" + e.getMessage()
+						+ ")");
 			}
-		});
-
-		return resultRef.get();
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected void mapViews(List expandedViews, List methods,
-			AtomicReference<List> resultRef) {
-		List result = expandedViews;
+		case UIQueryParser.NAME:
+			return new UIQueryASTClassName(step.getText());
 		
-
-		for (Object methodName : methods) {			
-			List nextResult = new ArrayList(result.size());
-			for (Object o : result) {
-				Operation op = null;
-				if (methodName instanceof Operation) {
-					op = (Operation) methodName;												
-				}
-				if (methodName instanceof String) {
-					op = new PropertyOperation((String) methodName);	
-				}					
-				nextResult.add(op.apply(o));								
+		case UIQueryParser.WILDCARD:
+			try {
+				return new UIQueryASTClassName(Class.forName("android.view.View"));
+			} catch (ClassNotFoundException e) {
+				//Cannot happen
+				throw new IllegalStateException(e);
 			}
-			result = nextResult;
+
+			
+		case UIQueryParser.FILTER_COLON:
+			return UIQueryASTWith.fromAST(step);
+			
+		case UIQueryParser.ALL:
+			return UIQueryVisibility.ALL;	
+			
+		case UIQueryParser.VISIBLE:
+			return UIQueryVisibility.VISIBLE;					
+			
+		default:
+			throw new InvalidUIQueryException("Unknown query: " + stepType
+					+ " with text: " + step.getText());
+
 		}
-		
-		List finalResult = new ArrayList(result.size());
-		for (Object o : result) {
-			finalResult.add(ViewMapper.mapView(o));
-		}
-		
-		resultRef.set(finalResult);
 
-	}
-
-	@SuppressWarnings({ "rawtypes" })
-	public List execute(boolean includeInvisible,
-			ConditionVariable computationFinished) {
-		long before = System.currentTimeMillis();
-		List queryResults = UIQueryEvaluator.evaluateQueryWithOptions(
-				this.queryString, rootViews(), this.arguments,
-				computationFinished);
-		long after = System.currentTimeMillis();
-
-		String action = "EvaluateQuery";
-		System.out.println(action + " took: " + (after - before) + "ms");
-
-		return queryResults;// TODO
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List expandViews(List inputViews) {
-		List expandedViews = new ArrayList(inputViews.size());
-		for (Object o : inputViews) {
-			if (o instanceof AtomicReference) {
-				List<Map<String,Object>> refVal = ((AtomicReference<List<Map<String,Object>>>) o).get();
-				if (refVal == null) {
-					System.err
-							.println("Query produced no results asynchronously");
-					continue;
-				}
-				expandedViews.addAll(refVal);
-				
-			} else {
-				expandedViews.add(o);
-			}
-		}
-		return expandedViews;
 	}
 
 	public List<View> allVisibleViews() {

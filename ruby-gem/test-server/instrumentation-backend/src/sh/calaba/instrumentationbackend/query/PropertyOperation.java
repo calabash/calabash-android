@@ -19,7 +19,7 @@ public class PropertyOperation implements Operation {
 
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	public Object apply(Object o) {
+	public Object apply(Object o) throws Exception {
 		if (o instanceof Map) {
 			Map objAsMap = (Map) o;
 			if (objAsMap.containsKey(propertyName)) {											
@@ -37,23 +37,21 @@ public class PropertyOperation implements Operation {
 				Method m = UIQueryUtils
 						.hasProperty(o, propertyName);
 				if (m != null) {
-					try {
-						return m.invoke(o);
-					} catch (Exception e) {
-						e.printStackTrace();
-						return (UIQueryResultVoid.instance
-								.asMap(propertyName, o,
-										"Results in exception " + e.getMessage()));
-					}
+					return m.invoke(o);					
 				} else {
-					return (UIQueryResultVoid.instance
+					return UIQueryResultVoid.instance
 							.asMap(propertyName, o,
 									"NO accessor for "
-											+ propertyName));
+											+ propertyName);
 				}
 			}
 		}
 
+	}
+
+	@Override
+	public String getName() {
+		return "Property["+this.propertyName+"]";
 	}
 
 }
