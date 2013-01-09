@@ -56,7 +56,7 @@ public class UIQueryEvaluator {
 			List nextResult = new ArrayList(result.size());
 			for (Object obj : result) {
 				try {
-					nextResult.add(op.apply(result));	
+					nextResult.add(op.apply(obj));	
 				} catch (Exception e) {
 					e.printStackTrace();
 					nextResult.add(UIQueryResultVoid.instance.asMap(op.getName(), obj, e.getMessage()));
