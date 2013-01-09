@@ -4,8 +4,6 @@ package sh.calaba.instrumentationbackend.actions.webview;
 import java.util.List;
 import java.util.Map;
 
-import android.webkit.WebView;
-
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient.WebFuture;
@@ -28,13 +26,13 @@ public class SetText implements Action {
 		}
 		Map<String, Object> firstElement = QueryHelper.findFirstVisibleElement(queryResult);
 		//TODO: Hack! Should be serialized instead of removed
-		WebView webView = (WebView) firstElement.get("webView");
+		CalabashChromeClient client = CalabashChromeClient.findAndPrepareWebViews().get(0);
 		firstElement.remove("class");
 		firstElement.remove("webView");
 		firstElement.remove("html");
 		String firstElementJson = QueryHelper.toJsonString(firstElement);
 
-		WebFuture result = QueryHelper.executeAsyncJavascriptInWebviews(webView,"set_text.js", firstElementJson, args[2]);
+		WebFuture result = QueryHelper.executeAsyncJavascriptInWebviews(client.getWebView(),"set_text.js", firstElementJson, args[2]);
 		
 		return new Result(true,result.getAsString());    			    
     }
