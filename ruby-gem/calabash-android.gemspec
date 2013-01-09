@@ -20,5 +20,6 @@ Gem::Specification.new do |s|
   s.add_dependency( "retriable" )
   s.add_dependency( "slowhandcuke" )
   s.add_dependency( "rubyzip" )
+  s.add_dependency( "awesome_print" )
 
 end
