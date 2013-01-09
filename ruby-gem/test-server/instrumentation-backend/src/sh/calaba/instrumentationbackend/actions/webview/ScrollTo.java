@@ -4,13 +4,11 @@ package sh.calaba.instrumentationbackend.actions.webview;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
 import sh.calaba.instrumentationbackend.actions.Actions;
-import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import android.test.TouchUtils;
 import android.webkit.WebView;
 
@@ -28,8 +26,6 @@ public class ScrollTo implements Action {
 		}
 		final Map<String, Object> firstVisibleRectangle = QueryHelper.findFirstVisibleRectangle(queryResult);
 		
-		boolean success = (Boolean) UIQueryUtils.evaluateSyncInMainThread(new Callable() {
-			public Object call() throws Exception {
 				CalabashChromeClient calabashChromeClient = CalabashChromeClient.findAndPrepareWebViews().get(0);
 				final WebView webView = calabashChromeClient.getWebView();
 				webView.scrollTo(0, 0);		
@@ -39,16 +35,13 @@ public class ScrollTo implements Action {
 					if (scrolledTo != webView.getScrollY()) {
 						scrolledTo = webView.getScrollY();
 					} else {
-						return false;
+						return new Result(false,"");
 					}
 				}
-				return true;
-			}
-		});
 		
 		
 	
-		return new Result(success, "");
+		return new Result(true, "");
     }
 
 
