@@ -10,6 +10,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import android.os.Looper;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import android.os.Build;
 import android.os.ConditionVariable;
@@ -23,7 +24,7 @@ public class CalabashChromeClient extends WebChromeClient {
 	private final WebView webView;
 	private final WebFuture scriptFuture;
 
-	public CalabashChromeClient(WebView webView) {
+	public CalabashChromeClient(final WebView webView) {
 		this.webView = webView;
 		this.scriptFuture = new WebFuture(webView);
 		if (Build.VERSION.SDK_INT < 16) { // jelly bean
@@ -36,7 +37,17 @@ public class CalabashChromeClient extends WebChromeClient {
 				throw new RuntimeException(e);
 			}
 		}
-		webView.setWebChromeClient(this);
+
+        if ( Looper.getMainLooper().getThread() == Thread.currentThread()) {
+            webView.setWebChromeClient(this);
+        } else {
+            InstrumentationBackend.instrumentation.runOnMainSync(new Runnable() {
+                @Override
+                public void run() {
+                    webView.setWebChromeClient(CalabashChromeClient.this);
+                }
+            });
+        }
 	}
 
 	@Override
