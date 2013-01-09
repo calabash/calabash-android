@@ -11,6 +11,7 @@ import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient.Web
 import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import android.webkit.WebView;
 
+@Deprecated
 public class DumpBodyHtml implements Action {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
