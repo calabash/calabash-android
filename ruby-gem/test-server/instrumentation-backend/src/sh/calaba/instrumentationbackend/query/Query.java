@@ -2,10 +2,7 @@ package sh.calaba.instrumentationbackend.query;
 
 import static sh.calaba.instrumentationbackend.InstrumentationBackend.viewFetcher;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -143,9 +140,18 @@ public class Query {
 		return viewFetcher.getAllViews(false);
 	}
 
-	public List<View> rootViews() {
-		return Arrays.asList(viewFetcher.getWindowDecorViews());
-	}
+    public List<View> rootViews() {
+        Set<View> parents = new HashSet<View>();
+        for (View v : allVisibleViews())
+        {
+            View parent = viewFetcher.getTopParent(v);
+            System.out.println(parent);
+            parents.add(parent);
+        }
+        List<View> results = new ArrayList<View>();
+        results.addAll(parents);
+        return results;
+    }
 
 
 }
