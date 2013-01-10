@@ -44,7 +44,8 @@ public class Command {
 
     public Result execute() {
         final Action action = InstrumentationBackend.actions.lookup(getCommand());
-
+        return action.execute(getArguments());
+        /*
         if ( Looper.getMainLooper().getThread() == Thread.currentThread()) {
             return action.execute(getArguments());
         }
@@ -57,7 +58,7 @@ public class Command {
             }
         });
         return result.get();
-
+*/
     }
 
 }

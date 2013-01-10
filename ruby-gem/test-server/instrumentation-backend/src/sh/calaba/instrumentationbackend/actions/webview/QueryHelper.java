@@ -4,44 +4,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient.WebFuture;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import android.webkit.WebView;
 
 public class QueryHelper {
 
-	public static String executeJavascriptInWebviews(WebView webViewOrNull, String scriptPath, String... args) {
-		
-		String script = readJavascriptFromAsset(scriptPath);
-
-		for (String arg : args) {
-			script = script.replaceFirst("%@", arg);
-		}
-
-		final String myScript = script;
-    	List<CalabashChromeClient> webViews = null;
-    	if (webViewOrNull == null)
-    	{
-    		webViews = CalabashChromeClient.findAndPrepareWebViews();
-    	}
-    	else 
-    	{
-    		webViews = Collections.singletonList(CalabashChromeClient.prepareWebView(webViewOrNull));	
-    	}
-    	
-
-    	for (CalabashChromeClient ccc : webViews) {
-    	    WebView w = ccc.getWebView();
-            w.loadUrl("javascript:calabash_result = " + myScript + ";prompt('calabash:' + calabash_result);");
-			return ccc.getResult();
-		}
-    	throw new RuntimeException("No webviews found");
-	}
 	
 	@SuppressWarnings("unchecked")
 	public static Map<String, Object> findFirstVisibleRectangle(List<HashMap<String,Object>> elements) {
@@ -87,11 +60,6 @@ public class QueryHelper {
 			throw new RuntimeException(e);
 		}
 	}
-	public static Map<String,Object> translateRectToScreenCoordinates(Map<String, Object> rectangle) {
-		WebView webView = CalabashChromeClient.findAndPrepareWebViews().get(0).getWebView();
-		return translateRectToScreenCoordinates(webView, rectangle);
-	}
-	
 	
 	public static String toJsonString(Object o) {
 		//http://www.mkyong.com/java/how-to-convert-java-map-to-from-json-jackson/
@@ -118,4 +86,19 @@ public class QueryHelper {
 		}
 		return script.toString();
     }
+	
+	public static WebFuture executeAsyncJavascriptInWebviews(WebView webView,
+			String scriptPath, String selector, String type) {
+
+		String script = readJavascriptFromAsset(scriptPath);
+
+		script = script.replaceFirst("%@", selector);
+		script = script.replaceFirst("%@", type);
+
+		CalabashChromeClient chromeClient = CalabashChromeClient.prepareWebView(webView);		
+        webView.loadUrl("javascript:calabash_result = " + script + ";prompt('calabash:' + calabash_result);");
+		return chromeClient.getResult();
+	}
+
+
 }

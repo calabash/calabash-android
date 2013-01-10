@@ -22,7 +22,13 @@ public class Result {
 		this.success = success;
 		this.message = message;
     }
-    
+
+    public Result(boolean success, List<String> messages) {
+		this.success = success;
+		this.message = null;
+		this.bonusInformation = messages;
+    }
+
     public String getMessage() {
     	return message;
     }

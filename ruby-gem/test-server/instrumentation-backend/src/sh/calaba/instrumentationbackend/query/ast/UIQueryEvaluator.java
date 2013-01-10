@@ -1,134 +1,72 @@
 package sh.calaba.instrumentationbackend.query.ast;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.tree.CommonTree;
-
-import android.view.View;
-
-import sh.calaba.instrumentationbackend.query.antlr.UIQueryLexer;
-import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
+import sh.calaba.instrumentationbackend.query.Operation;
+import sh.calaba.instrumentationbackend.query.UIQueryResultVoid;
+import sh.calaba.instrumentationbackend.query.ViewMapper;
 
 public class UIQueryEvaluator {
-
-	private static class UIQueryResultVoid {
-		public static final UIQueryResultVoid instance = new UIQueryResultVoid();
-		
-		private UIQueryResultVoid() {}
-		
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public Object asMap(String methodName, Object receiver,String errorMessage) {
-			Map map = new HashMap();
-			map.put("error",errorMessage);
-			map.put("methodName",methodName);
-			map.put("receiverClass", receiver.getClass().getName());
-			map.put("receiverString",receiver.toString());
-			return map;
-		}
-	}
-
+	
 	@SuppressWarnings({ "rawtypes" })
-	public static List evaluateQuery(String query, List inputViews) {
-		return evaluateQueryForPath(parseQuery(query), inputViews);
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static List evaluateQueryWithOptions(String query, List inputViews,
-			List options) {
+	public static List evaluateQueryWithOptions(List<UIQueryAST> query, List inputViews,
+			List<Operation> operations) {
 		
         long before = System.currentTimeMillis();
-        List views = evaluateQueryForPath(parseQuery(query), inputViews);
-        long after = System.currentTimeMillis();
-        String action = "EvaluateQueryNoOptions";
+        
+        List views = evaluateQueryForPath(query, inputViews);
+        
+        long after = System.currentTimeMillis();              
+        String action = "EvaluateQuery";                               
+        System.out.println(action+ " took: "+ (after-before) + "ms");
+        
+        before = System.currentTimeMillis();
+        
+        List result = applyOperations(views, operations);
+        
+        after = System.currentTimeMillis();              
+        action = "ApplyOperations";                               
         System.out.println(action+ " took: "+ (after-before) + "ms");
 
-		
+        before = System.currentTimeMillis();
+        
+		List finalResult = mapViews(result);
+        
+		after = System.currentTimeMillis();              
+        action = "MapViews";                               
+        return finalResult;         	
+	}
 
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static List mapViews(List result) {		
+		List finalResult = new ArrayList(result.size());
+		for (Object o : result) {
+			finalResult.add(ViewMapper.mapView(o));
+		}
+		return finalResult;
+	}
+
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static List applyOperations(List views, List<Operation> operations) {
 		List result = views;
-		for (Object methodNameObj : options) {
-			String propertyName = (String) methodNameObj;
-			List nextResult = new ArrayList(views.size());
-			for (Object o : result) {
+		for(Operation op : operations) {
+			List nextResult = new ArrayList(result.size());
+			for (Object obj : result) {
 				try {
-					
-					before = System.currentTimeMillis();
-					if (o instanceof Map)
-					{
-						Map objAsMap = (Map) o;
-						if (objAsMap.containsKey(propertyName))
-						{
-							nextResult.add(objAsMap.get(propertyName));
-						}
-						else 
-						{
-							nextResult.add(UIQueryResultVoid.instance.asMap(propertyName,o,"No key for "+propertyName + ". Keys: "+(objAsMap.keySet().toString())));
-						}						
-					}
-					else 
-					{
-						if (o instanceof View && "id".equals(propertyName))
-						{
-							nextResult.add(UIQueryUtils.getId((View) o));
-						}
-						else 
-						{
-							Method m = UIQueryUtils.hasProperty(o, propertyName);
-							after = System.currentTimeMillis();
-					        action = "HasProperty";
-					        System.out.println(action+ " took: "+ (after-before) + "ms");
-							if (m != null) {
-								nextResult.add(m.invoke(o));	
-							}
-							else 
-							{
-								nextResult.add(UIQueryResultVoid.instance.asMap(propertyName,o,"NO accessor for "+propertyName));
-							}							
-						}
-					}
-					
-										
+					nextResult.add(op.apply(obj));	
 				} catch (Exception e) {
-					System.out.println(e.getMessage());
-					nextResult.add(UIQueryResultVoid.instance.asMap(propertyName,o,e.getMessage()));
-				}
+					e.printStackTrace();
+					nextResult.add(UIQueryResultVoid.instance.asMap(op.getName(), obj, e.getMessage()));
+				}				
 			}
 			result = nextResult;
 		}
 		return result;
-
 	}
 
-	@SuppressWarnings("unchecked")
-	public static List<UIQueryAST> parseQuery(String query) {
-		UIQueryLexer lexer = new UIQueryLexer(new ANTLRStringStream(query));
-		UIQueryParser parser = new UIQueryParser(new CommonTokenStream(lexer));
-
-		UIQueryParser.query_return q;
-		try {
-			q = parser.query();
-		} catch (RecognitionException e) {
-			throw new InvalidUIQueryException(e.getMessage());
-		}
-		if (q == null) {
-			throw new InvalidUIQueryException(query);
-		}
-		CommonTree rootNode = (CommonTree) q.getTree();
-		List<CommonTree> queryPath = rootNode.getChildren();
-
-		if (queryPath == null || queryPath.isEmpty()) {
-			queryPath = Collections.singletonList(rootNode);
-		}
-
-		return mapUIQueryFromAstNodes(queryPath);
-	}
 
 	@SuppressWarnings("rawtypes")
 	private static List evaluateQueryForPath(List<UIQueryAST> queryPath,
@@ -136,26 +74,23 @@ public class UIQueryEvaluator {
 
 		List currentResult = inputViews;
 		UIQueryDirection currentDirection = UIQueryDirection.DESCENDANT;
+		UIQueryVisibility currentVisibility = UIQueryVisibility.VISIBLE;
+		
 		for (UIQueryAST step : queryPath) {			
 			if (isDirection(step)) {
 				currentDirection = directionFromAst(step);
-			} else {
-				System.out.println(step);
-		        long before = System.currentTimeMillis();
-		        		        
-
-				currentResult = step.evaluateWithViewsAndDirection(
-						currentResult, currentDirection);
-				long after = System.currentTimeMillis();
-		        String action = "EvaluateQueryNoOptions" + step.toString();
-		        System.out.println(action+ " took: "+ (after-before) + "ms");
-
+			}
+			else if (step instanceof UIQueryVisibility) {
+				currentVisibility = (UIQueryVisibility) step;
+			}
+			else {
+				currentResult = step.evaluateWithViews(currentResult, currentDirection,currentVisibility);
 			}
 
 		}
 		return currentResult;
 	}
-
+	
 	public static UIQueryDirection directionFromAst(UIQueryAST step) {
 		// TODO Auto-generated method stub
 		return null;
@@ -165,38 +100,5 @@ public class UIQueryEvaluator {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	public static List<UIQueryAST> mapUIQueryFromAstNodes(List<CommonTree> nodes) {
-		List<UIQueryAST> mapped = new ArrayList<UIQueryAST>(nodes.size());
-		for (CommonTree t : nodes) {
-			mapped.add(uiQueryFromAst(t));
-		}
-		return mapped;
-	}
-
-	public static UIQueryAST uiQueryFromAst(CommonTree step) {
-		String stepType = UIQueryParser.tokenNames[step.getType()];
-		switch (step.getType()) {
-		case UIQueryParser.QUALIFIED_NAME:
-			try {
-				return new UIQueryASTClassName(Class.forName(step.getText()));
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				throw new InvalidUIQueryException("Qualified class name: "
-						+ step.getText() + " not found. (" + e.getMessage()
-						+ ")");
-			}
-		case UIQueryParser.NAME:
-			return new UIQueryASTClassName(step.getText());
-
-		case UIQueryParser.FILTER_COLON:
-			return UIQueryASTWith.fromAST(step);
-		default:
-			throw new InvalidUIQueryException("Unknown query: " + stepType
-					+ " with text: " + step.getText());
-
-		}
-
-	}
-
+			
 }

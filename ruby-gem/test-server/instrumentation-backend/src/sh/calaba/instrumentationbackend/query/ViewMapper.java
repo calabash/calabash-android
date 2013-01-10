@@ -2,8 +2,10 @@ package sh.calaba.instrumentationbackend.query;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import android.content.res.Resources;
 import android.view.View;
 import android.widget.Button;
@@ -13,9 +15,8 @@ import android.widget.TextView;
 public class ViewMapper {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Object extractDataFromView(Object obj) {
-		if (!(obj instanceof View)) {return obj;}
-		View v = (View) obj;
+	public static Object extractDataFromView(View v) {		
+		
 		Map data = new HashMap();
 		data.put("class", v.getClass().getName());		
 		data.put("description", v.toString());
@@ -61,6 +62,29 @@ public class ViewMapper {
 		}
 		return data;
 
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Object mapView(Object o) {
+		if (o instanceof View) {
+			return extractDataFromView((View) o);
+		} 
+		else if (o instanceof Map) {			
+			Map copy = new HashMap();			
+			for (Object e : ((Map) o).entrySet()) {
+				Map.Entry entry = (Entry) e;
+				Object value = entry.getValue();
+				if (value instanceof View) {
+					copy.put(entry.getKey(), UIQueryUtils.getId((View) value));
+				}
+				else {
+					copy.put(entry.getKey(),entry.getValue());
+				}			
+			}
+			
+			return copy;
+		}
+		return o;
 	}
 
 }

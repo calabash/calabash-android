@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface UIQueryAST {
 	@SuppressWarnings("rawtypes")
-	public List evaluateWithViewsAndDirection(List inputViews, UIQueryDirection direction);
+	public List evaluateWithViews(List inputViews, UIQueryDirection direction, UIQueryVisibility visibility);
 }
