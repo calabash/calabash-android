@@ -2,14 +2,18 @@ package sh.calaba.instrumentationbackend.query;
 
 import static sh.calaba.instrumentationbackend.InstrumentationBackend.viewFetcher;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 
-import sh.calaba.instrumentationbackend.actions.Operation;
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryLexer;
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
 import sh.calaba.instrumentationbackend.query.ast.InvalidUIQueryException;
@@ -54,9 +58,21 @@ public class Query {
 			if (o instanceof Operation) {
 				op = (Operation) o;												
 			}
-			if (o instanceof String) {
+			else if (o instanceof String) {
 				op = new PropertyOperation((String) o);	
-			}					
+			}
+			else if (o instanceof Map) {
+				Map mapOp = (Map) o;				
+				String methodName = (String) mapOp.get("method_name");
+				if (methodName == null) {
+					throw new IllegalArgumentException("Trying to convert a Map without method_name to an operation. " + mapOp.toString());
+				}
+				List arguments = (List) mapOp.get("arguments");
+				if (arguments == null) {
+					throw new IllegalArgumentException("Trying to convert a Map without arguments to an operation. " + mapOp.toString());
+				}
+				op = new InvocationOperation(methodName, arguments);
+			}
 			result.add(op);								
 		}
 		return result;

@@ -101,7 +101,15 @@ module Operations
   end
 
   def query(uiquery, *args)
-    map(uiquery,:query,*args)
+    converted_args = []
+    args.each do |arg|
+      if arg.is_a?(Hash) and arg.count == 1
+        converted_args << {:method_name => arg.keys.first, :arguments => [ arg.values.first ]}
+      else
+        converted_args << arg
+      end
+    end
+    map(uiquery,:query,*converted_args)
   end
 
   def ni

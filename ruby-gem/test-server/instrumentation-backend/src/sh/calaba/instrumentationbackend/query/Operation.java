@@ -1,4 +1,4 @@
-package sh.calaba.instrumentationbackend.actions;
+package sh.calaba.instrumentationbackend.query;
 
 public interface Operation {
 

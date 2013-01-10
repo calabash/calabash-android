@@ -3,7 +3,7 @@ package sh.calaba.instrumentationbackend.query.ast;
 import java.util.ArrayList;
 import java.util.List;
 
-import sh.calaba.instrumentationbackend.actions.Operation;
+import sh.calaba.instrumentationbackend.query.Operation;
 import sh.calaba.instrumentationbackend.query.UIQueryResultVoid;
 import sh.calaba.instrumentationbackend.query.ViewMapper;
 

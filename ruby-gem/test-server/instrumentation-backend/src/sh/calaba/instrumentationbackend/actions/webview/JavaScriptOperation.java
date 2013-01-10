@@ -1,10 +1,6 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
-import java.util.Map;
-
-import sh.calaba.instrumentationbackend.actions.Operation;
-import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient.WebFuture;
-import android.webkit.WebView;
+import sh.calaba.instrumentationbackend.query.Operation;
 
 public class JavaScriptOperation implements Operation {
 

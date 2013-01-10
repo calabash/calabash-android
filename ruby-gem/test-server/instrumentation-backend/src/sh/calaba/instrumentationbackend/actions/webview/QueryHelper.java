@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient.WebFuture;
@@ -87,8 +86,7 @@ public class QueryHelper {
 		}
 		return script.toString();
     }
-
-	@SuppressWarnings("rawtypes")
+	
 	public static WebFuture executeAsyncJavascriptInWebviews(WebView webView,
 			String scriptPath, String selector, String type) {
 

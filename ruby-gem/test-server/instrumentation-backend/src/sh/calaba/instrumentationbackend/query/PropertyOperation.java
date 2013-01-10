@@ -3,7 +3,6 @@ package sh.calaba.instrumentationbackend.query;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import sh.calaba.instrumentationbackend.actions.Operation;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import android.view.View;
 

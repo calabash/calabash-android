@@ -1,10 +1,8 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
@@ -15,8 +13,7 @@ import android.webkit.WebView;
 
 
 public class ScrollTo implements Action {
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    
 	@Override
     public Result execute(String... args) {
     	//TODO: Should do horizontal scrolling if needed
@@ -72,7 +69,8 @@ public class ScrollTo implements Action {
         return top < centerY && centerY < bottom;
     }
 
-    private int getCenterY(String uiQuery, WebView webView) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	private int getCenterY(String uiQuery, WebView webView) {
         List queryResult = new sh.calaba.instrumentationbackend.query.Query(uiQuery).executeQuery();
         if (queryResult.isEmpty()) {
             throw new RuntimeException("Query found no elements");
