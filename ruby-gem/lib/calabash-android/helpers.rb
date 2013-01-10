@@ -89,7 +89,9 @@ end
 
 def fingerprint_from_keystore
   keystore_info = read_keystore_info
-  fingerprints = `#{keytool_path} -v -list -alias #{keystore_info["keystore_alias"]} -keystore #{keystore_info["keystore_location"]} -storepass #{keystore_info["keystore_password"]}`
+  cmd = "#{keytool_path} -v -list -alias #{keystore_info["keystore_alias"]} -keystore #{keystore_info["keystore_location"]} -storepass #{keystore_info["keystore_password"]}"
+  log cmd
+  fingerprints = `#{cmd}`
   md5_fingerprint = extract_md5_fingerprint(fingerprints)
   log "MD5 fingerprint for keystore (#{keystore_info["keystore_location"]}): #{md5_fingerprint}"
   md5_fingerprint
@@ -107,7 +109,9 @@ def fingerprint_from_apk(app_path)
       raise "No RSA file found in META-INF. Cannot proceed." if rsa_files.empty?
       raise "More than one RSA file found in META-INF. Cannot proceed." if rsa_files.length > 1
 
-      fingerprints = `#{keytool_path} -v -printcert -file #{rsa_files.first}`
+      cmd = "#{keytool_path} -v -printcert -file #{rsa_files.first}"
+      log cmd
+      fingerprints = `#{cmd}`
       md5_fingerprint = extract_md5_fingerprint(fingerprints)
       log "MD5 fingerprint for signing cert (#{app_path}): #{md5_fingerprint}"
       md5_fingerprint
@@ -116,6 +120,8 @@ def fingerprint_from_apk(app_path)
 end
 
 def extract_md5_fingerprint(fingerprints)
+  log fingerprints
+
   if is_windows?
     if fingerprints.encoding.name == "CP850"
       fingerprints = fingerprints.gsub("\xA0".force_encoding("CP850"),"")
