@@ -59,7 +59,7 @@ def sign_apk(app_path, dest_path)
     jarsigner_path = "jarsigner"
   end
 
-  cmd = "#{jarsigner_path} -sigalg MD5withRSA -digestalg SHA1 -signedjar #{dest_path} -storepass #{keystore["keystore_password"]} -keystore \"#{File.expand_path keystore["keystore_location"]}\" #{app_path} #{keystore["keystore_alias"]}"
+  cmd = "#{jarsigner_path} -sigalg MD5withRSA -digestalg SHA1 -signedjar #{dest_path} -storepass #{keystore["keystore_password"]} -keystore #{keystore["keystore_location"]} #{app_path} #{keystore["keystore_alias"]}"
   log cmd
   unless system(cmd)
     puts "jarsigner command: #{cmd}"
@@ -69,10 +69,11 @@ end
 
 def read_keystore_info
   if File.exist? ".calabash_settings"
-    JSON.parse(IO.read(".calabash_settings"))
+    keystore = JSON.parse(IO.read(".calabash_settings"))
+    keystore["keystore_location"] = '"' + File.expand_path(keystore["keystore_location"]) + '"' if keystore["keystore_location"]
   else
     {
-    "keystore_location" => "#{ENV["HOME"]}/.android/debug.keystore",
+    "keystore_location" => %Q("#{File.expand_path(File.join(ENV["HOME"], "/.android/debug.keystore"))}\"),
     "keystore_password" => "android",
     "keystore_alias" => "androiddebugkey",
     }
