@@ -195,7 +195,6 @@ public class InvocationOperation implements Operation {
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return "InvocationOp["+this.methodName+", arguments = " + this.arguments + "]";
 	}
 
