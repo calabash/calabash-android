@@ -122,7 +122,7 @@ def extract_md5_fingerprint(fingerprints)
     end
   end
 
-  m = fingerprints.scan(/MD5\s*:\s*((?:\h\h:){15}\h\h)/).flatten
+  m = fingerprints.scan(/MD5\s*:\s*((?:[a-fA-F\d]{2}:){15}[a-fA-F\d]{2})/).flatten
   raise "No MD5 fingerprint found:\n #{fingerprints}" if m.empty?
   m.first
 end
