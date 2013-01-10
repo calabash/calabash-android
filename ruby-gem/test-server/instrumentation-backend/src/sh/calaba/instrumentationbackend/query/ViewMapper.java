@@ -76,13 +76,16 @@ public class ViewMapper {
 				Object value = entry.getValue();
 				if (value instanceof View) {
 					copy.put(entry.getKey(), UIQueryUtils.getId((View) value));
-				}
+				}				
 				else {
 					copy.put(entry.getKey(),entry.getValue());
 				}			
 			}
 			
 			return copy;
+		} 
+		else if (o instanceof CharSequence) {
+			return o.toString();
 		}
 		return o;
 	}
