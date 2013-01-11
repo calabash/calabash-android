@@ -206,11 +206,9 @@ public class UIQueryUtils {
 			public Object call() throws Exception {
 				List<Map<String, Object>> parsedResult;
 				try {
-					parsedResult = new ObjectMapper()
-					.readValue(
-							jsonResponse,
-							new TypeReference<List<HashMap<String, Object>>>() {
-							});
+					parsedResult = new ObjectMapper().readValue(
+									jsonResponse,
+									new TypeReference<List<HashMap<String, Object>>>() {});
 					for (Map<String,Object> data : parsedResult) {
 						Map<String,Object> rect = (Map<String, Object>) data.get("rect");
 						Map <String,Object> updatedRect = QueryHelper.translateRectToScreenCoordinates(webView, rect);
@@ -218,9 +216,23 @@ public class UIQueryUtils {
 						data.put("webView", webView);
 					}
 					return parsedResult;
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new RuntimeException(e);		
+				} catch (Exception igored) {
+					try {
+						Map resultAsMap = new ObjectMapper().readValue(
+											jsonResponse,
+											new TypeReference<HashMap>() {});
+						//This usually happens in case of error
+						//check this case
+						System.out.println(resultAsMap);
+						String errorMsg = (String) resultAsMap.get("error");
+						System.out.println(errorMsg);
+						return Collections.singletonList(resultAsMap);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new RuntimeException(e);		
+					}
+					
+					
 				}		
 			}
 		});
