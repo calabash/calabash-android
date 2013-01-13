@@ -26,7 +26,7 @@ Then /^The "([^\"]*)" for row (\d+) should be "([^\"]*)"$/ do | view_id, row, va
   
   if( response['children'] )
     found_id = false
-    response['children'] each do | view |
+    response['children'].each do | view |
 	  if( view['id'] == view_id )
 	    raise "Text is #{view['text']}, expected #{value}" unless( view['text'] == value )
 		found_id = true
