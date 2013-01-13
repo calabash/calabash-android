@@ -112,6 +112,22 @@ module Operations
     map(uiquery,:query,*converted_args)
   end
 
+  def each_item(opts={:query => "android.widget.ListView", :post_scroll => 0.2}, &block)
+    uiquery = opts[:query] || "android.widget.ListView"
+    skip_if = opts[:skip_if] || lambda { |i| false }
+    stop_when = opts[:stop_when] || lambda { |i| false }
+    check_element_exists(uiquery)
+    num_items = query(opts[:query], :adapter, :count).first
+    num_items.times do |item|
+      next if skip_if.call(item)
+      break if stop_when.call(item)
+
+      scroll_to_row(opts[:query], item)
+      sleep(opts[:post_scroll]) if opts[:post_scroll] and opts[:post_scroll] > 0
+      yield(item)
+    end
+  end
+
   def ni
     raise "Not yet implemented."
   end
@@ -452,7 +468,8 @@ module Operations
   end
 
   def scroll_to_row(uiquery,number)
-    ni
+    query(uiquery, {:smoothScrollToPosition => number})
+    puts "TODO:detect end of scroll - use sleep for now"
   end
 
   def pinch(in_out,options={})

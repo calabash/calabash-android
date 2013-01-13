@@ -78,8 +78,8 @@ public class InvocationOperation implements Operation {
 				Method[] methods = o.getClass().getMethods();
 				for (Method m : methods) {
 					if (m.getName().equals(InvocationOperation.this.methodName)) {
-						Class<?>[] parameterTypes = m.getParameterTypes();
-						if (parameterTypes.length == InvocationOperation.this.classes.length && areArgumentsConvertibleTo(parameterTypes)) {
+						Class<?>[] parameterTypes = m.getParameterTypes();						
+						if (parameterTypes.length == InvocationOperation.this.classes.length && areArgumentsConvertibleTo(parameterTypes)) {							
 							try {
 								Object result;
 								if( m.getReturnType().equals(Void.TYPE)){
@@ -92,6 +92,7 @@ public class InvocationOperation implements Operation {
 								ref.set(result);
 								return;
 							} catch (Exception e) {
+								e.printStackTrace();
 								refEx.set(e);
 								return;
 							}
@@ -119,8 +120,8 @@ public class InvocationOperation implements Operation {
 				Class<?> c = o.getClass();
 				if (convertStringCharSeq && c.equals(String.class)) {
 					c = CharSequence.class;//Android API specific optimization
-				} 				
-				types[i] = c; 	
+				} 								
+				types[i] = mapToPrimitiveClass(c); 	
 			}
 			else {
 				types[i] = null;
@@ -129,18 +130,38 @@ public class InvocationOperation implements Operation {
 		return types;
 	}
 	
+	private Class<?> mapToPrimitiveClass(Class<?> c) {
+		if (c.equals(Integer.class)) {
+			return int.class;
+		}
+		else if (c.equals(Float.class)) {
+			return float.class;
+		}
+		else if (c.equals(Double.class)) {
+			return double.class;
+		}
+		else if (c.equals(Boolean.class)) {
+			return boolean.class;
+		}		
+		return c;
+	}
+	
+	
 	//parameterType.length == this.classes.length
 	//Note: right now we don't do any clever mapping, we 
 	//only use Java's sub type relation: isAssigableFrom
 	private boolean areArgumentsConvertibleTo(Class<?>[] parameterTypes) {		
 		for (int i=0; i < parameterTypes.length; i++) {
 			Class<?> typei = parameterTypes[i];			
-			if (this.classes[i] == null) {
+			if (this.arguments.get(i) == null) {
 				if (typei.isPrimitive()) {
 					//Can't pass null as primitive
 					return false;
 				}
 				continue; //can always pass null (unless primitive)
+			}
+			if (typei.isPrimitive() && typei.equals(mapToPrimitiveClass(this.classes[i]))) {
+				continue;
 			}
 			if (!typei.isAssignableFrom(this.classes[i])) {
 				return false;
