@@ -57,12 +57,7 @@ public class CalabashChromeClient extends WebChromeClient {
 			r.confirm("CALABASH_ACK");
 			System.out.println("onJsPrompt: " + message);
 			String jsonResponse = message.replaceFirst("calabash:", "");
-			try {
-				scriptFuture.setResult(jsonResponse);
-			} catch (Exception e) {
-				e.printStackTrace();
-				scriptFuture.setResult(null);
-			}
+			scriptFuture.setResult(jsonResponse);			
 			return true;
 		} else {
 			if (mWebChromeClient == null) {
