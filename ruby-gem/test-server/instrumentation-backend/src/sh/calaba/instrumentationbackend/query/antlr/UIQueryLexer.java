@@ -1,4 +1,4 @@
-// $ANTLR 3.4 antlr/UIQuery.g 2013-01-07 13:26:07
+// $ANTLR 3.4 antlr/UIQuery.g 2013-01-23 13:00:35
 
     package sh.calaba.instrumentationbackend.query.antlr;
 
@@ -12,20 +12,23 @@ import java.util.ArrayList;
 public class UIQueryLexer extends Lexer {
     public static final int EOF=-1;
     public static final int ALL=4;
-    public static final int BOOL=5;
-    public static final int ESC_SEQ=6;
-    public static final int FILTER_COLON=7;
-    public static final int HEX_DIGIT=8;
-    public static final int INT=9;
-    public static final int NAME=10;
-    public static final int NIL=11;
-    public static final int OCTAL_ESC=12;
-    public static final int QUALIFIED_NAME=13;
-    public static final int STRING=14;
-    public static final int UNICODE_ESC=15;
-    public static final int VISIBLE=16;
-    public static final int WHITE=17;
-    public static final int WILDCARD=18;
+    public static final int BEGINPRED=5;
+    public static final int BOOL=6;
+    public static final int ENDPRED=7;
+    public static final int ESC_SEQ=8;
+    public static final int FILTER_COLON=9;
+    public static final int HEX_DIGIT=10;
+    public static final int INT=11;
+    public static final int NAME=12;
+    public static final int NIL=13;
+    public static final int OCTAL_ESC=14;
+    public static final int QUALIFIED_NAME=15;
+    public static final int RELATION=16;
+    public static final int STRING=17;
+    public static final int UNICODE_ESC=18;
+    public static final int VISIBLE=19;
+    public static final int WHITE=20;
+    public static final int WILDCARD=21;
 
     // delegates
     // delegators
@@ -186,27 +189,181 @@ public class UIQueryLexer extends Lexer {
     }
     // $ANTLR end "FILTER_COLON"
 
+    // $ANTLR start "BEGINPRED"
+    public final void mBEGINPRED() throws RecognitionException {
+        try {
+            int _type = BEGINPRED;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // antlr/UIQuery.g:61:11: ( '{' )
+            // antlr/UIQuery.g:61:13: '{'
+            {
+            match('{'); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "BEGINPRED"
+
+    // $ANTLR start "ENDPRED"
+    public final void mENDPRED() throws RecognitionException {
+        try {
+            int _type = ENDPRED;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // antlr/UIQuery.g:63:11: ( '}' )
+            // antlr/UIQuery.g:63:13: '}'
+            {
+            match('}'); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "ENDPRED"
+
+    // $ANTLR start "RELATION"
+    public final void mRELATION() throws RecognitionException {
+        try {
+            int _type = RELATION;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // antlr/UIQuery.g:66:10: ( ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' ) ( '[c]' )? )
+            // antlr/UIQuery.g:66:12: ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' ) ( '[c]' )?
+            {
+            // antlr/UIQuery.g:66:12: ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' )
+            int alt2=4;
+            switch ( input.LA(1) ) {
+            case 'B':
+                {
+                alt2=1;
+                }
+                break;
+            case 'E':
+                {
+                alt2=2;
+                }
+                break;
+            case 'C':
+                {
+                alt2=3;
+                }
+                break;
+            case 'L':
+                {
+                alt2=4;
+                }
+                break;
+            default:
+                NoViableAltException nvae =
+                    new NoViableAltException("", 2, 0, input);
+
+                throw nvae;
+
+            }
+
+            switch (alt2) {
+                case 1 :
+                    // antlr/UIQuery.g:66:13: 'BEGINSWITH'
+                    {
+                    match("BEGINSWITH"); 
+
+
+
+                    }
+                    break;
+                case 2 :
+                    // antlr/UIQuery.g:66:28: 'ENDSWITH'
+                    {
+                    match("ENDSWITH"); 
+
+
+
+                    }
+                    break;
+                case 3 :
+                    // antlr/UIQuery.g:66:41: 'CONTAINS'
+                    {
+                    match("CONTAINS"); 
+
+
+
+                    }
+                    break;
+                case 4 :
+                    // antlr/UIQuery.g:66:54: 'LIKE'
+                    {
+                    match("LIKE"); 
+
+
+
+                    }
+                    break;
+
+            }
+
+
+            // antlr/UIQuery.g:66:61: ( '[c]' )?
+            int alt3=2;
+            int LA3_0 = input.LA(1);
+
+            if ( (LA3_0=='[') ) {
+                alt3=1;
+            }
+            switch (alt3) {
+                case 1 :
+                    // antlr/UIQuery.g:66:62: '[c]'
+                    {
+                    match("[c]"); 
+
+
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "RELATION"
+
     // $ANTLR start "INT"
     public final void mINT() throws RecognitionException {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:60:5: ( ( '0' .. '9' )+ )
-            // antlr/UIQuery.g:60:7: ( '0' .. '9' )+
+            // antlr/UIQuery.g:69:5: ( ( '0' .. '9' )+ )
+            // antlr/UIQuery.g:69:7: ( '0' .. '9' )+
             {
-            // antlr/UIQuery.g:60:7: ( '0' .. '9' )+
-            int cnt2=0;
-            loop2:
+            // antlr/UIQuery.g:69:7: ( '0' .. '9' )+
+            int cnt4=0;
+            loop4:
             do {
-                int alt2=2;
-                int LA2_0 = input.LA(1);
+                int alt4=2;
+                int LA4_0 = input.LA(1);
 
-                if ( ((LA2_0 >= '0' && LA2_0 <= '9')) ) {
-                    alt2=1;
+                if ( ((LA4_0 >= '0' && LA4_0 <= '9')) ) {
+                    alt4=1;
                 }
 
 
-                switch (alt2) {
+                switch (alt4) {
             	case 1 :
             	    // antlr/UIQuery.g:
             	    {
@@ -224,12 +381,12 @@ public class UIQueryLexer extends Lexer {
             	    break;
 
             	default :
-            	    if ( cnt2 >= 1 ) break loop2;
+            	    if ( cnt4 >= 1 ) break loop4;
                         EarlyExitException eee =
-                            new EarlyExitException(2, input);
+                            new EarlyExitException(4, input);
                         throw eee;
                 }
-                cnt2++;
+                cnt4++;
             } while (true);
 
 
@@ -249,26 +406,26 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = BOOL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:63:6: ( 'true' | 'false' )
-            int alt3=2;
-            int LA3_0 = input.LA(1);
+            // antlr/UIQuery.g:72:6: ( 'true' | 'false' )
+            int alt5=2;
+            int LA5_0 = input.LA(1);
 
-            if ( (LA3_0=='t') ) {
-                alt3=1;
+            if ( (LA5_0=='t') ) {
+                alt5=1;
             }
-            else if ( (LA3_0=='f') ) {
-                alt3=2;
+            else if ( (LA5_0=='f') ) {
+                alt5=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 3, 0, input);
+                    new NoViableAltException("", 5, 0, input);
 
                 throw nvae;
 
             }
-            switch (alt3) {
+            switch (alt5) {
                 case 1 :
-                    // antlr/UIQuery.g:63:8: 'true'
+                    // antlr/UIQuery.g:72:8: 'true'
                     {
                     match("true"); 
 
@@ -277,7 +434,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:63:17: 'false'
+                    // antlr/UIQuery.g:72:17: 'false'
                     {
                     match("false"); 
 
@@ -301,22 +458,22 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = NIL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:66:5: ( 'nil' | 'null' )
-            int alt4=2;
-            int LA4_0 = input.LA(1);
+            // antlr/UIQuery.g:75:5: ( 'nil' | 'null' )
+            int alt6=2;
+            int LA6_0 = input.LA(1);
 
-            if ( (LA4_0=='n') ) {
-                int LA4_1 = input.LA(2);
+            if ( (LA6_0=='n') ) {
+                int LA6_1 = input.LA(2);
 
-                if ( (LA4_1=='i') ) {
-                    alt4=1;
+                if ( (LA6_1=='i') ) {
+                    alt6=1;
                 }
-                else if ( (LA4_1=='u') ) {
-                    alt4=2;
+                else if ( (LA6_1=='u') ) {
+                    alt6=2;
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("", 4, 1, input);
+                        new NoViableAltException("", 6, 1, input);
 
                     throw nvae;
 
@@ -324,14 +481,14 @@ public class UIQueryLexer extends Lexer {
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 4, 0, input);
+                    new NoViableAltException("", 6, 0, input);
 
                 throw nvae;
 
             }
-            switch (alt4) {
+            switch (alt6) {
                 case 1 :
-                    // antlr/UIQuery.g:66:7: 'nil'
+                    // antlr/UIQuery.g:75:7: 'nil'
                     {
                     match("nil"); 
 
@@ -340,7 +497,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:66:15: 'null'
+                    // antlr/UIQuery.g:75:15: 'null'
                     {
                     match("null"); 
 
@@ -364,8 +521,8 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = NAME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:69:7: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
-            // antlr/UIQuery.g:69:9: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // antlr/UIQuery.g:78:7: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
+            // antlr/UIQuery.g:78:9: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
@@ -377,18 +534,18 @@ public class UIQueryLexer extends Lexer {
             }
 
 
-            // antlr/UIQuery.g:69:33: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
-            loop5:
+            // antlr/UIQuery.g:78:33: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            loop7:
             do {
-                int alt5=2;
-                int LA5_0 = input.LA(1);
+                int alt7=2;
+                int LA7_0 = input.LA(1);
 
-                if ( ((LA5_0 >= '0' && LA5_0 <= '9')||(LA5_0 >= 'A' && LA5_0 <= 'Z')||LA5_0=='_'||(LA5_0 >= 'a' && LA5_0 <= 'z')) ) {
-                    alt5=1;
+                if ( ((LA7_0 >= '0' && LA7_0 <= '9')||(LA7_0 >= 'A' && LA7_0 <= 'Z')||LA7_0=='_'||(LA7_0 >= 'a' && LA7_0 <= 'z')) ) {
+                    alt7=1;
                 }
 
 
-                switch (alt5) {
+                switch (alt7) {
             	case 1 :
             	    // antlr/UIQuery.g:
             	    {
@@ -406,7 +563,7 @@ public class UIQueryLexer extends Lexer {
             	    break;
 
             	default :
-            	    break loop5;
+            	    break loop7;
                 }
             } while (true);
 
@@ -427,28 +584,28 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:73:5: ( '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\'' )
-            // antlr/UIQuery.g:73:8: '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\''
+            // antlr/UIQuery.g:82:5: ( '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\'' )
+            // antlr/UIQuery.g:82:8: '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\''
             {
             match('\''); 
 
-            // antlr/UIQuery.g:73:13: ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )*
-            loop6:
+            // antlr/UIQuery.g:82:13: ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )*
+            loop8:
             do {
-                int alt6=3;
-                int LA6_0 = input.LA(1);
+                int alt8=3;
+                int LA8_0 = input.LA(1);
 
-                if ( (LA6_0=='\\') ) {
-                    alt6=1;
+                if ( (LA8_0=='\\') ) {
+                    alt8=1;
                 }
-                else if ( ((LA6_0 >= '\u0000' && LA6_0 <= '&')||(LA6_0 >= '(' && LA6_0 <= '[')||(LA6_0 >= ']' && LA6_0 <= '\uFFFF')) ) {
-                    alt6=2;
+                else if ( ((LA8_0 >= '\u0000' && LA8_0 <= '&')||(LA8_0 >= '(' && LA8_0 <= '[')||(LA8_0 >= ']' && LA8_0 <= '\uFFFF')) ) {
+                    alt8=2;
                 }
 
 
-                switch (alt6) {
+                switch (alt8) {
             	case 1 :
-            	    // antlr/UIQuery.g:73:15: ESC_SEQ
+            	    // antlr/UIQuery.g:82:15: ESC_SEQ
             	    {
             	    mESC_SEQ(); 
 
@@ -456,7 +613,7 @@ public class UIQueryLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // antlr/UIQuery.g:73:25: ~ ( '\\\\' | '\\'' )
+            	    // antlr/UIQuery.g:82:25: ~ ( '\\\\' | '\\'' )
             	    {
             	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '&')||(input.LA(1) >= '(' && input.LA(1) <= '[')||(input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) {
             	        input.consume();
@@ -472,7 +629,7 @@ public class UIQueryLexer extends Lexer {
             	    break;
 
             	default :
-            	    break loop6;
+            	    break loop8;
                 }
             } while (true);
 
@@ -495,24 +652,24 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = WHITE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:76:9: ( ( ' ' )+ )
-            // antlr/UIQuery.g:76:11: ( ' ' )+
+            // antlr/UIQuery.g:85:9: ( ( ' ' )+ )
+            // antlr/UIQuery.g:85:11: ( ' ' )+
             {
-            // antlr/UIQuery.g:76:11: ( ' ' )+
-            int cnt7=0;
-            loop7:
+            // antlr/UIQuery.g:85:11: ( ' ' )+
+            int cnt9=0;
+            loop9:
             do {
-                int alt7=2;
-                int LA7_0 = input.LA(1);
+                int alt9=2;
+                int LA9_0 = input.LA(1);
 
-                if ( (LA7_0==' ') ) {
-                    alt7=1;
+                if ( (LA9_0==' ') ) {
+                    alt9=1;
                 }
 
 
-                switch (alt7) {
+                switch (alt9) {
             	case 1 :
-            	    // antlr/UIQuery.g:76:11: ' '
+            	    // antlr/UIQuery.g:85:11: ' '
             	    {
             	    match(' '); 
 
@@ -520,12 +677,12 @@ public class UIQueryLexer extends Lexer {
             	    break;
 
             	default :
-            	    if ( cnt7 >= 1 ) break loop7;
+            	    if ( cnt9 >= 1 ) break loop9;
                         EarlyExitException eee =
-                            new EarlyExitException(7, input);
+                            new EarlyExitException(9, input);
                         throw eee;
                 }
-                cnt7++;
+                cnt9++;
             } while (true);
 
 
@@ -543,7 +700,7 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "HEX_DIGIT"
     public final void mHEX_DIGIT() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:79:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
+            // antlr/UIQuery.g:88:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
             // antlr/UIQuery.g:
             {
             if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'F')||(input.LA(1) >= 'a' && input.LA(1) <= 'f') ) {
@@ -569,11 +726,11 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "ESC_SEQ"
     public final void mESC_SEQ() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:83:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
-            int alt8=3;
-            int LA8_0 = input.LA(1);
+            // antlr/UIQuery.g:92:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
+            int alt10=3;
+            int LA10_0 = input.LA(1);
 
-            if ( (LA8_0=='\\') ) {
+            if ( (LA10_0=='\\') ) {
                 switch ( input.LA(2) ) {
                 case '\'':
                 case '\\':
@@ -583,12 +740,12 @@ public class UIQueryLexer extends Lexer {
                 case 'r':
                 case 't':
                     {
-                    alt8=1;
+                    alt10=1;
                     }
                     break;
                 case 'u':
                     {
-                    alt8=2;
+                    alt10=2;
                     }
                     break;
                 case '0':
@@ -600,12 +757,12 @@ public class UIQueryLexer extends Lexer {
                 case '6':
                 case '7':
                     {
-                    alt8=3;
+                    alt10=3;
                     }
                     break;
                 default:
                     NoViableAltException nvae =
-                        new NoViableAltException("", 8, 1, input);
+                        new NoViableAltException("", 10, 1, input);
 
                     throw nvae;
 
@@ -614,14 +771,14 @@ public class UIQueryLexer extends Lexer {
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 8, 0, input);
+                    new NoViableAltException("", 10, 0, input);
 
                 throw nvae;
 
             }
-            switch (alt8) {
+            switch (alt10) {
                 case 1 :
-                    // antlr/UIQuery.g:83:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\'' | '\\\\' )
+                    // antlr/UIQuery.g:92:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\'' | '\\\\' )
                     {
                     match('\\'); 
 
@@ -638,7 +795,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:84:9: UNICODE_ESC
+                    // antlr/UIQuery.g:93:9: UNICODE_ESC
                     {
                     mUNICODE_ESC(); 
 
@@ -646,7 +803,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // antlr/UIQuery.g:85:9: OCTAL_ESC
+                    // antlr/UIQuery.g:94:9: OCTAL_ESC
                     {
                     mOCTAL_ESC(); 
 
@@ -666,43 +823,43 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "OCTAL_ESC"
     public final void mOCTAL_ESC() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:90:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
-            int alt9=3;
-            int LA9_0 = input.LA(1);
+            // antlr/UIQuery.g:99:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
+            int alt11=3;
+            int LA11_0 = input.LA(1);
 
-            if ( (LA9_0=='\\') ) {
-                int LA9_1 = input.LA(2);
+            if ( (LA11_0=='\\') ) {
+                int LA11_1 = input.LA(2);
 
-                if ( ((LA9_1 >= '0' && LA9_1 <= '3')) ) {
-                    int LA9_2 = input.LA(3);
+                if ( ((LA11_1 >= '0' && LA11_1 <= '3')) ) {
+                    int LA11_2 = input.LA(3);
 
-                    if ( ((LA9_2 >= '0' && LA9_2 <= '7')) ) {
-                        int LA9_4 = input.LA(4);
+                    if ( ((LA11_2 >= '0' && LA11_2 <= '7')) ) {
+                        int LA11_4 = input.LA(4);
 
-                        if ( ((LA9_4 >= '0' && LA9_4 <= '7')) ) {
-                            alt9=1;
+                        if ( ((LA11_4 >= '0' && LA11_4 <= '7')) ) {
+                            alt11=1;
                         }
                         else {
-                            alt9=2;
+                            alt11=2;
                         }
                     }
                     else {
-                        alt9=3;
+                        alt11=3;
                     }
                 }
-                else if ( ((LA9_1 >= '4' && LA9_1 <= '7')) ) {
-                    int LA9_3 = input.LA(3);
+                else if ( ((LA11_1 >= '4' && LA11_1 <= '7')) ) {
+                    int LA11_3 = input.LA(3);
 
-                    if ( ((LA9_3 >= '0' && LA9_3 <= '7')) ) {
-                        alt9=2;
+                    if ( ((LA11_3 >= '0' && LA11_3 <= '7')) ) {
+                        alt11=2;
                     }
                     else {
-                        alt9=3;
+                        alt11=3;
                     }
                 }
                 else {
                     NoViableAltException nvae =
-                        new NoViableAltException("", 9, 1, input);
+                        new NoViableAltException("", 11, 1, input);
 
                     throw nvae;
 
@@ -710,14 +867,14 @@ public class UIQueryLexer extends Lexer {
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 9, 0, input);
+                    new NoViableAltException("", 11, 0, input);
 
                 throw nvae;
 
             }
-            switch (alt9) {
+            switch (alt11) {
                 case 1 :
-                    // antlr/UIQuery.g:90:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
+                    // antlr/UIQuery.g:99:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -754,7 +911,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:91:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
+                    // antlr/UIQuery.g:100:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -781,7 +938,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // antlr/UIQuery.g:92:9: '\\\\' ( '0' .. '7' )
+                    // antlr/UIQuery.g:101:9: '\\\\' ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -810,8 +967,8 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "UNICODE_ESC"
     public final void mUNICODE_ESC() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:97:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
-            // antlr/UIQuery.g:97:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+            // antlr/UIQuery.g:106:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
+            // antlr/UIQuery.g:106:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
             {
             match('\\'); 
 
@@ -840,10 +997,10 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR end "UNICODE_ESC"
 
     public void mTokens() throws RecognitionException {
-        // antlr/UIQuery.g:1:8: ( WILDCARD | QUALIFIED_NAME | ALL | VISIBLE | FILTER_COLON | INT | BOOL | NIL | NAME | STRING | WHITE )
-        int alt10=11;
-        alt10 = dfa10.predict(input);
-        switch (alt10) {
+        // antlr/UIQuery.g:1:8: ( WILDCARD | QUALIFIED_NAME | ALL | VISIBLE | FILTER_COLON | BEGINPRED | ENDPRED | RELATION | INT | BOOL | NIL | NAME | STRING | WHITE )
+        int alt12=14;
+        alt12 = dfa12.predict(input);
+        switch (alt12) {
             case 1 :
                 // antlr/UIQuery.g:1:10: WILDCARD
                 {
@@ -885,47 +1042,71 @@ public class UIQueryLexer extends Lexer {
                 }
                 break;
             case 6 :
-                // antlr/UIQuery.g:1:59: INT
+                // antlr/UIQuery.g:1:59: BEGINPRED
+                {
+                mBEGINPRED(); 
+
+
+                }
+                break;
+            case 7 :
+                // antlr/UIQuery.g:1:69: ENDPRED
+                {
+                mENDPRED(); 
+
+
+                }
+                break;
+            case 8 :
+                // antlr/UIQuery.g:1:77: RELATION
+                {
+                mRELATION(); 
+
+
+                }
+                break;
+            case 9 :
+                // antlr/UIQuery.g:1:86: INT
                 {
                 mINT(); 
 
 
                 }
                 break;
-            case 7 :
-                // antlr/UIQuery.g:1:63: BOOL
+            case 10 :
+                // antlr/UIQuery.g:1:90: BOOL
                 {
                 mBOOL(); 
 
 
                 }
                 break;
-            case 8 :
-                // antlr/UIQuery.g:1:68: NIL
+            case 11 :
+                // antlr/UIQuery.g:1:95: NIL
                 {
                 mNIL(); 
 
 
                 }
                 break;
-            case 9 :
-                // antlr/UIQuery.g:1:72: NAME
+            case 12 :
+                // antlr/UIQuery.g:1:99: NAME
                 {
                 mNAME(); 
 
 
                 }
                 break;
-            case 10 :
-                // antlr/UIQuery.g:1:77: STRING
+            case 13 :
+                // antlr/UIQuery.g:1:104: STRING
                 {
                 mSTRING(); 
 
 
                 }
                 break;
-            case 11 :
-                // antlr/UIQuery.g:1:84: WHITE
+            case 14 :
+                // antlr/UIQuery.g:1:111: WHITE
                 {
                 mWHITE(); 
 
@@ -938,118 +1119,179 @@ public class UIQueryLexer extends Lexer {
     }
 
 
-    protected DFA10 dfa10 = new DFA10(this);
-    static final String DFA10_eotS =
-        "\2\uffff\3\16\2\uffff\3\16\2\uffff\2\16\2\uffff\5\16\1\33\3\16\1"+
-        "\37\1\16\1\uffff\1\16\1\42\1\16\1\uffff\1\37\1\16\1\uffff\1\42\1"+
-        "\16\1\46\1\uffff";
-    static final String DFA10_eofS =
-        "\47\uffff";
-    static final String DFA10_minS =
-        "\1\40\1\uffff\3\56\2\uffff\3\56\2\uffff\2\56\2\uffff\13\56\1\uffff"+
-        "\3\56\1\uffff\2\56\1\uffff\3\56\1\uffff";
-    static final String DFA10_maxS =
-        "\1\172\1\uffff\3\172\2\uffff\3\172\2\uffff\2\172\2\uffff\13\172"+
-        "\1\uffff\3\172\1\uffff\2\172\1\uffff\3\172\1\uffff";
-    static final String DFA10_acceptS =
-        "\1\uffff\1\1\3\uffff\1\5\1\6\3\uffff\1\12\1\13\2\uffff\1\11\1\2"+
-        "\13\uffff\1\3\3\uffff\1\10\2\uffff\1\7\3\uffff\1\4";
-    static final String DFA10_specialS =
-        "\47\uffff}>";
-    static final String[] DFA10_transitionS = {
-            "\1\13\6\uffff\1\12\2\uffff\1\1\5\uffff\12\6\1\5\6\uffff\32\11"+
-            "\4\uffff\1\11\1\uffff\1\2\4\11\1\7\7\11\1\10\5\11\1\4\1\11\1"+
-            "\3\4\11",
+    protected DFA12 dfa12 = new DFA12(this);
+    static final String DFA12_eotS =
+        "\2\uffff\3\24\3\uffff\4\24\1\uffff\3\24\2\uffff\2\24\2\uffff\11"+
+        "\24\1\51\7\24\1\61\1\24\1\uffff\4\24\1\67\1\70\1\24\1\uffff\1\61"+
+        "\4\24\2\uffff\1\70\4\24\1\102\3\24\1\uffff\1\24\2\67\1\24\1\67";
+    static final String DFA12_eofS =
+        "\110\uffff";
+    static final String DFA12_minS =
+        "\1\40\1\uffff\3\56\3\uffff\4\56\1\uffff\3\56\2\uffff\2\56\2\uffff"+
+        "\23\56\1\uffff\7\56\1\uffff\5\56\2\uffff\11\56\1\uffff\5\56";
+    static final String DFA12_maxS =
+        "\1\175\1\uffff\3\172\3\uffff\4\172\1\uffff\3\172\2\uffff\2\172\2"+
+        "\uffff\23\172\1\uffff\7\172\1\uffff\5\172\2\uffff\11\172\1\uffff"+
+        "\5\172";
+    static final String DFA12_acceptS =
+        "\1\uffff\1\1\3\uffff\1\5\1\6\1\7\4\uffff\1\11\3\uffff\1\15\1\16"+
+        "\2\uffff\1\14\1\2\23\uffff\1\3\7\uffff\1\13\5\uffff\1\10\1\12\11"+
+        "\uffff\1\4\5\uffff";
+    static final String DFA12_specialS =
+        "\110\uffff}>";
+    static final String[] DFA12_transitionS = {
+            "\1\21\6\uffff\1\20\2\uffff\1\1\5\uffff\12\14\1\5\6\uffff\1\17"+
+            "\1\4\1\11\1\17\1\10\6\17\1\12\16\17\4\uffff\1\17\1\uffff\1\2"+
+            "\4\17\1\15\7\17\1\16\5\17\1\13\1\17\1\3\4\17\1\6\1\uffff\1\7",
             "",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\13\15"+
-            "\1\14\16\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\10\15"+
-            "\1\20\21\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\21\15"+
-            "\1\21\10\15",
-            "",
-            "",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\1\22"+
-            "\31\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\10\15"+
-            "\1\23\13\15\1\24\5\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\32\15",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\13\23"+
+            "\1\22\16\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\10\23"+
+            "\1\26\21\23",
+            "\1\25\1\uffff\12\23\7\uffff\4\23\1\27\25\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
             "",
             "",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\13\15"+
-            "\1\25\16\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\32\15",
+            "",
+            "\1\25\1\uffff\12\23\7\uffff\15\23\1\30\14\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\16\23\1\31\13\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\10\23\1\32\21\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\21\23"+
+            "\1\33\10\23",
+            "",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\1\34"+
+            "\31\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\10\23"+
+            "\1\35\13\23\1\36\5\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
             "",
             "",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\22\15"+
-            "\1\26\7\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\24\15"+
-            "\1\27\5\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\13\15"+
-            "\1\30\16\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\13\15"+
-            "\1\31\16\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\13\15"+
-            "\1\32\16\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\32\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\10\15"+
-            "\1\34\21\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\4\15"+
-            "\1\35\25\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\22\15"+
-            "\1\36\7\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\32\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\13\15"+
-            "\1\40\16\15",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\13\23"+
+            "\1\37\16\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
             "",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\1\15"+
-            "\1\41\30\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\32\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\4\15"+
-            "\1\43\25\15",
             "",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\32\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\13\15"+
-            "\1\44\16\15",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\22\23"+
+            "\1\40\7\23",
+            "\1\25\1\uffff\12\23\7\uffff\6\23\1\41\23\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\3\23\1\42\26\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\15\23\1\43\14\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\12\23\1\44\17\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\24\23"+
+            "\1\45\5\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\13\23"+
+            "\1\46\16\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\13\23"+
+            "\1\47\16\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\13\23"+
+            "\1\50\16\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\10\23"+
+            "\1\52\21\23",
+            "\1\25\1\uffff\12\23\7\uffff\10\23\1\53\21\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\22\23\1\54\7\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\23\23\1\55\6\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\4\23\1\56\25\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\4\23"+
+            "\1\57\25\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\22\23"+
+            "\1\60\7\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\13\23"+
+            "\1\62\16\23",
             "",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\32\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\4\15"+
-            "\1\45\25\15",
-            "\1\17\1\uffff\12\15\7\uffff\32\15\4\uffff\1\15\1\uffff\32\15",
-            ""
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\1\23"+
+            "\1\63\30\23",
+            "\1\25\1\uffff\12\23\7\uffff\15\23\1\64\14\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\26\23\1\65\3\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\1\66\31\23\4\uffff\1\23\1\uffff"+
+            "\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\4\23"+
+            "\1\71\25\23",
+            "",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\13\23"+
+            "\1\72\16\23",
+            "\1\25\1\uffff\12\23\7\uffff\22\23\1\73\7\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\10\23\1\74\21\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\10\23\1\75\21\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "",
+            "",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\4\23"+
+            "\1\76\25\23",
+            "\1\25\1\uffff\12\23\7\uffff\26\23\1\77\3\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\23\23\1\100\6\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\15\23\1\101\14\23\4\uffff\1\23"+
+            "\1\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\10\23\1\103\21\23\4\uffff\1\23"+
+            "\1\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\7\23\1\104\22\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\22\23\1\105\7\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "",
+            "\1\25\1\uffff\12\23\7\uffff\23\23\1\106\6\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\7\23\1\107\22\23\4\uffff\1\23\1"+
+            "\uffff\32\23",
+            "\1\25\1\uffff\12\23\7\uffff\32\23\4\uffff\1\23\1\uffff\32\23"
     };
 
-    static final short[] DFA10_eot = DFA.unpackEncodedString(DFA10_eotS);
-    static final short[] DFA10_eof = DFA.unpackEncodedString(DFA10_eofS);
-    static final char[] DFA10_min = DFA.unpackEncodedStringToUnsignedChars(DFA10_minS);
-    static final char[] DFA10_max = DFA.unpackEncodedStringToUnsignedChars(DFA10_maxS);
-    static final short[] DFA10_accept = DFA.unpackEncodedString(DFA10_acceptS);
-    static final short[] DFA10_special = DFA.unpackEncodedString(DFA10_specialS);
-    static final short[][] DFA10_transition;
+    static final short[] DFA12_eot = DFA.unpackEncodedString(DFA12_eotS);
+    static final short[] DFA12_eof = DFA.unpackEncodedString(DFA12_eofS);
+    static final char[] DFA12_min = DFA.unpackEncodedStringToUnsignedChars(DFA12_minS);
+    static final char[] DFA12_max = DFA.unpackEncodedStringToUnsignedChars(DFA12_maxS);
+    static final short[] DFA12_accept = DFA.unpackEncodedString(DFA12_acceptS);
+    static final short[] DFA12_special = DFA.unpackEncodedString(DFA12_specialS);
+    static final short[][] DFA12_transition;
 
     static {
-        int numStates = DFA10_transitionS.length;
-        DFA10_transition = new short[numStates][];
+        int numStates = DFA12_transitionS.length;
+        DFA12_transition = new short[numStates][];
         for (int i=0; i<numStates; i++) {
-            DFA10_transition[i] = DFA.unpackEncodedString(DFA10_transitionS[i]);
+            DFA12_transition[i] = DFA.unpackEncodedString(DFA12_transitionS[i]);
         }
     }
 
-    class DFA10 extends DFA {
+    class DFA12 extends DFA {
 
-        public DFA10(BaseRecognizer recognizer) {
+        public DFA12(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 10;
-            this.eot = DFA10_eot;
-            this.eof = DFA10_eof;
-            this.min = DFA10_min;
-            this.max = DFA10_max;
-            this.accept = DFA10_accept;
-            this.special = DFA10_special;
-            this.transition = DFA10_transition;
+            this.decisionNumber = 12;
+            this.eot = DFA12_eot;
+            this.eof = DFA12_eof;
+            this.min = DFA12_min;
+            this.max = DFA12_max;
+            this.accept = DFA12_accept;
+            this.special = DFA12_special;
+            this.transition = DFA12_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( WILDCARD | QUALIFIED_NAME | ALL | VISIBLE | FILTER_COLON | INT | BOOL | NIL | NAME | STRING | WHITE );";
+            return "1:1: Tokens : ( WILDCARD | QUALIFIED_NAME | ALL | VISIBLE | FILTER_COLON | BEGINPRED | ENDPRED | RELATION | INT | BOOL | NIL | NAME | STRING | WHITE );";
         }
     }
  

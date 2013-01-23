@@ -19,8 +19,10 @@ import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
 import sh.calaba.instrumentationbackend.query.ast.InvalidUIQueryException;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryAST;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryASTClassName;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryASTPredicate;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryASTWith;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryEvaluator;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryVisibility;
 import android.view.View;
 
@@ -142,7 +144,10 @@ public class Query {
 			return UIQueryVisibility.ALL;	
 			
 		case UIQueryParser.VISIBLE:
-			return UIQueryVisibility.VISIBLE;					
+			return UIQueryVisibility.VISIBLE;
+			
+		case UIQueryParser.BEGINPRED:
+			return UIQueryASTPredicate.newPredicateFromAST(step);
 			
 		default:
 			throw new InvalidUIQueryException("Unknown query: " + stepType
@@ -151,7 +156,7 @@ public class Query {
 		}
 
 	}
-
+	
 	public List<View> allVisibleViews() {
 		return viewFetcher.getAllViews(false);
 	}

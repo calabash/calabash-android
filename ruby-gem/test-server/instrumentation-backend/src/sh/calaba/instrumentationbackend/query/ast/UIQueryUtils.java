@@ -14,16 +14,20 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.antlr.runtime.tree.CommonTree;
+
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.actions.webview.QueryHelper;
 import sh.calaba.instrumentationbackend.query.CompletedFuture;
+import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import sh.calaba.org.codehaus.jackson.type.TypeReference;
 import android.content.res.Resources.NotFoundException;
 import android.view.View;
 import android.webkit.WebView;
 
-public class UIQueryUtils {
+public class UIQueryUtils {	
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List subviews(Object o)
 	{
@@ -237,6 +241,31 @@ public class UIQueryUtils {
 			}
 		});
 		
+	}
+
+	public static Object parseValue(CommonTree val) {
+		switch (val.getType()) {
+		case UIQueryParser.STRING: {
+			String textWithPings = val.getText();
+			String text = textWithPings
+					.substring(1, textWithPings.length() - 1);
+			return text;
+		}
+		case UIQueryParser.INT:
+			return Integer.parseInt(val.getText(), 10);
+		case UIQueryParser.BOOL: {
+			String text = val.getText();
+			return Boolean.parseBoolean(text);
+		}
+		case UIQueryParser.NIL:
+			return null;
+
+		default:
+			throw new IllegalArgumentException("Unable to parse value type:"
+					+ val.getType() + " text " + val.getText());
+
+		}
+
 	}
 
 }
