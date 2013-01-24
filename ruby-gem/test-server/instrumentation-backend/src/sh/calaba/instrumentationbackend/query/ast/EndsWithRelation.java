@@ -9,7 +9,6 @@ public class EndsWithRelation implements UIQueryASTPredicateRelation {
 		this.caseSensitive = isCaseSensitive;
 	}
 
-	@Override
 	public boolean isCaseSensitive() { 
 		return caseSensitive;
 	}
@@ -26,10 +25,10 @@ public class EndsWithRelation implements UIQueryASTPredicateRelation {
 		if (firstValue == null || secondValue == null) {
 			return false;
 		}
-		if (firstValue instanceof String && secondValue instanceof String) {
-			String firstStr = (String) firstValue;
-			String secondStr = (String) secondValue;
-			if (!this.caseSensitive) {
+		if (firstValue instanceof CharSequence && secondValue instanceof CharSequence) {
+			String firstStr = firstValue.toString();
+			String secondStr = secondValue.toString();
+			if (!isCaseSensitive()) {
 				firstStr = firstStr.toLowerCase();
 				secondStr = secondStr.toLowerCase();
 			}						

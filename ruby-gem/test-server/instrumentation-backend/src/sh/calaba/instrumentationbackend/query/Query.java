@@ -22,7 +22,6 @@ import sh.calaba.instrumentationbackend.query.ast.UIQueryASTClassName;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryASTPredicate;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryASTWith;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryEvaluator;
-import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryVisibility;
 import android.view.View;
 

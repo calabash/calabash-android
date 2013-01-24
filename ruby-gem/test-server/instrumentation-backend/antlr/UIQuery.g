@@ -63,7 +63,10 @@ BEGINPRED : '{'
 ENDPRED	  : '}'
 	;
 	
-RELATION : ('BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE')('[c]')?
+RELATION : | '=' | '>' | '>=' | '<' | '<=' | 
+			(( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' 
+		       | 'beginswith' | 'endswith' | 'contains' | 'like') ('[' ('a'..'z' | 'A'..'Z')* ']')?)
+		       
 	; 
 
 INT :	'0'..'9'+
