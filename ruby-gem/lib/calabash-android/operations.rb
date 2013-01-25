@@ -417,7 +417,7 @@ module Operations
 
     if uiquery.instance_of? String
       elements = query(uiquery, *args)
-      raise "No elements found" if elements.empty?
+      raise "No elements found. Query: #{uiquery}" if elements.empty?
       element = elements.first
     else
       element = uiquery
