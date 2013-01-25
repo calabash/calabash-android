@@ -35,7 +35,7 @@ query	:	expr (WHITE! expr)*
 		;
 	
 
-expr	:	(className | filter | visibility) 
+expr	:	(className | filter | visibility | predicate) 
 		;
 
 className   :   (WILDCARD^ | NAME^ | QUALIFIED_NAME^);
@@ -56,6 +56,18 @@ filter : NAME FILTER_COLON^ (INT | STRING | BOOL | NIL);
 FILTER_COLON  : ':'
 	;
 
+predicate : BEGINPRED^ NAME WHITE! RELATION WHITE! (INT | STRING | BOOL | NIL) ENDPRED!
+	;
+BEGINPRED : '{'
+	;
+ENDPRED	  : '}'
+	;
+	
+RELATION : | '=' | '>' | '>=' | '<' | '<=' | 
+			(( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' 
+		       | 'beginswith' | 'endswith' | 'contains' | 'like') ('[' ('a'..'z' | 'A'..'Z')* ']')?)
+		       
+	; 
 
 INT :	'0'..'9'+
     ;

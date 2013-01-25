@@ -10,7 +10,6 @@ import java.util.concurrent.Future;
 import org.antlr.runtime.tree.CommonTree;
 
 import sh.calaba.instrumentationbackend.actions.webview.QueryHelper;
-import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
 import android.view.View;
 import android.webkit.WebView;
 
@@ -190,31 +189,9 @@ public class UIQueryASTWith implements UIQueryAST {
 	public static UIQueryASTWith fromAST(CommonTree step) {
 		CommonTree prop = (CommonTree) step.getChild(0);
 		CommonTree val = (CommonTree) step.getChild(1);
-
-		switch (val.getType()) {
-		case UIQueryParser.STRING: {
-			String textWithPings = val.getText();
-			String text = textWithPings
-					.substring(1, textWithPings.length() - 1);
-			return new UIQueryASTWith(prop.getText(), text);
-		}
-		case UIQueryParser.INT:
-			return new UIQueryASTWith(prop.getText(), Integer.parseInt(
-					val.getText(), 10));
-		case UIQueryParser.BOOL: {
-			String text = val.getText();
-			return new UIQueryASTWith(prop.getText(),
-					Boolean.parseBoolean(text));
-		}
-		case UIQueryParser.NIL:
-			return new UIQueryASTWith(prop.getText(), null);
-
-		default:
-			throw new IllegalArgumentException("Unable to parse value type:"
-					+ val.getType() + " text " + val.getText());
-
-		}
-
+		
+		Object parsedVal = UIQueryUtils.parseValue(val);
+		return new UIQueryASTWith(prop.getText(), parsedVal);
 	}
 
 	@Override
