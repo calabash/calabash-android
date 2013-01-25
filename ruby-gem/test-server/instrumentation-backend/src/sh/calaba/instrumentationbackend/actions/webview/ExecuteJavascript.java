@@ -29,17 +29,16 @@ public class ExecuteJavascript implements Action {
 				CalabashChromeClient ccc = list.get(0);
 				WebView webView = ccc.getWebView();
 				final String script = "javascript:(function() {"
-						+ " function cb(ret) {"
-						+ "  prompt('calabash:'+ret);"
-						+ " }"
-						+ " try {"
-						+ "  (function(returnValue) {"
-						+ scriptCode + ";"
-						+ "  }(cb));"
-						+ " } catch (e) {"
-						+ "  prompt('calabash:Exception: ' + e);"
-						+ " }"
-						+ "}())";
+                        + " var r;"
+                        + " try {"
+                        + "  r = (function() {"
+                        + scriptCode + ";"
+                        + "  }());"
+                        + " } catch (e) {"
+                        + "  r = 'Exception: ' + e;"
+                        + " }"
+                        + " prompt('calabash:'+r);"
+                        + "}())";
 
 				System.out.println("execute javascript: " + script);
 
