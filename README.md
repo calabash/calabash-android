@@ -43,7 +43,7 @@ If you are on Mac you may see an error like this:
     Building native extensions.  This could take a while...
     ERROR:  Error installing calabash-android:
 	ERROR: Failed to build gem native extension.
-    
+
     /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby extconf.rb
     mkmf.rb can't find header files for ruby at /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/ruby.h
 
@@ -75,7 +75,7 @@ Writing a test
 --------------
 The Cucumber features goes in the `features` library and should have the ".feature" extension.
 
-You can start out by looking at `features/test_dummy.feature`. You can extend this feature or make your own using some of the [predefined steps](https://github.com/calabash/calabash-android/blob/master/ruby-gem/lib/calabash-android/canned_steps.md) that comes with Calabash.
+You can start out by looking at `features/my_first.feature`. You can extend this feature or make your own using some of the [predefined steps](https://github.com/calabash/calabash-android/blob/master/ruby-gem/lib/calabash-android/canned_steps.md) that comes with Calabash.
 
 Running test
 ------------
