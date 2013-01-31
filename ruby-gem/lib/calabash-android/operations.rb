@@ -7,6 +7,7 @@ require 'socket'
 require 'timeout'
 require 'calabash-android/helpers'
 require 'calabash-android/wait_helpers'
+require 'calabash-android/version'
 require 'retriable'
 require 'cucumber'
 
@@ -372,32 +373,39 @@ module Operations
               log "Instrumentation backend is ready!"
             end
         end
+      rescue Exception => e
 
-        log "Checking client-server version match..."
-        response = perform_action('version')
-        unless response['success']
-          log "Unable to obtain Test Server version. "
-          log "Please delete your test_servers"
-          log "and re-run calabash-android run..."
-          raise "Unable to obtain test server version."
-        end
-        unless response['message'] == Calabash::Android::SERVER_VERSION
-
-          log "Calabash Client and Test-server version mismatch."
-          log "Client version #{Calabash::Android::VERSION}"
-          log "Test-server version #{response['message']}"
-          log "Expected Test-server version #{Calabash::Android::SERVER_VERSION}"
-          log "\n\nSolution:\n\n"
-          log "Please delete your test_servers"
-          log "and re-run calabash-android run..."
-          raise "Test-server version mismatch."
-        end
-
-      rescue
         msg = "Unable to make connection to Calabash Test Server at http://127.0.0.1:#{@server_port}/\n"
         msg << "Please check the logcat output for more info about what happened\n"
         raise msg
       end
+
+      log "Checking client-server version match..."
+      response = perform_action('version')
+      unless response['success']
+        msg = ["Unable to obtain Test Server version. "]
+        msg << "Please delete your test_servers"
+        msg << "and re-run calabash-android run..."
+        msg_s = msg.join("\n")
+        log(msg_s)
+        raise msg_s
+      end
+      unless response['message'] == Calabash::Android::SERVER_VERSION
+
+        msg = ["Calabash Client and Test-server version mismatch."]
+        msg << "Client version #{Calabash::Android::VERSION}"
+        msg << "Test-server version #{response['message']}"
+        msg << "Expected Test-server version #{Calabash::Android::SERVER_VERSION}"
+        msg << "\n\nSolution:\n\n"
+        msg << "Please delete your test_servers"
+        msg << "and re-run calabash-android run..."
+        msg_s = msg.join("\n")
+        log(msg_s)
+        raise msg_s
+      end
+      log("Client and server versions match. Proceeding...")
+
+
     end
 
     def shutdown_test_server
