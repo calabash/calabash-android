@@ -6,7 +6,9 @@ require 'json'
 require 'socket'
 require 'timeout'
 require 'calabash-android/helpers'
+require 'calabash-android/wait_helpers'
 require 'retriable'
+require 'cucumber'
 
 
 module Calabash module Android
@@ -178,7 +180,7 @@ module Operations
       succeeded = `#{adb_command} shell pm list packages`.include?("package:#{pn}")
 
       unless succeeded
-        Cucumber.wants_to_quit = true
+        ::Cucumber.wants_to_quit = true
         raise "#{pn} did not get installed. Aborting!"
       end
     end
@@ -326,7 +328,7 @@ module Operations
     end
 
     def start_test_server_in_background(options={})
-      raise "Will not start test server because of previous failures." if Cucumber.wants_to_quit
+      raise "Will not start test server because of previous failures." if ::Cucumber.wants_to_quit
 
       if keyguard_enabled?
         wake_up
@@ -369,6 +371,26 @@ module Operations
             else
               log "Instrumentation backend is ready!"
             end
+        end
+
+        log "Checking client-server version match..."
+        response = perform_action('version')
+        unless response['success']
+          log "Unable to obtain Test Server version. "
+          log "Please delete your test_servers"
+          log "and re-run calabash-android run..."
+          raise "Unable to obtain test server version."
+        end
+        unless response['message'] == Calabash::Android::SERVER_VERSION
+
+          log "Calabash Client and Test-server version mismatch."
+          log "Client version #{Calabash::Android::VERSION}"
+          log "Test-server version #{response['message']}"
+          log "Expected Test-server version #{Calabash::Android::SERVER_VERSION}"
+          log "\n\nSolution:\n\n"
+          log "Please delete your test_servers"
+          log "and re-run calabash-android run..."
+          raise "Test-server version mismatch."
         end
 
       rescue

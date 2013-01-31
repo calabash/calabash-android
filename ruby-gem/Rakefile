@@ -3,7 +3,7 @@ load 'lib/calabash-android/helpers.rb'
 
 def build
   test_server_template_dir = File.join(File.dirname(__FILE__), 'test-server')
-  
+
   Dir.mktmpdir do |workspace_dir|
     
     @test_server_dir = File.join(workspace_dir, 'test-server')
@@ -45,6 +45,29 @@ task :build do
   build
 
   Rake::Task["install"].execute
+
+end
+
+task :bump_server do
+  test_server_template_dir = File.join(File.dirname(__FILE__), 'test-server')
+
+  version_command = File.join(test_server_template_dir,
+                              "instrumentation-backend",
+                              "src",
+                              "sh",
+                              "calaba",
+                              "instrumentationbackend",
+                              "actions",
+                              "version",
+                              "Version.java" )
+
+  unless File.exist?(version_command)
+    raise "Unable to find version file at: #{version_command}"
+  end
+
+  text = File.read(version_command)
+  text.gsub!(/public static final String VERSION=".*";/,%Q[public static final String VERSION="#{Calabash::Android::SERVER_VERSION}";])
+  File.open(version_command, 'w') { |f| f.write(text) }
 
 end
 
