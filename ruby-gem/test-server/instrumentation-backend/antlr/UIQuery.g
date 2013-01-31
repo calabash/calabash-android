@@ -12,7 +12,7 @@ options {
     package sh.calaba.instrumentationbackend.query.antlr;
 }
 
-@members {
+@lexer::members {
   public String getErrorMessage(RecognitionException e, String[] tokenNames)
   {
     List stack = getRuleInvocationStack(e, this.getClass().getName());
@@ -20,6 +20,7 @@ options {
     if ( e instanceof NoViableAltException ) {
       NoViableAltException nvae = (NoViableAltException)e;
       msg = " no viable alt; token="+e.token+" (decision="+nvae.decisionNumber+" state "+nvae.stateNumber+")"+" decision=<<"+nvae.grammarDecisionDescription+">>";
+      throw new RuntimeException(msg, e);
     }
     else {
     msg = super.getErrorMessage(e, tokenNames);

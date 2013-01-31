@@ -1,4 +1,4 @@
-// $ANTLR 3.4 antlr/UIQuery.g 2013-01-24 10:28:02
+// $ANTLR 3.4 antlr/UIQuery.g 2013-01-31 12:10:57
 
     package sh.calaba.instrumentationbackend.query.antlr;
 
@@ -30,6 +30,25 @@ public class UIQueryLexer extends Lexer {
     public static final int WHITE=20;
     public static final int WILDCARD=21;
 
+      public String getErrorMessage(RecognitionException e, String[] tokenNames)
+      {
+        List stack = getRuleInvocationStack(e, this.getClass().getName());
+        String msg = null;
+        if ( e instanceof NoViableAltException ) {
+          NoViableAltException nvae = (NoViableAltException)e;
+          msg = " no viable alt; token="+e.token+" (decision="+nvae.decisionNumber+" state "+nvae.stateNumber+")"+" decision=<<"+nvae.grammarDecisionDescription+">>";
+          throw new RuntimeException(msg, e);
+        }
+        else {
+        msg = super.getErrorMessage(e, tokenNames);
+        }
+        return stack+" "+msg;
+      }
+      public String getTokenErrorDisplay(Token t) {
+        return t.toString();
+      }
+
+
     // delegates
     // delegators
     public Lexer[] getDelegates() {
@@ -50,8 +69,8 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = WILDCARD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:43:10: ( '*' )
-            // antlr/UIQuery.g:43:12: '*'
+            // antlr/UIQuery.g:44:10: ( '*' )
+            // antlr/UIQuery.g:44:12: '*'
             {
             match('*'); 
 
@@ -71,13 +90,13 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = QUALIFIED_NAME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:45:16: ( NAME ( '.' NAME )+ )
-            // antlr/UIQuery.g:45:18: NAME ( '.' NAME )+
+            // antlr/UIQuery.g:46:16: ( NAME ( '.' NAME )+ )
+            // antlr/UIQuery.g:46:18: NAME ( '.' NAME )+
             {
             mNAME(); 
 
 
-            // antlr/UIQuery.g:45:23: ( '.' NAME )+
+            // antlr/UIQuery.g:46:23: ( '.' NAME )+
             int cnt1=0;
             loop1:
             do {
@@ -91,7 +110,7 @@ public class UIQueryLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // antlr/UIQuery.g:45:24: '.' NAME
+            	    // antlr/UIQuery.g:46:24: '.' NAME
             	    {
             	    match('.'); 
 
@@ -127,8 +146,8 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = ALL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:49:5: ( 'all' )
-            // antlr/UIQuery.g:49:7: 'all'
+            // antlr/UIQuery.g:50:5: ( 'all' )
+            // antlr/UIQuery.g:50:7: 'all'
             {
             match("all"); 
 
@@ -150,8 +169,8 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = VISIBLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:51:9: ( 'visible' )
-            // antlr/UIQuery.g:51:11: 'visible'
+            // antlr/UIQuery.g:52:9: ( 'visible' )
+            // antlr/UIQuery.g:52:11: 'visible'
             {
             match("visible"); 
 
@@ -173,8 +192,8 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = FILTER_COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:56:15: ( ':' )
-            // antlr/UIQuery.g:56:17: ':'
+            // antlr/UIQuery.g:57:15: ( ':' )
+            // antlr/UIQuery.g:57:17: ':'
             {
             match(':'); 
 
@@ -194,8 +213,8 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = BEGINPRED;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:61:11: ( '{' )
-            // antlr/UIQuery.g:61:13: '{'
+            // antlr/UIQuery.g:62:11: ( '{' )
+            // antlr/UIQuery.g:62:13: '{'
             {
             match('{'); 
 
@@ -215,8 +234,8 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = ENDPRED;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:63:11: ( '}' )
-            // antlr/UIQuery.g:63:13: '}'
+            // antlr/UIQuery.g:64:11: ( '}' )
+            // antlr/UIQuery.g:64:13: '}'
             {
             match('}'); 
 
@@ -236,7 +255,7 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = RELATION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:66:10: (| '=' | '>' | '>=' | '<' | '<=' | ( ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' | 'beginswith' | 'endswith' | 'contains' | 'like' ) ( '[' ( 'a' .. 'z' | 'A' .. 'Z' )* ']' )? ) )
+            // antlr/UIQuery.g:67:10: (| '=' | '>' | '>=' | '<' | '<=' | ( ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' | 'beginswith' | 'endswith' | 'contains' | 'like' ) ( '[' ( 'a' .. 'z' | 'A' .. 'Z' )* ']' )? ) )
             int alt5=7;
             switch ( input.LA(1) ) {
             case '=':
@@ -286,26 +305,26 @@ public class UIQueryLexer extends Lexer {
 
             switch (alt5) {
                 case 1 :
-                    // antlr/UIQuery.g:66:12: 
+                    // antlr/UIQuery.g:67:12: 
                     {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:66:14: '='
+                    // antlr/UIQuery.g:67:14: '='
                     {
                     match('='); 
 
                     }
                     break;
                 case 3 :
-                    // antlr/UIQuery.g:66:20: '>'
+                    // antlr/UIQuery.g:67:20: '>'
                     {
                     match('>'); 
 
                     }
                     break;
                 case 4 :
-                    // antlr/UIQuery.g:66:26: '>='
+                    // antlr/UIQuery.g:67:26: '>='
                     {
                     match(">="); 
 
@@ -314,14 +333,14 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // antlr/UIQuery.g:66:33: '<'
+                    // antlr/UIQuery.g:67:33: '<'
                     {
                     match('<'); 
 
                     }
                     break;
                 case 6 :
-                    // antlr/UIQuery.g:66:39: '<='
+                    // antlr/UIQuery.g:67:39: '<='
                     {
                     match("<="); 
 
@@ -330,12 +349,12 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 7 :
-                    // antlr/UIQuery.g:67:4: ( ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' | 'beginswith' | 'endswith' | 'contains' | 'like' ) ( '[' ( 'a' .. 'z' | 'A' .. 'Z' )* ']' )? )
+                    // antlr/UIQuery.g:68:4: ( ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' | 'beginswith' | 'endswith' | 'contains' | 'like' ) ( '[' ( 'a' .. 'z' | 'A' .. 'Z' )* ']' )? )
                     {
-                    // antlr/UIQuery.g:67:4: ( ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' | 'beginswith' | 'endswith' | 'contains' | 'like' ) ( '[' ( 'a' .. 'z' | 'A' .. 'Z' )* ']' )? )
-                    // antlr/UIQuery.g:67:5: ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' | 'beginswith' | 'endswith' | 'contains' | 'like' ) ( '[' ( 'a' .. 'z' | 'A' .. 'Z' )* ']' )?
+                    // antlr/UIQuery.g:68:4: ( ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' | 'beginswith' | 'endswith' | 'contains' | 'like' ) ( '[' ( 'a' .. 'z' | 'A' .. 'Z' )* ']' )? )
+                    // antlr/UIQuery.g:68:5: ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' | 'beginswith' | 'endswith' | 'contains' | 'like' ) ( '[' ( 'a' .. 'z' | 'A' .. 'Z' )* ']' )?
                     {
-                    // antlr/UIQuery.g:67:5: ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' | 'beginswith' | 'endswith' | 'contains' | 'like' )
+                    // antlr/UIQuery.g:68:5: ( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' | 'beginswith' | 'endswith' | 'contains' | 'like' )
                     int alt2=8;
                     switch ( input.LA(1) ) {
                     case 'B':
@@ -388,7 +407,7 @@ public class UIQueryLexer extends Lexer {
 
                     switch (alt2) {
                         case 1 :
-                            // antlr/UIQuery.g:67:7: 'BEGINSWITH'
+                            // antlr/UIQuery.g:68:7: 'BEGINSWITH'
                             {
                             match("BEGINSWITH"); 
 
@@ -397,7 +416,7 @@ public class UIQueryLexer extends Lexer {
                             }
                             break;
                         case 2 :
-                            // antlr/UIQuery.g:67:22: 'ENDSWITH'
+                            // antlr/UIQuery.g:68:22: 'ENDSWITH'
                             {
                             match("ENDSWITH"); 
 
@@ -406,7 +425,7 @@ public class UIQueryLexer extends Lexer {
                             }
                             break;
                         case 3 :
-                            // antlr/UIQuery.g:67:35: 'CONTAINS'
+                            // antlr/UIQuery.g:68:35: 'CONTAINS'
                             {
                             match("CONTAINS"); 
 
@@ -415,7 +434,7 @@ public class UIQueryLexer extends Lexer {
                             }
                             break;
                         case 4 :
-                            // antlr/UIQuery.g:67:48: 'LIKE'
+                            // antlr/UIQuery.g:68:48: 'LIKE'
                             {
                             match("LIKE"); 
 
@@ -424,7 +443,7 @@ public class UIQueryLexer extends Lexer {
                             }
                             break;
                         case 5 :
-                            // antlr/UIQuery.g:68:12: 'beginswith'
+                            // antlr/UIQuery.g:69:12: 'beginswith'
                             {
                             match("beginswith"); 
 
@@ -433,7 +452,7 @@ public class UIQueryLexer extends Lexer {
                             }
                             break;
                         case 6 :
-                            // antlr/UIQuery.g:68:27: 'endswith'
+                            // antlr/UIQuery.g:69:27: 'endswith'
                             {
                             match("endswith"); 
 
@@ -442,7 +461,7 @@ public class UIQueryLexer extends Lexer {
                             }
                             break;
                         case 7 :
-                            // antlr/UIQuery.g:68:40: 'contains'
+                            // antlr/UIQuery.g:69:40: 'contains'
                             {
                             match("contains"); 
 
@@ -451,7 +470,7 @@ public class UIQueryLexer extends Lexer {
                             }
                             break;
                         case 8 :
-                            // antlr/UIQuery.g:68:53: 'like'
+                            // antlr/UIQuery.g:69:53: 'like'
                             {
                             match("like"); 
 
@@ -463,7 +482,7 @@ public class UIQueryLexer extends Lexer {
                     }
 
 
-                    // antlr/UIQuery.g:68:61: ( '[' ( 'a' .. 'z' | 'A' .. 'Z' )* ']' )?
+                    // antlr/UIQuery.g:69:61: ( '[' ( 'a' .. 'z' | 'A' .. 'Z' )* ']' )?
                     int alt4=2;
                     int LA4_0 = input.LA(1);
 
@@ -472,11 +491,11 @@ public class UIQueryLexer extends Lexer {
                     }
                     switch (alt4) {
                         case 1 :
-                            // antlr/UIQuery.g:68:62: '[' ( 'a' .. 'z' | 'A' .. 'Z' )* ']'
+                            // antlr/UIQuery.g:69:62: '[' ( 'a' .. 'z' | 'A' .. 'Z' )* ']'
                             {
                             match('['); 
 
-                            // antlr/UIQuery.g:68:66: ( 'a' .. 'z' | 'A' .. 'Z' )*
+                            // antlr/UIQuery.g:69:66: ( 'a' .. 'z' | 'A' .. 'Z' )*
                             loop3:
                             do {
                                 int alt3=2;
@@ -539,10 +558,10 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:72:5: ( ( '0' .. '9' )+ )
-            // antlr/UIQuery.g:72:7: ( '0' .. '9' )+
+            // antlr/UIQuery.g:73:5: ( ( '0' .. '9' )+ )
+            // antlr/UIQuery.g:73:7: ( '0' .. '9' )+
             {
-            // antlr/UIQuery.g:72:7: ( '0' .. '9' )+
+            // antlr/UIQuery.g:73:7: ( '0' .. '9' )+
             int cnt6=0;
             loop6:
             do {
@@ -597,7 +616,7 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = BOOL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:75:6: ( 'true' | 'false' )
+            // antlr/UIQuery.g:76:6: ( 'true' | 'false' )
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -616,7 +635,7 @@ public class UIQueryLexer extends Lexer {
             }
             switch (alt7) {
                 case 1 :
-                    // antlr/UIQuery.g:75:8: 'true'
+                    // antlr/UIQuery.g:76:8: 'true'
                     {
                     match("true"); 
 
@@ -625,7 +644,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:75:17: 'false'
+                    // antlr/UIQuery.g:76:17: 'false'
                     {
                     match("false"); 
 
@@ -649,7 +668,7 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = NIL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:78:5: ( 'nil' | 'null' )
+            // antlr/UIQuery.g:79:5: ( 'nil' | 'null' )
             int alt8=2;
             int LA8_0 = input.LA(1);
 
@@ -679,7 +698,7 @@ public class UIQueryLexer extends Lexer {
             }
             switch (alt8) {
                 case 1 :
-                    // antlr/UIQuery.g:78:7: 'nil'
+                    // antlr/UIQuery.g:79:7: 'nil'
                     {
                     match("nil"); 
 
@@ -688,7 +707,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:78:15: 'null'
+                    // antlr/UIQuery.g:79:15: 'null'
                     {
                     match("null"); 
 
@@ -712,8 +731,8 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = NAME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:81:7: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
-            // antlr/UIQuery.g:81:9: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // antlr/UIQuery.g:82:7: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
+            // antlr/UIQuery.g:82:9: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
@@ -725,7 +744,7 @@ public class UIQueryLexer extends Lexer {
             }
 
 
-            // antlr/UIQuery.g:81:33: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // antlr/UIQuery.g:82:33: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
             loop9:
             do {
                 int alt9=2;
@@ -775,12 +794,12 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:85:5: ( '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\'' )
-            // antlr/UIQuery.g:85:8: '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\''
+            // antlr/UIQuery.g:86:5: ( '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\'' )
+            // antlr/UIQuery.g:86:8: '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\''
             {
             match('\''); 
 
-            // antlr/UIQuery.g:85:13: ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )*
+            // antlr/UIQuery.g:86:13: ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )*
             loop10:
             do {
                 int alt10=3;
@@ -796,7 +815,7 @@ public class UIQueryLexer extends Lexer {
 
                 switch (alt10) {
             	case 1 :
-            	    // antlr/UIQuery.g:85:15: ESC_SEQ
+            	    // antlr/UIQuery.g:86:15: ESC_SEQ
             	    {
             	    mESC_SEQ(); 
 
@@ -804,7 +823,7 @@ public class UIQueryLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // antlr/UIQuery.g:85:25: ~ ( '\\\\' | '\\'' )
+            	    // antlr/UIQuery.g:86:25: ~ ( '\\\\' | '\\'' )
             	    {
             	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '&')||(input.LA(1) >= '(' && input.LA(1) <= '[')||(input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) {
             	        input.consume();
@@ -843,10 +862,10 @@ public class UIQueryLexer extends Lexer {
         try {
             int _type = WHITE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // antlr/UIQuery.g:88:9: ( ( ' ' )+ )
-            // antlr/UIQuery.g:88:11: ( ' ' )+
+            // antlr/UIQuery.g:89:9: ( ( ' ' )+ )
+            // antlr/UIQuery.g:89:11: ( ' ' )+
             {
-            // antlr/UIQuery.g:88:11: ( ' ' )+
+            // antlr/UIQuery.g:89:11: ( ' ' )+
             int cnt11=0;
             loop11:
             do {
@@ -860,7 +879,7 @@ public class UIQueryLexer extends Lexer {
 
                 switch (alt11) {
             	case 1 :
-            	    // antlr/UIQuery.g:88:11: ' '
+            	    // antlr/UIQuery.g:89:11: ' '
             	    {
             	    match(' '); 
 
@@ -891,7 +910,7 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "HEX_DIGIT"
     public final void mHEX_DIGIT() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:91:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
+            // antlr/UIQuery.g:92:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
             // antlr/UIQuery.g:
             {
             if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'F')||(input.LA(1) >= 'a' && input.LA(1) <= 'f') ) {
@@ -917,7 +936,7 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "ESC_SEQ"
     public final void mESC_SEQ() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:95:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
+            // antlr/UIQuery.g:96:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
             int alt12=3;
             int LA12_0 = input.LA(1);
 
@@ -969,7 +988,7 @@ public class UIQueryLexer extends Lexer {
             }
             switch (alt12) {
                 case 1 :
-                    // antlr/UIQuery.g:95:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\'' | '\\\\' )
+                    // antlr/UIQuery.g:96:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\'' | '\\\\' )
                     {
                     match('\\'); 
 
@@ -986,7 +1005,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:96:9: UNICODE_ESC
+                    // antlr/UIQuery.g:97:9: UNICODE_ESC
                     {
                     mUNICODE_ESC(); 
 
@@ -994,7 +1013,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // antlr/UIQuery.g:97:9: OCTAL_ESC
+                    // antlr/UIQuery.g:98:9: OCTAL_ESC
                     {
                     mOCTAL_ESC(); 
 
@@ -1014,7 +1033,7 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "OCTAL_ESC"
     public final void mOCTAL_ESC() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:102:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
+            // antlr/UIQuery.g:103:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
             int alt13=3;
             int LA13_0 = input.LA(1);
 
@@ -1065,7 +1084,7 @@ public class UIQueryLexer extends Lexer {
             }
             switch (alt13) {
                 case 1 :
-                    // antlr/UIQuery.g:102:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
+                    // antlr/UIQuery.g:103:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -1102,7 +1121,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:103:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
+                    // antlr/UIQuery.g:104:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -1129,7 +1148,7 @@ public class UIQueryLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // antlr/UIQuery.g:104:9: '\\\\' ( '0' .. '7' )
+                    // antlr/UIQuery.g:105:9: '\\\\' ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -1158,8 +1177,8 @@ public class UIQueryLexer extends Lexer {
     // $ANTLR start "UNICODE_ESC"
     public final void mUNICODE_ESC() throws RecognitionException {
         try {
-            // antlr/UIQuery.g:109:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
-            // antlr/UIQuery.g:109:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+            // antlr/UIQuery.g:110:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
+            // antlr/UIQuery.g:110:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
             {
             match('\\'); 
 

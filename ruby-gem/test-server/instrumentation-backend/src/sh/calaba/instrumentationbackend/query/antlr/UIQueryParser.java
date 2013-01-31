@@ -1,4 +1,4 @@
-// $ANTLR 3.4 antlr/UIQuery.g 2013-01-24 10:28:02
+// $ANTLR 3.4 antlr/UIQuery.g 2013-01-31 12:10:57
 
     package sh.calaba.instrumentationbackend.query.antlr;
 
@@ -64,24 +64,6 @@ public TreeAdaptor getTreeAdaptor() {
     public String getGrammarFileName() { return "antlr/UIQuery.g"; }
 
 
-      public String getErrorMessage(RecognitionException e, String[] tokenNames)
-      {
-        List stack = getRuleInvocationStack(e, this.getClass().getName());
-        String msg = null;
-        if ( e instanceof NoViableAltException ) {
-          NoViableAltException nvae = (NoViableAltException)e;
-          msg = " no viable alt; token="+e.token+" (decision="+nvae.decisionNumber+" state "+nvae.stateNumber+")"+" decision=<<"+nvae.grammarDecisionDescription+">>";
-        }
-        else {
-        msg = super.getErrorMessage(e, tokenNames);
-        }
-        return stack+" "+msg;
-      }
-      public String getTokenErrorDisplay(Token t) {
-        return t.toString();
-      }
-
-
     public static class query_return extends ParserRuleReturnScope {
         CommonTree tree;
         public Object getTree() { return tree; }
@@ -89,7 +71,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "query"
-    // antlr/UIQuery.g:34:1: query : expr ( WHITE ! expr )* ;
+    // antlr/UIQuery.g:35:1: query : expr ( WHITE ! expr )* ;
     public final UIQueryParser.query_return query() throws RecognitionException {
         UIQueryParser.query_return retval = new UIQueryParser.query_return();
         retval.start = input.LT(1);
@@ -106,20 +88,20 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree WHITE2_tree=null;
 
         try {
-            // antlr/UIQuery.g:34:7: ( expr ( WHITE ! expr )* )
-            // antlr/UIQuery.g:34:9: expr ( WHITE ! expr )*
+            // antlr/UIQuery.g:35:7: ( expr ( WHITE ! expr )* )
+            // antlr/UIQuery.g:35:9: expr ( WHITE ! expr )*
             {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            pushFollow(FOLLOW_expr_in_query53);
+            pushFollow(FOLLOW_expr_in_query56);
             expr1=expr();
 
             state._fsp--;
 
             adaptor.addChild(root_0, expr1.getTree());
 
-            // antlr/UIQuery.g:34:14: ( WHITE ! expr )*
+            // antlr/UIQuery.g:35:14: ( WHITE ! expr )*
             loop1:
             do {
                 int alt1=2;
@@ -132,11 +114,11 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt1) {
             	case 1 :
-            	    // antlr/UIQuery.g:34:15: WHITE ! expr
+            	    // antlr/UIQuery.g:35:15: WHITE ! expr
             	    {
-            	    WHITE2=(Token)match(input,WHITE,FOLLOW_WHITE_in_query56); 
+            	    WHITE2=(Token)match(input,WHITE,FOLLOW_WHITE_in_query59); 
 
-            	    pushFollow(FOLLOW_expr_in_query59);
+            	    pushFollow(FOLLOW_expr_in_query62);
             	    expr3=expr();
 
             	    state._fsp--;
@@ -183,7 +165,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "expr"
-    // antlr/UIQuery.g:38:1: expr : ( className | filter | visibility | predicate ) ;
+    // antlr/UIQuery.g:39:1: expr : ( className | filter | visibility | predicate ) ;
     public final UIQueryParser.expr_return expr() throws RecognitionException {
         UIQueryParser.expr_return retval = new UIQueryParser.expr_return();
         retval.start = input.LT(1);
@@ -202,13 +184,13 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // antlr/UIQuery.g:38:6: ( ( className | filter | visibility | predicate ) )
-            // antlr/UIQuery.g:38:8: ( className | filter | visibility | predicate )
+            // antlr/UIQuery.g:39:6: ( ( className | filter | visibility | predicate ) )
+            // antlr/UIQuery.g:39:8: ( className | filter | visibility | predicate )
             {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            // antlr/UIQuery.g:38:8: ( className | filter | visibility | predicate )
+            // antlr/UIQuery.g:39:8: ( className | filter | visibility | predicate )
             int alt2=4;
             switch ( input.LA(1) ) {
             case QUALIFIED_NAME:
@@ -257,9 +239,9 @@ public TreeAdaptor getTreeAdaptor() {
 
             switch (alt2) {
                 case 1 :
-                    // antlr/UIQuery.g:38:9: className
+                    // antlr/UIQuery.g:39:9: className
                     {
-                    pushFollow(FOLLOW_className_in_expr77);
+                    pushFollow(FOLLOW_className_in_expr80);
                     className4=className();
 
                     state._fsp--;
@@ -269,9 +251,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:38:21: filter
+                    // antlr/UIQuery.g:39:21: filter
                     {
-                    pushFollow(FOLLOW_filter_in_expr81);
+                    pushFollow(FOLLOW_filter_in_expr84);
                     filter5=filter();
 
                     state._fsp--;
@@ -281,9 +263,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 3 :
-                    // antlr/UIQuery.g:38:30: visibility
+                    // antlr/UIQuery.g:39:30: visibility
                     {
-                    pushFollow(FOLLOW_visibility_in_expr85);
+                    pushFollow(FOLLOW_visibility_in_expr88);
                     visibility6=visibility();
 
                     state._fsp--;
@@ -293,9 +275,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 4 :
-                    // antlr/UIQuery.g:38:43: predicate
+                    // antlr/UIQuery.g:39:43: predicate
                     {
-                    pushFollow(FOLLOW_predicate_in_expr89);
+                    pushFollow(FOLLOW_predicate_in_expr92);
                     predicate7=predicate();
 
                     state._fsp--;
@@ -339,7 +321,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "className"
-    // antlr/UIQuery.g:41:1: className : ( WILDCARD ^| NAME ^| QUALIFIED_NAME ^) ;
+    // antlr/UIQuery.g:42:1: className : ( WILDCARD ^| NAME ^| QUALIFIED_NAME ^) ;
     public final UIQueryParser.className_return className() throws RecognitionException {
         UIQueryParser.className_return retval = new UIQueryParser.className_return();
         retval.start = input.LT(1);
@@ -356,13 +338,13 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree QUALIFIED_NAME10_tree=null;
 
         try {
-            // antlr/UIQuery.g:41:13: ( ( WILDCARD ^| NAME ^| QUALIFIED_NAME ^) )
-            // antlr/UIQuery.g:41:17: ( WILDCARD ^| NAME ^| QUALIFIED_NAME ^)
+            // antlr/UIQuery.g:42:13: ( ( WILDCARD ^| NAME ^| QUALIFIED_NAME ^) )
+            // antlr/UIQuery.g:42:17: ( WILDCARD ^| NAME ^| QUALIFIED_NAME ^)
             {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            // antlr/UIQuery.g:41:17: ( WILDCARD ^| NAME ^| QUALIFIED_NAME ^)
+            // antlr/UIQuery.g:42:17: ( WILDCARD ^| NAME ^| QUALIFIED_NAME ^)
             int alt3=3;
             switch ( input.LA(1) ) {
             case WILDCARD:
@@ -390,9 +372,9 @@ public TreeAdaptor getTreeAdaptor() {
 
             switch (alt3) {
                 case 1 :
-                    // antlr/UIQuery.g:41:18: WILDCARD ^
+                    // antlr/UIQuery.g:42:18: WILDCARD ^
                     {
-                    WILDCARD8=(Token)match(input,WILDCARD,FOLLOW_WILDCARD_in_className107); 
+                    WILDCARD8=(Token)match(input,WILDCARD,FOLLOW_WILDCARD_in_className110); 
                     WILDCARD8_tree = 
                     (CommonTree)adaptor.create(WILDCARD8)
                     ;
@@ -402,9 +384,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:41:30: NAME ^
+                    // antlr/UIQuery.g:42:30: NAME ^
                     {
-                    NAME9=(Token)match(input,NAME,FOLLOW_NAME_in_className112); 
+                    NAME9=(Token)match(input,NAME,FOLLOW_NAME_in_className115); 
                     NAME9_tree = 
                     (CommonTree)adaptor.create(NAME9)
                     ;
@@ -414,9 +396,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 3 :
-                    // antlr/UIQuery.g:41:38: QUALIFIED_NAME ^
+                    // antlr/UIQuery.g:42:38: QUALIFIED_NAME ^
                     {
-                    QUALIFIED_NAME10=(Token)match(input,QUALIFIED_NAME,FOLLOW_QUALIFIED_NAME_in_className117); 
+                    QUALIFIED_NAME10=(Token)match(input,QUALIFIED_NAME,FOLLOW_QUALIFIED_NAME_in_className120); 
                     QUALIFIED_NAME10_tree = 
                     (CommonTree)adaptor.create(QUALIFIED_NAME10)
                     ;
@@ -460,7 +442,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "visibility"
-    // antlr/UIQuery.g:47:1: visibility : ( ALL ^| VISIBLE ^) ;
+    // antlr/UIQuery.g:48:1: visibility : ( ALL ^| VISIBLE ^) ;
     public final UIQueryParser.visibility_return visibility() throws RecognitionException {
         UIQueryParser.visibility_return retval = new UIQueryParser.visibility_return();
         retval.start = input.LT(1);
@@ -475,13 +457,13 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree VISIBLE12_tree=null;
 
         try {
-            // antlr/UIQuery.g:47:14: ( ( ALL ^| VISIBLE ^) )
-            // antlr/UIQuery.g:47:18: ( ALL ^| VISIBLE ^)
+            // antlr/UIQuery.g:48:14: ( ( ALL ^| VISIBLE ^) )
+            // antlr/UIQuery.g:48:18: ( ALL ^| VISIBLE ^)
             {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            // antlr/UIQuery.g:47:18: ( ALL ^| VISIBLE ^)
+            // antlr/UIQuery.g:48:18: ( ALL ^| VISIBLE ^)
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -500,9 +482,9 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt4) {
                 case 1 :
-                    // antlr/UIQuery.g:47:19: ALL ^
+                    // antlr/UIQuery.g:48:19: ALL ^
                     {
-                    ALL11=(Token)match(input,ALL,FOLLOW_ALL_in_visibility155); 
+                    ALL11=(Token)match(input,ALL,FOLLOW_ALL_in_visibility158); 
                     ALL11_tree = 
                     (CommonTree)adaptor.create(ALL11)
                     ;
@@ -512,9 +494,9 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // antlr/UIQuery.g:47:26: VISIBLE ^
+                    // antlr/UIQuery.g:48:26: VISIBLE ^
                     {
-                    VISIBLE12=(Token)match(input,VISIBLE,FOLLOW_VISIBLE_in_visibility160); 
+                    VISIBLE12=(Token)match(input,VISIBLE,FOLLOW_VISIBLE_in_visibility163); 
                     VISIBLE12_tree = 
                     (CommonTree)adaptor.create(VISIBLE12)
                     ;
@@ -558,7 +540,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "filter"
-    // antlr/UIQuery.g:54:1: filter : NAME FILTER_COLON ^ ( INT | STRING | BOOL | NIL ) ;
+    // antlr/UIQuery.g:55:1: filter : NAME FILTER_COLON ^ ( INT | STRING | BOOL | NIL ) ;
     public final UIQueryParser.filter_return filter() throws RecognitionException {
         UIQueryParser.filter_return retval = new UIQueryParser.filter_return();
         retval.start = input.LT(1);
@@ -575,20 +557,20 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree set15_tree=null;
 
         try {
-            // antlr/UIQuery.g:54:8: ( NAME FILTER_COLON ^ ( INT | STRING | BOOL | NIL ) )
-            // antlr/UIQuery.g:54:10: NAME FILTER_COLON ^ ( INT | STRING | BOOL | NIL )
+            // antlr/UIQuery.g:55:8: ( NAME FILTER_COLON ^ ( INT | STRING | BOOL | NIL ) )
+            // antlr/UIQuery.g:55:10: NAME FILTER_COLON ^ ( INT | STRING | BOOL | NIL )
             {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            NAME13=(Token)match(input,NAME,FOLLOW_NAME_in_filter187); 
+            NAME13=(Token)match(input,NAME,FOLLOW_NAME_in_filter190); 
             NAME13_tree = 
             (CommonTree)adaptor.create(NAME13)
             ;
             adaptor.addChild(root_0, NAME13_tree);
 
 
-            FILTER_COLON14=(Token)match(input,FILTER_COLON,FOLLOW_FILTER_COLON_in_filter189); 
+            FILTER_COLON14=(Token)match(input,FILTER_COLON,FOLLOW_FILTER_COLON_in_filter192); 
             FILTER_COLON14_tree = 
             (CommonTree)adaptor.create(FILTER_COLON14)
             ;
@@ -641,7 +623,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "predicate"
-    // antlr/UIQuery.g:59:1: predicate : BEGINPRED ^ NAME WHITE ! RELATION WHITE ! ( INT | STRING | BOOL | NIL ) ENDPRED !;
+    // antlr/UIQuery.g:60:1: predicate : BEGINPRED ^ NAME WHITE ! RELATION WHITE ! ( INT | STRING | BOOL | NIL ) ENDPRED !;
     public final UIQueryParser.predicate_return predicate() throws RecognitionException {
         UIQueryParser.predicate_return retval = new UIQueryParser.predicate_return();
         retval.start = input.LT(1);
@@ -666,36 +648,36 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree ENDPRED22_tree=null;
 
         try {
-            // antlr/UIQuery.g:59:11: ( BEGINPRED ^ NAME WHITE ! RELATION WHITE ! ( INT | STRING | BOOL | NIL ) ENDPRED !)
-            // antlr/UIQuery.g:59:13: BEGINPRED ^ NAME WHITE ! RELATION WHITE ! ( INT | STRING | BOOL | NIL ) ENDPRED !
+            // antlr/UIQuery.g:60:11: ( BEGINPRED ^ NAME WHITE ! RELATION WHITE ! ( INT | STRING | BOOL | NIL ) ENDPRED !)
+            // antlr/UIQuery.g:60:13: BEGINPRED ^ NAME WHITE ! RELATION WHITE ! ( INT | STRING | BOOL | NIL ) ENDPRED !
             {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            BEGINPRED16=(Token)match(input,BEGINPRED,FOLLOW_BEGINPRED_in_predicate225); 
+            BEGINPRED16=(Token)match(input,BEGINPRED,FOLLOW_BEGINPRED_in_predicate228); 
             BEGINPRED16_tree = 
             (CommonTree)adaptor.create(BEGINPRED16)
             ;
             root_0 = (CommonTree)adaptor.becomeRoot(BEGINPRED16_tree, root_0);
 
 
-            NAME17=(Token)match(input,NAME,FOLLOW_NAME_in_predicate228); 
+            NAME17=(Token)match(input,NAME,FOLLOW_NAME_in_predicate231); 
             NAME17_tree = 
             (CommonTree)adaptor.create(NAME17)
             ;
             adaptor.addChild(root_0, NAME17_tree);
 
 
-            WHITE18=(Token)match(input,WHITE,FOLLOW_WHITE_in_predicate230); 
+            WHITE18=(Token)match(input,WHITE,FOLLOW_WHITE_in_predicate233); 
 
-            RELATION19=(Token)match(input,RELATION,FOLLOW_RELATION_in_predicate233); 
+            RELATION19=(Token)match(input,RELATION,FOLLOW_RELATION_in_predicate236); 
             RELATION19_tree = 
             (CommonTree)adaptor.create(RELATION19)
             ;
             adaptor.addChild(root_0, RELATION19_tree);
 
 
-            WHITE20=(Token)match(input,WHITE,FOLLOW_WHITE_in_predicate235); 
+            WHITE20=(Token)match(input,WHITE,FOLLOW_WHITE_in_predicate238); 
 
             set21=(Token)input.LT(1);
 
@@ -712,7 +694,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            ENDPRED22=(Token)match(input,ENDPRED,FOLLOW_ENDPRED_in_predicate254); 
+            ENDPRED22=(Token)match(input,ENDPRED,FOLLOW_ENDPRED_in_predicate257); 
 
             }
 
@@ -742,27 +724,27 @@ public TreeAdaptor getTreeAdaptor() {
 
  
 
-    public static final BitSet FOLLOW_expr_in_query53 = new BitSet(new long[]{0x0000000000100002L});
-    public static final BitSet FOLLOW_WHITE_in_query56 = new BitSet(new long[]{0x0000000000289030L});
-    public static final BitSet FOLLOW_expr_in_query59 = new BitSet(new long[]{0x0000000000100002L});
-    public static final BitSet FOLLOW_className_in_expr77 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_filter_in_expr81 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_visibility_in_expr85 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_predicate_in_expr89 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_WILDCARD_in_className107 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_className112 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_QUALIFIED_NAME_in_className117 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ALL_in_visibility155 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_VISIBLE_in_visibility160 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_filter187 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_FILTER_COLON_in_filter189 = new BitSet(new long[]{0x0000000000022840L});
-    public static final BitSet FOLLOW_set_in_filter192 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BEGINPRED_in_predicate225 = new BitSet(new long[]{0x0000000000001000L});
-    public static final BitSet FOLLOW_NAME_in_predicate228 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_WHITE_in_predicate230 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_RELATION_in_predicate233 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_WHITE_in_predicate235 = new BitSet(new long[]{0x0000000000022840L});
-    public static final BitSet FOLLOW_set_in_predicate238 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_ENDPRED_in_predicate254 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_expr_in_query56 = new BitSet(new long[]{0x0000000000100002L});
+    public static final BitSet FOLLOW_WHITE_in_query59 = new BitSet(new long[]{0x0000000000289030L});
+    public static final BitSet FOLLOW_expr_in_query62 = new BitSet(new long[]{0x0000000000100002L});
+    public static final BitSet FOLLOW_className_in_expr80 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_filter_in_expr84 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_visibility_in_expr88 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_predicate_in_expr92 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_WILDCARD_in_className110 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_className115 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_QUALIFIED_NAME_in_className120 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ALL_in_visibility158 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_VISIBLE_in_visibility163 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NAME_in_filter190 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_FILTER_COLON_in_filter192 = new BitSet(new long[]{0x0000000000022840L});
+    public static final BitSet FOLLOW_set_in_filter195 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_BEGINPRED_in_predicate228 = new BitSet(new long[]{0x0000000000001000L});
+    public static final BitSet FOLLOW_NAME_in_predicate231 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_WHITE_in_predicate233 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_RELATION_in_predicate236 = new BitSet(new long[]{0x0000000000100000L});
+    public static final BitSet FOLLOW_WHITE_in_predicate238 = new BitSet(new long[]{0x0000000000022840L});
+    public static final BitSet FOLLOW_set_in_predicate241 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_ENDPRED_in_predicate257 = new BitSet(new long[]{0x0000000000000002L});
 
 }
