@@ -34,21 +34,8 @@ def build
 end
 
 
-
-task :build do
-  unless File.exists? "test-server/calabash-js/src"
-    puts "calabash-js not found!"
-    puts "For instuctions see: https://github.com/calabash/calabash-android/wiki/Building-calabash-android"
-    exit 1
-  end
-
-  build
-
-  Rake::Task["install"].execute
-
-end
-
-task :bump_server do
+desc "Update server version to expected server version"
+task :match_versions do
   test_server_template_dir = File.join(File.dirname(__FILE__), 'test-server')
 
   version_command = File.join(test_server_template_dir,
@@ -70,5 +57,20 @@ task :bump_server do
   File.open(version_command, 'w') { |f| f.write(text) }
 
 end
+
+
+task :build => :match_versions do
+  unless File.exists? "test-server/calabash-js/src"
+    puts "calabash-js not found!"
+    puts "For instuctions see: https://github.com/calabash/calabash-android/wiki/Building-calabash-android"
+    exit 1
+  end
+
+  build
+
+  Rake::Task["install"].execute
+
+end
+
 
 Bundler::GemHelper.install_tasks
