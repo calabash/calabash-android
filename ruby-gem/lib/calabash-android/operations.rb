@@ -12,6 +12,7 @@ require 'retriable'
 module Calabash module Android
 
 module Operations
+  include Calabash::Android::WaitHelpers
 
   def log(message)
     $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}" if (ARGV.include? "-v" or ARGV.include? "--verbose")
@@ -86,19 +87,19 @@ module Operations
     default_device.set_gps_coordinates(latitude, longitude)
   end
 
-  def wait_for(timeout, &block)
-    value = nil
-    begin
-      Timeout::timeout(timeout) do
-        until (value = block.call)
-          sleep 0.3
-        end
-      end
-    rescue Exception => e
-      raise e
-    end
-    value
-  end
+  #def wait_for(timeout, &block)
+  #  value = nil
+  #  begin
+  #    Timeout::timeout(timeout) do
+  #      until (value = block.call)
+  #        sleep 0.3
+  #      end
+  #    end
+  #  rescue Exception => e
+  #    raise e
+  #  end
+  #  value
+  #end
 
   def query(uiquery, *args)
     converted_args = []
@@ -408,7 +409,6 @@ module Operations
 
   def screenshot_and_raise(msg)
     screenshot_embed
-    sleep 5
     raise(msg)
   end
 
