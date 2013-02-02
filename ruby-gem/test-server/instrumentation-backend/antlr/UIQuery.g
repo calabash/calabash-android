@@ -36,7 +36,10 @@ query	:	expr (WHITE! expr)*
 		;
 	
 
-expr	:	(className | filter | visibility | predicate) 
+expr	:	(className | filter | visibility | predicate | DIRECTION^) 
+		;
+		
+DIRECTION : 'descendant' | 'child' | 'parent' | 'sibling'
 		;
 
 className   :   (WILDCARD^ | NAME^ | QUALIFIED_NAME^);

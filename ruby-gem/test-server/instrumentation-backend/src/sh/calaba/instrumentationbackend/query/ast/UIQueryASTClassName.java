@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import android.view.View;
+
 public class UIQueryASTClassName implements UIQueryAST {
 	public final String simpleClassName;	
 	@SuppressWarnings("rawtypes")
@@ -45,6 +47,9 @@ public class UIQueryASTClassName implements UIQueryAST {
 						case PARENT:
 							addParentMatchesToResult(o,result);
 							break;
+						case SIBLING:
+							addSiblingMatchesToResult(o,result);
+							break;
 					}
 					
 					
@@ -56,10 +61,28 @@ public class UIQueryASTClassName implements UIQueryAST {
 		
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected void addSiblingMatchesToResult(Object o, List result) {
+		List parents = UIQueryUtils.parents(o);
+		if (parents != null && !parents.isEmpty()) {
+			Object immediateParent = parents.get(0);
+			for (Object v : UIQueryUtils.subviews(immediateParent)) {
+				if (v != o && match(v)) {
+					result.add(v);
+				}
+			}									
+		}		
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addParentMatchesToResult(Object o, List result) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		for (Object parent : UIQueryUtils.parents(o))
+		{
+			if (match(parent))
+			{
+				result.add(parent);
+			}
+		}		
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

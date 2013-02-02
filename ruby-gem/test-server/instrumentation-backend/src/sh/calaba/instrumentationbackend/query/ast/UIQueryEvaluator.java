@@ -77,8 +77,8 @@ public class UIQueryEvaluator {
 		UIQueryVisibility currentVisibility = UIQueryVisibility.VISIBLE;
 		
 		for (UIQueryAST step : queryPath) {			
-			if (isDirection(step)) {
-				currentDirection = directionFromAst(step);
+			if (step instanceof UIQueryDirection) {
+				currentDirection = (UIQueryDirection) step;
 			}
 			else if (step instanceof UIQueryVisibility) {
 				currentVisibility = (UIQueryVisibility) step;
@@ -90,15 +90,10 @@ public class UIQueryEvaluator {
 		}
 		return currentResult;
 	}
-	
-	public static UIQueryDirection directionFromAst(UIQueryAST step) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		
 
 	public static boolean isDirection(UIQueryAST step) {
-		// TODO Auto-generated method stub
-		return false;
+		return step instanceof UIQueryDirection;
 	}
 			
 }
