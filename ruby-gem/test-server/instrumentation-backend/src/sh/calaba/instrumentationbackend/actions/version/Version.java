@@ -22,7 +22,7 @@ public class Version implements Action {
 	 * test server is built.
 	 * 
 	 */
-	public static final String VERSION="0.4.0.pre15";
+	public static final String VERSION="0.4.0.pre16";
     
 	@Override
     public Result execute(String... args) {                
