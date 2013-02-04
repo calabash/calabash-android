@@ -69,7 +69,7 @@ elsif cmd == 'console'
     puts "No such file #{ARGV.first}"
     exit 1
   end
-  calabash_console ARGV.first
+  calabash_console(relative_to_full_path(ARGV.shift))
   exit 0
 elsif cmd == 'setup'
   calabash_setup

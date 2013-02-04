@@ -23,5 +23,7 @@ def calabash_console(app_path = nil)
     ENV["TEST_APP_PATH"] = test_server_path
   end
 
+  build_test_server_if_needed(app_path)
+
   system "#{RbConfig.ruby} -S irb"
 end

@@ -69,6 +69,7 @@
       <copy todir="${staging.dir}/assets">
         <fileset dir="${calabashjs.dir}"/>
       </copy>
+      <replace file="${staging.dir}/src/sh/calaba/instrumentationbackend/actions/version/Version.java" token="####VERSION####" value="${version}" failOnNoReplacements="true" />
     </target>
 
 

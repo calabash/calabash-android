@@ -48,6 +48,14 @@ module Operations
     default_device.perform_action(action, *arguments)
   end
 
+  def reinstall_apps
+    default_device.reinstall_apps
+  end
+
+  def reinstall_test_server
+    default_device.reinstall_test_server
+  end
+
   def install_app(app_path)
     default_device.install_app(app_path)
   end
@@ -168,6 +176,10 @@ module Operations
     def reinstall_apps()
       uninstall_app(package_name(@app_path))
       install_app(@app_path)
+      reinstall_test_server()
+    end
+
+    def reinstall_test_server()
       uninstall_app(package_name(@test_server_path))
       install_app(@test_server_path)
     end
@@ -384,21 +396,19 @@ module Operations
       response = perform_action('version')
       unless response['success']
         msg = ["Unable to obtain Test Server version. "]
-        msg << "Please delete your test_servers"
-        msg << "and re-run calabash-android run..."
+        msg << "Please run 'reinstall_test_server' to make sure you have the correct version"
         msg_s = msg.join("\n")
         log(msg_s)
         raise msg_s
       end
-      unless response['message'] == Calabash::Android::SERVER_VERSION
+      unless response['message'] == Calabash::Android::VERSION
 
         msg = ["Calabash Client and Test-server version mismatch."]
         msg << "Client version #{Calabash::Android::VERSION}"
         msg << "Test-server version #{response['message']}"
-        msg << "Expected Test-server version #{Calabash::Android::SERVER_VERSION}"
+        msg << "Expected Test-server version #{Calabash::Android::VERSION}"
         msg << "\n\nSolution:\n\n"
-        msg << "Please delete your test_servers"
-        msg << "and re-run calabash-android run..."
+        msg << "Run 'reinstall_test_server' to make sure you have the correct version"
         msg_s = msg.join("\n")
         log(msg_s)
         raise msg_s

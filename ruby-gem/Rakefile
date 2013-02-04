@@ -5,16 +5,17 @@ def build
   test_server_template_dir = File.join(File.dirname(__FILE__), 'test-server')
 
   Dir.mktmpdir do |workspace_dir|
-    
+
     @test_server_dir = File.join(workspace_dir, 'test-server')
     FileUtils.cp_r(test_server_template_dir, workspace_dir)
-    
+
     ant_executable = (is_windows? ? "ant.bat" : "ant")
     args = [
       ant_executable,
-      "clean", 
+      "clean",
       "package",
       "-Dandroid.api.level=16",
+      "-Dversion=#{Calabash::Android::VERSION}",
     ]
     Dir.chdir(@test_server_dir) do
       STDOUT.sync = true
@@ -28,38 +29,12 @@ def build
     end
 
     FileUtils.mkdir_p "test_servers" unless File.exist? "test_servers"
-    
+
     FileUtils.cp(File.join(@test_server_dir, "bin", "Test_unsigned.apk"), File.join(File.dirname(__FILE__), 'lib/calabash-android/lib/TestServer.apk'))
   end
 end
 
-
-desc "Update server version to expected server version"
-task :match_versions do
-  test_server_template_dir = File.join(File.dirname(__FILE__), 'test-server')
-
-  version_command = File.join(test_server_template_dir,
-                              "instrumentation-backend",
-                              "src",
-                              "sh",
-                              "calaba",
-                              "instrumentationbackend",
-                              "actions",
-                              "version",
-                              "Version.java" )
-
-  unless File.exist?(version_command)
-    raise "Unable to find version file at: #{version_command}"
-  end
-
-  text = File.read(version_command)
-  text.gsub!(/public static final String VERSION=".*";/,%Q[public static final String VERSION="#{Calabash::Android::SERVER_VERSION}";])
-  File.open(version_command, 'w') { |f| f.write(text) }
-
-end
-
-
-task :build => :match_versions do
+task :build do
   unless File.exists? "test-server/calabash-js/src"
     puts "calabash-js not found!"
     puts "For instuctions see: https://github.com/calabash/calabash-android/wiki/Building-calabash-android"

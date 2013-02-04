@@ -13,15 +13,7 @@ def calabash_run(app_path = nil)
   end
 
   if app_path
-    unless File.exist?(test_server_path(app_path))
-      if ARGV.include? "--no-build"
-        puts "No test server found for this combination of app and calabash version. Exiting!"
-        exit 1
-      else
-        puts "No test server found for this combination of app and calabash version. Recreating test server."
-        calabash_build(app_path)
-      end
-    end
+    build_test_server_if_needed(app_path)
 
     test_server_path = test_server_path(app_path)
     if ENV["TEST_SERVER_PORT"]

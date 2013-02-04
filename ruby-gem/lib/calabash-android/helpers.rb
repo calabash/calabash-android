@@ -38,6 +38,19 @@ def test_server_path(apk_file_path)
   "test_servers/#{checksum(apk_file_path)}_#{Calabash::Android::VERSION}.apk"
 end
 
+
+def build_test_server_if_needed(app_path)
+  unless File.exist?(test_server_path(app_path))
+    if ARGV.include? "--no-build"
+      puts "No test server found for this combination of app and calabash version. Exiting!"
+      exit 1
+    else
+      puts "No test server found for this combination of app and calabash version. Recreating test server."
+      calabash_build(app_path)
+    end
+  end
+end
+
 def resign_apk(app_path)
   Dir.mktmpdir do |tmp_dir|
     log "Resign apk"
