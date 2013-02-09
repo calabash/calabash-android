@@ -1,4 +1,4 @@
-When writing custom steps, you'll need to use the Ruby API to interact with your application. This document describes the API at a high level. If you want to see details you can look at the source code in the files at [calabash-android/lib/calabash-android](.../calabash-android/lib/calabash-android/). There are functions in the source code which aren't documented here. Those are way more likely to change (so be warned if you rely on those).
+When writing custom steps, you'll need to use the Ruby API to interact with your application. This document describes the API at a high level. If you want to see details you can look at the source code in the files at [ruby-gem/lib/calabash-android](../ruby-gem/lib/calabash-android/). There are functions in the source code which aren't documented here. Those are way more likely to change (so be warned if you rely on those).
 
 Calabash Android has a client-server architecture. The Calabash Ruby API is the client side which speaks HTTP with the test server that running on the device alogn with your app. To get an architectural overview of Calabash Android please read the blog posts:
 
