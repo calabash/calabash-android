@@ -20,12 +20,12 @@ A view is represented as a ruby [Hash](http://www.ruby-doc.org/core-1.9.3/Hash.h
     irb(main):003:0> query("button index:1").first.keys
     => ["id", "enabled", "contentDescription", "class", "text", "rect", "description"]
 
-The `*args` parameter lets you perform selectors on the query result *before* it is returned to your Ruby script code (remember that the query is evaluated as Java code inside the app and the result is sent back to the Ruby code). The form `*args` is Ruby-speak for a variable number of args. For example, if you have a UITableView you can do
+The `*args` parameter lets you perform methods on the query result *before* it is returned to your Ruby script code (remember that the query is evaluated as Java code inside the app and the result is sent back to the Ruby code). The form `*args` is Ruby-speak for a variable number of args. For example, if you have a button you can do
 
     irb(main):005:0> query("button", "text")
     => ["Optional Settings", "Save", "Cancel", "Get a free blog at WordPress.com"]
 
-This performs the selector `text` on each of the buttons in the view (it always returns an array). You can perform a sequence of selectors:
+This calls a 'getter' method "text" (that is text(), getText() or isText()) on each of the buttons in the view (it always returns an array). You can perform a sequence of methods:
 
     irb(main):007:0> query("button", "text", "length")
     => [17, 4, 6, 32]
@@ -34,7 +34,7 @@ This performs the selector `text` on each of the buttons in the view (it always 
     => ["optional settings", "save", "cancel", "get a free blog at wordpress.com"]
 
 
-For selectors with arguments you can use hashes. In Ruby 1.9 this has quite nice syntax:
+For methods with arguments you can use hashes. In Ruby 1.9 this has quite nice syntax:
 
     irb(main):033:0> query("edittext index:1", setText:"1234")
     => ["<VOID>"]
@@ -48,7 +48,7 @@ Behind the scenes the Java method `setText` will be execute with the argument `"
 
 Notice that the string `<VOID>` is Calabash's way of returning from a Java method with return type `void`.
 
-For more complex selectors you use Arrays of Hashes. Here is a complex Ruby 1.9 example:
+For more complex methods you use Arrays of Hashes. Here is a complex Ruby 1.9 example:
 
     TODO: Example?
 
@@ -146,6 +146,16 @@ The `touch` method is one of the most used in Calabash. It is mostly used in its
 Which uses content descriptions, ids or texts. This form is so common that there is a short-hand for it: `tap`:
 
     irb(main):038:0> tap 'Save'
+
+For flexibility you can also pass in a hash representation of a view and the the touch event will be calculated based on those values and no query will be executed. `touch` will also accept a list of hashes in which case Calabash will touch the first one view in the list.
+
+The following are all equivalent
+
+    touch("button index:0")
+    touch("button")
+    touch(query("button index:0"))
+    touch(query("button").first)
+    touch(query("button"))
 
 
 # Screenshot
