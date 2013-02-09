@@ -87,6 +87,10 @@ module Operations
     default_device.screenshot(options)
   end
 
+  def fail(msg="Error. Check log for details.", options={:prefix => nil, :name => nil, :label => nil})
+   screenshot_and_raise(msg, options)
+  end
+
   def set_gps_coordinates_from_location(location)
     default_device.set_gps_coordinates_from_location(location)
   end
