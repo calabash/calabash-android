@@ -94,20 +94,6 @@ module Operations
     default_device.set_gps_coordinates(latitude, longitude)
   end
 
-  #def wait_for(timeout, &block)
-  #  value = nil
-  #  begin
-  #    Timeout::timeout(timeout) do
-  #      until (value = block.call)
-  #        sleep 0.3
-  #      end
-  #    end
-  #  rescue Exception => e
-  #    raise e
-  #  end
-  #  value
-  #end
-
   def query(uiquery, *args)
     converted_args = []
     args.each do |arg|
