@@ -17,6 +17,7 @@ module Calabash module Android
 
 module Operations
   include Calabash::Android::WaitHelpers
+  include Calabash::Android::TouchHelpers
 
   def log(message)
     $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}" if (ARGV.include? "-v" or ARGV.include? "--verbose")
