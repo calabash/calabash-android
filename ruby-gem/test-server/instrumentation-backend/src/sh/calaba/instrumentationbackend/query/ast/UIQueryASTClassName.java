@@ -53,8 +53,10 @@ public class UIQueryASTClassName implements UIQueryAST {
 					}
 					
 					
-				}					
-				return result;
+				}
+
+                List filteredResult = visibility.evaluateWithViews(result, direction, visibility);
+				return filteredResult;
 			}
 		});
 		

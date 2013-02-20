@@ -51,7 +51,7 @@ public class UIQueryASTPredicate implements UIQueryAST {
 
 				}
 
-				return filteredResult;
+				return visibility.evaluateWithViews(filteredResult, direction, visibility);
 			}
 		});
 	}
