@@ -50,7 +50,7 @@ To run your test:
 
     calabash-android run <apk>
 
-Calabash-android will install an instrumentation next along with your app when executing the app. We call this instrumentation for "test server". The "test server" has special permission that allows it to interact very closely with your app during test.
+Calabash-android will install an instrumentation along with your app when executing the app. We call this instrumentation for "test server". The "test server" has special permission that allows it to interact very closely with your app during test.
 Everytime you test a new binary or use an upgraded version of calabash a new test server will be build.
 The test server is an intrumentation that will run along with your app on the device to execute the test.
 
