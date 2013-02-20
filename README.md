@@ -34,6 +34,11 @@ Install `calabash-android` by running
 - `gem install calabash-android`
 - You might have to run `sudo gem install calabash-android` if you do not have the right permissions.
 
+### Documentation
+
+[Ruby API](documentation/ruby_api.md)
+
+
 #### Troubleshooting Installation
 
 If you are on Mac you may see an error like this:
