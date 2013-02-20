@@ -149,6 +149,11 @@ public class UIQueryUtils {
 	public static boolean isVisible(Object v) {
 		if (!(v instanceof View)) { return true; }		
 		View view = (View) v;
+
+        if (view.getWidth() == 0 || view.getWidth() == 0) {
+            return false;
+        }
+
 		return view.isShown() && viewFetcher.isViewSufficientlyShown(view);
 	}
 
