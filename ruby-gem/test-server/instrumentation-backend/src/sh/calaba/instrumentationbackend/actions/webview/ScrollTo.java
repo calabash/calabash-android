@@ -17,7 +17,7 @@ public class ScrollTo implements Action {
 	@Override
     public Result execute(String... args) {
     	//TODO: Should do horizontal scrolling if needed
-    	final String uiQuery = "webView " + args[0] + ":'"+ args[1] + "'";
+    	final String uiQuery = "android.webkit.WebView " + args[0] + ":'"+ args[1] + "'";
 
         CalabashChromeClient calabashChromeClient = CalabashChromeClient.findAndPrepareWebViews().get(0);
         WebView webView = calabashChromeClient.getWebView();

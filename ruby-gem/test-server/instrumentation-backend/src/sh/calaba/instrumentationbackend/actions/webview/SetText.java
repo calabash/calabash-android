@@ -19,7 +19,7 @@ public class SetText implements Action {
 	@SuppressWarnings({ "rawtypes", "unchecked"})
 	@Override
     public Result execute(final String... args) {
-		final String uiQuery = "webView " + args[0] + ":'"+ args[1] + "'";
+		final String uiQuery = "android.webkit.WebView " + args[0] + ":'"+ args[1] + "'";
 		List queryResult = new sh.calaba.instrumentationbackend.query.Query(uiQuery).executeQuery();
 		if (queryResult.isEmpty()) {
 			throw new RuntimeException("No element found");
