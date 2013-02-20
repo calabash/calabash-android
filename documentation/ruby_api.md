@@ -1,14 +1,26 @@
+Ruby API
+========
+
 When writing custom steps, you'll need to use the Ruby API to interact with your application. This document describes the API at a high level. If you want to see details you can look at the source code in the files at [ruby-gem/lib/calabash-android](../ruby-gem/lib/calabash-android/). There are functions in the source code which aren't documented here. Those are way more likely to change (so be warned if you rely on those).
 
 Calabash Android has a client-server architecture. The Calabash Ruby API is the client side which speaks HTTP with the test server that running on the device along with your app. To get an architectural overview of Calabash Android please read the blog posts:
 
 [AN OVERVIEW OF CALABASH ANDROID](http://blog.lesspainful.com/2012/03/07/Calabash-Android/)
 
+# General
+### `start_test_server_in_background`
+Starts the test server and the app under test (AUT). If the app is already running it will be restarted.
+
+### `reinstall_apps`
+Will reinstall both the test server and the AUT to be sure the newest versions are installed.
+
+
 # Query
 ### `query(uiquery, *args)`
 Query returns an [array](http://www.ruby-doc.org/core-1.9.3/Array.html) of its results. The query function gives powerful query capability from your test code. You can find views and other application objects, and make assertions about them or extract data from them.
 
-The syntax for queries is really important, and described in a separate document: [Query Syntax](query_syntax.md).
+The syntax for queries is really important, and described in a separate document: TODO: Query Syntax.
+(Until the documention for query gets written the best reference is [this blog post](http://blog.lesspainful.com/2012/12/18/Android-Query/))
 
 Calabash Android tries to return results that carry useable information by default. For view objects this includes coordinates, class and contentdescription:
 
@@ -50,7 +62,7 @@ Notice that the string `<VOID>` is Calabash's way of returning from a Java metho
 
 For more complex methods you use Arrays of Hashes. Here is a complex Ruby 1.9 example:
 
-    TODO: Example?
+    TODO: Example
 
 
 ### `element_does_not_exist(uiquery)`
