@@ -159,14 +159,10 @@ public class Query {
 		}
 
 	}
-	
-	public List<View> allVisibleViews() {
-		return viewFetcher.getAllViews(false);
-	}
 
     public List<View> rootViews() {
         Set<View> parents = new HashSet<View>();
-        for (View v : allVisibleViews())
+        for (View v : viewFetcher.getAllViews(false))
         {
             View parent = viewFetcher.getTopParent(v);
             System.out.println(parent);
