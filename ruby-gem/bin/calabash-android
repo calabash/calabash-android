@@ -11,6 +11,24 @@ unless defined? RbConfig.ruby
   end
 end
 
+
+if File.exist? "features/support/app_life_cycle_hooks.rb"
+  content = IO.read("features/support/app_life_cycle_hooks.rb")
+  if content.include? "include Calabash::Android::Operations"
+    puts """
+    Fatal Error!
+    Your Calabash hooks are not compatible with this version of calabash-android.
+    Please remove the following line from 'features/support/app_life_cycle_hooks.rb'.
+
+      include Calabash::Android::Operations
+
+    """
+
+    exit 1
+  end
+end
+
+
 require File.join(File.dirname(__FILE__), "calabash-android-helpers")
 require File.join(File.dirname(__FILE__), "calabash-android-generate")
 require File.join(File.dirname(__FILE__), "calabash-android-build")
