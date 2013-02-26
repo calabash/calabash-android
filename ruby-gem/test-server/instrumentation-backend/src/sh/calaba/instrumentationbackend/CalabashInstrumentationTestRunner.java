@@ -21,7 +21,7 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
 		}
 
         // Start the HttpServer as soon as possible in a not-ready state
-        HttpServer.instantiate();
+        HttpServer.instantiate(Integer.parseInt(arguments.getString("test_server_port")));
 
         InstrumentationBackend.testPackage = arguments.getString("target_package");
 

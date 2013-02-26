@@ -59,8 +59,8 @@ module Operations
   end
 
   def uninstall_apps
-    default_device.uninstall_app("sh.calaba.android.test")
-    default_device.uninstall_app(ENV["PACKAGE_NAME"])
+    default_device.uninstall_app(package_name(default_device.test_server_path))
+    default_device.uninstall_app(package_name(default_device.app_path))
   end
 
   def wake_up
@@ -148,15 +148,18 @@ module Operations
   end
 
   class Device
+    attr_reader :app_path, :test_server_path, :serial, :server_port, :test_server_port
 
-    def initialize(cucumber_world, serial, server_port, app_path, test_server_path)
+    def initialize(cucumber_world, serial, server_port, app_path, test_server_path, test_server_port = 7102)
+
       @cucumber_world = cucumber_world
       @serial = serial
       @server_port = server_port
       @app_path = app_path
       @test_server_path = test_server_path
+      @test_server_port = test_server_port
 
-      forward_cmd = "#{adb_command} forward tcp:#{server_port} tcp:7102"
+      forward_cmd = "#{adb_command} forward tcp:#{@server_port} tcp:#{@test_server_port}"
       log forward_cmd
       log `#{forward_cmd}`
     end
@@ -316,8 +319,10 @@ module Operations
         wake_up
       end
 
+      puts "app_path: #{@app_path}"
       env_options = {:target_package => options[:target_package] || package_name(@app_path),
                      :main_activity => options[:main_activity] || main_activity(@app_path),
+                     :test_server_port => @test_server_port,
                      :debug => options[:debug] || false,
                      :class => options[:class] || "sh.calaba.instrumentationbackend.InstrumentationBackend"}
 
@@ -329,7 +334,7 @@ module Operations
         cmd_arr << val.to_s
       end
 
-      cmd_arr << "sh.calaba.android.test/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
+      cmd_arr << "#{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
 
       cmd = cmd_arr.join(" ")
 

@@ -42,20 +42,14 @@ public class HttpServer extends NanoHTTPD {
 	 * 
 	 * Can only be called once. Otherwise, you'll get an IllegalStateException.
 	 */
-	public synchronized static HttpServer instantiate() {
+	public synchronized static HttpServer instantiate(int testServerPort) {
 		if (instance != null) {
 			throw new IllegalStateException("Can only instantiate once!");
 		}
-		instance = new HttpServer();
+		instance = new HttpServer(testServerPort);
 		return instance;
 	}
 
-	/**
-	 * Returns the singleton instance for HttpServer.
-	 * 
-	 * If {@link #instantiate()} hasn't already been called, an
-	 * IllegalStateException is thrown.
-	 */
 	public synchronized static HttpServer getInstance() {
 		if (instance == null) {
 			throw new IllegalStateException("Must be initialized!");
@@ -63,8 +57,8 @@ public class HttpServer extends NanoHTTPD {
 		return instance;
 	}
 
-	private HttpServer() {
-		super(7102, new File("/"));
+	private HttpServer(int testServerPort) {
+		super(testServerPort, new File("/"));
 	}
 
 	@SuppressWarnings("rawtypes")
