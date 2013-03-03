@@ -254,6 +254,7 @@ public class UIQueryUtils {
 			String textWithPings = val.getText();
 			String text = textWithPings
 					.substring(1, textWithPings.length() - 1);
+            text = text.replaceAll("\\\\'", "'");
 			return text;
 		}
 		case UIQueryParser.INT:
