@@ -72,7 +72,7 @@ module Operations
   end
 
   def start_test_server_in_background(options={})
-    default_device.start_test_server_in_background()
+    default_device.start_test_server_in_background(options)
   end
 
   def shutdown_test_server
@@ -319,12 +319,13 @@ module Operations
         wake_up
       end
 
-      puts "app_path: #{@app_path}"
-      env_options = {:target_package => options[:target_package] || package_name(@app_path),
-                     :main_activity => options[:main_activity] || main_activity(@app_path),
+      env_options = {:target_package => package_name(@app_path),
+                     :main_activity => main_activity(@app_path),
                      :test_server_port => @test_server_port,
-                     :debug => options[:debug] || false,
-                     :class => options[:class] || "sh.calaba.instrumentationbackend.InstrumentationBackend"}
+                     :debug => false,
+                     :class => "sh.calaba.instrumentationbackend.InstrumentationBackend"}
+
+      env_options = env_options.merge(options)
 
       cmd_arr = [adb_command, "shell am instrument"]
 

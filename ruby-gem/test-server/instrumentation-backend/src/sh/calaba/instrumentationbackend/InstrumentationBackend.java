@@ -1,5 +1,7 @@
 package sh.calaba.instrumentationbackend;
 
+import android.content.Intent;
+import android.os.Bundle;
 import sh.calaba.instrumentationbackend.actions.Actions;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
 import android.Manifest;
@@ -17,6 +19,7 @@ import com.jayway.android.robotium.solo.SoloEnhanced;
 public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
     public static String testPackage;
     public static Class mainActivity;
+    public static Bundle extras;
     
     private static final String TAG = "InstrumentationBackend";
     
@@ -32,7 +35,10 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2 {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        
+        Intent i = new Intent();
+        i.setClassName(testPackage, mainActivity.getName());
+        i.putExtras(extras);
+        setActivityIntent(i);
         solo = new SoloEnhanced(getInstrumentation(), this.getActivity());
         viewFetcher = new PublicViewFetcher(getInstrumentation(), this.getActivity());
         actions = new Actions(getInstrumentation(), this);
