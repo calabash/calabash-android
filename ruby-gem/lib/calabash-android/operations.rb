@@ -297,7 +297,7 @@ module Operations
     end
 
     def wake_up
-      wake_up_cmd = "#{adb_command} shell am start -a android.intent.action.MAIN -n sh.calaba.android.test/sh.calaba.instrumentationbackend.WakeUp"
+      wake_up_cmd = "#{adb_command} shell am start -a android.intent.action.MAIN -n #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.WakeUp"
       log "Waking up device using:"
       log wake_up_cmd
       raise "Could not wake up the device" unless system(wake_up_cmd)
@@ -308,7 +308,7 @@ module Operations
     end
 
     def clear_app_data
-      cmd = "#{adb_command} shell am instrument sh.calaba.android.test/sh.calaba.instrumentationbackend.ClearAppData"
+      cmd = "#{adb_command} shell am instrument #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.ClearAppData"
       raise "Could not clear data" unless system(cmd)
     end
 
