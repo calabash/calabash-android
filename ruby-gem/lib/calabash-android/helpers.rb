@@ -139,7 +139,7 @@ def extract_md5_fingerprint(fingerprints)
   log fingerprints
 
   if is_windows?
-    if fingerprints.encoding.name == "CP850"
+    if fingerprints.respond_to?(:encoding) && fingerprints.encoding.name == "CP850"
       fingerprints = fingerprints.gsub("\xA0".force_encoding("CP850"),"")
     end
   end
