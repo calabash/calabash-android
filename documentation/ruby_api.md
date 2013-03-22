@@ -187,3 +187,29 @@ If prefix and name are nil it will use default values (which is currently the li
 
 Label is the label used in the cucumber report output (equals to name if not specified).
 
+# Pull and push files and folders from and to the device
+### `pull(remote, local)`
+Pulls a file from the device to local computer:
+
+    pull("/sdcard/file.jpg", "file.jpg")
+
+### `push(local, remote)`
+Pushes a file from the local computer to the device:
+
+    push("file.jpg", "/sdcard/file.jpg")
+
+Uses [adb](http://developer.android.com/tools/help/adb.html) so same rules apply: 
+
+* Won't be able to pull or push from restricted folders such as /data/data
+* If destination path already exists, it's overwritten without warning
+* For files, full destination path must be provided, ie:
+
+Won't work:
+```
+push("file.jpg", "/sdcard/folder")
+```
+
+Will work:
+```
+push("file.jpg", "/sdcard/folder/file.jpg")
+```
