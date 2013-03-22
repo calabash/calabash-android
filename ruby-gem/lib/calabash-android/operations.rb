@@ -71,6 +71,14 @@ module Operations
     default_device.clear_app_data
   end
 
+  def pull(remote, local)
+    default_device.pull(remote, local)
+  end
+
+  def push(local, remote)
+    default_device.push(local, remote)
+  end
+
   def start_test_server_in_background(options={})
     default_device.start_test_server_in_background(options)
   end
@@ -310,6 +318,16 @@ module Operations
     def clear_app_data
       cmd = "#{adb_command} shell am instrument #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.ClearAppData"
       raise "Could not clear data" unless system(cmd)
+    end
+
+    def pull(remote, local)
+      cmd = "#{adb_command} pull #{remote} #{local}"
+      raise "Could not pull #{remote} to #{local}" unless system(cmd)
+    end
+
+    def push(local, remote)
+      cmd = "#{adb_command} push #{local} #{remote}"
+      raise "Could not push #{local} to #{remote}" unless system(cmd)
     end
 
     def start_test_server_in_background(options={})
