@@ -87,7 +87,7 @@ def read_keystore_info
     keystore
   else
     {
-    "keystore_location" => %Q("#{File.expand_path(File.join(ENV["HOME"], "/.android/debug.keystore"))}\"),
+    "keystore_location" => %Q("#{File.expand_path(File.join(ENV["HOME"], "/.android/debug.keystore"))}"),
     "keystore_password" => "android",
     "keystore_alias" => "androiddebugkey",
     }
@@ -104,7 +104,7 @@ end
 
 def fingerprint_from_keystore
   keystore_info = read_keystore_info
-  cmd = "#{keytool_path} -v -list -alias #{keystore_info["keystore_alias"]} -keystore \"#{keystore_info["keystore_location"]}\" -storepass #{keystore_info["keystore_password"]}"
+  cmd = "#{keytool_path} -v -list -alias #{keystore_info["keystore_alias"]} -keystore #{keystore_info["keystore_location"]} -storepass #{keystore_info["keystore_password"]}"
 
   log cmd
   fingerprints = `#{cmd}`
