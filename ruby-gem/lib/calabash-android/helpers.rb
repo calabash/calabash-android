@@ -138,13 +138,7 @@ end
 def extract_md5_fingerprint(fingerprints)
   log fingerprints
 
-  if is_windows?
-    if fingerprints.encoding.name == "CP850"
-      fingerprints = fingerprints.gsub("\xA0".force_encoding("CP850"),"")
-    end
-  end
-
-  m = fingerprints.scan(/MD5\s*:\s*((?:[a-fA-F\d]{2}:){15}[a-fA-F\d]{2})/).flatten
+  m = fingerprints.scan(/MD5.*((?:[a-fA-F\d]{2}:){15}[a-fA-F\d]{2})/).flatten
   raise "No MD5 fingerprint found:\n #{fingerprints}" if m.empty?
   m.first
 end
