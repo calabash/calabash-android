@@ -267,12 +267,7 @@ module Operations
       @@screenshot_count ||= 0
       path = "#{prefix}#{name}_#{@@screenshot_count}.png"
 
-      if ENV["SCREENSHOT_VIA_USB"] == "true"
-        device_args = "-s #{@serial}" if @serial
-        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenShotTaker.jar')} #{path} #{device_args}"
-        log screenshot_cmd
-        raise "Could not take screenshot" unless system(screenshot_cmd)
-      else
+      if ENV["SCREENSHOT_VIA_USB"] == "false"
         begin
           res = http("/screenshot")
         rescue EOFError
@@ -281,8 +276,12 @@ module Operations
         File.open(path, 'wb') do |f|
           f.write res
         end
+      else
+        device_args = "-s #{@serial}" if @serial
+        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenShotTaker.jar')} #{path} #{device_args}"
+        log screenshot_cmd
+        raise "Could not take screenshot" unless system(screenshot_cmd)
       end
-
 
       @@screenshot_count += 1
       path
