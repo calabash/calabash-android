@@ -108,6 +108,18 @@ module Operations
     default_device.set_gps_coordinates(latitude, longitude)
   end
 
+  def get_preferences(name)
+    default_device.get_preferences(name)
+  end
+
+  def set_preferences(name, hash)
+    default_device.set_preferences(name, hash)
+  end
+
+  def clear_preferences(name)
+    default_device.clear_preferences(name)
+  end
+
   def query(uiquery, *args)
     converted_args = []
     args.each do |arg|
@@ -431,9 +443,29 @@ module Operations
     def set_gps_coordinates(latitude, longitude)
       perform_action('set_gps_coordinates', latitude, longitude)
     end
+
+    def get_preferences(name)
+      result = perform_action('get_preferences', name);
+      preferences = {}
+
+      if result["bonusInformation"].length > 0
+          result["bonusInformation"].each do |item|
+          json_item = JSON.parse(item)
+          preferences[json_item["key"]] = json_item["value"]
+        end
+      end
+
+      preferences
+    end
+
+    def set_preferences(name, hash)
+      perform_action('set_preferences', name, hash);
+    end
+
+    def clear_preferences(name)
+      perform_action('clear_preferences', name);
+    end
   end
-
-
 
   def label(uiquery)
     ni

@@ -213,3 +213,24 @@ Will work:
 ```
 push("file.jpg", "/sdcard/folder/file.jpg")
 ```
+
+# Read, write and clear SharedPreferences
+Simple API over [SharedPreferences](http://developer.android.com/guide/topics/data/data-storage.html#pref), all
+methods require the name of the SharedPreferences file as the first argument.
+
+Supports ints, floats, booleans and strings.
+
+### `get_preferences(name)`
+Returns a hash with the preferences available for the given name:
+
+    preferences = get_preferences("my_preferences")
+
+### `set_preferences(name, hash)`
+Sets the given hash as preferences for the given name:
+
+    set_preferences("my_preferences", {:name => "wadus", :email => "wadus@wadus.com", :id => 8, :active => true})
+
+### `clear_preferences(name)`
+Clears the preferences for the given name:
+
+    clear_preferences("my_preferences")
