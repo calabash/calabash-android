@@ -142,6 +142,14 @@ module Operations
 
   ###
 
+  ### simple page object helper
+
+  def page(clz, *args)
+    clz.new(self, *args)
+  end
+
+  ###
+
   ### app life cycle
   def connect_to_test_server
     puts "Explicit calls to connect_to_test_server should be removed."
