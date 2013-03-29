@@ -11,7 +11,7 @@ class Calabash::ABase
 
   def trait
     raise "You should define a trait method or a title method" unless respond_to?(:title)
-    "navigationItemView marked:'#{self.title}'"
+    "* marked:'#{self.title}'"
   end
 
   def current_page?
@@ -24,9 +24,6 @@ class Calabash::ABase
 
   def await(wait_opts={})
     wait_for_elements_exist([trait], wait_opts)
-    unless wait_opts.has_key?(:await_animation) && !wait_opts[:await_animation]
-      sleep(transition_duration)
-    end
     self
   end
 
@@ -47,7 +44,7 @@ class Calabash::ABase
   #
   # Returns the transition target page
   #
-  # Note it is assumed that the target page is a Calabash::IBase (or acts accordingly)
+  # Note it is assumed that the target page is a Calabash::ABase (or acts accordingly)
   def transition(transition_options={})
     uiquery = transition_options[:tap]
     action = transition_options[:action]
@@ -69,12 +66,8 @@ class Calabash::ABase
     page_obj ||= self
 
     if should_await
-      wait_opts = transition_options[:wait_options] || {}
-      if page_obj == self
-        unless wait_opts.has_key?(:await_animation) && !wait_opts[:await_animation]
-          sleep(transition_duration)
-        end
-      else
+      unless page_obj == self
+        wait_opts = transition_options[:wait_options] || {}
         page_obj.await(wait_opts)
       end
     end
