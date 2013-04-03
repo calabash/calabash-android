@@ -19,6 +19,10 @@ module Operations
   include Calabash::Android::WaitHelpers
   include Calabash::Android::TouchHelpers
 
+  def current_activity
+    `#{adb_command} shell dumpsys window windows`.each_line.grep(/mFocusedApp.+[\.\/]([^.\/\}]+)\}/){$1}.first
+  end
+
   def log(message)
     $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}" if (ARGV.include? "-v" or ARGV.include? "--verbose")
   end
