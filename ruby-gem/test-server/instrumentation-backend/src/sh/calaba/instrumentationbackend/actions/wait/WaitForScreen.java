@@ -16,7 +16,7 @@ public class WaitForScreen implements Action {
             if (InstrumentationBackend.solo.waitForActivity(args[0], DEFAULT_TIMEOUT)) {
                 return Result.successResult();
             } else {
-            	String currentActivity = InstrumentationBackend.solo.getCurrentActivity().getLocalClassName();
+            	String currentActivity = InstrumentationBackend.solo.getCurrentActivity().getClass().getSimpleName();
             	Result result = new Result(false, "Screen " + args[0] + " not found.  Current activity is " + currentActivity);
             	result.addBonusInformation(currentActivity);
             	return result;
@@ -35,7 +35,7 @@ public class WaitForScreen implements Action {
             if (InstrumentationBackend.solo.waitForActivity(args[0], timeout)) {
                 return Result.successResult();
             } else {
-                String currentActivity = InstrumentationBackend.solo.getCurrentActivity().getLocalClassName();
+                String currentActivity = InstrumentationBackend.solo.getCurrentActivity().getClass().getSimpleName();
             	Result result = new Result(false, "Screen " + args[0] + " not found.  Current activity is " + currentActivity);
             	result.addBonusInformation(currentActivity);
             	return result;
