@@ -289,8 +289,7 @@ module Operations
           f.write res
         end
       else
-        device_args = "-s #{@serial}" if @serial
-        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenShotTaker.jar')} #{path} #{device_args}"
+        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenshotTaker.jar')} #{serial} #{path}"
         log screenshot_cmd
         raise "Could not take screenshot" unless system(screenshot_cmd)
       end
@@ -300,20 +299,34 @@ module Operations
     end
 
     def adb_command
+      "#{adb} -s #{serial}"
+    end
+
+    def adb
       if is_windows?
-        %Q("#{ENV["ANDROID_HOME"]}\\platform-tools\\adb.exe" #{device_args})
+        %Q("#{ENV["ANDROID_HOME"]}\\platform-tools\\adb.exe")
       else
-        %Q("#{ENV["ANDROID_HOME"]}/platform-tools/adb" #{device_args})
+        %Q("#{ENV["ANDROID_HOME"]}/platform-tools/adb")
       end
     end
 
-    def device_args
-      if @serial
-        "-s #{@serial}"
-      else
-        ""
-      end
+    def serial
+      @serial || default_serial
     end
+
+    def default_serial
+      devices = connected_devices
+      log "connected_devices: #{devices}"
+      raise "No connected devices" if devices.empty?
+      raise "More than one device connected. Specify device serial using ADB_DEVICE_ARG" if devices.length > 1
+      devices.first
+    end
+
+    def connected_devices
+      lines = `#{adb} devices`.split("\n")
+      lines.shift
+      lines.collect { |l| l.split("\t").first}
+    end  
 
     def wake_up
       wake_up_cmd = "#{adb_command} shell am start -a android.intent.action.MAIN -n #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.WakeUp"
