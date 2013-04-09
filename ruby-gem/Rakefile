@@ -14,7 +14,7 @@ def build
       ant_executable,
       "clean",
       "package",
-      "-Dandroid.api.level=16",
+      "-Dandroid.api.level=17",
       "-Dversion=#{Calabash::Android::VERSION}",
     ]
     Dir.chdir(@test_server_dir) do
