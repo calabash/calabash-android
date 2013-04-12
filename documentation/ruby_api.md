@@ -216,9 +216,13 @@ push("file.jpg", "/sdcard/folder/file.jpg")
 
 # Read, write and clear SharedPreferences
 Simple API over [SharedPreferences](http://developer.android.com/guide/topics/data/data-storage.html#pref), all
-methods require the name of the SharedPreferences file as the first argument.
+methods require the name of the SharedPreferences file as the first argument. Supports ints, floats, booleans and strings.
 
-Supports ints, floats, booleans and strings.
+It is important to notice that depending on your application you might need to poke around with SharedPreferences
+before or after your application or activity starts. In that case you will need to call these methods either
+before or after your scenario.
+
+To do so, you can tag a particular scenario and edit your application lifecycle hooks as explained [here](https://groups.google.com/forum/?fromgroups=#!topic/calabash-android/Ql3iluRMijg).
 
 ### `get_preferences(name)`
 Returns a hash with the preferences available for the given name:

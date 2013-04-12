@@ -8,15 +8,11 @@ import android.content.SharedPreferences;
 /**
  * Allows clearing SharedPreferences.
  *
- * The name of the SharedPreferences file is required as the first 
- * value of the arguments passed.
- *
  * See Ruby API docs for more info:
  * https://github.com/calabash/calabash-android/blob/master/documentation/ruby_api.md
  * 
  * @author Juan Delgado (juan@ustwo.co.uk)
  */
-
 public class ClearPreferences implements Action {
 
 	@Override
@@ -24,7 +20,7 @@ public class ClearPreferences implements Action {
 		
 		try{
 			
-			SharedPreferences preferences = PreferencesUtils.getPreferences(args, InstrumentationBackend.instrumentation.getTargetContext());
+			SharedPreferences preferences = PreferencesUtils.getPreferencesFromArgs(args, InstrumentationBackend.instrumentation.getTargetContext());
 			preferences.edit().clear().commit();
 			
 			return Result.successResult();

@@ -445,11 +445,31 @@ module Operations
     end
 
     def get_preferences(name)
-      result = perform_action('get_preferences', name);
+
+      log "Get preferences: #{name}, app running? #{app_running?}"
       preferences = {}
 
-      if result["bonusInformation"].length > 0
-          result["bonusInformation"].each do |item|
+      if app_running?
+        json = perform_action('get_preferences', name);
+      else
+
+        logcat_id = get_logcat_id()
+        cmd = "#{adb_command} shell am instrument -e logcat #{logcat_id} -e name \"#{name}\" #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.GetPreferences"
+
+        raise "Could not get preferences" unless system(cmd)
+
+        logcat_cmd = get_logcat_cmd(logcat_id)
+        logcat_output = `#{logcat_cmd}`
+
+        json = get_json_from_logcat(logcat_output)
+
+        raise "Could not get preferences" unless json != nil and json["success"]
+      end
+
+      # at this point we have valid json, coming from an action
+      # or instrumentation, but we don't care, just parse
+      if json["bonusInformation"].length > 0
+          json["bonusInformation"].each do |item|
           json_item = JSON.parse(item)
           preferences[json_item["key"]] = json_item["value"]
         end
@@ -459,11 +479,78 @@ module Operations
     end
 
     def set_preferences(name, hash)
-      perform_action('set_preferences', name, hash);
+
+      log "Set preferences: #{name}, #{hash}, app running? #{app_running?}"
+
+      if app_running?
+        perform_action('set_preferences', name, hash);
+      else
+
+        params = hash.map {|k,v| "-e \"#{k}\" \"#{v}\""}.join(" ")
+
+        logcat_id = get_logcat_id()
+        cmd = "#{adb_command} shell am instrument -e logcat #{logcat_id} -e name \"#{name}\" #{params} #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.SetPreferences"
+
+        raise "Could not set preferences" unless system(cmd)
+
+        logcat_cmd = get_logcat_cmd(logcat_id)
+        logcat_output = `#{logcat_cmd}`
+
+        json = get_json_from_logcat(logcat_output)
+
+        raise "Could not set preferences" unless json != nil and json["success"]
+      end
     end
 
     def clear_preferences(name)
-      perform_action('clear_preferences', name);
+
+      log "Clear preferences: #{name}, app running? #{app_running?}"
+
+      if app_running?
+        perform_action('clear_preferences', name);
+      else
+        
+        logcat_id = get_logcat_id()
+        cmd = "#{adb_command} shell am instrument -e logcat #{logcat_id} -e name \"#{name}\" #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.ClearPreferences"
+        raise "Could not clear preferences" unless system(cmd)
+
+        logcat_cmd = get_logcat_cmd(logcat_id)
+        logcat_output = `#{logcat_cmd}`
+
+        json = get_json_from_logcat(logcat_output)
+
+        raise "Could not clear preferences" unless json != nil and json["success"]
+      end
+    end
+
+    def get_json_from_logcat(logcat_output)
+
+      logcat_output.split(/\r?\n/).each do |line|
+        begin
+          json = JSON.parse(line)
+          return json
+        rescue
+          # nothing to do here, just discarding logcat rubbish
+        end
+      end
+
+      return nil
+    end
+
+    def get_logcat_id()
+      # we need a unique logcat tag so we can later
+      # query the logcat output and filter out everything
+      # but what we are interested in
+
+      random = (0..10000).to_a.sample
+      "#{Time.now.strftime("%s")}_#{random}"
+    end
+
+    def get_logcat_cmd(tag)
+      # returns raw logcat output for our tag
+      # filtering out everthing else
+
+      "#{adb_command} logcat -d -v raw #{tag}:* *:S"
     end
   end
 
