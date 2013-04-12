@@ -438,6 +438,9 @@ module Operations
     def shutdown_test_server
       begin
         http("/kill")
+        retriable :tries => 10, :interval => 0.1 do
+          raise EOFError.new unless !app_running?
+        end
       rescue EOFError
         log ("Could not kill app. App is most likely not running anymore.")
       end
