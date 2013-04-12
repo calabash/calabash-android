@@ -20,7 +20,7 @@ module Operations
   include Calabash::Android::TouchHelpers
 
   def current_activity
-    `#{adb_command} shell dumpsys window windows`.each_line.grep(/mFocusedApp.+[\.\/]([^.\/\}]+)\}/){$1}.first
+    `#{default_device.adb_command} shell dumpsys window windows`.each_line.grep(/mFocusedApp.+[\.\/]([^.\/\}]+)\}/){$1}.first
   end
 
   def log(message)
