@@ -42,7 +42,8 @@ public class Actions {
                     addAction(element);
                 }
             }
-        } catch (Exception e) {
+            dexFile.close();
+	    } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
