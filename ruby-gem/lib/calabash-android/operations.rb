@@ -438,9 +438,11 @@ module Operations
     def shutdown_test_server
       begin
         http("/kill")
-        retriable :tries => 10, :interval => 0.1 do
-          raise EOFError.new unless !app_running?
+        Timeout::timeout(3) do
+          sleep 0.3 while app_running?
         end
+      rescue Timeout::Error
+        log ("Could not kill app. Waited to 3 seconds.")
       rescue EOFError
         log ("Could not kill app. App is most likely not running anymore.")
       end
