@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -16,8 +17,9 @@ import sh.calaba.instrumentationbackend.Command;
 import sh.calaba.instrumentationbackend.FranklyResult;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
-import sh.calaba.instrumentationbackend.actions.dump.DumpCommand;
+import sh.calaba.instrumentationbackend.json.JSONUtils;
 import sh.calaba.instrumentationbackend.query.Query;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import sh.calaba.org.codehaus.jackson.map.DeserializationConfig.Feature;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import android.graphics.Bitmap;
@@ -71,9 +73,13 @@ public class HttpServer extends NanoHTTPD {
 		else if (uri.endsWith("/dump")) {
 			FranklyResult errorResult = null;
 			try {
-				Action dumpCommand = new DumpCommand();
-				Result result = dumpCommand.execute();
-				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",toJson(result));
+				Map<?, ?> dumpTree = (Map) UIQueryUtils.evaluateSyncInMainThread(new Callable() {
+					public Object call() throws Exception {
+						return UIQueryUtils.dump();
+					}
+				});
+
+				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",JSONUtils.asJson(dumpTree));
 			} catch (Exception e ) {
 				e.printStackTrace();
                 errorResult = FranklyResult.fromThrowable(e);
