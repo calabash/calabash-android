@@ -18,33 +18,14 @@ public class ViewMapper {
 	public static Object extractDataFromView(View v) {		
 		
 		Map data = new HashMap();
-		data.put("class", v.getClass().getName());		
+		data.put("class", getClassNameForView(v));		
 		data.put("description", v.toString());
-		CharSequence description = v.getContentDescription();
-		data.put("contentDescription", description != null ? description.toString() : null);
+		data.put("contentDescription", getContentDescriptionForView(v));
 		data.put("enabled", v.isEnabled());
-		String id = null;
-		try {
-			id = InstrumentationBackend.solo.getCurrentActivity()
-					.getResources().getResourceEntryName(v.getId());
-		} catch (Resources.NotFoundException e) {
-			System.out.println("Resource not found for " + v.getId()
-					+ ". Moving on.");
-		}
-		data.put("id", id);
-
-		Map rect = new HashMap();
-		int[] location = new int[2];
-		v.getLocationOnScreen(location);
-
-		rect.put("x", location[0]);
-		rect.put("y", location[1]);
 		
-		rect.put("center_x", location[0] + v.getWidth()/2.0);
-		rect.put("center_y", location[1] + v.getHeight()/2.0);
-		
-		rect.put("width", v.getWidth());
-		rect.put("height", v.getHeight());
+		data.put("id", getIdForView(v));
+
+		Map rect = getRectForView(v);
 
 		data.put("rect", rect);
 
@@ -62,6 +43,43 @@ public class ViewMapper {
 		}
 		return data;
 
+	}
+
+	public static Map getRectForView(View v) {
+		Map rect = new HashMap();
+		int[] location = new int[2];
+		v.getLocationOnScreen(location);
+
+		rect.put("x", location[0]);
+		rect.put("y", location[1]);
+		
+		rect.put("center_x", location[0] + v.getWidth()/2.0);
+		rect.put("center_y", location[1] + v.getHeight()/2.0);
+		
+		rect.put("width", v.getWidth());
+		rect.put("height", v.getHeight());
+		return rect;
+	}
+
+	public static String getContentDescriptionForView(View v) {
+		CharSequence description = v.getContentDescription();
+		return description != null ? description.toString() : null;
+	}
+
+	public static String getClassNameForView(View v) {
+		return v.getClass().getName();
+	}
+
+	public static String getIdForView(View v) {
+		String id = null;
+		try {
+			id = InstrumentationBackend.solo.getCurrentActivity()
+					.getResources().getResourceEntryName(v.getId());
+		} catch (Resources.NotFoundException e) {
+			System.out.println("Resource not found for " + v.getId()
+					+ ". Moving on.");
+		}
+		return id;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

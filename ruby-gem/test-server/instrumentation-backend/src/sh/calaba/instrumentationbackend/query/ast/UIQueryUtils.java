@@ -19,12 +19,16 @@ import org.antlr.runtime.tree.CommonTree;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.actions.webview.QueryHelper;
 import sh.calaba.instrumentationbackend.query.CompletedFuture;
+import sh.calaba.instrumentationbackend.query.Query;
+import sh.calaba.instrumentationbackend.query.ViewMapper;
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import sh.calaba.org.codehaus.jackson.type.TypeReference;
-import android.content.res.Resources.NotFoundException;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.TextView;
 
 public class UIQueryUtils {	
 	
@@ -158,13 +162,7 @@ public class UIQueryUtils {
 	}
 
 	public static String getId(View view) {
-		try {
-			return InstrumentationBackend.solo.getCurrentActivity()
-					.getResources().getResourceEntryName(view.getId());			
-	
-		}
-		catch (NotFoundException e) {}
-		return null;
+		return ViewMapper.getIdForView(view);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -272,6 +270,112 @@ public class UIQueryUtils {
 
 		}
 
+	}
+
+/*
+ * {"rect"=>{"x"=>0, "y"=>0, "width"=>768, "height"=>1024},
+ "hit-point"=>{"x"=>384, "y"=>512},
+ "id"=>"",
+ "action"=>false,
+ "enabled"=>1,
+ "visible"=>1,
+ "value"=>nil,
+ "type"=>"[object UIAWindow]",
+ "name"=>nil,
+ "label"=>nil,
+ "children"=> [same-structure*]
+ }
+ */
+	public static Map<?,?> dump() 
+	{
+		Query mainQuery = new Query("not_used");		
+		return dumpRecursively(emptyRootView(), mainQuery.rootViews());
+		
+	}
+	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected static Map<?,?> dumpRecursively(Map parentView,List<View> children)
+	{
+		ArrayList childrenArray = new ArrayList(32);
+		for (View view : children) {			
+			childrenArray.add(dumpRecursively(serializeViewToDump(view),  UIQueryUtils.subviews(view)));
+		}
+			
+		parentView.put("children", childrenArray);
+		
+		return parentView;
+	}
+	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Map<?,?> serializeViewToDump(View view) {
+		if (view == null) {return null;}
+		
+		Map m = new HashMap();
+		
+		m.put("id",getId(view));
+		
+		Map rect = ViewMapper.getRectForView(view);
+		Map hitPoint = extractHitPointFromRect(rect);
+		
+		m.put("rect",rect);
+		m.put("hit-point",hitPoint);
+		m.put("action",isAction(view));
+		m.put("enabled",view.isEnabled());
+		m.put("visible",isVisible(view));
+		m.put("value",extractValueFromView(view));
+		m.put("type",ViewMapper.getClassNameForView(view));
+		m.put("name",getId(view));//TODO: does name make sense on Android?
+		m.put("label",ViewMapper.getContentDescriptionForView(view));									
+		return m;
+	}
+
+	public static Object extractValueFromView(View view) {
+		if (view instanceof Button) {
+			Button b = (Button) view;
+			return b.getText().toString();
+		}
+		else if (view instanceof CheckBox) {
+			CheckBox c = (CheckBox) view;
+			return c.isChecked();
+		}
+		else if (view instanceof TextView) {
+			TextView t = (TextView) view;
+			return t.getText().toString();
+		}
+		return view.toString();
+	}
+
+	public static boolean isAction(View view) 
+	{
+		
+		return (view instanceof android.widget.Button);
+		//TODO: obviously many more!
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Map extractHitPointFromRect(Map rect) {
+		Map hitPoint = new HashMap();
+		hitPoint.put("x", rect.get("center_x"));
+		hitPoint.put("y", rect.get("center_y"));
+		return hitPoint;
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes", "serial"})
+	private static Map<?,?> emptyRootView() {
+		return new HashMap() {{				
+			put("id",null);
+			put("rect",null);
+			put("hit-point",null);
+			put("action",false);
+			put("enabled",false);
+			put("visible",true);
+			put("value",null);
+			put("type","[object CalabashRootView]");
+			put("name",null);
+			put("label",null);									
+		}};
 	}
 
 }

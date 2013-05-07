@@ -1,14 +1,13 @@
 package sh.calaba.instrumentationbackend;
 
 import java.io.CharArrayWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
+import sh.calaba.instrumentationbackend.json.JSONUtils;
 
 /**
  * Represents a response in the Frankly protocol.
@@ -52,13 +51,7 @@ public class FranklyResult {
     }
     
     public String asJson() {
-        ObjectMapper mapper = new ObjectMapper();
-
-        try {        	
-            return mapper.writeValueAsString(asMap());
-        } catch (IOException e) {
-            throw new RuntimeException("Could not convert result to json", e);
-        }
+        return JSONUtils.asJson(asMap());
     }
 
 	public Map<String,Object> asMap() 

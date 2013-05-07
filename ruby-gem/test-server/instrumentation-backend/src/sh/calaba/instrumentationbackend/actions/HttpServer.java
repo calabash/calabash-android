@@ -3,7 +3,6 @@ package sh.calaba.instrumentationbackend.actions;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -17,8 +16,8 @@ import sh.calaba.instrumentationbackend.Command;
 import sh.calaba.instrumentationbackend.FranklyResult;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
+import sh.calaba.instrumentationbackend.actions.dump.DumpCommand;
 import sh.calaba.instrumentationbackend.query.Query;
-import sh.calaba.instrumentationbackend.query.QueryResult;
 import sh.calaba.org.codehaus.jackson.map.DeserializationConfig.Feature;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import android.graphics.Bitmap;
@@ -68,7 +67,20 @@ public class HttpServer extends NanoHTTPD {
 		if (uri.endsWith("/ping")) {
 			return new NanoHTTPD.Response(HTTP_OK, MIME_HTML, "pong");
 
-		} else if (uri.endsWith("/map")) {
+		}
+		else if (uri.endsWith("/dump")) {
+			FranklyResult errorResult = null;
+			try {
+				Action dumpCommand = new DumpCommand();
+				Result result = dumpCommand.execute();
+				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",toJson(result));
+			} catch (Exception e ) {
+				e.printStackTrace();
+                errorResult = FranklyResult.fromThrowable(e);
+            }
+            return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", errorResult.asJson());
+		} 
+		else if (uri.endsWith("/map")) {
 			FranklyResult errorResult = null;
 			try {
 				String commandString = params.getProperty("json");
@@ -77,12 +89,11 @@ public class HttpServer extends NanoHTTPD {
 				
 				String uiQuery = (String) command.get("query");
 				Map op = (Map) command.get("operation");
+				@SuppressWarnings("unused") //TODO: support other methods, e.g., flash
 				String methodName = (String) op.get("method_name");
 				List arguments = (List) op.get("arguments");
 				
-				//For now we only support query and query_all
-				//query_all includes also invisible views, while query filters them
-				boolean includeInVisible = "query_all".equals(methodName);
+				//For now we only support query
 				
 				
 				List queryResult = new Query(uiQuery,arguments).executeQuery();
