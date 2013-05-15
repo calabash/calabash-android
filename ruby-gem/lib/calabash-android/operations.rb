@@ -259,7 +259,8 @@ module Operations
         http.read_timeout = options[:read_timeout] if options[:read_timeout]
         resp = http.post(path, "#{data.to_json}", {"Content-Type" => "application/json;charset=utf-8"})
         resp.body
-      rescue Exception => e
+      rescue EOFError => e
+          log "It looks like your app is no longer running. \nIt could be because of a crash or because your test script shut it down."
           raise e
       end
     end
