@@ -17,7 +17,7 @@ public class WaitForViewById implements Action {
         	if( getViewById(viewId, 60000) != null ) {
         		return Result.successResult();
         	} else {
-        		return new Result(false, "Timed out while waiting for view with id:'" + viewId + "'");
+        		return new Result(false, "Waiting for view with id '" + viewId + "' to be visible timed out");
         	}
         } catch( InterruptedException e ) {
     		return Result.fromThrowable(e);
@@ -25,22 +25,29 @@ public class WaitForViewById implements Action {
     }
     
     protected View getViewById( String viewId, long timeout ) throws InterruptedException {
-    	System.out.println("Waiting for view with id '" + viewId + "'");
+        
+    	System.out.println("Waiting for view with id '" + viewId + "' to appear");
+    	
+    	View view = TestHelpers.getViewById(viewId);
+    	
+    	// no view, quick exit
+    	if(view == null){
+    	    throw new IllegalArgumentException("Could not find view with id '" + viewId + "'");
+    	}
+    	
+    	System.out.println("Waiting for view with id '" + viewId + "' found view " + view);
+    	
         long endTime = System.currentTimeMillis() + timeout;
         while (System.currentTimeMillis() < endTime) {
-            View view = TestHelpers.getViewById(viewId);
-            System.out.println("Waiting for view with id '" + viewId + "' found view " + view);
-
-            if (view != null) {
-                System.out.println("Waiting for view with id '" + viewId + "' Success");
+            if (view.getVisibility() == View.VISIBLE) {
+                System.out.println("View with id '" + viewId + "' is visible, success");
                 return view;
             } else {
-            	System.out.println("Waiting for view with id '" + viewId + "' sleeping...");
+            	System.out.println("View with id '" + viewId + "' is not visible, sleeping...");
             	Thread.sleep(500);
             }
         }
         
-        System.out.println("Waiting for view with id '" + viewId + "' Timed out");
         return null;
     }
 
