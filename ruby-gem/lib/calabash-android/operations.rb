@@ -215,7 +215,11 @@ module Operations
     end
 
     def app_running?
-      `#{adb_command} shell ps`.include?(ENV["PROCESS_NAME"] || package_name(@app_path))
+      begin
+        http("/ping") == "pong"
+      rescue
+        false
+      end
     end
 
     def keyguard_enabled?
@@ -256,11 +260,7 @@ module Operations
         resp = http.post(path, "#{data.to_json}", {"Content-Type" => "application/json;charset=utf-8"})
         resp.body
       rescue Exception => e
-        if app_running?
           raise e
-        else
-          raise "App no longer running"
-        end
       end
     end
 
