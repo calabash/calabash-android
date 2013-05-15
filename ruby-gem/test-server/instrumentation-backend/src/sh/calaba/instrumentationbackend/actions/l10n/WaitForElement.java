@@ -28,13 +28,14 @@ public class WaitForElement implements Action {
 	@Override
 	public Result execute(String... args) {
 		String l10nKey = args[0];
+		String pckg = (args.length > 1)? args[1] : null;
 		
-		String myLocalizedString = L10nHelper.getValue(l10nKey);
+		String myLocalizedString = L10nHelper.getValue(l10nKey, pckg);
 		boolean timedOut = !InstrumentationBackend.solo.waitForText(
 				myLocalizedString, 1, 90000);
 		if (timedOut) {
 			return new Result(false, "Time out while waiting for text:"
-					+ args[0]);
+					+ args[0] + ", package: " + pckg);
 		} else {
 			return Result.successResult();
 		}

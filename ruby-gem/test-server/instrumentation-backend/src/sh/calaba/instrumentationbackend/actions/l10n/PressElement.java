@@ -21,7 +21,9 @@ public class PressElement implements Action {
 	public Result execute(String... args) {
 		String l10nKey = args[0];
 		String elementType = args.length > 1 ? args[1] : null;
-		String myLocalizedString = L10nHelper.getValue(l10nKey);
+		String pckg = (args.length > 2)? args[2] : null;
+		
+		String myLocalizedString = L10nHelper.getValue(l10nKey, pckg);
 		InstrumentationBackend.solo.searchText(myLocalizedString);
 		if (elementType == null) {
 			InstrumentationBackend.solo.clickOnText(myLocalizedString);
