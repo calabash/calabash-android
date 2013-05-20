@@ -11,7 +11,10 @@ public class EnterTextById implements Action {
 
 	@Override
 	public Result execute(String... args) {
-        final View view = TestHelpers.getViewById(args[1]);
+        if(args[1] == null) {
+            return Result.failedResult("Input text cannot be null");
+        }
+        View view = TestHelpers.getViewById(args[1]);
         if(view == null) {
             return new Result(false, "No view found with id: '" + args[1] + "'");
         } else if (!(view instanceof EditText)) {
