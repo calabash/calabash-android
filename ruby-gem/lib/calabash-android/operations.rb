@@ -217,14 +217,13 @@ module Operations
       cmd = "#{adb_command} install -r \"#{app_path}\""
       log "Updating: #{app_path}"
       result = `#{cmd}`
-      log result
-      pn = package_name(app_path)
-      succeeded = `#{adb_command} shell pm list packages`.include?("package:#{pn}")
+      log "result: #{result}"
+      succeeded = result.include?("Success")
 
       unless succeeded
         ::Cucumber.wants_to_quit = true
         raise "#{pn} did not get updated. Aborting!"
-      end
+      end    
     end
 
     def uninstall_app(package_name)
