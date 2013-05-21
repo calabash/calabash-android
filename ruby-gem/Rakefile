@@ -14,6 +14,7 @@ def build
       ant_executable,
       "clean",
       "package",
+      "-debug",
       "-Dandroid.api.level=17",
       "-Dversion=#{Calabash::Android::VERSION}",
     ]
