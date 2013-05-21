@@ -11,7 +11,7 @@ def calabash_build(app)
   FileUtils.mkdir_p File.dirname(test_server_file_name) unless File.exist? File.dirname(test_server_file_name)
 
   unsigned_test_apk = File.join(File.dirname(__FILE__), '..', 'lib/calabash-android/lib/TestServer.apk')
-  platforms = Dir["#{ENV["ANDROID_HOME"].gsub("\\", "/")}/platforms/android-*"].sort_by! { |item| '%08s' % item.split('-').last }
+  platforms = Dir["#{android_home_path}/platforms/android-*"].sort_by! { |item| '%08s' % item.split('-').last }
   android_platform = platforms.last
   raise "No Android SDK found in #{ENV["ANDROID_HOME"].gsub("\\", "/")}/platforms/" unless android_platform
   Dir.mktmpdir do |workspace_dir|
@@ -27,7 +27,7 @@ def calabash_build(app)
         raise "Could not replace test package name in manifest"
       end
 
-      unless system %Q{"#{ENV["ANDROID_HOME"]}/platform-tools/aapt" package -M AndroidManifest.xml  -I "#{android_platform}/android.jar" -F dummy.apk}
+      unless system %Q{"#{tools_dir}/aapt" package -M AndroidManifest.xml  -I "#{android_platform}/android.jar" -F dummy.apk}
         raise "Could not create dummy.apk"
       end
 

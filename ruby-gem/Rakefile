@@ -15,6 +15,7 @@ def build
       "clean",
       "package",
       "-debug",
+      "-Dtools.dir=\"#{tools_dir}\"",
       "-Dandroid.api.level=17",
       "-Dversion=#{Calabash::Android::VERSION}",
     ]

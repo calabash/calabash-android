@@ -6,7 +6,6 @@
 
     <property name="adb.device.arg" value="" />
     <property environment="env"/>
-    <property file="build.properties"/>
     <property name="staging.dir" location="staging"/>
     <property name="bin.dir" location="bin"/>
     <property name="test.app.aapt" location="${bin.dir}/Test_aapt.apk"/>
@@ -14,24 +13,19 @@
     <property name="test.app.unsigned" location="${bin.dir}/Test_unsigned.apk"/>
     <property name="calabashjs.dir" location="calabash-js/src"/>
 
-
     <!-- Windows support -->
     <condition property="bat" value=".bat" else=""><os family="windows" /></condition>
-    <property name="dx" location="${env.ANDROID_HOME}/platform-tools/dx${bat}" />
-    <property name="apkbuilder" location="${env.ANDROID_HOME}/tools/apkbuilder${bat}" />
 
+    <property name="dx" location="${tools.dir}/dx${bat}" />
+    <property name="aapt" location="${tools.dir}/aapt${bat}" />
+    
     <property name="android.lib" location="${env.ANDROID_HOME}/platforms/android-${android.api.level}/android.jar"/>
     <path id="android.antlibs">
+        <pathelement path="${env.ANDROID_HOME}/tools/lib/ant-tasks.jar" />
         <pathelement path="${env.ANDROID_HOME}/tools/lib/anttasks.jar" />
         <pathelement path="${env.ANDROID_HOME}/tools/lib/sdklib.jar" />
         <pathelement path="${env.ANDROID_HOME}/tools/lib/androidprefs.jar" />
     </path>
-    <taskdef name="xpath" classname="com.android.ant.XPathTask" classpathref="android.antlibs"/>
-    <taskdef name="aapt" classname="com.android.ant.AaptExecTask" classpathref="android.antlibs" />
-    <taskdef name="apkbuilder" classname="com.android.ant.ApkBuilderTask" classpathref="android.antlibs" />
-
-
-
 
     <path id="jar.libs.ref">
       <fileset dir="${staging.dir}/libs/" includes="*.jar" />
@@ -103,7 +97,7 @@
     </target>
 
     <target name="-aapt">
-      <exec executable="${env.ANDROID_HOME}/platform-tools/aapt" failonerror="yes">
+      <exec executable="${aapt}" failonerror="yes">
         <arg value="package" />
         <arg value="-f" />
         <arg value="-F" />
@@ -131,12 +125,11 @@
     </target>
 
     <target name="-apk">
-      <exec executable="${apkbuilder}" failonerror="yes">
+      <exec executable="java" failonerror="yes">
+        <arg value="-jar" />
+        <arg value="${staging.dir}/CalabashApkBuilder.jar" />
         <arg file="${test.app.unsigned}" />
-        <arg value="-u" />
-        <arg value="-z" />
         <arg file="${test.app.aapt}" />
-        <arg value="-f" />
         <arg file="${dex.file}" />
       </exec>
     </target>
