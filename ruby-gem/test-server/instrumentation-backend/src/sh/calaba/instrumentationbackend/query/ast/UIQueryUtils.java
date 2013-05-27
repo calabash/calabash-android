@@ -24,6 +24,7 @@ import sh.calaba.instrumentationbackend.query.ViewMapper;
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import sh.calaba.org.codehaus.jackson.type.TypeReference;
+import android.text.InputType;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -154,7 +155,7 @@ public class UIQueryUtils {
 		if (!(v instanceof View)) { return true; }		
 		View view = (View) v;
 
-        if (view.getWidth() == 0 || view.getWidth() == 0) {
+        if (view.getHeight() == 0 || view.getWidth() == 0) {
             return false;
         }
 
@@ -273,7 +274,8 @@ public class UIQueryUtils {
 	}
 
 /*
- * {"rect"=>{"x"=>0, "y"=>0, "width"=>768, "height"=>1024},
+ * 
+{"rect"=>{"x"=>0, "y"=>0, "width"=>768, "height"=>1024},
  "hit-point"=>{"x"=>384, "y"=>512},
  "id"=>"",
  "action"=>false,
@@ -283,17 +285,25 @@ public class UIQueryUtils {
  "type"=>"[object UIAWindow]",
  "name"=>nil,
  "label"=>nil,
- "children"=> [same-structure*]
- }
+ "children"=> [(samestructure)*]
+  
  */
 	public static Map<?,?> dump() 
 	{
-		Query mainQuery = new Query("not_used");		
-		return dumpRecursively(emptyRootView(), mainQuery.rootViews());
-		
+		Query dummyQuery = new Query("not_used");	
+				
+		return dumpRecursively(emptyRootView(), dummyQuery.rootViews());
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Map<?,?> mapWithElAsNull(Map<?,?> dump) {
+		HashMap result = new HashMap(dump);
+		result.put("el",null);
+		return result;
+	}
+
 	
+		
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected static Map<?,?> dumpRecursively(Map parentView,List<View> children)
 	{
@@ -315,6 +325,7 @@ public class UIQueryUtils {
 		Map m = new HashMap();
 		
 		m.put("id",getId(view));
+		m.put("el",view);
 		
 		Map rect = ViewMapper.getRectForView(view);
 		Map hitPoint = extractHitPointFromRect(rect);
@@ -324,11 +335,59 @@ public class UIQueryUtils {
 		m.put("action",isAction(view));
 		m.put("enabled",view.isEnabled());
 		m.put("visible",isVisible(view));
+		m.put("entry_types", elementEntryTypes(view));
 		m.put("value",extractValueFromView(view));
 		m.put("type",ViewMapper.getClassNameForView(view));
-		m.put("name",getId(view));//TODO: does name make sense on Android?
+		m.put("name",getNameForView(view));
 		m.put("label",ViewMapper.getContentDescriptionForView(view));									
 		return m;
+	}
+
+	public static List<String> elementEntryTypes(View view) {
+		if (view instanceof TextView)
+		{
+			TextView textView = (TextView) view;				
+			return mapTextViewInputTypes(textView.getInputType());	
+		}
+		return null;
+		
+	}
+
+	public static List<String> mapTextViewInputTypes(int inputType) {
+		List<String> inputTypes = new ArrayList<String>();
+		if (inputTypeHasTrait(inputType, InputType.TYPE_TEXT_VARIATION_PASSWORD) || inputTypeHasTrait(inputType, InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD)) {
+			inputTypes.add("password");
+		}
+		if (inputTypeHasTrait(inputType, InputType.TYPE_CLASS_NUMBER)) {
+			inputTypes.add("numeric");
+		}
+		inputTypes.add(String.valueOf(inputType));
+		
+		return inputTypes;	
+	}
+
+	private static boolean inputTypeHasTrait(int inputType,
+			int inputTypeTrait) {
+		return (inputType & inputTypeTrait) != 0;
+	}
+
+	private static Object getNameForView(View view) 
+	{
+		Object result = null;
+		Method hintMethod = hasProperty(view,"hint");
+		if (hintMethod!=null)
+		{
+			result = getProperty(view, hintMethod);			
+		}
+		if (result != null) {return result.toString();}
+		Method textMethod = hasProperty(view,"text");
+		if (textMethod!=null)
+		{
+			result = getProperty(view, textMethod);			
+		}
+		if (result != null) {return result.toString();}
+		
+		return null;
 	}
 
 	public static Object extractValueFromView(View view) {
@@ -366,6 +425,7 @@ public class UIQueryUtils {
 	private static Map<?,?> emptyRootView() {
 		return new HashMap() {{				
 			put("id",null);
+			put("el",null);			
 			put("rect",null);
 			put("hit-point",null);
 			put("action",false);

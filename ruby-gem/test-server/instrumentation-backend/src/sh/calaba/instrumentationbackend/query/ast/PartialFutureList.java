@@ -86,8 +86,8 @@ public class PartialFutureList implements Future {
 		return result;
 	}
 	
-	private Future extractFuture(List evaluateWithViews) {
-		for (Object o : evaluateWithViews) {
+	private Future extractFuture(List list) {
+		for (Object o : list) {
 			if (o instanceof Future) {
 				return (Future) o;
 			}

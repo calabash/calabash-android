@@ -164,8 +164,7 @@ public class Query {
         Set<View> parents = new HashSet<View>();
         for (View v : viewFetcher.getAllViews(false))
         {
-            View parent = viewFetcher.getTopParent(v);
-            System.out.println(parent);
+            View parent = viewFetcher.getTopParent(v);            
             parents.add(parent);
         }
         List<View> results = new ArrayList<View>();
