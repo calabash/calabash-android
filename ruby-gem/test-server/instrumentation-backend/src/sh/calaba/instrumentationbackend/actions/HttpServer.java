@@ -60,7 +60,7 @@ public class HttpServer extends NanoHTTPD {
 		super(testServerPort, new File("/"));
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Response serve(String uri, String method, Properties header,
 			Properties params, Properties files) {
 		System.out.println("URI: " + uri);
@@ -71,14 +71,37 @@ public class HttpServer extends NanoHTTPD {
 		else if (uri.endsWith("/dump")) {
 			FranklyResult errorResult = null;
 			try {
-				Map<?,?> dumpTree = new ViewDump().dumpWithoutElements();
+				
+				
+				String json = params.getProperty("json");
+				
+				
+				if (json == null)
+				{					
+					Map<?,?> dumpTree = new ViewDump().dumpWithoutElements();
+					return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", JSONUtils.asJson(dumpTree));
+				}
+				else 
+				{
+					ObjectMapper mapper = new ObjectMapper();
+					Map dumpSpec = mapper.readValue(json, Map.class);
+														
+					List<Integer> path = (List<Integer>) dumpSpec.get("path");
+					if (path == null)
+					{
+						Map<?,?> dumpTree = new ViewDump().dumpWithoutElements();
+						return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", JSONUtils.asJson(dumpTree));					
+					}
+					Map<?,?> dumpTree = new ViewDump().dumpPathWithoutElements(path);
+					return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", JSONUtils.asJson(dumpTree));
+				}
 
-				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", JSONUtils.asJson(dumpTree));
+				
 			} catch (Exception e ) {
 				e.printStackTrace();
                 errorResult = FranklyResult.fromThrowable(e);
             }
-            return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", errorResult.asJson());
+            return new NanoHTTPD.Response(HTTP_INTERNALERROR, "application/json;charset=utf-8", errorResult.asJson());
 		} 
 		else if (uri.endsWith("/map")) {
 			FranklyResult errorResult = null;

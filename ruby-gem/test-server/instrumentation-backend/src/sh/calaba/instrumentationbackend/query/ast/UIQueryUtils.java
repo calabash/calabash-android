@@ -308,15 +308,35 @@ public class UIQueryUtils {
 	protected static Map<?,?> dumpRecursively(Map parentView,List<View> children)
 	{
 		ArrayList childrenArray = new ArrayList(32);
-		for (View view : children) {			
-			childrenArray.add(dumpRecursively(serializeViewToDump(view),  UIQueryUtils.subviews(view)));
+		for (int i=0;i<children.size();i++) {
+			View view = children.get(i);
+			Map serializedChild = serializeViewToDump(view);
+			List<Integer> childPath = new ArrayList<Integer>((List) parentView.get("path"));
+			childPath.add(i);
+			serializedChild.put("path", childPath);			
+			childrenArray.add(dumpRecursively(serializedChild, UIQueryUtils.subviews(view)));
 		}
 			
 		parentView.put("children", childrenArray);
 		
 		return parentView;
 	}
-	
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Map<?,?> dumpByPath(List<Integer> path) {
+		Query dummyQuery = new Query("not_used");
+		
+		Map currentView = emptyRootView();
+		List<View> currentChildren = dummyQuery.rootViews(); 
+				
+		for (Integer i:path) {
+			View child = currentChildren.get(i);		
+			currentView = serializeViewToDump(child);
+			currentChildren = UIQueryUtils.subviews(child);						
+		}
+		
+		return currentView;
+	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Map<?,?> serializeViewToDump(View view) {
@@ -332,7 +352,7 @@ public class UIQueryUtils {
 		
 		m.put("rect",rect);
 		m.put("hit-point",hitPoint);
-		m.put("action",isAction(view));
+		m.put("action",actionForView(view));
 		m.put("enabled",view.isEnabled());
 		m.put("visible",isVisible(view));
 		m.put("entry_types", elementEntryTypes(view));
@@ -403,14 +423,40 @@ public class UIQueryUtils {
 			TextView t = (TextView) view;
 			return t.getText().toString();
 		}
-		return view.toString();
+		return null;
 	}
 
-	public static boolean isAction(View view) 
+	/*
+	 * function action(el)
+    {
+        var normalized = normalize(el);
+        if (!normalized) {
+            return false;
+        }
+        if (normalized instanceof UIAButton) {
+            return {
+                "type":'touch',
+                "gesture":'tap'
+            };
+        }
+        //TODO MORE
+        return false;
+    }
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Map<?,?> actionForView(View view) 
 	{
+		Map result = null;
+		if (view instanceof android.widget.Button || view instanceof android.widget.ImageButton) {
+			result = new HashMap();
+			result.put("type","touch");
+			result.put("gesture","tap");
+		}
 		
-		return (view instanceof android.widget.Button);
 		//TODO: obviously many more!
+		return result;
+		
+		
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -422,7 +468,7 @@ public class UIQueryUtils {
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes", "serial"})
-	private static Map<?,?> emptyRootView() {
+	private static Map<?,?> emptyRootView() {		
 		return new HashMap() {{				
 			put("id",null);
 			put("el",null);			
@@ -432,10 +478,13 @@ public class UIQueryUtils {
 			put("enabled",false);
 			put("visible",true);
 			put("value",null);
+			put("path",new ArrayList<Integer>());			
 			put("type","[object CalabashRootView]");
 			put("name",null);
 			put("label",null);									
 		}};
 	}
+
+	
 
 }

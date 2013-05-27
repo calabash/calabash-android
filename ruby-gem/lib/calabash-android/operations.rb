@@ -1,3 +1,4 @@
+require 'httpclient'
 require 'json'
 require 'net/http'
 require 'open-uri'
@@ -254,15 +255,86 @@ module Operations
 
     def http(path, data = {}, options = {})
       begin
-        http = Net::HTTP.new "127.0.0.1", @server_port
-        http.open_timeout = options[:open_timeout] if options[:open_timeout]
-        http.read_timeout = options[:read_timeout] if options[:read_timeout]
-        resp = http.post(path, "#{data.to_json}", {"Content-Type" => "application/json;charset=utf-8"})
-        resp.body
-      rescue EOFError => e
-          log "It looks like your app is no longer running. \nIt could be because of a crash or because your test script shut it down."
-          raise e
+
+        configure_http(@http, options)
+        make_http_request(
+            :method => :post,
+            :body => data.to_json,
+            :uri => url_for(path),
+            :header => {"Content-Type" => "application/json;charset=utf-8"})
+
+      rescue HTTPClient::TimeoutError,
+             HTTPClient::KeepAliveDisconnected,
+             Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ECONNABORTED,
+             Errno::ETIMEDOUT => e
+        log "It looks like your app is no longer running. \nIt could be because of a crash or because your test script shut it down."
+        raise e
       end
+    end
+
+    def set_http(http)
+      @http = http
+    end
+
+    def url_for(method)
+      url = URI.parse(ENV['DEVICE_ENDPOINT']|| "http://127.0.0.1:#{@server_port}")
+      path = url.path
+      if path.end_with? "/"
+        path = "#{path}#{method}"
+      else
+        path = "#{path}/#{method}"
+      end
+      url.path = path
+      url
+    end
+
+
+
+    def make_http_request(options)
+      body = nil
+      begin
+        unless @http
+          @http = init_request(options)
+        end
+        header = options[:header] || {}
+        header["Content-Type"] = "application/json;charset=utf-8"
+        options[:header] = header
+
+        if options[:method] == :post
+          body = @http.post(options[:uri], options).body
+        else
+          body = @http.get(options[:uri], options).body
+        end
+      rescue Exception => e
+        if @http
+          @http.reset_all
+          @http=nil
+        end
+        raise e
+      end
+      body
+    end
+
+    def init_request(options)
+      http = HTTPClient.new
+      configure_http(http, options)
+    end
+
+    def configure_http(http, options)
+      return unless http
+      http.connect_timeout = options[:open_timeout] || 15
+      http.send_timeout = options[:send_timeout] || 15
+      http.receive_timeout = options[:read_timeout] || 15
+      if options.has_key?(:debug) && options[:debug]
+        http.debug_dev= $stdout
+      else
+        if ENV['DEBUG_HTTP'] and (ENV['DEBUG_HTTP'] != '0')
+          http.debug_dev = $stdout
+        else
+          http.debug_dev= nil
+        end
+      end
+      http
     end
 
     def screenshot(options={:prefix => nil, :name => nil})
@@ -493,8 +565,8 @@ module Operations
     performAction("touch_coordinate", center_x, center_y)
   end
 
-  def http(options, data=nil)
-    default_device.http(options, data)
+  def http(path, data = {}, options = {})
+    default_device.http(path, data, options)
   end
 
   def html(q)
@@ -620,12 +692,12 @@ module Operations
     res['results']
   end
 
-  def url_for( verb )
-    ni
+  def url_for( method )
+    default_device.url_for(method)
   end
 
-  def make_http_request( url, req )
-    ni
+  def make_http_request(options)
+    default_device.make_http_request(options)
   end
 
 end

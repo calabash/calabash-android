@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 
@@ -21,7 +22,18 @@ public class ViewDump {
 		
 	}
 
+
+	public Map<?,?> dumpPathWithoutElements(final List<Integer> path) {
+		final AtomicReference<List<Integer>> ref = new AtomicReference<List<Integer>>(path);
+		Map<?, ?> dumpTree = (Map) UIQueryUtils.evaluateSyncInMainThread(new Callable() {
+			public Object call() throws Exception {
+				return UIQueryUtils.dumpByPath(ref.get());
+			}
+		});
 		
+		return UIQueryUtils.mapWithElAsNull(dumpTree);						
+	}
+
 	
 	private Map<?, ?> sameTreeWithoutElements(Map<?, ?> dump) {
 		Map node = UIQueryUtils.mapWithElAsNull(dump);

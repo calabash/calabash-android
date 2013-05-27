@@ -21,5 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency( "slowhandcuke" )
   s.add_dependency( "rubyzip" )
   s.add_dependency( "awesome_print" )
+  s.add_dependency( 'httpclient', '~> 2.3.2')
 
 end
