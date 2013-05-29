@@ -5,6 +5,7 @@ Usage: calabash-android <command-name> [parameters] [options]
     setup
     build
     run [parameters]
+    console
     version
 
   Commands:
@@ -15,8 +16,11 @@ Usage: calabash-android <command-name> [parameters] [options]
     setup sets up a non-default keystore to use with this test project.
 
     build builds the test server that will be used when testing the app.
-      
+
     run runs Cucumber in the current folder with the enviroment needed.
+
+    console opens an interactive irb shell. Here you can send commands
+      to the app and query for UI elements.
 
     version prints the gem version
 
