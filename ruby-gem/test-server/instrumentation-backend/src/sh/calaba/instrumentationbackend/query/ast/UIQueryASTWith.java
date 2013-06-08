@@ -120,7 +120,7 @@ public class UIQueryASTWith implements UIQueryAST {
 						|| (value != null && value.equals(this.value))) {
 					return o;
 				} else if (this.value instanceof String
-						&& this.value.equals(value.toString())) {
+						&& value != null && this.value.equals(value.toString())) {
 					return o;
 				}
 			}
