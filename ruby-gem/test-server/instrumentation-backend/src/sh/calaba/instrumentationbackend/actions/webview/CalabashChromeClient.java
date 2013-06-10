@@ -1,5 +1,6 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +37,22 @@ public class CalabashChromeClient extends WebChromeClient {
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
+		}  else {
+			try {
+				
+				/*
+				 * pick up the chromeClient from the webView
+				 * this is required because in Jelly Bean there is no getWebChromeClient
+				 * above sdk 16.This will help HTML5 hybrid application (Cordova) to pass the prompt messages 
+				 * to Native code. Previously the CalabashChromeClient did not populate the mWebChromeClient
+				 * which lead to the Cordova.exec messages not forward to the Cordova ChromeClient.
+				 */
+				Field field = getChromeClientField(webView.getClass());
+				field.setAccessible(true);
+				mWebChromeClient = (WebChromeClient) field.get(webView);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		}
 
         if ( Looper.getMainLooper().getThread() == Thread.currentThread()) {
@@ -48,6 +65,21 @@ public class CalabashChromeClient extends WebChromeClient {
                 }
             });
         }
+	}
+
+	/*
+	 * returns the chromeClient from the WebView.
+	 * recursively moves up to its superClass to get the chromeClient 
+	 * if there is no chromeClient it returns null.
+	 */
+	private Field getChromeClientField(Class currentClass) {
+		if (currentClass == null)
+			return null;
+		try {
+			return currentClass.getDeclaredField("chromeClient");
+		} catch (NoSuchFieldException e) {
+			return getChromeClientField(currentClass.getSuperclass());
+		}
 	}
 
 	@Override
