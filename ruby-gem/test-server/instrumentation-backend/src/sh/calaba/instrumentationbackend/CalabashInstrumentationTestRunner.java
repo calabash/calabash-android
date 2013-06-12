@@ -2,6 +2,7 @@ package sh.calaba.instrumentationbackend;
 
 import java.lang.reflect.Method;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.test.InstrumentationTestRunner;
@@ -27,7 +28,7 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
         InstrumentationBackend.extras = arguments;
 
         try {
-            InstrumentationBackend.mainActivity = Class.forName(arguments.getString("main_activity"));
+            InstrumentationBackend.mainActivity = Class.forName(arguments.getString("main_activity")).asSubclass(Activity.class);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
