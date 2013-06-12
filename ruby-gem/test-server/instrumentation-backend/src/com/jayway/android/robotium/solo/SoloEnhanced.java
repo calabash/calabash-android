@@ -2,15 +2,14 @@ package com.jayway.android.robotium.solo;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.app.Instrumentation;
 
 public class SoloEnhanced extends Solo {
 //	private Pincher pincher;
 	private MapViewUtils mapViewUtils;
 
-	public SoloEnhanced(Instrumentation instrumentation, Activity activity) {
-		super(instrumentation, activity);
+	public SoloEnhanced(Instrumentation instrumentation) {
+		super(instrumentation);
 		this.mapViewUtils = new MapViewUtils(instrumentation, viewFetcher, sleeper, waiter);
 //		this.pincher = new Pincher(instrumentation, viewFetcher);
 	}

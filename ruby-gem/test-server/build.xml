@@ -17,7 +17,7 @@
     <condition property="bat" value=".bat" else=""><os family="windows" /></condition>
 
     <property name="dx" location="${tools.dir}/dx${bat}" />
-    <property name="aapt" location="${tools.dir}/aapt${bat}" />
+    <property name="aapt" location="${tools.dir}/aapt" />
     
     <property name="android.lib" location="${env.ANDROID_HOME}/platforms/android-${android.api.level}/android.jar"/>
     <path id="android.antlibs">
