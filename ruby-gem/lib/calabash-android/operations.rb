@@ -63,6 +63,10 @@ module Operations
     default_device.install_app(app_path)
   end
 
+  def update_app(app_path)
+    default_device.update_app(app_path)
+  end
+
   def uninstall_apps
     default_device.uninstall_app(package_name(default_device.test_server_path))
     default_device.uninstall_app(package_name(default_device.app_path))
@@ -208,6 +212,19 @@ module Operations
         ::Cucumber.wants_to_quit = true
         raise "#{pn} did not get installed. Aborting!"
       end
+    end
+
+    def update_app(app_path)
+      cmd = "#{adb_command} install -r \"#{app_path}\""
+      log "Updating: #{app_path}"
+      result = `#{cmd}`
+      log "result: #{result}"
+      succeeded = result.include?("Success")
+
+      unless succeeded
+        ::Cucumber.wants_to_quit = true
+        raise "#{pn} did not get updated. Aborting!"
+      end    
     end
 
     def uninstall_app(package_name)
