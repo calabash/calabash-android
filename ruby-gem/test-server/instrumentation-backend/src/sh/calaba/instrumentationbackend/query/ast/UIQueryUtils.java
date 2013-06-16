@@ -297,6 +297,7 @@ public class UIQueryUtils {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Map<?,?> mapWithElAsNull(Map<?,?> dump) {
+		if (dump == null) return null;
 		HashMap result = new HashMap(dump);
 		result.put("el",null);
 		return result;
@@ -330,9 +331,15 @@ public class UIQueryUtils {
 		List<View> currentChildren = dummyQuery.rootViews(); 
 				
 		for (Integer i:path) {
-			View child = currentChildren.get(i);		
-			currentView = serializeViewToDump(child);
-			currentChildren = UIQueryUtils.subviews(child);						
+			if (i < currentChildren.size()) {
+				View child = currentChildren.get(i);		
+				currentView = serializeViewToDump(child);
+				currentChildren = UIQueryUtils.subviews(child);	
+			}
+			else {
+				return null;				
+			}
+									
 		}
 		
 		return currentView;

@@ -93,7 +93,14 @@ public class HttpServer extends NanoHTTPD {
 						return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", JSONUtils.asJson(dumpTree));					
 					}
 					Map<?,?> dumpTree = new ViewDump().dumpPathWithoutElements(path);
-					return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", JSONUtils.asJson(dumpTree));
+					if (dumpTree == null) {
+						return new NanoHTTPD.Response(HTTP_NOTFOUND, "application/json;charset=utf-8", "{}");	
+					}
+					else {
+						return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", JSONUtils.asJson(dumpTree));	
+					}
+					
+					
 				}
 
 				
