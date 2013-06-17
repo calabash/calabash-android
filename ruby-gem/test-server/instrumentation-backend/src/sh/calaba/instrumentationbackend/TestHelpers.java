@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.drawable.Drawable;
@@ -53,19 +54,42 @@ public class TestHelpers {
         if (!expectedViewType.isInstance(theView)) {
             throw new RuntimeException(String.format("getViewById:  Expected to find a View of type %s but found one of type %s", expectedViewType.getClass().getName(), theView.getClass().getName()));
         }
-        
+
         return (ViewType) theView;
     }
 
     public static View getViewById(String resName) {
-        int id = InstrumentationBackend.solo.getCurrentActivity().getResources().getIdentifier(resName, "id", InstrumentationBackend.solo.getCurrentActivity().getPackageName());
+        int id = getIdFromString(resName);
         if (id == 0) {
             return null;
         }
 
         return InstrumentationBackend.solo.getView(id);
     }
-    
+
+    /**
+     * Converts a string identifier name to the corresponding {@code R.id.*}
+     * (Integer) resource identifier.
+     *
+     * If the string appears to be a number, it will be converted to an
+     * integer and assumed to be an existing identifier.
+     *
+     * @param resName the resource identifier name
+     * @return the corresponding {@code R.id.[resName]} identifier
+     */
+    public static int getIdFromString(String resName) {
+        try
+        {
+            // Check if th string is just a direct number (unlikely)
+            return Integer.parseInt(resName);
+        } catch (NumberFormatException nfe) {
+            // Assume this is an "R.id.<name>" string.
+        }
+
+        final Activity activity = InstrumentationBackend.solo.getCurrentActivity();
+        return activity.getResources().getIdentifier(resName, "id", activity.getPackageName());
+    }
+
     public static Drawable getDrawableById(String resName) {
         int id;
         try {
@@ -117,7 +141,7 @@ public class TestHelpers {
     public static void wait(int durationInSeconds) {
     	wait(new Double(durationInSeconds));
     }
-    
+
 
     public static void wait(double durationInSeconds) {
         try {
