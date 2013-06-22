@@ -75,7 +75,7 @@ public class WaitForTab implements Action {
             		}
         		} else {
         			Log.i("WaitForTab", "current tab view: " + view.getId() + ", " + view.getClass().getSimpleName());
-        			List<TextView> textViews = InstrumentationBackend.solo.getCurrentTextViews(view);
+        			List<TextView> textViews = InstrumentationBackend.solo.getCurrentViews(TextView.class, view);
         			for( TextView textView : textViews ) {
         				currentTab = textView.getText().toString();
         				Log.i("WaitForTab", " child text view: " + currentTab);

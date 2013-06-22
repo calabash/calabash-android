@@ -20,7 +20,7 @@ public class Press implements Action {
 
         InstrumentationBackend.solo.searchButton(description);
         helpText += "Buttons:\n";
-        for (Button b : InstrumentationBackend.solo.getCurrentButtons()) {
+        for (Button b : InstrumentationBackend.solo.getCurrentViews(Button.class)) {
             helpText += b.getText() + "\n";
             if (b.getText().toString().equalsIgnoreCase(description)) {
                 System.out.println("Found button to press:" + b);

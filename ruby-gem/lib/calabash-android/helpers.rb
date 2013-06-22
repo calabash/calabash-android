@@ -26,7 +26,24 @@ def main_activity(app)
 end
 
 def manifest(app)
-  `java -jar "#{File.dirname(__FILE__)}/lib/manifest_extractor.jar" "#{app}"`
+  out_path = manifest_path(app)
+  manifest_file = File.join(out_path, 'AndroidManifest.xml')
+  puts manifest_file
+  if File.exist?(manifest_file)
+    return File.read(manifest_file)
+  end
+
+  manifest_extractor = File.join(File.expand_path(File.dirname(__FILE__)),'lib', 'apktool-cli-1.5.3-SNAPSHOT.jar')
+  output = `java -jar "#{manifest_extractor}" d -s "#{app}" #{out_path} &> .calabash.extract.out`
+  unless File.size?(manifest_file)
+    f =  File.size?('.calabash.extract.out') ? File.read('.calabash.extract.out') : ''
+    raise ("Unable to extract manifest: #{output}\n#{f}")
+  else
+    output = File.read(manifest_file)
+  end
+
+  output
+
 end
 
 def checksum(file_path)
@@ -36,6 +53,10 @@ end
 
 def test_server_path(apk_file_path)
   "test_servers/#{checksum(apk_file_path)}_#{Calabash::Android::VERSION}.apk"
+end
+
+def manifest_path(apk_file_path)
+  "test_servers/#{checksum(apk_file_path)}_#{Calabash::Android::VERSION}.res"
 end
 
 

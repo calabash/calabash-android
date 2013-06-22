@@ -55,7 +55,7 @@ public class GetListItemText implements Action {
 		}
 
 
-		ArrayList<ListView> listViews = InstrumentationBackend.solo.getCurrentListViews();
+		ArrayList<ListView> listViews = InstrumentationBackend.solo.getCurrentViews(ListView.class);
 		Log.d("GetListItemText", "Found " + listViews.size() + " list views");
 		if( listViews == null || listViews.size() <= listIndex ) {
 			return new Result(false, "Could not find list #" + (listIndex + 1));

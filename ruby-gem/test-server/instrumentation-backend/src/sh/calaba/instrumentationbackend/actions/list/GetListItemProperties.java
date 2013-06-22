@@ -57,7 +57,7 @@ public class GetListItemProperties implements Action {
 		}
 
 
-		ArrayList<ListView> listViews = InstrumentationBackend.solo.getCurrentListViews();
+		ArrayList<ListView> listViews = InstrumentationBackend.solo.getCurrentViews(ListView.class);
 		if( listViews == null || listViews.size() <= listIndex ) {
 			return new Result(false, "Could not find list #" + (listIndex + 1));
 		}

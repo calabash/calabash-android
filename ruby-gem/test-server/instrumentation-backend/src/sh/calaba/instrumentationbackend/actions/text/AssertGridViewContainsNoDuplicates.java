@@ -17,7 +17,7 @@ public class AssertGridViewContainsNoDuplicates implements Action {
 
 	@Override
 	public Result execute(String... args) {
-		ArrayList<GridView> gridViews = InstrumentationBackend.solo.getCurrentGridViews();
+		ArrayList<GridView> gridViews = InstrumentationBackend.solo.getCurrentViews(GridView.class);
 
 		if( gridViews.size() == 0 ) {
 			return new Result(false, "Could not find any grid views");
@@ -50,7 +50,7 @@ public class AssertGridViewContainsNoDuplicates implements Action {
 
 	private LinkedList<String> assertNoDuplicatesInGrid( GridView gridView ) {
 		//InstrumentationBackend.solo.getViews( gridView );
-		ArrayList<TextView> textViews = InstrumentationBackend.solo.getCurrentTextViews( gridView );
+		ArrayList<TextView> textViews = InstrumentationBackend.solo.getCurrentViews(TextView.class, gridView );
 		LinkedList<String> textValues = new LinkedList<String>();
 		LinkedList<String> duplicates = new LinkedList<String>();
 

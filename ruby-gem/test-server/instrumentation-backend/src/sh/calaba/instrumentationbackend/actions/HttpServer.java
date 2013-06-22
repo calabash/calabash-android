@@ -3,6 +3,7 @@ package sh.calaba.instrumentationbackend.actions;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -45,7 +46,11 @@ public class HttpServer extends NanoHTTPD {
 		if (instance != null) {
 			throw new IllegalStateException("Can only instantiate once!");
 		}
-		instance = new HttpServer(testServerPort);
+		try {
+			instance = new HttpServer(testServerPort);
+		} catch (IOException e) {
+			new RuntimeException(e);
+		}
 		return instance;
 	}
 
@@ -56,7 +61,7 @@ public class HttpServer extends NanoHTTPD {
 		return instance;
 	}
 
-	private HttpServer(int testServerPort) {
+	private HttpServer(int testServerPort) throws IOException {
 		super(testServerPort, new File("/"));
 	}
 

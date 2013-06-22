@@ -19,7 +19,7 @@ public class PressImageButtonDescription implements Action {
         }
 
         int count = 0;
-        for (ImageButton b : InstrumentationBackend.solo.getCurrentImageButtons()){
+        for (ImageButton b : InstrumentationBackend.solo.getCurrentViews(ImageButton.class)){
             err += " "+ b.getContentDescription();
             if (args[0].equals(b.getContentDescription())){
                 if (count == index) {

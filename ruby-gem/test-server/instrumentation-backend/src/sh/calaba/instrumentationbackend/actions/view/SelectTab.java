@@ -69,7 +69,7 @@ FIND_TAB:
         			foundTabs.add(currentTab);
         		} else {
         			Log.i("SelectTab", "current tab view: " + view.getId() + ", " + view.getClass().getSimpleName());
-        			List<TextView> textViews = InstrumentationBackend.solo.getCurrentTextViews(view);
+        			List<TextView> textViews = InstrumentationBackend.solo.getCurrentViews(TextView.class, view);
         			for( TextView textView : textViews ) {
         				currentTab = textView.getText().toString();
         				Log.i("SelectTab", " child text view: " + currentTab);

@@ -12,7 +12,7 @@ public class PressButtonText implements Action {
     @Override
     public Result execute(String... args) {
         InstrumentationBackend.solo.searchButton(args[0]);
-        for (Button b : InstrumentationBackend.solo.getCurrentButtons())
+        for (Button b : InstrumentationBackend.solo.getCurrentViews(Button.class))
         	System.out.println("Button text: " + b.getText());
         InstrumentationBackend.solo.clickOnButton(args[0]);
         return Result.successResult();
