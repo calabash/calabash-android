@@ -3,15 +3,15 @@ package sh.calaba.instrumentationbackend.actions.view;
 import java.util.LinkedList;
 import java.util.List;
 
+import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import sh.calaba.instrumentationbackend.Result;
+import sh.calaba.instrumentationbackend.actions.Action;
 import android.app.Activity;
 import android.app.TabActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TabHost;
 import android.widget.TextView;
-import sh.calaba.instrumentationbackend.InstrumentationBackend;
-import sh.calaba.instrumentationbackend.Result;
-import sh.calaba.instrumentationbackend.actions.Action;
 
 /**
  * Select the tab by 1-based index or by name

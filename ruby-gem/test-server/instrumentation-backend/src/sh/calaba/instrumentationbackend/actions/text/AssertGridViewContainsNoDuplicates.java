@@ -3,11 +3,11 @@ package sh.calaba.instrumentationbackend.actions.text;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import android.widget.GridView;
-import android.widget.TextView;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
+import android.widget.GridView;
+import android.widget.TextView;
 
 /**
  * Optional arg is 1-based index - eg: assert_no_duplicates_in_grid, "1" examines the first grid

@@ -417,6 +417,16 @@ public class NanoHTTPD
 
 						decodeMultipartData(boundary, fbuf, in, parms, files);
 					}
+					else if (contentType.toLowerCase().startsWith("application/json"))
+					{
+						StringBuffer sb = new StringBuffer();
+						String line = null;
+						while ((line = in.readLine()) != null)
+						{
+						sb.append(line + "\n");
+						}
+						parms.put("json", sb.toString());
+					}
 					else
 					{
 						// Handle application/x-www-form-urlencoded

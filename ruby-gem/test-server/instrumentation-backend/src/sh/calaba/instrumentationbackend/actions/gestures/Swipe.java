@@ -1,6 +1,5 @@
 package sh.calaba.instrumentationbackend.actions.gestures;
 
-import android.util.DisplayMetrics;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;

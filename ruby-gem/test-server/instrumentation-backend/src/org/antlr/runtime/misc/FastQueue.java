@@ -27,8 +27,8 @@
  */
 package org.antlr.runtime.misc;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /** A queue that can dequeue and get(i) in O(1) and grow arbitrarily large.

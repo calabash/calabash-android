@@ -28,7 +28,7 @@ end
 def manifest(app)
   out_path = manifest_path(app)
   manifest_file = File.join(out_path, 'AndroidManifest.xml')
-  puts manifest_file
+
   if File.exist?(manifest_file)
     return File.read(manifest_file)
   end

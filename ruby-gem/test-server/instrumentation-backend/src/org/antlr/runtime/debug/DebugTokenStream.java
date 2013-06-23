@@ -27,9 +27,9 @@
  */
 package org.antlr.runtime.debug;
 
-import org.antlr.runtime.*;
-
-import java.util.List;
+import org.antlr.runtime.Token;
+import org.antlr.runtime.TokenSource;
+import org.antlr.runtime.TokenStream;
 
 public class DebugTokenStream implements TokenStream {
 	protected DebugEventListener dbg;

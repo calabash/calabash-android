@@ -1,15 +1,15 @@
 package sh.calaba.instrumentationbackend;
 
-import android.content.Intent;
-import android.os.Bundle;
 import sh.calaba.instrumentationbackend.actions.Actions;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 

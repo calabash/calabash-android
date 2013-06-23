@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import android.view.View;
-
 public class UIQueryASTClassName implements UIQueryAST {
 	public final String simpleClassName;	
 	@SuppressWarnings("rawtypes")

@@ -27,12 +27,12 @@
  */
 package org.antlr.runtime.tree;
 
-import org.antlr.runtime.Token;
-import org.antlr.runtime.TokenStream;
-import org.antlr.runtime.RecognitionException;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.Token;
+import org.antlr.runtime.TokenStream;
 
 /** A TreeAdaptor that works with any Tree implementation. */
 public abstract class BaseTreeAdaptor implements TreeAdaptor {
