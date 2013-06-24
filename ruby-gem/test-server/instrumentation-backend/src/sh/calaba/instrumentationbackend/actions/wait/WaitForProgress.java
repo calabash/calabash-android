@@ -36,7 +36,7 @@ public class WaitForProgress implements Action {
     private int numberOfVisibleProgressBars() {
         int visibleProgressBars = 0;
         for (ProgressBar v : InstrumentationBackend.solo.getCurrentViews(ProgressBar.class)) {
-            if (v != null & v.getVisibility() != View.GONE && v.getVisibility() != View.INVISIBLE) {
+            if (v != null & v.getVisibility() != View.GONE && v.getVisibility() != View.INVISIBLE && v.isShown()) {
                 visibleProgressBars++;
                 System.out.println("Found visible progressbar number:" + visibleProgressBars);
             }
