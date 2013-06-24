@@ -76,10 +76,10 @@
          source="1.6"
          target="1.6"
          debug="true"
+         includeantruntime="false"
 	       bootclasspathref="android.target.classpath"
 	       classpath="${extensible.classpath}"
-	       classpathref="jar.libs.ref">
-      </javac>
+	       classpathref="jar.libs.ref" />
     </target>
 
 
