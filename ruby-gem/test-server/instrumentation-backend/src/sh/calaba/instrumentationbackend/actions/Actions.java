@@ -1,6 +1,7 @@
 package sh.calaba.instrumentationbackend.actions;
 
-import java.util.Enumeration;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +13,6 @@ import android.content.pm.InstrumentationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.test.InstrumentationTestCase;
-import dalvik.system.DexFile;
 
 public class Actions {
 
@@ -20,8 +20,8 @@ public class Actions {
     public static Instrumentation parentInstrumentation;
     public static InstrumentationTestCase parentTestCase;
     private Context context;
-	private Context targetContext;
-
+    private Context targetContext;
+    
     public Actions(Instrumentation parentInstrumentation, InstrumentationTestCase parentTestCase) {
         Actions.parentInstrumentation = parentInstrumentation;
         Actions.parentTestCase = parentTestCase;
@@ -32,18 +32,16 @@ public class Actions {
     
     private void loadActions() {
         try {
-            DexFile dexFile = new DexFile(getApkLocation());
-            Enumeration<String> entries = dexFile.entries();
-            while (entries.hasMoreElements()) {
-                String element = entries.nextElement();
-                // Only look at classes from the actions package (and sub
-                // packages)
-                if (element.startsWith("sh.calaba.instrumentationbackend.actions.")) {
-                    addAction(element);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(context.getAssets().open("actions")));
+            try {
+                for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                    String name = line.trim();
+                    if (name.length() > 0) addAction(name);
                 }
+            } finally {
+                reader.close();
             }
-            dexFile.close();
-	    } catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -83,29 +81,6 @@ public class Actions {
         }
         return action;
     }
-
-    private String getApkLocation() {
-        PackageManager pm = context.getPackageManager();
-        InstrumentationInfo info = null;
-        try {
-            info = pm.getInstrumentationInfo(new ComponentName(context, parentInstrumentation.getClass()), 0);
-        } catch (NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return info != null ? info.sourceDir : null;
-    }
-    
-    private String getTargetApkLocation() {
-        PackageManager pm = targetContext.getPackageManager();
-        InstrumentationInfo info = null;
-        try {
-            info = pm.getInstrumentationInfo(new ComponentName(targetContext, parentInstrumentation.getClass()), 0);
-        } catch (NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return info != null ? info.sourceDir : null;
-    }
-
 
     public Map<String, Action> getActions() {
         return actions;

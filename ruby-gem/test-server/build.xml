@@ -17,7 +17,7 @@
     <condition property="bat" value=".bat" else=""><os family="windows" /></condition>
 
     <property name="dx" location="${tools.dir}/dx${bat}" />
-    <property name="aapt" location="${tools.dir}/aapt${bat}" />
+    <property name="aapt" location="${tools.dir}/aapt" />
     
     <property name="android.lib" location="${env.ANDROID_HOME}/platforms/android-${android.api.level}/android.jar"/>
     <path id="android.antlibs">
@@ -64,6 +64,13 @@
         <fileset dir="${calabashjs.dir}"/>
       </copy>
       <replace file="${staging.dir}/src/sh/calaba/instrumentationbackend/actions/version/Version.java" token="####VERSION####" value="${version}" failOnNoReplacements="true" />
+
+      <property name="src.dir.absolute" location="${staging.dir}/src" />
+      <pathconvert property="testserver.actions" pathsep="${line.separator}" dirsep=".">
+        <fileset dir="${src.dir.absolute}" includes="sh/calaba/instrumentationbackend/actions/**/*.java" />
+        <globmapper from="${src.dir.absolute}/*.java" to="*" handledirsep="true" />
+      </pathconvert>
+      <echo file="${staging.dir}/assets/actions" message="${testserver.actions}${line.separator}" />
     </target>
 
 
