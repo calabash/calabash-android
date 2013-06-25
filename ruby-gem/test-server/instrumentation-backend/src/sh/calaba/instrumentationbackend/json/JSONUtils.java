@@ -3,7 +3,7 @@ package sh.calaba.instrumentationbackend.json;
 import java.io.IOException;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 
 public class JSONUtils {
 

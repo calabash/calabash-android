@@ -10,9 +10,8 @@ import java.util.Map;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient.WebFuture;
+import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import android.webkit.WebView;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class QueryHelper {
 

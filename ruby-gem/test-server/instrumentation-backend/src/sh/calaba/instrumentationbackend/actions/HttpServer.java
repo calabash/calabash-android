@@ -20,11 +20,10 @@ import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.json.JSONUtils;
 import sh.calaba.instrumentationbackend.query.Query;
+import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class HttpServer extends NanoHTTPD {
 	private static final String TAG = "InstrumentationBackend";

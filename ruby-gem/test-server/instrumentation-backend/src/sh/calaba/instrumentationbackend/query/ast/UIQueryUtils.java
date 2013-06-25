@@ -22,15 +22,14 @@ import sh.calaba.instrumentationbackend.query.CompletedFuture;
 import sh.calaba.instrumentationbackend.query.Query;
 import sh.calaba.instrumentationbackend.query.ViewMapper;
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
+import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
+import sh.calaba.org.codehaus.jackson.type.TypeReference;
 import android.text.InputType;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UIQueryUtils {
 
