@@ -82,11 +82,12 @@ BOOL :	'true' | 'false'
 NIL :	'nil' | 'null'
     ;
 
-NAME  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
+NAME  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'$')*
     ;
 
 STRING
-    :  '\'' ( ESC_SEQ | ~('\\'|'\'') )* '\''
+    :  '\'' ( ESC_SEQ | ~('\\'|'\'') )* '\'' 
+    |  '"' ( DOUBLE_ESC_SEQ | ~('\\'|'"') )* '"'    
     ;
 
 WHITE   :	' '+ ;
@@ -96,6 +97,13 @@ HEX_DIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
 fragment
 ESC_SEQ
     :   '\\' ('b'|'t'|'n'|'f'|'r'|'\''|'\\')
+    |   UNICODE_ESC
+    |   OCTAL_ESC
+    ;
+
+fragment
+DOUBLE_ESC_SEQ
+    :   '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\\')
     |   UNICODE_ESC
     |   OCTAL_ESC
     ;

@@ -1,4 +1,4 @@
-// $ANTLR 3.4 antlr/UIQuery.g 2013-02-02 18:08:56
+// $ANTLR 3.4 antlr/UIQuery.g 2013-06-26 21:55:04
 
     package sh.calaba.instrumentationbackend.query.antlr;
 
@@ -14,7 +14,7 @@ import org.antlr.runtime.tree.*;
 @SuppressWarnings({"all", "warnings", "unchecked"})
 public class UIQueryParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ALL", "BEGINPRED", "BOOL", "DIRECTION", "ENDPRED", "ESC_SEQ", "FILTER_COLON", "HEX_DIGIT", "INT", "NAME", "NIL", "OCTAL_ESC", "QUALIFIED_NAME", "RELATION", "STRING", "UNICODE_ESC", "VISIBLE", "WHITE", "WILDCARD"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "ALL", "BEGINPRED", "BOOL", "DIRECTION", "DOUBLE_ESC_SEQ", "ENDPRED", "ESC_SEQ", "FILTER_COLON", "HEX_DIGIT", "INT", "NAME", "NIL", "OCTAL_ESC", "QUALIFIED_NAME", "RELATION", "STRING", "UNICODE_ESC", "VISIBLE", "WHITE", "WILDCARD"
     };
 
     public static final int EOF=-1;
@@ -22,21 +22,22 @@ public class UIQueryParser extends Parser {
     public static final int BEGINPRED=5;
     public static final int BOOL=6;
     public static final int DIRECTION=7;
-    public static final int ENDPRED=8;
-    public static final int ESC_SEQ=9;
-    public static final int FILTER_COLON=10;
-    public static final int HEX_DIGIT=11;
-    public static final int INT=12;
-    public static final int NAME=13;
-    public static final int NIL=14;
-    public static final int OCTAL_ESC=15;
-    public static final int QUALIFIED_NAME=16;
-    public static final int RELATION=17;
-    public static final int STRING=18;
-    public static final int UNICODE_ESC=19;
-    public static final int VISIBLE=20;
-    public static final int WHITE=21;
-    public static final int WILDCARD=22;
+    public static final int DOUBLE_ESC_SEQ=8;
+    public static final int ENDPRED=9;
+    public static final int ESC_SEQ=10;
+    public static final int FILTER_COLON=11;
+    public static final int HEX_DIGIT=12;
+    public static final int INT=13;
+    public static final int NAME=14;
+    public static final int NIL=15;
+    public static final int OCTAL_ESC=16;
+    public static final int QUALIFIED_NAME=17;
+    public static final int RELATION=18;
+    public static final int STRING=19;
+    public static final int UNICODE_ESC=20;
+    public static final int VISIBLE=21;
+    public static final int WHITE=22;
+    public static final int WILDCARD=23;
 
     // delegates
     public Parser[] getDelegates() {
@@ -744,9 +745,9 @@ public TreeAdaptor getTreeAdaptor() {
 
  
 
-    public static final BitSet FOLLOW_expr_in_query56 = new BitSet(new long[]{0x0000000000200002L});
-    public static final BitSet FOLLOW_WHITE_in_query59 = new BitSet(new long[]{0x00000000005120B0L});
-    public static final BitSet FOLLOW_expr_in_query62 = new BitSet(new long[]{0x0000000000200002L});
+    public static final BitSet FOLLOW_expr_in_query56 = new BitSet(new long[]{0x0000000000400002L});
+    public static final BitSet FOLLOW_WHITE_in_query59 = new BitSet(new long[]{0x0000000000A240B0L});
+    public static final BitSet FOLLOW_expr_in_query62 = new BitSet(new long[]{0x0000000000400002L});
     public static final BitSet FOLLOW_className_in_expr80 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_filter_in_expr84 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_visibility_in_expr88 = new BitSet(new long[]{0x0000000000000002L});
@@ -757,15 +758,15 @@ public TreeAdaptor getTreeAdaptor() {
     public static final BitSet FOLLOW_QUALIFIED_NAME_in_className150 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_ALL_in_visibility188 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_VISIBLE_in_visibility193 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NAME_in_filter220 = new BitSet(new long[]{0x0000000000000400L});
-    public static final BitSet FOLLOW_FILTER_COLON_in_filter222 = new BitSet(new long[]{0x0000000000045040L});
+    public static final BitSet FOLLOW_NAME_in_filter220 = new BitSet(new long[]{0x0000000000000800L});
+    public static final BitSet FOLLOW_FILTER_COLON_in_filter222 = new BitSet(new long[]{0x000000000008A040L});
     public static final BitSet FOLLOW_set_in_filter225 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BEGINPRED_in_predicate258 = new BitSet(new long[]{0x0000000000002000L});
-    public static final BitSet FOLLOW_NAME_in_predicate261 = new BitSet(new long[]{0x0000000000200000L});
-    public static final BitSet FOLLOW_WHITE_in_predicate263 = new BitSet(new long[]{0x0000000000020000L});
-    public static final BitSet FOLLOW_RELATION_in_predicate266 = new BitSet(new long[]{0x0000000000200000L});
-    public static final BitSet FOLLOW_WHITE_in_predicate268 = new BitSet(new long[]{0x0000000000045040L});
-    public static final BitSet FOLLOW_set_in_predicate271 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_BEGINPRED_in_predicate258 = new BitSet(new long[]{0x0000000000004000L});
+    public static final BitSet FOLLOW_NAME_in_predicate261 = new BitSet(new long[]{0x0000000000400000L});
+    public static final BitSet FOLLOW_WHITE_in_predicate263 = new BitSet(new long[]{0x0000000000040000L});
+    public static final BitSet FOLLOW_RELATION_in_predicate266 = new BitSet(new long[]{0x0000000000400000L});
+    public static final BitSet FOLLOW_WHITE_in_predicate268 = new BitSet(new long[]{0x000000000008A040L});
+    public static final BitSet FOLLOW_set_in_predicate271 = new BitSet(new long[]{0x0000000000000200L});
     public static final BitSet FOLLOW_ENDPRED_in_predicate287 = new BitSet(new long[]{0x0000000000000002L});
 
 }
