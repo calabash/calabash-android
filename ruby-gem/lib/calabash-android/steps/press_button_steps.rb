@@ -27,7 +27,7 @@ Then /^I touch the "([^\"]*)" text$/ do |text|
 end
 
 Then /^I press list item number (\d+)$/ do |line_index|
-  performAction('press_list_item', line_index, 0)
+  performAction('press_list_item', line_index.to_i+1, 0)
 end
 
 Then /^I long press list item number (\d+)$/ do |line_index|
