@@ -10,8 +10,7 @@ public class UIQueryASTClassName implements UIQueryAST {
 	public final Class qualifiedClassName;
 	
 	public UIQueryASTClassName(String simpleClassName) 
-	{
-		if (simpleClassName == null) {throw new IllegalArgumentException("Cannot instantiate with null class");}
+	{		
 		this.simpleClassName = simpleClassName;
 		this.qualifiedClassName = null;
 	}
@@ -112,6 +111,9 @@ public class UIQueryASTClassName implements UIQueryAST {
 	
 	private boolean match(Object o)
 	{
+		if (this.simpleClassName == null && this.qualifiedClassName == null) {
+			return false;
+		}
 		return matchSimpleClassName(o,this.simpleClassName) ||
 				matchQualifiedClassName(o,this.qualifiedClassName);
 	}
@@ -122,11 +124,14 @@ public class UIQueryASTClassName implements UIQueryAST {
 	}
 
 	public static boolean matchSimpleClassName(Object o, String simpleClassName) {
-		// TODO Auto-generated method stub
 		return simpleClassName != null && simpleClassName.equalsIgnoreCase(o.getClass().getSimpleName());
 	}
 	
 	public String toString() {
+		if (this.simpleClassName == null && this.qualifiedClassName == null) {
+			return "Class[null]";	
+		}
+
 		if (this.simpleClassName != null) 
 		{
 			return "Class["+this.simpleClassName+"]";	

@@ -120,10 +120,7 @@ public class Query {
 			try {
 				return new UIQueryASTClassName(Class.forName(step.getText()));
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				throw new InvalidUIQueryException("Qualified class name: "
-						+ step.getText() + " not found. (" + e.getMessage()
-						+ ")");
+				return new UIQueryASTClassName((String)null);
 			}
 		case UIQueryParser.NAME:
 			return new UIQueryASTClassName(step.getText());
