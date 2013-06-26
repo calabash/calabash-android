@@ -10,7 +10,7 @@ public class PressListItems implements Action {
 
     @Override
     public Result execute(String... args) {
-        InstrumentationBackend.solo.clickInList(Integer.parseInt(args[0]) - 1, Integer.parseInt(args[1]));
+        InstrumentationBackend.solo.clickInList(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
         return Result.successResult();
     }
 
