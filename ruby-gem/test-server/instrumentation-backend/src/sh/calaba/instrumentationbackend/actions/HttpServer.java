@@ -48,7 +48,7 @@ public class HttpServer extends NanoHTTPD {
 		try {
 			instance = new HttpServer(testServerPort);
 		} catch (IOException e) {
-			new RuntimeException(e);
+			throw new RuntimeException(e);
 		}
 		return instance;
 	}
