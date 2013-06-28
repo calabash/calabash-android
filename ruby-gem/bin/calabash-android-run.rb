@@ -16,15 +16,9 @@ def calabash_run(app_path = nil)
     build_test_server_if_needed(app_path)
 
     test_server_path = test_server_path(app_path)
-    if ENV["TEST_SERVER_PORT"]
-      test_server_port = ENV["TEST_SERVER_PORT"]
-    else
-      test_server_port = "34777"
-    end
     env = "MAIN_ACTIVITY=#{main_activity(app_path)} "\
           "APP_PATH=\"#{app_path}\" "\
-          "TEST_APP_PATH=\"#{test_server_path}\" "\
-          "TEST_SERVER_PORT=#{test_server_port}"
+          "TEST_APP_PATH=\"#{test_server_path}\""
   else
     env = ""
   end
