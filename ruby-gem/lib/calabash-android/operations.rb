@@ -190,8 +190,8 @@ module Operations
     def initialize(cucumber_world, serial, server_port, app_path, test_server_path, test_server_port = 7102)
 
       @cucumber_world = cucumber_world
-      @serial = serial
-      @server_port = server_port
+      @serial = serial || default_serial
+      @server_port = server_port || default_server_port
       @app_path = app_path
       @test_server_path = test_server_path
       @test_server_port = test_server_port
@@ -412,16 +412,33 @@ module Operations
       end
     end
 
-    def serial
-      @serial || default_serial
-    end
-
     def default_serial
       devices = connected_devices
       log "connected_devices: #{devices}"
       raise "No connected devices" if devices.empty?
       raise "More than one device connected. Specify device serial using ADB_DEVICE_ARG" if devices.length > 1
       devices.first
+    end
+
+    def default_server_port
+      require 'yaml'
+      File.open(File.expand_path('~/.calabash.yaml'), File::RDWR|File::CREAT) do |f|
+        f.flock(File::LOCK_EX)
+        state = YAML::load(f) || {}
+        ports = state['server_ports'] ||= {}
+        return ports[serial] if ports.has_key?(serial)
+
+        port = 34777
+        port += 1 while ports.has_value?(port)
+        ports[serial] = port
+
+        f.rewind
+        f.write(YAML::dump(state))
+        f.truncate(f.pos)
+
+        log "Persistently allocated port #{port} to #{serial}"
+        return port
+      end
     end
 
     def connected_devices
