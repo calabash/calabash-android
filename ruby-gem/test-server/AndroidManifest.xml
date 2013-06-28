@@ -19,6 +19,9 @@
     <uses-sdk android:minSdkVersion="4" />
     <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner" />
     <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.ClearAppData" />
+    <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.ClearPreferences" />
+    <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.SetPreferences" />
+    <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.GetPreferences" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
