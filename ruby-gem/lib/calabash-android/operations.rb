@@ -236,7 +236,7 @@ module Operations
       unless succeeded
         ::Cucumber.wants_to_quit = true
         raise "#{pn} did not get updated. Aborting!"
-      end    
+      end
     end
 
     def uninstall_app(package_name)
@@ -422,7 +422,7 @@ module Operations
 
     def default_server_port
       require 'yaml'
-      File.open(File.expand_path('~/.calabash.yaml'), File::RDWR|File::CREAT) do |f|
+      File.open(File.expand_path(server_port_configuration), File::RDWR|File::CREAT) do |f|
         f.flock(File::LOCK_EX)
         state = YAML::load(f) || {}
         ports = state['server_ports'] ||= {}
@@ -441,11 +441,15 @@ module Operations
       end
     end
 
+    def server_port_configuration
+      File.expand_path(ENV['CALABASH_SERVER_PORTS'] || "~/.calabash.yaml")
+    end
+
     def connected_devices
       lines = `#{adb} devices`.split("\n")
       lines.shift
       lines.collect { |l| l.split("\t").first}
-    end  
+    end
 
     def wake_up
       wake_up_cmd = "#{adb_command} shell am start -a android.intent.action.MAIN -n #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.WakeUp"
@@ -646,7 +650,7 @@ module Operations
       if app_running?
         perform_action('clear_preferences', name);
       else
-        
+
         logcat_id = get_logcat_id()
         cmd = "#{adb_command} shell am instrument -e logcat #{logcat_id} -e name \"#{name}\" #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.ClearPreferences"
         raise "Could not clear preferences" unless system(cmd)
