@@ -28,9 +28,9 @@ end
 def manifest(app)
   out_path = manifest_path(app)
   manifest_file = File.join(out_path, 'AndroidManifest.xml')
-  unless File.exist?(manifest_file)
+  unless File.size?(manifest_file)
     manifest_extractor = File.join(File.expand_path(File.dirname(__FILE__)),'lib', 'apktool-cli-1.5.3-SNAPSHOT.jar')
-    output = `java -jar "#{manifest_extractor}" d -s "#{app}" #{out_path} 2>&1`
+    output = `java -jar "#{manifest_extractor}" d -s --frame-path "#{framework_path(app)}" -f "#{app}" #{out_path} 2>&1`
     raise "Unable to extract manifest: #{output}" unless File.size?(manifest_file)
     # Tidy up a bit. It would be nice if apktool could just dump the manifest alone.
     FileUtils.rm_rf(%w{res assets classes.dex}.map {|f| File.join(out_path, f) })
@@ -49,6 +49,10 @@ end
 
 def manifest_path(apk_file_path)
   "test_servers/#{checksum(apk_file_path)}_#{Calabash::Android::VERSION}.res"
+end
+
+def framework_path(apk_file_path)
+  "test_servers/apktool-#{checksum(apk_file_path)}_#{Calabash::Android::VERSION}"
 end
 
 
