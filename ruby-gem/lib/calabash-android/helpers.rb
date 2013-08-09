@@ -89,7 +89,7 @@ def sign_apk(app_path, dest_path)
     jarsigner_path = "jarsigner"
   end
 
-  cmd = "#{jarsigner_path} -sigalg MD5withRSA -digestalg SHA1 -signedjar #{dest_path} -storepass #{keystore["keystore_password"]} -keystore #{keystore["keystore_location"]} #{app_path} #{keystore["keystore_alias"]}"
+  cmd = "#{jarsigner_path} -sigalg MD5withRSA -digestalg SHA1 -signedjar #{dest_path} -storepass #{keystore["keystore_password"]} -keystore #{keystore["keystore_location"]} \"#{app_path}\" #{keystore["keystore_alias"]}"
   log cmd
   unless system(cmd)
     puts "jarsigner command: #{cmd}"
@@ -172,7 +172,7 @@ def fingerprint_from_apk(app_path)
       raise "No RSA file found in META-INF. Cannot proceed." if rsa_files.empty?
       raise "More than one RSA file found in META-INF. Cannot proceed." if rsa_files.length > 1
 
-      cmd = "#{keytool_path} -v -printcert -file #{rsa_files.first}"
+      cmd = "#{keytool_path} -v -printcert -file \"#{rsa_files.first}\""
       log cmd
       fingerprints = `#{cmd}`
       md5_fingerprint = extract_md5_fingerprint(fingerprints)
