@@ -48,19 +48,23 @@ public class CalabashChromeClient extends WebChromeClient {
 				 */
 				Field field = getChromeClientField(webView.getClass());
 				if (field == null) {
-					throw new UnableToFindChromeClientException(webView);
+					mWebChromeClient = null;
 				}
-				field.setAccessible(true);
-				try {
-					mWebChromeClient = (WebChromeClient) field.get(webView);
-				} catch (IllegalArgumentException e) {					
-					e.printStackTrace();
-					throw new UnableToFindChromeClientException(e, webView);
-				} catch (IllegalAccessException e) {
-					
-					e.printStackTrace();
-					throw new UnableToFindChromeClientException(e, webView);
-				}			
+				else {
+					try {
+						field.setAccessible(true);
+						mWebChromeClient = (WebChromeClient) field.get(webView);
+					} catch (IllegalArgumentException e) {					
+						e.printStackTrace();
+						throw new UnableToFindChromeClientException(e, webView);
+					} catch (IllegalAccessException e) {
+						
+						e.printStackTrace();
+						throw new UnableToFindChromeClientException(e, webView);
+					}	
+				}
+	
+							
 		}
 
         if ( Looper.getMainLooper().getThread() == Thread.currentThread()) {
