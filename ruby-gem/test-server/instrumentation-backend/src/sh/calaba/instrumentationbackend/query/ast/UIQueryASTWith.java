@@ -10,6 +10,8 @@ import java.util.concurrent.Future;
 import org.antlr.runtime.tree.CommonTree;
 
 import sh.calaba.instrumentationbackend.actions.webview.QueryHelper;
+import sh.calaba.instrumentationbackend.actions.webview.UnableToFindChromeClientException;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 
@@ -134,8 +136,14 @@ public class UIQueryASTWith implements UIQueryAST {
 		if (!(this.value instanceof String)) {
 			return null;
 		}
-		return QueryHelper.executeAsyncJavascriptInWebviews(o,
-				"calabash.js", (String) this.value,this.propertyName);
+		try {
+			return QueryHelper.executeAsyncJavascriptInWebviews(o,
+					"calabash.js", (String) this.value,this.propertyName);
+				
+		} catch (UnableToFindChromeClientException e) {
+			Log.w("Calabash","Unable to find UnableToFindChromeClientException");
+			return null;
+		}
 				
 	}
 

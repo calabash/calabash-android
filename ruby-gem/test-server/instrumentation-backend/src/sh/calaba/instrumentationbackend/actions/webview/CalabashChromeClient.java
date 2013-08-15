@@ -38,7 +38,6 @@ public class CalabashChromeClient extends WebChromeClient {
 				throw new RuntimeException(e);
 			}
 		}  else {
-			try {
 				
 				/*
 				 * pick up the chromeClient from the webView
@@ -48,11 +47,20 @@ public class CalabashChromeClient extends WebChromeClient {
 				 * which lead to the Cordova.exec messages not forward to the Cordova ChromeClient.
 				 */
 				Field field = getChromeClientField(webView.getClass());
+				if (field == null) {
+					throw new UnableToFindChromeClientException(webView);
+				}
 				field.setAccessible(true);
-				mWebChromeClient = (WebChromeClient) field.get(webView);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+				try {
+					mWebChromeClient = (WebChromeClient) field.get(webView);
+				} catch (IllegalArgumentException e) {					
+					e.printStackTrace();
+					throw new UnableToFindChromeClientException(e, webView);
+				} catch (IllegalAccessException e) {
+					
+					e.printStackTrace();
+					throw new UnableToFindChromeClientException(e, webView);
+				}			
 		}
 
         if ( Looper.getMainLooper().getThread() == Thread.currentThread()) {
