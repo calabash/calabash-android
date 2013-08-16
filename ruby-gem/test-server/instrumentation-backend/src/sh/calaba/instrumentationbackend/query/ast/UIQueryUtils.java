@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.antlr.runtime.tree.CommonTree;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient.WebFuture;
 import sh.calaba.instrumentationbackend.actions.webview.QueryHelper;
 import sh.calaba.instrumentationbackend.query.CompletedFuture;
 import sh.calaba.instrumentationbackend.query.Query;
@@ -25,6 +26,7 @@ import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import sh.calaba.org.codehaus.jackson.type.TypeReference;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -35,6 +37,7 @@ public class UIQueryUtils {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List subviews(Object o) {
+		
 		try {
 			Method getChild = o.getClass().getMethod("getChildAt", int.class);
 			getChild.setAccessible(true);
@@ -57,6 +60,19 @@ public class UIQueryUtils {
 			return Collections.EMPTY_LIST;
 		}
 
+	}
+
+	@SuppressWarnings({ "rawtypes" })
+	public static Future webViewSubViews(WebView o) {
+		
+		Log.i("Calabash", "About to webViewSubViews");
+		
+
+		WebFuture controls = QueryHelper.executeAsyncJavascriptInWebviews(o,
+				"calabash.js", "input,button","css");
+		
+		return controls;
+		
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -167,9 +183,11 @@ public class UIQueryUtils {
 		return ViewMapper.getIdForView(view);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Future evaluateAsyncInMainThread(final Callable callable)
-			throws Exception {
+			throws Exception {		
+		
+				
 		final AtomicReference<Future> result = new AtomicReference<Future>();
 		final AtomicReference<Exception> errorResult = new AtomicReference<Exception>();
 
@@ -300,17 +318,26 @@ public class UIQueryUtils {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected static Map<?, ?> dumpRecursively(Map parentView,
-			List<View> children) {
+			List children) {
 		ArrayList childrenArray = new ArrayList(32);
 		for (int i = 0; i < children.size(); i++) {
-			View view = children.get(i);
+			Object view = children.get(i);
 			Map serializedChild = serializeViewToDump(view);
 			List<Integer> childPath = new ArrayList<Integer>(
 					(List) parentView.get("path"));
 			childPath.add(i);
 			serializedChild.put("path", childPath);
-			childrenArray.add(dumpRecursively(serializedChild,
-					UIQueryUtils.subviews(view)));
+			List childrenList = null;
+			if (view instanceof WebView) {
+				Future webViewSubViews = webViewSubViews((WebView) view);
+				childrenArray.add(webViewSubViews);
+			}
+			else {
+				childrenList = UIQueryUtils.subviews(view);
+				childrenArray.add(dumpRecursively(serializedChild,
+						childrenList));
+			}
+			
 		}
 
 		parentView.put("children", childrenArray);
@@ -339,31 +366,138 @@ public class UIQueryUtils {
 		return currentView;
 	}
 
+	/*
+ * 
+                                            "enabled" => true,
+                                            "visible" => true,
+                                           "children" => [],
+                                              "label" => nil,
+                                               "rect" => {
+                                            "center_y" => 158.5,
+                                            "center_x" => 300.0,
+                                              "height" => 25,
+                                                   "y" => 146,
+                                               "width" => 600,
+                                                   "x" => 0
+                                        },
+                                               "type" => "android.widget.TextView",
+                                                 "id" => "FacebookTextView",
+                                                 "el" => nil,
+                                               "name" => "",
+                                             "action" => nil,
+                                              "value" => "",
+                                               "path" => [
+                                            [0] 0,
+                                            [1] 0,
+                                            [2] 2,
+                                            [3] 0,
+                                            [4] 2
+                                        ],
+                                          "hit-point" => {
+                                            "y" => 158.5,
+                                            "x" => 300.0
+                                        },
+                                        "entry_types" => [
+                                            [0] "0"
+                                        ]
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Map<?, ?> serializeViewToDump(View view) {
-		if (view == null) {
+	public static Map<?, ?> serializeViewToDump(Object viewOrMap) {
+		if (viewOrMap == null) {
 			return null;
 		}
+		
+		if (viewOrMap instanceof Map) 
+		{
+			Map map = (Map) viewOrMap;			
+			map.put("el", map);
 
-		Map m = new HashMap();
+			Map rect = (Map) map.get("rect");
+			Map hitPoint = extractHitPointFromRect(rect);
+			
+			map.put("hit-point", hitPoint);
+			Map result = new HashMap();
+			result.put("type", "touch");
+			result.put("gesture", "tap");
+			map.put("action", result);
+			map.put("enabled", true);
+			map.put("visible", true);
+			String nodeName = (String) map.get("nodeName");
+			if (nodeName != null && nodeName.toLowerCase().equals("input")) {
+				String domType = extractDomType((String)map.get("html"));
+				map.put("domType", domType);
+				Log.i("Calabash - domtype", domType);
+				if (domType!=null && domType.equals("password")) {
+					map.put("entry_types", Collections.singletonList("password"));		
+				}
+				else {
+					map.put("entry_types", Collections.singletonList("text"));
+				}
+				
+			}
+			
+			
+			
+			map.put("value", null);
+			map.put("type", "dom");
+			map.put("name", null);
+			map.put("label", null);
+			return map;	
+			
+		}
+		else 
+		{
+			Map m = new HashMap();
+			
+			View view = (View) viewOrMap;
+			m.put("id", getId(view));
+			m.put("el", view);
 
-		m.put("id", getId(view));
-		m.put("el", view);
+			Map rect = ViewMapper.getRectForView(view);
+			Map hitPoint = extractHitPointFromRect(rect);
 
-		Map rect = ViewMapper.getRectForView(view);
-		Map hitPoint = extractHitPointFromRect(rect);
+			m.put("rect", rect);
+			m.put("hit-point", hitPoint);
+			m.put("action", actionForView(view));
+			m.put("enabled", view.isEnabled());
+			m.put("visible", isVisible(view));
+			m.put("entry_types", elementEntryTypes(view));
+			m.put("value", extractValueFromView(view));
+			m.put("type", ViewMapper.getClassNameForView(view));
+			m.put("name", getNameForView(view));
+			m.put("label", ViewMapper.getContentDescriptionForView(view));
+			return m;	
+		}
 
-		m.put("rect", rect);
-		m.put("hit-point", hitPoint);
-		m.put("action", actionForView(view));
-		m.put("enabled", view.isEnabled());
-		m.put("visible", isVisible(view));
-		m.put("entry_types", elementEntryTypes(view));
-		m.put("value", extractValueFromView(view));
-		m.put("type", ViewMapper.getClassNameForView(view));
-		m.put("name", getNameForView(view));
-		m.put("label", ViewMapper.getContentDescriptionForView(view));
-		return m;
+		
+
+		
+	}
+
+	public static String extractDomType(String string) {
+		String[] split = string.split("type=");
+		if (split.length > 1) {
+			String lastPart = split[1];
+			if (lastPart == null) {
+				return null;	
+			}				
+			if (lastPart.charAt(0) == '"' || lastPart.charAt(0) == '\'') {
+				int endIndex = -1;
+				for (int i=1;i<lastPart.length();i++) {
+					if (lastPart.charAt(i) == '\'' || lastPart.charAt(i) == '"') {
+						endIndex = i;
+						break;
+					}
+				}
+				
+				if (endIndex > 0) {
+					return lastPart.substring(1,endIndex);
+				}
+				
+			}			
+		}
+		return null;
+		
 	}
 
 	public static List<String> elementEntryTypes(View view) {

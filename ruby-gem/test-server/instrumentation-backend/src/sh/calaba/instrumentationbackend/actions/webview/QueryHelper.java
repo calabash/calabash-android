@@ -11,6 +11,7 @@ import java.util.Map;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient.WebFuture;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
+import android.util.Log;
 import android.webkit.WebView;
 
 public class QueryHelper {
@@ -94,7 +95,7 @@ public class QueryHelper {
 
 		script = script.replaceFirst("%@", selector);
 		script = script.replaceFirst("%@", type);
-
+		
 		CalabashChromeClient chromeClient = CalabashChromeClient.prepareWebView(webView);		
         webView.loadUrl("javascript:calabash_result = " + script + ";prompt('calabash:' + calabash_result);");
 		return chromeClient.getResult();
