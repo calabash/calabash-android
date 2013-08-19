@@ -7,8 +7,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +36,14 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class UIQueryUtils {
+
+	private static final Set<String> DOM_TEXT_TYPES;
+	static {
+		DOM_TEXT_TYPES = new HashSet<String>();
+		DOM_TEXT_TYPES.add("email");
+		DOM_TEXT_TYPES.add("text");
+		DOM_TEXT_TYPES.add("");
+	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List subviews(Object o) {
@@ -415,33 +425,33 @@ public class UIQueryUtils {
 			Map rect = (Map) map.get("rect");
 			Map hitPoint = extractHitPointFromRect(rect);
 			
-			map.put("hit-point", hitPoint);
-			Map result = new HashMap();
-			result.put("type", "touch");
-			result.put("gesture", "tap");
-			map.put("action", result);
+			map.put("hit-point", hitPoint);			
 			map.put("enabled", true);
 			map.put("visible", true);
-			String nodeName = (String) map.get("nodeName");
-			if (nodeName != null && nodeName.toLowerCase().equals("input")) {
-				String domType = extractDomType((String)map.get("html"));
-				map.put("domType", domType);
-				Log.i("Calabash - domtype", domType);
-				if (domType!=null && domType.equals("password")) {
-					map.put("entry_types", Collections.singletonList("password"));		
-				}
-				else {
-					map.put("entry_types", Collections.singletonList("text"));
-				}
-				
-			}
-			
-			
-			
 			map.put("value", null);
 			map.put("type", "dom");
 			map.put("name", null);
 			map.put("label", null);
+			map.put("children", Collections.EMPTY_LIST);
+			String html = (String)map.get("html");
+			String nodeName = (String) map.get("nodeName");			
+			if (nodeName != null && nodeName.toLowerCase().equals("input")) {				
+				String domType = extractDomType(html);
+				if (isDomPasswordType(domType)) {
+					map.put("entry_types", Collections.singletonList("password"));
+				}
+				else if (isDomTextType(domType)) {
+					map.put("entry_types", Collections.singletonList("text"));
+				} 
+				else {
+					map.put("entry_types", Collections.emptyList());	
+				}					
+				map.put("value", extractAttribute(html, "value"));
+				map.put("type", "dom");
+				map.put("name", extractAttribute(html, "name"));
+				map.put("label", extractAttribute(html, "title"));
+			}					
+						
 			return map;	
 			
 		}
@@ -474,8 +484,27 @@ public class UIQueryUtils {
 		
 	}
 
-	public static String extractDomType(String string) {
-		String[] split = string.split("type=");
+	private static boolean isDomTextType(String domType) {
+		if (domType == null) {
+			return true;
+		}
+		return DOM_TEXT_TYPES.contains(domType);
+	}
+
+	private static boolean isDomPasswordType(String domType) {		
+		return "password".equalsIgnoreCase(domType);
+	}
+
+	// naive implementation only works for (valid) input tags
+	public static String extractDomType(String input) {
+		return extractAttribute(input, "type");		
+	}
+	
+	public static String extractAttribute(String input, String attribute) {
+		String[] split = input.split(attribute+"=");
+		if (split.length == 1) {
+			split = input.split(attribute+" =");			
+		}
 		if (split.length > 1) {
 			String lastPart = split[1];
 			if (lastPart == null) {
@@ -499,6 +528,8 @@ public class UIQueryUtils {
 		return null;
 		
 	}
+
+
 
 	public static List<String> elementEntryTypes(View view) {
 		if (view instanceof TextView) {
