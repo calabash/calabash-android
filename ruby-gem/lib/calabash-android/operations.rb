@@ -699,8 +699,12 @@ module Operations
     ni
   end
 
-  def screenshot_and_raise(msg)
-    screenshot_embed
+  def screenshot_and_raise(msg, options = nil)
+    if options
+      screenshot_embed options
+    else
+      screenshot_embed
+    end
     raise(msg)
   end
 
