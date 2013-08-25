@@ -45,20 +45,6 @@ public class Command {
     public Result execute() {
         final Action action = InstrumentationBackend.actions.lookup(getCommand());
         return action.execute(getArguments());
-        /*
-        if ( Looper.getMainLooper().getThread() == Thread.currentThread()) {
-            return action.execute(getArguments());
-        }
-
-        final AtomicReference<Result> result = new AtomicReference<Result>();
-        InstrumentationBackend.instrumentation.runOnMainSync(new Runnable() {
-            @Override
-            public void run() {
-                result.set(action.execute(getArguments()));
-            }
-        });
-        return result.get();
-*/
     }
 
 }
