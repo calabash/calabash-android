@@ -3,6 +3,7 @@
 require 'fileutils'
 require 'rbconfig'
 require 'calabash-android/helpers'
+require 'calabash-android/java_keystore'
 
 # for ruby 1.9.1 and earlier
 unless defined? RbConfig.ruby
