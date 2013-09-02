@@ -10,6 +10,7 @@ require 'calabash-android/helpers'
 require 'calabash-android/wait_helpers'
 require 'calabash-android/touch_helpers'
 require 'calabash-android/version'
+require 'calabash-android/env'
 require 'retriable'
 require 'cucumber'
 
@@ -405,7 +406,7 @@ module Operations
     end
 
     def adb
-      if is_windows?
+      if Env.is_windows?
         %Q("#{ENV["ANDROID_HOME"]}\\platform-tools\\adb.exe")
       else
         %Q("#{ENV["ANDROID_HOME"]}/platform-tools/adb")

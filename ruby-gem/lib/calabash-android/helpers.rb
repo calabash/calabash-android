@@ -99,64 +99,6 @@ def android_home_path
   ENV["ANDROID_HOME"].gsub("\\", "/")
 end
 
-def get_keystore
-  keystore = read_keystore_info
-  JavaKeystore.new(keystore["keystore_location"], keystore["keystore_alias"], keystore["keystore_password"])
-end
-
-def read_keystore_info
-  keystore = default_keystore
-
-  if File.exist? ".calabash_settings"
-    keystore = JSON.parse(IO.read(".calabash_settings"))
-    fail_if_key_missing(keystore, "keystore_location")
-    fail_if_key_missing(keystore, "keystore_password")
-    fail_if_key_missing(keystore, "keystore_alias")
-    keystore["keystore_location"] = File.expand_path(keystore["keystore_location"])
-  end
-  keystore
-end
-
-def default_keystore
-  {
-    "keystore_location" => File.expand_path(File.join(ENV["HOME"], "/.android/debug.keystore")),
-    "keystore_password" => "android",
-    "keystore_alias" => "androiddebugkey",
-  }
-end
-
-def fail_if_key_missing(map, key)
-  raise "Found .calabash_settings but no #{key} defined." unless map[key]
-end
-
-def remove_quotes(s)
-  s.gsub(/"/, "")
-end
-
-def put_in_quotes(s)
-  %Q{"#{s}"}
-end
-
-def keytool_path
-  if is_windows?
-    "\"#{ENV["JAVA_HOME"]}/bin/keytool.exe\""
-  else
-    "keytool"
-  end
-end
-
-def fingerprint_from_keystore
-  get_keystore.fingerprint
-end
-
-def jarsigner_path
-  if is_windows?
-    "\"#{ENV["JAVA_HOME"]}/bin/jarsigner.exe\""
-  else
-    "jarsigner"
-  end
-end
-
 def fingerprint_from_apk(app_path)
   app_path = File.expand_path(app_path)
   Dir.mktmpdir do |tmp_dir|
@@ -171,7 +113,7 @@ def fingerprint_from_apk(app_path)
       raise "No RSA file found in META-INF. Cannot proceed." if rsa_files.empty?
       raise "More than one RSA file found in META-INF. Cannot proceed." if rsa_files.length > 1
 
-      cmd = "#{keytool_path} -v -printcert -file \"#{rsa_files.first}\""
+      cmd = "#{Env.keytool_path} -v -printcert -file \"#{rsa_files.first}\""
       log cmd
       fingerprints = `#{cmd}`
       md5_fingerprint = extract_md5_fingerprint(fingerprints)
@@ -182,14 +124,9 @@ def fingerprint_from_apk(app_path)
 end
 
 def extract_md5_fingerprint(fingerprints)
-  log fingerprints
   m = fingerprints.scan(/MD5.*((?:[a-fA-F\d]{2}:){15}[a-fA-F\d]{2})/).flatten
   raise "No MD5 fingerprint found:\n #{fingerprints}" if m.empty?
   m.first
-end
-
-def is_windows?
-  (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
 end
 
 def log(message, error = false)
