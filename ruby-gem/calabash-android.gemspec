@@ -23,4 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency( "awesome_print" )
   s.add_dependency( 'httpclient', '~> 2.3.2')
   s.add_dependency( 'xamarin-test-cloud', '>= 0.9.23')
+  s.add_dependency( 'popen4', '~> 0.1.2')
+  s.add_dependency( 'escape', '~> 0.0.4')
 end

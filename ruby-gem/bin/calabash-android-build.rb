@@ -1,7 +1,7 @@
 def calabash_build(app)
-  keystore = read_keystore_info()
-  if fingerprint_from_keystore != fingerprint_from_apk(app)
-    puts "#{app} is not signed with the configured keystore '#{keystore["keystore_location"]}' Aborting!"
+  keystore = get_keystore
+  if keystore.fingerprint != fingerprint_from_apk(app)
+    puts "#{app} is not signed with the configured keystore '#{keystore.location}' Aborting!"
     exit 1
   end
 

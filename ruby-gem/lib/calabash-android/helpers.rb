@@ -1,7 +1,10 @@
+require "stringio"
 require 'rexml/document'
 require 'rexml/xpath'
 require 'zip/zip'
 require 'tempfile'
+require 'popen4'
+require 'escape'
 
 include REXML
 
@@ -81,20 +84,8 @@ def resign_apk(app_path)
 end
 
 def sign_apk(app_path, dest_path)
-  keystore = read_keystore_info()
-
-  if is_windows?
-    jarsigner_path = "\"#{ENV["JAVA_HOME"]}/bin/jarsigner.exe\""
-  else
-    jarsigner_path = "jarsigner"
-  end
-
-  cmd = "#{jarsigner_path} -sigalg MD5withRSA -digestalg SHA1 -signedjar #{dest_path} -storepass #{keystore["keystore_password"]} -keystore #{keystore["keystore_location"]} \"#{app_path}\" #{keystore["keystore_alias"]}"
-  log cmd
-  unless system(cmd)
-    puts "jarsigner command: #{cmd}"
-    raise "Could not sign app (#{app_path}"
-  end
+  java_keystore = get_keystore
+  java_keystore.sign_apk(app_path, dest_path)
 end
 
 def tools_dir
@@ -107,6 +98,58 @@ def android_home_path
   ENV["ANDROID_HOME"].gsub("\\", "/")
 end
 
+
+class JavaKeystore
+  attr_reader :errors, :location, :keystore_alias, :password, :fingerprint
+  def initialize(location, keystore_alias, password)
+    raise "No such file #{location}" unless File.exists?(File.expand_path(location))
+
+    keystore_data = system_with_stdout_on_success(keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password)
+    unless keystore_data
+      error = "Could not list certificates in keystore. Probably because the password was incorrect."
+      @errors = [message: error]
+      log error
+      #TODO: Handle the case where password is correct but the alias is missing.
+    end
+    @location = location
+    @keystore_alias = keystore_alias
+    @password = password
+    @fingerprint = extract_md5_fingerprint(keystore_data)
+  end
+
+  def sign_apk(apk_path, dest_path)
+    raise "Cannot sign with a miss configured keystore" if errors
+    raise "No such file: #{apk_path}" unless File.exists?(apk_path)
+
+    unless system_with_stdout_on_success(jarsigner_path, '-sigalg', 'MD5withRSA', '-digestalg', 'SHA1', '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
+      raise "Could not sign app: #{apk_path}"
+    end
+  end
+
+  private
+  def system_with_stdout_on_success(cmd, *args)
+    args = args.clone.unshift cmd
+
+    out, err = nil, nil
+    cmd = Escape.shell_command(args)
+    log "Command: #{cmd}"
+    status = POpen4::popen4(cmd) do |stdout, stderr, stdin, pid|
+      out = stdout.read
+      err = stderr.read
+    end
+    if status.exitstatus == 0
+      out
+    else
+      nil
+    end
+  end
+end
+
+def get_keystore
+  keystore = read_keystore_info
+  JavaKeystore.new(keystore["keystore_location"], keystore["keystore_alias"], keystore["keystore_password"])
+end
+
 def read_keystore_info
   keystore = default_keystore
 
@@ -117,7 +160,6 @@ def read_keystore_info
     fail_if_key_missing(keystore, "keystore_alias")
     keystore["keystore_location"] = File.expand_path(keystore["keystore_location"])
   end
-  keystore["keystore_location"] = put_in_quotes(remove_quotes(keystore["keystore_location"]))
   keystore
 end
 
@@ -150,17 +192,19 @@ def keytool_path
 end
 
 def fingerprint_from_keystore
-  keystore_info = read_keystore_info
-  cmd = "#{keytool_path} -v -list -alias #{keystore_info["keystore_alias"]} -keystore #{keystore_info["keystore_location"]} -storepass #{keystore_info["keystore_password"]}"
+  get_keystore.fingerprint
+end
 
-  log cmd
-  fingerprints = `#{cmd}`
-  md5_fingerprint = extract_md5_fingerprint(fingerprints)
-  log "MD5 fingerprint for keystore (#{keystore_info["keystore_location"]}): #{md5_fingerprint}"
-  md5_fingerprint
+def jarsigner_path
+  if is_windows?
+    "\"#{ENV["JAVA_HOME"]}/bin/jarsigner.exe\""
+  else
+    "jarsigner"
+  end
 end
 
 def fingerprint_from_apk(app_path)
+  app_path = File.expand_path(app_path)
   Dir.mktmpdir do |tmp_dir|
     Dir.chdir(tmp_dir) do
       FileUtils.cp(app_path, "app.apk")
@@ -169,6 +213,7 @@ def fingerprint_from_apk(app_path)
         z.extract if /^META-INF\/\w+.(RSA|rsa)/ =~ z.name
       end
       rsa_files = Dir["#{tmp_dir}/META-INF/*"]
+
       raise "No RSA file found in META-INF. Cannot proceed." if rsa_files.empty?
       raise "More than one RSA file found in META-INF. Cannot proceed." if rsa_files.length > 1
 
@@ -184,7 +229,6 @@ end
 
 def extract_md5_fingerprint(fingerprints)
   log fingerprints
-
   m = fingerprints.scan(/MD5.*((?:[a-fA-F\d]{2}:){15}[a-fA-F\d]{2})/).flatten
   raise "No MD5 fingerprint found:\n #{fingerprints}" if m.empty?
   m.first
