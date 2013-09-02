@@ -5,6 +5,7 @@ require 'zip/zip'
 require 'tempfile'
 require 'popen4'
 require 'escape'
+require 'rbconfig'
 
 include REXML
 
@@ -188,7 +189,6 @@ def extract_md5_fingerprint(fingerprints)
 end
 
 def is_windows?
-  require 'rbconfig'
   (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
 end
 
