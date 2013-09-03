@@ -44,9 +44,6 @@ task :build do
   end
 
   build
-
-  Rake::Task["install"].execute
-
 end
 
 
