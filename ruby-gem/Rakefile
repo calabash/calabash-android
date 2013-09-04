@@ -1,5 +1,6 @@
 require 'bundler'
 load 'lib/calabash-android/helpers.rb'
+load 'lib/calabash-android/env.rb'
 
 def build
   test_server_template_dir = File.join(File.dirname(__FILE__), 'test-server')
@@ -9,9 +10,8 @@ def build
     @test_server_dir = File.join(workspace_dir, 'test-server')
     FileUtils.cp_r(test_server_template_dir, workspace_dir)
 
-    ant_executable = (is_windows? ? "ant.bat" : "ant")
     args = [
-      ant_executable,
+      Env.ant_path,
       "clean",
       "package",
       "-debug",

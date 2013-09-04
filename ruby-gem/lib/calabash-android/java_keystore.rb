@@ -25,7 +25,6 @@ class JavaKeystore
     end
   end
 
-  private
   def system_with_stdout_on_success(cmd, *args)
     args = args.clone.unshift cmd
 
@@ -42,21 +41,51 @@ class JavaKeystore
       nil
     end
   end
-end
 
-def get_keystore
-  if File.exist? ".calabash_settings"
-    keystore = JSON.parse(IO.read(".calabash_settings"))
-    fail_if_key_missing(keystore, "keystore_location")
-    fail_if_key_missing(keystore, "keystore_password")
-    fail_if_key_missing(keystore, "keystore_alias")
-    keystore["keystore_location"] = File.expand_path(keystore["keystore_location"])
-    JavaKeystore.new(keystore["keystore_location"], keystore["keystore_alias"], keystore["keystore_password"])
-  else
-    JavaKeystore.new(File.expand_path(File.join(ENV["HOME"], "/.android/debug.keystore")), 'androiddebugkey', 'android')
+  def self.read_keystore_with_default_password_and_alias(path)
+    path = File.expand_path path
+
+    if File.exists? path
+      keystore = JavaKeystore.new(path, 'androiddebugkey', 'android')
+      if keystore.errors
+        log "Trying to "
+        nil
+      else
+        log "Unlocked keystore at #{path} - fingerprint: #{keystore.fingerprint}"
+        keystore
+      end
+    else
+      log "Trying to read keystore from: #{path} - no such file"
+      nil
+    end
   end
-end
 
-def fail_if_key_missing(map, key)
-  raise "Found .calabash_settings but no #{key} defined." unless map[key]
+  def self.get_keystores
+    if keystore = keystore_from_settings 
+      keystore
+    else
+      [
+        read_keystore_with_default_password_and_alias(File.join(ENV["HOME"], "/.android/debug.keystore")),
+        read_keystore_with_default_password_and_alias("debug.keystore"),
+        read_keystore_with_default_password_and_alias(File.join(ENV["HOME"], ".local/share/Xamarin/Mono\ for\ Android/debug.keystore")),
+        read_keystore_with_default_password_and_alias(File.join(ENV["HOME"], "AppData/Local/Xamarin/Mono for Android/debug.keystore")),
+      ].compact
+    end
+  end
+
+  def self.keystore_from_settings
+      keystore = JSON.parse(IO.read(".calabash_settings")) if File.exist? ".calabash_settings"
+      keystore = JSON.parse(IO.read("calabash_settings")) if File.exist? "calabash_settings"
+      return unless keystore
+      fail_if_key_missing(keystore, "keystore_location")
+      fail_if_key_missing(keystore, "keystore_password")
+      fail_if_key_missing(keystore, "keystore_alias")
+      keystore["keystore_location"] = File.expand_path(keystore["keystore_location"])
+      JavaKeystore.new(keystore["keystore_location"], keystore["keystore_alias"], keystore["keystore_password"])
+  end
+
+  def fail_if_key_missing(map, key)
+    raise "Found .calabash_settings but no #{key} defined." unless map[key]
+  end
+
 end

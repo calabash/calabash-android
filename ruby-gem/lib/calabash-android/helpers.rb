@@ -6,6 +6,7 @@ require 'tempfile'
 require 'popen4'
 require 'escape'
 require 'rbconfig'
+require 'calabash-android/java_keystore'
 
 include REXML
 
@@ -85,7 +86,7 @@ def resign_apk(app_path)
 end
 
 def sign_apk(app_path, dest_path)
-  java_keystore = get_keystore
+  java_keystore = JavaKeystore.get_keystores.first
   java_keystore.sign_apk(app_path, dest_path)
 end
 

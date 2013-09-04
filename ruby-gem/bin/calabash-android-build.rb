@@ -1,11 +1,26 @@
 def calabash_build(app)
-  keystore = get_keystore
-  if keystore.fingerprint != fingerprint_from_apk(app)
-    puts "#{app} is not signed with the configured keystore '#{keystore.location}' Aborting!"
+  apk_fingerprint = fingerprint_from_apk(app)
+  log "#{app} was signed with a certificate with fingerprint #{apk_fingerprint}"
+
+  keystores = JavaKeystore.get_keystores
+  keystore = keystores.find { |k| k.fingerprint == apk_fingerprint}
+
+  unless keystore
+    puts "#{app} is not signed with any of the available keystores."
+    puts "Tried the following keystores:"
+    keystores.each do |k|
+      puts k.location
+    end
+    puts ""
+    puts "You can resign the app with #{keystores.first.location} by running:
+    calabash-android resign #{app}"
+
+    puts ""
+    puts "Notice that resigning an app might break some functionality."
+    puts "Getting a copy of the certificate used when the app was build will in general be more reliable."
+
     exit 1
   end
-
-
 
   test_server_file_name = test_server_path(app)
   FileUtils.mkdir_p File.dirname(test_server_file_name) unless File.exist? File.dirname(test_server_file_name)
@@ -36,7 +51,7 @@ def calabash_build(app)
         zip_file.add("AndroidManifest.xml", "customAndroidManifest.xml")
       end
     end
-    sign_apk("#{workspace_dir}/TestServer.apk", test_server_file_name)
+    keystore.sign_apk("#{workspace_dir}/TestServer.apk", test_server_file_name)
     begin
 
     rescue Exception => e

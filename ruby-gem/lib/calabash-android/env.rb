@@ -1,3 +1,4 @@
+
 class Env
 
   def self.keytool_path
@@ -14,6 +15,10 @@ class Env
     else
       "jarsigner"
     end
+  end
+
+  def self.ant_path
+    is_windows? ? "ant.bat" : "ant"
   end
 
   def self.is_windows?
