@@ -6,7 +6,7 @@ class JavaKeystore
     keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password)
     unless keystore_data
       error = "Could not list certificates in keystore. Probably because the password was incorrect."
-      @errors = [message: error]
+      @errors = [{:message => error}]
       log error
       #TODO: Handle the case where password is correct but the alias is missing.
     end
