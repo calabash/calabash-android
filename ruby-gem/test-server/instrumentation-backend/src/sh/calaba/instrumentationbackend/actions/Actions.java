@@ -20,13 +20,11 @@ public class Actions {
     public static Instrumentation parentInstrumentation;
     public static InstrumentationTestCase parentTestCase;
     private Context context;
-    private Context targetContext;
-    
+
     public Actions(Instrumentation parentInstrumentation, InstrumentationTestCase parentTestCase) {
         Actions.parentInstrumentation = parentInstrumentation;
         Actions.parentTestCase = parentTestCase;
         this.context = parentInstrumentation.getContext();
-        this.targetContext = parentInstrumentation.getTargetContext();
         loadActions();
     }
     
