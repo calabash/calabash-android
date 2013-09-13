@@ -23,7 +23,3 @@ def ask_for_setting(key, msg)
   puts msg
   @settings[key] = STDIN.gets.chomp
 end
-
-def platform_versions
-  Dir["#{ENV["ANDROID_HOME"]}/platforms/android-*"].collect{|platform| platform.split("-").last.to_i}.sort
-end
