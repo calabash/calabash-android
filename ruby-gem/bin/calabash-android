@@ -60,19 +60,16 @@ end
 
 if (ARGV.length == 0)
   print_usage
-  exit 0
 end
 cmd = ARGV.shift
 if cmd == 'help'
   print_help
-  exit 0
 elsif cmd == 'build'
   exit_if_android_sdk_not_found
   puts "Please specify the app you want to build a test server for" if (ARGV.empty? or not is_apk_file?(ARGV.first))
   while not ARGV.empty? and is_apk_file?(ARGV.first)
     calabash_build(relative_to_full_path(ARGV.shift))
   end
-  exit 0
 elsif cmd == 'run'
   exit_if_android_sdk_not_found
   if ARGV.empty? or not is_apk_file?(ARGV.first)
@@ -82,7 +79,6 @@ elsif cmd == 'run'
   end
 elsif cmd == 'gen'
   calabash_scaffold
-  exit 0
 elsif cmd == 'console'
   if ARGV.empty?
     puts "Please specify an app"
@@ -93,11 +89,9 @@ elsif cmd == 'console'
     exit 1
   end
   calabash_console(relative_to_full_path(ARGV.shift))
-  exit 0
 elsif cmd == 'setup'
   exit_if_android_sdk_not_found
   calabash_setup
-  exit 0
 elsif cmd == 'extract-manifest'
   if ARGV.empty?
     puts "Please specify an app"
@@ -109,7 +103,6 @@ elsif cmd == 'extract-manifest'
   end
 
   puts manifest ARGV.first
-  exit 0
 elsif cmd == 'resign'
   unless File.exist?(File.expand_path(ARGV.first))
     puts "No such file #{ARGV.first}"
@@ -119,7 +112,6 @@ elsif cmd == 'resign'
 
 elsif cmd == 'version'
   puts Calabash::Android::VERSION
-  exit 0
 else
   print_usage
 end
