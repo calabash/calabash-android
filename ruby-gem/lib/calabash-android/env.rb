@@ -34,4 +34,10 @@ class Env
     ENV["ANDROID_HOME"].gsub("\\", "/")
   end
 
+  def self.android_platform_path
+    platforms = Dir["#{android_home_path}/platforms/android-*"].sort_by { |item| '%08s' % item.split('-').last }
+    raise "No Android SDK found in #{android_home_path}/platforms/" if platforms.empty?
+    platforms.last
+  end
+
 end

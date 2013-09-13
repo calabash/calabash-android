@@ -26,9 +26,8 @@ def calabash_build(app)
   FileUtils.mkdir_p File.dirname(test_server_file_name) unless File.exist? File.dirname(test_server_file_name)
 
   unsigned_test_apk = File.join(File.dirname(__FILE__), '..', 'lib/calabash-android/lib/TestServer.apk')
-  platforms = Dir["#{Env.android_home_path}/platforms/android-*"].sort_by { |item| '%08s' % item.split('-').last }
-  android_platform = platforms.last
-  raise "No Android SDK found in #{ENV["ANDROID_HOME"].gsub("\\", "/")}/platforms/" unless android_platform
+
+  android_platform = Env.android_platform_path
   Dir.mktmpdir do |workspace_dir|
     Dir.chdir(workspace_dir) do
       FileUtils.cp(unsigned_test_apk, "TestServer.apk")
