@@ -1,4 +1,3 @@
-
 class Env
 
   def self.keytool_path
@@ -34,5 +33,5 @@ class Env
   def self.android_home_path
     ENV["ANDROID_HOME"].gsub("\\", "/")
   end
-  
+
 end
