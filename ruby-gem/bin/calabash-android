@@ -51,8 +51,11 @@ def relative_to_full_path(file_path)
   File.expand_path(file_path)
 end
 
-def raise_if_android_home_not_set
-  raise "Please set the ANDROID_HOME environment variable" unless ENV["ANDROID_HOME"]
+def exit_if_android_sdk_not_found
+  unless File.exists?(ENV["ANDROID_HOME"] || "")
+    puts "Please set ANDROID_HOME to point to the Android SDK"
+    exit 1
+  end
 end
 
 if (ARGV.length == 0)
@@ -64,14 +67,14 @@ if cmd == 'help'
   print_help
   exit 0
 elsif cmd == 'build'
-  raise_if_android_home_not_set
+  exit_if_android_sdk_not_found
   puts "Please specify the app you want to build a test server for" if (ARGV.empty? or not is_apk_file?(ARGV.first))
   while not ARGV.empty? and is_apk_file?(ARGV.first)
     calabash_build(relative_to_full_path(ARGV.shift))
   end
   exit 0
 elsif cmd == 'run'
-  raise_if_android_home_not_set
+  exit_if_android_sdk_not_found
   if ARGV.empty? or not is_apk_file?(ARGV.first)
     exit calabash_run()
   else
@@ -92,6 +95,7 @@ elsif cmd == 'console'
   calabash_console(relative_to_full_path(ARGV.shift))
   exit 0
 elsif cmd == 'setup'
+  exit_if_android_sdk_not_found
   calabash_setup
   exit 0
 elsif cmd == 'extract-manifest'

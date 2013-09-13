@@ -1,10 +1,6 @@
 require "calabash-android/version"
 
 def calabash_setup
-  unless File.exists?(ENV["ANDROID_HOME"] || "")
-    puts "Please set ANDROID_HOME to point to the Android SDK"
-    exit 1
-  end
   @settings = {}
 
   puts "Please enter keystore information to use a custom keystore instead of the default"
