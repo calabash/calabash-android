@@ -1,5 +1,4 @@
 require 'bundler'
-load 'lib/calabash-android/helpers.rb'
 load 'lib/calabash-android/env.rb'
 
 def build
@@ -15,7 +14,7 @@ def build
       "clean",
       "package",
       "-debug",
-      "-Dtools.dir=\"#{tools_dir}\"",
+      "-Dtools.dir=\"#{Env.tools_dir}\"",
       "-Dandroid.api.level=17",
       "-Dversion=#{Calabash::Android::VERSION}",
     ]

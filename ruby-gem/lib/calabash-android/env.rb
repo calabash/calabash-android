@@ -24,4 +24,15 @@ class Env
   def self.is_windows?
     (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
   end
+
+  def self.tools_dir
+    dirs = Dir["#{android_home_path}/build-tools/*/"] + Dir["#{android_home_path}/platform-tools/"]
+    raise "Could not find tools directory in ANDROID_HOME" if dirs.empty?
+    dirs.first
+  end
+
+  def self.android_home_path
+    ENV["ANDROID_HOME"].gsub("\\", "/")
+  end
+  
 end

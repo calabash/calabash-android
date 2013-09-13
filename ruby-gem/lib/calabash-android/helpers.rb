@@ -90,16 +90,6 @@ def sign_apk(app_path, dest_path)
   java_keystore.sign_apk(app_path, dest_path)
 end
 
-def tools_dir
-  dirs = Dir["#{android_home_path}/build-tools/*/"] + Dir["#{android_home_path}/platform-tools/"]
-  raise "Could not find tools directory in ANDROID_HOME" if dirs.empty?
-  dirs.first
-end
-
-def android_home_path
-  ENV["ANDROID_HOME"].gsub("\\", "/")
-end
-
 def fingerprint_from_apk(app_path)
   app_path = File.expand_path(app_path)
   Dir.mktmpdir do |tmp_dir|
