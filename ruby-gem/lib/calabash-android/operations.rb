@@ -402,15 +402,7 @@ module Operations
     end
 
     def adb_command
-      "#{adb} -s #{serial}"
-    end
-
-    def adb
-      if Env.is_windows?
-        %Q("#{ENV["ANDROID_HOME"]}\\platform-tools\\adb.exe")
-      else
-        %Q("#{ENV["ANDROID_HOME"]}/platform-tools/adb")
-      end
+      "#{Env.adb} -s #{serial}"
     end
 
     def default_serial
@@ -447,7 +439,7 @@ module Operations
     end
 
     def connected_devices
-      lines = `#{adb} devices`.split("\n")
+      lines = `#{Env.adb} devices`.split("\n")
       lines.shift
       lines.collect { |l| l.split("\t").first}
     end

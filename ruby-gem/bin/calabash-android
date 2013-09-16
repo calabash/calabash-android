@@ -52,7 +52,7 @@ def relative_to_full_path(file_path)
 end
 
 def exit_if_android_sdk_not_found
-  unless File.exists?(ENV["ANDROID_HOME"] || "")
+  unless File.exists?(Env.android_home_path || "")
     puts "Please set ANDROID_HOME to point to the Android SDK"
     exit 1
   end

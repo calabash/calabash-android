@@ -25,19 +25,27 @@ class Env
   end
 
   def self.tools_dir
-    dirs = Dir["#{android_home_path}/build-tools/*/"] + Dir["#{android_home_path}/platform-tools/"]
-    raise "Could not find tools directory in ANDROID_HOME" if dirs.empty?
-    dirs.first
+    Dir.chdir(android_home_path) do
+      dirs = Dir["build-tools/*"] + Dir["platform-tools"]
+      raise "Could not find tools directory in #{android_home_path}" if dirs.empty?
+      File.expand_path(dirs.first)
+    end
+  end
+
+  def self.adb
+    %Q("#{android_home_path}/platform-tools/adb")
   end
 
   def self.android_home_path
-    ENV["ANDROID_HOME"].gsub("\\", "/")
+    ENV["ANDROID_HOME"]
   end
 
   def self.android_platform_path
-    platforms = Dir["#{android_home_path}/platforms/android-*"].sort_by { |item| '%08s' % item.split('-').last }
-    raise "No Android SDK found in #{android_home_path}/platforms/" if platforms.empty?
-    platforms.last
+    Dir.chdir(android_home_path) do
+      platforms = Dir["platforms/android-*"].sort_by { |item| '%08s' % item.split('-').last }
+      raise "No Android SDK found in #{android_home_path}/platforms/" if platforms.empty?
+      File.expand_path(platforms.last)
+    end
   end
 
 end
