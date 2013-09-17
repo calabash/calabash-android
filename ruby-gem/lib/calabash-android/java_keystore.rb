@@ -26,17 +26,10 @@ class JavaKeystore
   end
 
   def system_with_stdout_on_success(cmd, *args)
-    args = args.clone.unshift cmd
-
-    out, err = nil, nil
-    cmd = Escape.shell_command(args)
-    log "Command: #{cmd}"
-    status = Open3::popen3(cmd) do |stdin, stdout, stderr, wait_thread|
-      out = stdout.read
-      err = stderr.read
-      wait_thread.value
-    end
-    if status == 0
+    cmd = "#{cmd} #{Escape.shell_command(args)}"
+    log cmd
+    out = `#{cmd}`
+    if $?.exitstatus == 0
       out
     else
       nil
