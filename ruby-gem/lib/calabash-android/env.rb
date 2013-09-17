@@ -37,7 +37,16 @@ class Env
   end
 
   def self.android_home_path
-    ENV["ANDROID_HOME"]
+    return ENV["ANDROID_HOME"] if ENV["ANDROID_HOME"]
+    monodroid_config_file = File.expand_path("~/.config/xbuild/monodroid-config.xml")
+    if File.exists?(monodroid_config_file)
+      require 'rexml/document'
+      begin
+        return REXML::Document.new(IO.read(monodroid_config_file)).elements["//android-sdk"].attributes["path"]
+      rescue
+      end
+    end
+    nil
   end
 
   def self.android_platform_path
