@@ -31,11 +31,12 @@ class JavaKeystore
     out, err = nil, nil
     cmd = Escape.shell_command(args)
     log "Command: #{cmd}"
-    status = POpen4::popen4(cmd) do |stdout, stderr, stdin, pid|
+    status = Open3::popen3(cmd) do |stdin, stdout, stderr, wait_thread|
       out = stdout.read
       err = stderr.read
+      wait_thread.value
     end
-    if status.exitstatus == 0
+    if status == 0
       out
     else
       nil
