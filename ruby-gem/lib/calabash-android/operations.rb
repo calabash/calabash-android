@@ -402,7 +402,7 @@ module Operations
     end
 
     def adb_command
-      "#{Env.adb} -s #{serial}"
+      "#{Env.adb_path} -s #{serial}"
     end
 
     def default_serial
@@ -439,7 +439,7 @@ module Operations
     end
 
     def connected_devices
-      lines = `#{Env.adb} devices`.split("\n")
+      lines = `#{Env.adb_path} devices`.split("\n")
       lines.shift
       lines.collect { |l| l.split("\t").first}
     end

@@ -51,13 +51,6 @@ def relative_to_full_path(file_path)
   File.expand_path(file_path)
 end
 
-def exit_if_android_sdk_not_found
-  unless File.exists?(Env.android_home_path || "")
-    puts "Please set ANDROID_HOME to point to the Android SDK"
-    exit 1
-  end
-end
-
 if (ARGV.length == 0)
   print_usage
 end
@@ -65,13 +58,13 @@ cmd = ARGV.shift
 if cmd == 'help'
   print_help
 elsif cmd == 'build'
-  exit_if_android_sdk_not_found
+  Env.exit_if_env_not_set_up
   puts "Please specify the app you want to build a test server for" if (ARGV.empty? or not is_apk_file?(ARGV.first))
   while not ARGV.empty? and is_apk_file?(ARGV.first)
     calabash_build(relative_to_full_path(ARGV.shift))
   end
 elsif cmd == 'run'
-  exit_if_android_sdk_not_found
+  Env.exit_if_env_not_set_up
   if ARGV.empty? or not is_apk_file?(ARGV.first)
     exit calabash_run()
   else
@@ -80,6 +73,7 @@ elsif cmd == 'run'
 elsif cmd == 'gen'
   calabash_scaffold
 elsif cmd == 'console'
+  Env.exit_if_env_not_set_up
   if ARGV.empty?
     puts "Please specify an app"
     exit 1
@@ -90,9 +84,10 @@ elsif cmd == 'console'
   end
   calabash_console(relative_to_full_path(ARGV.shift))
 elsif cmd == 'setup'
-  exit_if_android_sdk_not_found
+  Env.exit_if_env_not_set_up
   calabash_setup
 elsif cmd == 'extract-manifest'
+  Env.exit_if_env_not_set_up
   if ARGV.empty?
     puts "Please specify an app"
     exit 1

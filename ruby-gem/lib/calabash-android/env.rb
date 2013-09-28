@@ -1,19 +1,87 @@
+
 class Env
+  require 'win32/registry' if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+
+  def self.exit_if_env_not_set_up
+    exit_unless_jdk_is_available
+    exit_unless_android_sdk_is_available
+  end
+
+  def self.exit_unless_android_sdk_is_available
+    if android_home_path
+      log "Android SDK found at: #{android_home_path}"
+      return
+    end
+    puts "Could not find an Android SDK please make sure it is installed."
+    puts "You can read about how Calabash-Android is searching for an Android SDK and how you can help here:"
+    puts "https://github.com/calabash/calabash-android/blob/master/documentation/installation.md#prerequisites"
+    exit 1
+  end
 
   def self.keytool_path
-    if is_windows?
-      "\"#{ENV["JAVA_HOME"]}/bin/keytool.exe\""
-    else
-      "keytool"
+    find_executable_on_path(keytool_executable) ||
+    "\"#{jdk_path}/bin/#{keytool_executable}\""
+  end
+
+  def self.exit_unless_jdk_is_available
+    jdk = jdk_path
+    if find_executable_on_path(keytool_executable) || jdk
+      log "JDK found on PATH." if find_executable_on_path(keytool_executable)
+      log "JDK found at: #{jdk}" if jdk
+      return
     end
+    puts "Could not find Java Development Kit please make sure it is installed."
+    puts "You can read about how Calabash-Android is searching for a JDK and how you can help here:"
+    puts "https://github.com/calabash/calabash-android/blob/master/documentation/installation.md#prerequisites"
+    exit 1
   end
 
   def self.jarsigner_path
+    find_executable_on_path(jarsigner_executable) ||
+    "\"#{jdk_path}/bin/#{jarsigner_executable}\""
+  end
+
+  def self.jdk_path
+    path_if_jdk(ENV['JAVA_HOME']) ||
     if is_windows?
-      "\"#{ENV["JAVA_HOME"]}/bin/jarsigner.exe\""
+      path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.7', 'JavaHome')) ||
+      path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.6', 'JavaHome'))
     else
-      "jarsigner"
+      path_if_android_home(read_attribute_from_monodroid_config('java-sdk', 'path'))
     end
+  end
+
+  def self.android_home_path
+    path_if_android_home(ENV["ANDROID_HOME"]) ||
+    if is_windows?
+      path_if_android_home(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\Android SDK Tools', 'Path')) ||
+      path_if_android_home("C:\\Android\\android-sdk")
+    else
+      path_if_android_home(read_attribute_from_monodroid_config('android-sdk', 'path'))
+    end
+  end
+
+  def self.find_executable_on_path(executable)
+    path = path_elements.each do |x|
+      f = File.join(x, executable)
+      return "\"#{f}\"" if File.exists?(f)
+    end
+  end
+
+  def self.path_if_jdk(path)
+    path if path && File.exists?(File.join(path, 'bin', jarsigner_executable))
+  end
+
+  def self.jarsigner_executable
+    is_windows? ? 'jarsigner.exe' : 'jarsigner'
+  end
+  
+  def self.keytool_executable
+    is_windows? ? 'keytool.exe' : 'keytool'
+  end
+
+  def self.adb_executable
+    is_windows? ? 'adb.exe' : 'adb'
   end
 
   def self.ant_path
@@ -32,21 +100,28 @@ class Env
     end
   end
 
-  def self.adb
-    %Q("#{android_home_path}/platform-tools/adb")
+  def self.adb_path
+    %Q("#{android_home_path}/platform-tools/#{adb_executable}")
+  end  
+
+  def self.path_if_android_home(path)
+    path if path && File.exists?(File.join(path, 'platform-tools', adb_executable))
   end
 
-  def self.android_home_path
-    return ENV["ANDROID_HOME"] if ENV["ANDROID_HOME"]
+  def self.path_elements
+    return [] unless ENV['PATH']
+    ENV['PATH'].split (/[:;]/)
+  end
+
+  def self.read_attribute_from_monodroid_config(element, attribute)
     monodroid_config_file = File.expand_path("~/.config/xbuild/monodroid-config.xml")
     if File.exists?(monodroid_config_file)
       require 'rexml/document'
       begin
-        return REXML::Document.new(IO.read(monodroid_config_file)).elements["//android-sdk"].attributes["path"]
+        return REXML::Document.new(IO.read(monodroid_config_file)).elements["//#{element}"].attributes[attribute]
       rescue
       end
     end
-    nil
   end
 
   def self.android_platform_path
@@ -54,6 +129,14 @@ class Env
       platforms = Dir["platforms/android-*"].sort_by { |item| '%08s' % item.split('-').last }
       raise "No Android SDK found in #{android_home_path}/platforms/" if platforms.empty?
       File.expand_path(platforms.last)
+    end
+  end
+
+  def self.read_registry(root_key, key, value)
+    begin
+      root_key.open(key)[value]
+    rescue
+      nil
     end
   end
 
