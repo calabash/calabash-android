@@ -4,15 +4,18 @@ class JavaKeystore
     raise "No such file #{location}" unless File.exists?(File.expand_path(location))
 
     keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password)
-    unless keystore_data
+    if keystore_data.nil?
       error = "Could not list certificates in keystore. Probably because the password was incorrect."
       @errors = [{:message => error}]
       log error
+      raise error
       #TODO: Handle the case where password is correct but the alias is missing.
     end
     @location = location
     @keystore_alias = keystore_alias
     @password = password
+    log "Key store data:"
+    log keystore_data
     @fingerprint = extract_md5_fingerprint(keystore_data)
   end
 
@@ -56,7 +59,7 @@ class JavaKeystore
 
   def self.get_keystores
     if keystore = keystore_from_settings 
-      keystore
+      [ keystore ]
     else
       [
         read_keystore_with_default_password_and_alias(File.join(ENV["HOME"], "/.android/debug.keystore")),
@@ -78,7 +81,7 @@ class JavaKeystore
       JavaKeystore.new(keystore["keystore_location"], keystore["keystore_alias"], keystore["keystore_password"])
   end
 
-  def fail_if_key_missing(map, key)
+  def self.fail_if_key_missing(map, key)
     raise "Found .calabash_settings but no #{key} defined." unless map[key]
   end
 
