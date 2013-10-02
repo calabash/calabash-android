@@ -62,10 +62,11 @@ class Env
   end
 
   def self.find_executable_on_path(executable)
-    path = path_elements.each do |x|
+    path_elements.each do |x|
       f = File.join(x, executable)
       return "\"#{f}\"" if File.exists?(f)
     end
+    nil
   end
 
   def self.path_if_jdk(path)
