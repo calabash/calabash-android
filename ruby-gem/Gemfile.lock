@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    calabash-android (0.4.13)
+    calabash-android (0.4.14)
       awesome_print
       cucumber
       escape (~> 0.0.4)
