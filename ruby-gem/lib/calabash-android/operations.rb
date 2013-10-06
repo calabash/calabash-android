@@ -52,6 +52,32 @@ module Operations
     default_device.perform_action(action, *arguments)
   end
 
+  def clear_logcat
+      `#{default_device.adb_command} logcat -c`
+  end
+
+  def emitted_via_logcat(text, tag=nil, loglevel='V')
+    if tag
+      (`#{default_device.adb_command} logcat -d #{tag}:#{loglevel} *:S`).include? text
+    else
+      (`#{default_device.adb_command} logcat -d *:#{loglevel}`).include? text
+    end
+  end
+
+  def get_levels_emitted_via_logcat(tag='*')
+    events = Hash.new()
+
+    # put each of the event types in
+    (`#{default_device.adb_command} logcat -d #{tag}:VERBOSE *:S`).split("\n").each do |line| 
+          c = line.chars.first
+          ordered = 'EWIDV'
+          # assign the ordeing of log priority
+          events[c] = ordered.index c if ordered.include? c
+      end
+
+    events
+  end
+  
   def reinstall_apps
     default_device.reinstall_apps
   end
