@@ -47,7 +47,7 @@ class Env
       path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.7', 'JavaHome')) ||
       path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.6', 'JavaHome'))
     else
-      path_if_android_home(read_attribute_from_monodroid_config('java-sdk', 'path'))
+      path_if_jdk(read_attribute_from_monodroid_config('java-sdk', 'path'))
     end
   end
 
