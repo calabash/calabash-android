@@ -41,6 +41,11 @@ class Env
     "\"#{jdk_path}/bin/#{jarsigner_executable}\""
   end
 
+  def self.java_path
+    find_executable_on_path(java_executable) ||
+    "\"#{jdk_path}/bin/#{java_executable}\""
+  end
+
   def self.jdk_path
     path_if_jdk(ENV['JAVA_HOME']) ||
     if is_windows?
@@ -75,6 +80,10 @@ class Env
 
   def self.jarsigner_executable
     is_windows? ? 'jarsigner.exe' : 'jarsigner'
+  end
+
+  def self.java_executable
+    is_windows? ? 'java.exe' : 'java'
   end
   
   def self.keytool_executable
