@@ -5,7 +5,7 @@ import android.app.Instrumentation;
 
 public class PublicViewFetcher extends ViewFetcher {
 
-    public PublicViewFetcher(Instrumentation instrumentation, Activity activity) {
-        super(new ActivityUtils(instrumentation, activity, new Sleeper()));
+    public PublicViewFetcher(ActivityUtils activityUtils) {
+        super(activityUtils);
     }
 }
