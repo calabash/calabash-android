@@ -6,13 +6,11 @@ import android.app.Activity;
 import android.app.Instrumentation;
 
 public class SoloEnhanced extends Solo {
-//	private Pincher pincher;
 	private MapViewUtils mapViewUtils;
 
 	public SoloEnhanced(Instrumentation instrumentation, Activity activity) {
 		super(instrumentation, activity);
 		this.mapViewUtils = new MapViewUtils(instrumentation, viewFetcher, sleeper, waiter);
-//		this.pincher = new Pincher(instrumentation, viewFetcher);
 	}
     public ActivityUtils getActivityUtils() {
         return activityUtils;
@@ -74,27 +72,4 @@ public class SoloEnhanced extends Solo {
 	public List<String> getMapBounds() {
 		return mapViewUtils.getBounds();
 	}
-
-//	/**
-//	 * Sorry, doesn't work yet
-//	 * @param togetherOrApart - {@link Pincher#TOGETHER} or {@link Pincher#APART}
-//	 */
-//	public void pinch(int togetherOrApart) {
-//		switch( togetherOrApart ) {
-//		case Pincher.TOGETHER: pincher.pinch(Pincher.Direction.TOGETHER); break;
-//		case Pincher.APART: pincher.pinch(Pincher.Direction.APART); break;
-//		}
-//	}
-//
-//	/**
-//	 * Sorry, doesn't work yet
-//	 * @param togetherOrApart - {@link Pincher#TOGETHER} or {@link Pincher#APART}
-//	 * @param view
-//	 */
-//	public void pinch(int togetherOrApart, View view) {
-//		switch( togetherOrApart ) {
-//		case Pincher.TOGETHER: pincher.pinch(Pincher.Direction.TOGETHER, view); break;
-//		case Pincher.APART: pincher.pinch(Pincher.Direction.APART, view); break;
-//		}
-//	}
 }
