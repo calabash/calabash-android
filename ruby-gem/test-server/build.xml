@@ -44,6 +44,14 @@
       <fail unless="doesCalabashJsExist">
         ${calabashjs.dir} does not exist.
       </fail>
+      <antversion property="version.running" />
+      <fail message="FATAL ERROR:  The running Ant version, ${version.running}, is too old.">
+        <condition>
+          <not>
+            <antversion atleast="1.8" />
+          </not>
+        </condition>
+      </fail>
     </target>
 
     <target name="-stage">
