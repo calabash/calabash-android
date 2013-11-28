@@ -21,6 +21,8 @@ Install `calabash-android` by running
 Troubleshooting Installation
 ----------------------------
 
+### Mac
+
 If you are on Mac you may see an error like this:
 
     ~$ sudo gem install calabash-android
@@ -39,3 +41,23 @@ have [Xcode](http://developer.apple.com/xcode/) installed you can
 install them from it's Preferences pane (in the Download tab).
 Otherwise you can download the Command Line Tools for you OS X version
 from the [Apple Developer web site](http://developer.apple.com/downloads/index.action).
+
+### Ubuntu
+
+These instructions assume you'll be using Ruby 1.9.1.
+
+Installing Ruby:
+
+    sudo apt-get install ruby1.9.1
+
+You might need to install the dev package when installing calabash:
+
+    sudo apt-get isntall ruby1.9.1-dev
+
+If you see something like this while installing calabash:
+
+    cannot load such file -- rspec/expectations (LoadError)
+
+It's because the rspec package isn't installed:
+
+    gem install rspec
