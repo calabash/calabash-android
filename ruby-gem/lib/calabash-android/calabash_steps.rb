@@ -1,7 +1,3 @@
-
-WAIT_TIMEOUT = (ENV['WAIT_TIMEOUT'] || 30).to_f
-STEP_PAUSE = (ENV['STEP_PAUSE'] || 0.5).to_f
-
 require 'calabash-android/steps/assert_steps'
 require 'calabash-android/steps/check_box_steps'
 require 'calabash-android/steps/context_menu_steps'
@@ -16,5 +12,3 @@ require 'calabash-android/steps/screenshot_steps'
 require 'calabash-android/steps/search_steps'
 require 'calabash-android/steps/spinner_steps'
 require 'calabash-android/steps/time_picker_steps'
-require 'calabash-android/steps/list_steps'
-
