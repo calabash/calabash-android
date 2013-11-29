@@ -257,31 +257,3 @@ If you run the test on [LessPainful](https://www.lesspainful.com) they will actu
     Then /^I rotate the device to landscape$/
     Then /^I rotate the device to portrait$/
 
-Manual Steps
-------------
-
-These steps are useful for allowing mixed manual and automated tests and to be documented 
-and kept together. These steps do nothing when the tests are run automatically but are still
-documented in Cucumber output formatters such as the HTML report. This allows a 
-manual tester to perform the same test case but with extra manual steps such as manual image verification.
-
-To manually request a manual tester to compare the screen with a reference image
-
-    Then /^I compare the current screen with the reference image "([^\"]*) manually"$/ do |name|
-
-    For example:
-
-    Then I compare the current screen with the reference image "features/ref1.png" manually
-
-To manually perform a custom step    
-
-    Then /^I manually (.*)$/ do |action|
-
-    For example:
-
-    Then I manually check that the list scrolls smoothly
-
-
-    
-
-
