@@ -4,7 +4,7 @@ end
 
 When /^I pan the map to (-?\d+\.\d+), (-?\d+\.\d+)$/ do | lat, lon |
   performAction('pan_map_to', lat, lon)
-  performAction('wait', 1)
+  sleep(1)
 end
 
 When /^(?:I )?set the map zoom level to (\d+)$/ do | zoom |
