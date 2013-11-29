@@ -84,6 +84,11 @@ module Calabash
       end
 
       #options for wait_for apply
+      def wait_for_element_exist(uiquery, options={})
+        wait_for_elements_exist([uiquery], options)
+      end
+
+      #options for wait_for apply
       def wait_for_elements_exist(elements_arr, options={})
         if elements_arr.is_a?(String) || elements_arr.is_a?(Symbol)
           elements_arr = [elements_arr.to_s]
@@ -93,6 +98,12 @@ module Calabash
           elements_arr.all? { |q| element_exists(q) }
         end
       end
+
+      #options for wait_for apply
+      def wait_for_element_do_not_exist(uiquery, options={})
+        wait_for_elements_do_not_exist([uiquery], options)
+      end
+
       #options for wait_for apply
       def wait_for_elements_do_not_exist(elements_arr, options={})
         if elements_arr.is_a?(String)
