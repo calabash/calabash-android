@@ -23,7 +23,7 @@ Then /^I press image button number (\d+)$/ do |button_number|
 end
 
 Then /^I press view with id "([^\"]*)"$/ do |view_id|
-  performAction('click_on_view_by_id',view_id)
+  touch("* id:'#{view_id}'")
 end
 
 Then /^I press "([^\"]*)"$/ do |identifier|
