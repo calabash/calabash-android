@@ -43,8 +43,8 @@ Then /^I wait for the "([^\"]*)" button to appear$/ do |text|
   performAction('wait_for_button', text)
 end
 
-Then /^I wait for the view with id "([^\"]*)" to appear$/ do |text|
-  performAction('wait_for_view_by_id', text)
+Then /^I wait for the view with id "([^\"]*)" to appear$/ do |id|
+  wait_for_element_exist("* id:'#{id}'", {:timeout => 60})
 end
 
 Then /^I wait for the "([^\"]*)" view to appear$/ do |text|
