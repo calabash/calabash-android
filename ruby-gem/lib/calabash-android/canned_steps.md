@@ -23,7 +23,7 @@ To assert that specified text cannot be found use any of the following steps.
 Input steps
 -----------
 
-    Then /^I toggle checkbox number (\d+)$/ do |checkboxNumber|
+    Then /^I toggle checkbox number (\d+)$/ do |checkbox_number|
 Toggles checkout with the specified index.
 
     Then /^I long press "([^\"]*)"$/ do |text_to_press|
