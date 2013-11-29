@@ -24,19 +24,19 @@ Then /^I wait for a second$/ do
 end
 
 Then /^I wait for "([^\"]*)" to appear$/ do |text|
-  performAction('wait_for_text', text)
+  wait_for_element_exist("android.widget.TextView {text CONTAINS '#{text}'}", {:timeout => 90})
 end
 
 Then /^I wait up to (\d+) seconds for "([^\"]*)" to appear$/ do |timeout, text|
-  performAction('wait_for_text', text, timeout)
+  wait_for_element_exist("android.widget.TextView {text CONTAINS '#{text}'}", {:timeout => timeout})
 end
 
 Then /^I wait to see "([^\"]*)"$/ do |text|
-  performAction('wait_for_text', text)
+  wait_for_element_exist("* {text CONTAINS '#{text}'}", {:timeout => 90})
 end
 
 Then /^I wait up to (\d+) seconds to see "([^\"]*)"$/ do |timeout, text|
-  performAction('wait_for_text', text, timeout)
+  wait_for_element_exist("android.widget.TextView {text CONTAINS '#{text}'}", {:timeout => timeout})
 end
 
 Then /^I wait for the "([^\"]*)" button to appear$/ do |text|
