@@ -6,8 +6,14 @@ Then /^I press button number (\d+)$/ do |buttonNumber|
   performAction('press_button_number', buttonNumber) 
 end
 
-Then /^I press image button number (\d+)$/ do |buttonNumber|
-  performAction('press_image_button_number', buttonNumber) 
+Then /^I press image button number (\d+)$/ do |button_number|
+  button_number = button_number.to_i - 1
+  image_buttons = query("android.widget.ImageButton")
+
+  if button_number >= image_buttons.count
+    raise "Could not press ImageButton number #{button_number}. Only #{image_buttons.count} was found"
+  end
+  touch(image_buttons[button_number])
 end
 
 Then /^I press view with id "([^\"]*)"$/ do |view_id|
