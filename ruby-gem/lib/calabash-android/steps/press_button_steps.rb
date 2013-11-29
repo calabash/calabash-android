@@ -2,8 +2,14 @@ Given /^I press the "([^\"]*)" button$/ do |buttonText|
   performAction('press_button_with_text', buttonText)
 end
 
-Then /^I press button number (\d+)$/ do |buttonNumber|
-  performAction('press_button_number', buttonNumber) 
+Then /^I press button number (\d+)$/ do |button_number|
+  button_number = button_number.to_i - 1
+  buttons = query("android.widget.Button")
+
+  if button_number >= buttons.count
+    raise "Could not press Button number #{button_number}. Only #{buttons.count} was found"
+  end
+  touch(buttons[button_number])
 end
 
 Then /^I press image button number (\d+)$/ do |button_number|
