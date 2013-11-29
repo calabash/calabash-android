@@ -1,5 +1,5 @@
 Then /^I wait for progress$/ do
-  performAction('wait_for_no_progress_bars') 
+  wait_for_element_do_not_exist("android.widget.ProgressBar", :timeout => 60)
 end
 
 Then /^I wait$/ do
