@@ -1,5 +1,5 @@
-Given /^I press the "([^\"]*)" button$/ do |buttonText|
-  performAction('press_button_with_text', buttonText)
+Given /^I press the "([^\"]*)" button$/ do |button_text|
+  touch("android.widget.Button {text CONTAINS '#{button_text}'}")
 end
 
 Then /^I press button number (\d+)$/ do |button_number|
