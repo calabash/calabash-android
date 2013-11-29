@@ -58,7 +58,12 @@ module Calabash
         end
       end
 
-#options for wait_for apply
+      #options for wait_for apply
+      def wait_for_element_exist(uiquery, options={})
+        wait_for_elements_exist([uiquery], options)
+      end
+
+      #options for wait_for apply
       def wait_for_elements_exist(elements_arr, options={})
         options[:timeout_message] = options[:timeout_message] || "Timeout waiting for elements: #{elements_arr.join(",")}"
         wait_for(options) do
@@ -66,7 +71,12 @@ module Calabash
         end
       end
 
-#options for wait_for apply
+      #options for wait_for apply
+      def wait_for_element_do_not_exist(uiquery, options={})
+        wait_for_elements_do_not_exist([uiquery], options)
+      end
+
+      #options for wait_for apply
       def wait_for_elements_do_not_exist(elements_arr, options={})
         options[:timeout_message] = options[:timeout_message] || "Timeout waiting for no elements matching: #{elements_arr.join(",")}"
         wait_for(options) do
