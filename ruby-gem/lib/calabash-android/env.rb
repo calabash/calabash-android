@@ -78,6 +78,10 @@ class Env
     path if path && File.exists?(File.join(path, 'bin', jarsigner_executable))
   end
 
+  def self.zipalign_path
+    %Q("#{android_home_path}/tools/zipalign")
+  end
+
   def self.jarsigner_executable
     is_windows? ? 'jarsigner.exe' : 'jarsigner'
   end

@@ -76,12 +76,25 @@ def resign_apk(app_path)
   Dir.mktmpdir do |tmp_dir|
     log "Resign apk"
     unsigned_path = File.join(tmp_dir, 'unsigned.apk')
+    unaligned_path = File.join(tmp_dir, 'unaligned.apk')
     FileUtils.cp(app_path, unsigned_path)
-
-    `#{Env.java_path} -jar "#{File.dirname(__FILE__)}/lib/unsign.jar" "#{unsigned_path}"`
-
-    sign_apk(unsigned_path, app_path)
+    unsign_apk(unsigned_path)
+    sign_apk(unsigned_path, unaligned_path)
+    zipalign_apk(unaligned_path, app_path)
   end
+end
+
+def unsign_apk(path)
+  files_to_remove = `#{Env.tools_dir}/aapt list "#{path}"`.lines.collect(&:strip).grep(/^META-INF\//)
+  if files_to_remove.empty?
+    log "App wasn't signed. Will not try to unsign it."
+  else
+    system("#{Env.tools_dir}/aapt remove \"#{path}\" #{files_to_remove.join(" ")}")
+  end
+end
+
+def zipalign_apk(inpath, outpath)
+  system(%Q(#{Env.zipalign_path} -f 4 "#{inpath}" "#{outpath}"))
 end
 
 def sign_apk(app_path, dest_path)
