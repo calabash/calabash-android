@@ -3,6 +3,11 @@ def calabash_build(app)
   log "#{app} was signed with a certificate with fingerprint #{apk_fingerprint}"
 
   keystores = JavaKeystore.get_keystores
+  if keystores.empty?
+    puts "No keystores found."
+    puts "Please create one or run calabash-android setup to configure calabash-android to use an existing keystore."
+    exit 1
+  end
   keystore = keystores.find { |k| k.fingerprint == apk_fingerprint}
 
   unless keystore
