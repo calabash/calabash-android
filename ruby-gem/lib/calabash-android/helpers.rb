@@ -1,45 +1,29 @@
 require "stringio"
-require 'rexml/document'
-require 'rexml/xpath'
 require 'zip/zip'
 require 'tempfile'
 require 'escape'
 require 'rbconfig'
 require 'calabash-android/java_keystore'
 
-include REXML
-
 def package_name(app)
-  require 'rexml/document'
-  require 'rexml/xpath'
-
-  manifest = Document.new(manifest(app))
-  manifest.root.attributes['package']
+  package_line = aapt_dump(app, "package").first
+  raise "'package' not found in aapt output" unless package_line
+  m = package_line.match(/name='([^']+)'/)
+  raise "Unexpected output from aapt: #{package_line}" unless m
+  m[1]
 end
 
 def main_activity(app)
-  manifest = Document.new(manifest(app))
-  main_activity = manifest.elements["//action[@name='android.intent.action.MAIN']/../.."].attributes['name']
-  #Handle situation where main activity is on the form '.class_name'
-  if main_activity.start_with? "."
-    main_activity = package_name(app) + main_activity
-  elsif not main_activity.include? "." #This is undocumentet behaviour but Android seems to accept shorthand naming that does not start with '.'
-    main_activity = "#{package_name(app)}.#{main_activity}"
-  end
-  main_activity
+  launchable_activity_line = aapt_dump(app, "launchable-activity").first
+  raise "'launchable-activity' not found in aapt output" unless launchable_activity_line
+  m = launchable_activity_line.match(/name='([^']+)'/)
+  raise "Unexpected output from aapt: #{launchable_activity_line}" unless m
+  m[1]
 end
 
-def manifest(app)
-  out_path = manifest_path(app)
-  manifest_file = File.join(out_path, 'AndroidManifest.xml')
-  unless File.size?(manifest_file)
-    manifest_extractor = File.join(File.expand_path(File.dirname(__FILE__)),'lib', 'apktool-cli-1.5.3-SNAPSHOT.jar')
-    output = `#{Env.java_path} -jar "#{manifest_extractor}" d -s --frame-path "#{framework_path(app)}" -f "#{app}" #{out_path} 2>&1`
-    raise "Unable to extract manifest: #{output}" unless File.size?(manifest_file)
-    # Tidy up a bit. It would be nice if apktool could just dump the manifest alone.
-    FileUtils.rm_rf(%w{res assets classes.dex}.map {|f| File.join(out_path, f) })
-  end
-  File.read(manifest_file)
+def aapt_dump(app, key)
+  lines = `#{Env.tools_dir}/aapt dump badging "#{app}"`.lines.collect(&:strip)
+  lines.select { |l| l.start_with?("#{key}:") }
 end
 
 def checksum(file_path)
@@ -50,15 +34,6 @@ end
 def test_server_path(apk_file_path)
   "test_servers/#{checksum(apk_file_path)}_#{Calabash::Android::VERSION}.apk"
 end
-
-def manifest_path(apk_file_path)
-  "test_servers/#{checksum(apk_file_path)}_#{Calabash::Android::VERSION}.res"
-end
-
-def framework_path(apk_file_path)
-  "test_servers/apktool-#{checksum(apk_file_path)}_#{Calabash::Android::VERSION}"
-end
-
 
 def build_test_server_if_needed(app_path)
   unless File.exist?(test_server_path(app_path))

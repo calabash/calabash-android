@@ -86,18 +86,6 @@ elsif cmd == 'console'
 elsif cmd == 'setup'
   Env.exit_if_env_not_set_up
   calabash_setup
-elsif cmd == 'extract-manifest'
-  Env.exit_if_env_not_set_up
-  if ARGV.empty?
-    puts "Please specify an app"
-    exit 1
-  end
-  unless File.exist? ARGV.first
-    puts "No such file #{ARGV.first}"
-    exit 1
-  end
-
-  puts manifest ARGV.first
 elsif cmd == 'resign'
   Env.exit_if_env_not_set_up
   unless File.exist?(File.expand_path(ARGV.first))
