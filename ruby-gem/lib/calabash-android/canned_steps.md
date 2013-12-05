@@ -72,6 +72,9 @@ Finds the input field with id `view_id` and clears the text from it.
     Then /^I select "([^\"]*)" from "([^\"]*)"$/ do |item_text, spinner_content_description|
 Finds the Spinner by 'spinner_content_description' and selects the item with the matching 'item_text'
 
+    Then /^I select "([^\"]*)" from spinner with id "([^\"]*)"$/ do |text, spinner_view_id|
+Finds the Spinner with id `id` and selects the item with matching 'item_text' 
+
 Buttons
 -------
 
