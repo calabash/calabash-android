@@ -124,6 +124,7 @@ public class HttpServer extends NanoHTTPD {
 				Map command = mapper.readValue(commandString, Map.class);
 				
 				String uiQuery = (String) command.get("query");
+				uiQuery = uiQuery.trim();
 				Map op = (Map) command.get("operation");
 				@SuppressWarnings("unused") //TODO: support other methods, e.g., flash
 				String methodName = (String) op.get("method_name");
