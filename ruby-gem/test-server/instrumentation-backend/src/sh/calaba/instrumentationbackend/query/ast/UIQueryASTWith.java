@@ -42,7 +42,7 @@ public class UIQueryASTWith implements UIQueryAST {
 				for (int i = 0; i < inputViews.size(); i++) {
 					Object o = inputViews.get(i);
 
-					if (o instanceof WebView) {
+					if (o instanceof WebView && isDomQuery()) {
 						Future webResult = evaluateForWebView((WebView) o);
 						if (webResult != null) {
 							futureResult.add(webResult);
@@ -90,8 +90,13 @@ public class UIQueryASTWith implements UIQueryAST {
 
 	}
 
-	
-	@SuppressWarnings("rawtypes")
+    private boolean isDomQuery() {
+        System.out.println("isDomQuery: " + propertyName);
+        return propertyName.equalsIgnoreCase("css") || propertyName.equalsIgnoreCase("xpath");
+    }
+
+
+    @SuppressWarnings("rawtypes")
 	private Map evaluateForMap(Map map) {		
 		if (map.containsKey(this.propertyName)) {											
 			Object value = map.get(this.propertyName);
