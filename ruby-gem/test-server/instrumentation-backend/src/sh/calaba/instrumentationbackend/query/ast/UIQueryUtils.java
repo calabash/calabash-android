@@ -194,10 +194,8 @@ public class UIQueryUtils {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Future evaluateAsyncInMainThread(final Callable callable)
-			throws Exception {		
-		
-				
+	public static Future evaluateAsyncInMainThread(final Callable callable) throws Exception {
+
 		final AtomicReference<Future> result = new AtomicReference<Future>();
 		final AtomicReference<Exception> errorResult = new AtomicReference<Exception>();
 
@@ -248,10 +246,8 @@ public class UIQueryUtils {
 							new TypeReference<List<HashMap<String, Object>>>() {
 							});
 					for (Map<String, Object> data : parsedResult) {
-						Map<String, Object> rect = (Map<String, Object>) data
-								.get("rect");
-						Map<String, Object> updatedRect = QueryHelper
-								.translateRectToScreenCoordinates(webView, rect);
+						Map<String, Object> rect = (Map<String, Object>) data.get("rect");
+						Map<String, Object> updatedRect = QueryHelper.translateRectToScreenCoordinates(webView, rect);
 						data.put("rect", updatedRect);
 						data.put("webView", webView);
 					}

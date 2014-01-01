@@ -8,6 +8,8 @@ import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
 import sh.calaba.instrumentationbackend.actions.Actions;
+import sh.calaba.instrumentationbackend.query.QueryResult;
+
 import android.test.TouchUtils;
 import android.webkit.WebView;
 
@@ -71,11 +73,11 @@ public class ScrollTo implements Action {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
 	private int getCenterY(String uiQuery, WebView webView) {
-        List queryResult = new sh.calaba.instrumentationbackend.query.Query(uiQuery).executeQuery();
+        QueryResult queryResult = new sh.calaba.instrumentationbackend.query.Query(uiQuery).executeQuery();
         if (queryResult.isEmpty()) {
             throw new RuntimeException("Query found no elements");
         }
-        final Map<String, Object> firstVisibleRectangle = QueryHelper.findFirstVisibleRectangle(queryResult);
+        final Map<String, Object> firstVisibleRectangle = QueryHelper.findFirstVisibleRectangle(queryResult.asList());
 
         return Math.round((Float)firstVisibleRectangle.get("center_y"));
     }

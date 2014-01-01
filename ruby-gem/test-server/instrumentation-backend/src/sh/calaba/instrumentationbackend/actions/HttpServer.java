@@ -20,6 +20,7 @@ import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.json.JSONUtils;
 import sh.calaba.instrumentationbackend.query.Query;
+import sh.calaba.instrumentationbackend.query.QueryResult;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -133,7 +134,7 @@ public class HttpServer extends NanoHTTPD {
 				//For now we only support query
 				
 				
-				List queryResult = new Query(uiQuery,arguments).executeQuery();
+				QueryResult queryResult = new Query(uiQuery,arguments).executeQuery();
 
 				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", 
 						FranklyResult.successResult(queryResult).asJson());

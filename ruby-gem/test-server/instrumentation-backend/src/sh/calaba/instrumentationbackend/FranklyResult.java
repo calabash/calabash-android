@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import sh.calaba.instrumentationbackend.json.JSONUtils;
+import sh.calaba.instrumentationbackend.query.QueryResult;
 
 /**
  * Represents a response in the Frankly protocol.
@@ -23,66 +24,59 @@ public class FranklyResult {
     final String reason;
     final String detail;
     @SuppressWarnings("rawtypes")
-	final List results;
+	final QueryResult result;
         
 
 	@SuppressWarnings({ "rawtypes" })
-	public FranklyResult(boolean success, List results, String reason,
-			String detail) {
+	public FranklyResult(boolean success, QueryResult result, String reason, String detail) {
 		super();
 		this.success = success;
-		this.results = results;		
+		this.result = result;
 		this.reason = reason;
 		this.detail = detail;
 	}
 
 	public static FranklyResult fromThrowable(Throwable t) {
     	CharArrayWriter caw = new CharArrayWriter();
-    	t.printStackTrace(new PrintWriter(caw));		
-		return new FranklyResult(false,Collections.EMPTY_LIST,t.getMessage(),caw.toString());
+    	t.printStackTrace(new PrintWriter(caw));
+
+		return new FranklyResult(false, null, t.getMessage(),caw.toString());
     }
     
     public static FranklyResult emptyResult() {
-    	return new FranklyResult(true,Collections.EMPTY_LIST,null,null);
+    	return new FranklyResult(true, null, null,null);
     }
 
     public static FranklyResult failedResult(String message,String detail) {
-        return new FranklyResult(false,Collections.EMPTY_LIST,message,detail);
+        return new FranklyResult(false, null, message,detail);
     }
     
     public String asJson() {
         return JSONUtils.asJson(asMap());
     }
 
-	public Map<String,Object> asMap() 
+	public Map<String, Object> asMap()
 	{
-		Map<String,Object> result = new HashMap<String, Object>();
-		result.put("outcome", this.success ? "SUCCESS" : "ERROR");
+		Map<String,Object> map = new HashMap<String, Object>();
+        map.put("outcome", success ? "SUCCESS" : "ERROR");
 		
-		if (this.success) 
+		if (success)
 		{
-			result.put("results",this.results);	
+            map.put("results", result.asList());
 		}
 		else 
 		{
-			result.put("reason", this.reason);
-			if (this.detail != null)
+            map.put("reason", reason);
+			if (detail != null)
 			{
-				result.put("detail", this.detail);
+                map.put("detail", detail);
 			}						
 		}
-		return result;
-	}
-
-	@Override
-	public String toString() 
-	{
-		return "FranklyResult [success=" + success + ", reason=" + reason
-				+ ", details=" + detail + ", results=" + results + "]";
+		return map;
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static FranklyResult successResult(List result) {
+	public static FranklyResult successResult(QueryResult result) {
 		return new FranklyResult(true, result, null,null);
 	}    
 }

@@ -275,7 +275,7 @@ module Operations
         raise "Empty result from TestServer" if result.chomp.empty?
         result = JSON.parse(result)
         if not result["success"] then
-          raise "Step unsuccessful: #{result["message"]}"
+          raise "Action '#{action}' unsuccessful: #{result["message"]}"
         end
         result
       end
@@ -729,11 +729,9 @@ module Operations
 
   def set_text(uiquery, txt)
     raise "Currently queries are only supported for webviews" unless uiquery.start_with? "webView"
-
     uiquery.slice!(0, "webView".length)
     if uiquery =~ /(css|xpath):\s*(.*)/
       r = performAction("set_text", $1, $2, txt)
-      JSON.parse(r["message"])
     else
      raise "Invalid query #{uiquery}"
     end

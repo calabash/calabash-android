@@ -47,8 +47,7 @@ public class Query {
 		this.operations = args;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public List executeQuery() {		
+	public QueryResult executeQuery() {
 		return UIQueryEvaluator.evaluateQueryWithOptions(parseQuery(this.queryString), rootViews(), parseOperations(this.operations));		
 	}
 
