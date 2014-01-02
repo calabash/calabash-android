@@ -282,6 +282,12 @@ To manually perform a custom step
     Then I manually check that the list scrolls smoothly
 
 
+Disabling Canned Steps
+----------------------
+
+You can disable canned steps by setting the environment variable NO_CANNED_STEPS to true like so:
+
+    export NO_CANNED_STEPS='true' && calabash-android run <apk>
     
 
 
