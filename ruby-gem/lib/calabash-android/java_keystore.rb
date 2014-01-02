@@ -3,7 +3,7 @@ class JavaKeystore
   def initialize(location, keystore_alias, password)
     raise "No such file #{location}" unless File.exists?(File.expand_path(location))
 
-    keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password)
+    keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password, '-J-Dfile.encoding=utf-8')
     if keystore_data.nil?
       error = "Could not list certificates in keystore. Probably because the password was incorrect."
       @errors = [{:message => error}]
