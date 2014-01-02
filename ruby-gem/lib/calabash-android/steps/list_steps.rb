@@ -5,12 +5,13 @@
 Then /^I should see following list:$/ do | expected_table |
   result = performAction('get_list_item_text')
   response_table = result['bonusInformation']
-  response_table.each_with_index do | row_data, index |
+  response_table_array = []
+  response_table.each do | row_data|
     row_data = JSON.parse( row_data )
-    response_table[index] = row_data
+    tmpArray = [row_data.values.first]
+    response_table_array.push(tmpArray)
   end
-  
-  expected_table.diff!(response_table)
+  expected_table.diff!(response_table_array)
 end
 
 # Note: This step is currently intended as more of an example rather than a rock-solid, well-tested step.
