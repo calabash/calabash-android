@@ -12,6 +12,7 @@ import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient.WebFuture;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import android.util.Log;
+import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
 public class QueryHelper {
@@ -89,17 +90,21 @@ public class QueryHelper {
     }
 	
 	public static WebFuture executeAsyncJavascriptInWebviews(WebView webView,
-			String scriptPath, String selector, String type) {
+		String scriptPath, String selector, String type) {
 
 		String script = readJavascriptFromAsset(scriptPath);
 
 		script = script.replaceFirst("%@", selector);
 		script = script.replaceFirst("%@", type);
-		
-		CalabashChromeClient chromeClient = CalabashChromeClient.prepareWebView(webView);		
-        webView.loadUrl("javascript:calabash_result = " + script + ";prompt('calabash:' + calabash_result);");
-		return chromeClient.getResult();
+
+        CalabashChromeClient chromeClient = CalabashChromeClient.prepareWebView(webView);
+
+        if (android.os.Build.VERSION.SDK_INT < 19) { // Android 4.4
+            webView.loadUrl("javascript:calabash_result = " + script + ";prompt('calabash:' + calabash_result);");
+        } else {
+            chromeClient.evaluateCalabashScript(script);
+        }
+
+        return chromeClient.getResult();
 	}
-
-
 }
