@@ -728,12 +728,13 @@ module Operations
   end
 
   def set_text(uiquery, txt)
-    raise "Currently queries are only supported for webviews" unless uiquery.start_with? "webView"
-    uiquery.slice!(0, "webView".length)
-    if uiquery =~ /(css|xpath):\s*(.*)/
+    view,arguments = uiquery.split(" ",2)
+    raise "Currently queries are only supported for webviews" unless view.downcase == "webview"
+
+    if arguments =~ /(css|xpath):\s*(.*)/
       r = performAction("set_text", $1, $2, txt)
     else
-     raise "Invalid query #{uiquery}"
+     raise "Invalid query #{arguments}"
     end
   end
 
