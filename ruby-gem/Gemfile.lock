@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    calabash-android (0.4.19.pre3)
+    calabash-android (0.4.19.pre4)
       awesome_print
       cucumber
       escape (~> 0.0.4)
@@ -40,7 +40,7 @@ GEM
     slowhandcuke (0.0.3)
       cucumber
     thor (0.18.1)
-    xamarin-test-cloud (0.9.26)
+    xamarin-test-cloud (0.9.27)
       bundler (>= 1.3.0, < 2.0)
       json
       rest-client (~> 1.6.7)
