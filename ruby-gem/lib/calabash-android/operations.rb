@@ -701,11 +701,29 @@ module Operations
     raise(msg)
   end
 
-  def touch(uiquery,*args)
-    raise "Cannot touch nil" unless uiquery
+  def double_tap(uiquery, options = {})
+    center_x, center_y = find_coordinate(uiquery)
+
+    performAction("double_tap_coordinate", center_x, center_y)
+  end
+
+  def long_press(uiquery, options = {})
+    center_x, center_y = find_coordinate(uiquery)
+
+    performAction("long_press_coordinate", center_x, center_y)
+  end
+
+  def touch(uiquery, options = {})
+    center_x, center_y = find_coordinate(uiquery)
+
+    performAction("touch_coordinate", center_x, center_y)
+  end
+
+  def find_coordinate(uiquery)
+    raise "Cannot find nil" unless uiquery
 
     if uiquery.instance_of? String
-      elements = query(uiquery, *args)
+      elements = query(uiquery)
       raise "No elements found. Query: #{uiquery}" if elements.empty?
       element = elements.first
     else
@@ -713,10 +731,10 @@ module Operations
       element = element.first if element.instance_of?(Array)
     end
 
-
     center_x = element["rect"]["center_x"]
     center_y = element["rect"]["center_y"]
-    performAction("touch_coordinate", center_x, center_y)
+
+    [center_x, center_y]
   end
 
   def http(path, data = {}, options = {})
