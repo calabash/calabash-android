@@ -19,9 +19,6 @@ Will reinstall both the test server and the AUT to be sure the newest versions a
 ### `query(uiquery, *args)`
 Query returns an [array](http://www.ruby-doc.org/core-1.9.3/Array.html) of its results. The query function gives powerful query capability from your test code. You can find views and other application objects, and make assertions about them or extract data from them.
 
-The syntax for queries is really important, and described in a separate document: TODO: Query Syntax.
-(Until the documention for query gets written the best reference is [this blog post](http://blog.lesspainful.com/2012/12/18/Android-Query/))
-
 Calabash Android tries to return results that carry useable information by default. For view objects this includes coordinates, class and contentdescription:
 
     irb(main):002:0> query("button index:1")
