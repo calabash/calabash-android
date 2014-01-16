@@ -91,7 +91,7 @@ def fingerprint_from_apk(app_path)
       raise "No signature file (.RSA/.DSA) found in META-INF. Cannot proceed." if sig_files.empty?
       raise "More than one signature file (.RSA/.DSA) found in META-INF. Cannot proceed." if sig_files.length > 1
 
-      cmd = "#{Env.keytool_path} -v -printcert -J'-Dfile.encoding=utf-8' -file \"#{sig_files.first}\""
+      cmd = "#{Env.keytool_path} -v -printcert -J-Dfile.encoding=utf-8 -file \"#{sig_files.first}\""
       log cmd
       fingerprints = `#{cmd}`
       md5_fingerprint = extract_md5_fingerprint(fingerprints)
