@@ -104,7 +104,9 @@ end
 def extract_md5_fingerprint(fingerprints)
   m = fingerprints.scan(/MD5.*((?:[a-fA-F\d]{2}:){15}[a-fA-F\d]{2})/).flatten
   raise "No MD5 fingerprint found:\n #{fingerprints}" if m.empty?
-  m.first
+  a = fingerprints.scan(/signature algorithm.*:\s*\w+with(rsa|dsa)\s*$/i).flatten
+  raise "No signature algorithm found:\n #{fingerprints}" if a.empty?
+  a.first.upcase + '/' + m.first
 end
 
 def log(message, error = false)
