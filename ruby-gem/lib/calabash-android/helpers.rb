@@ -84,14 +84,14 @@ def fingerprint_from_apk(app_path)
       FileUtils.cp(app_path, "app.apk")
       FileUtils.mkdir("META-INF")
       Zip::ZipFile.foreach("app.apk") do |z|
-        z.extract if /^META-INF\/\w+.(RSA|rsa)/ =~ z.name
+        z.extract if /^META-INF\/\w+.(?i:RSA|DSA)/ =~ z.name
       end
-      rsa_files = Dir["#{tmp_dir}/META-INF/*"]
+      sig_files = Dir["#{tmp_dir}/META-INF/*"]
 
-      raise "No RSA file found in META-INF. Cannot proceed." if rsa_files.empty?
-      raise "More than one RSA file found in META-INF. Cannot proceed." if rsa_files.length > 1
+      raise "No signature file (.RSA/.DSA) found in META-INF. Cannot proceed." if sig_files.empty?
+      raise "More than one signature file (.RSA/.DSA) found in META-INF. Cannot proceed." if sig_files.length > 1
 
-      cmd = "#{Env.keytool_path} -v -printcert -J'-Dfile.encoding=utf-8' -file \"#{rsa_files.first}\""
+      cmd = "#{Env.keytool_path} -v -printcert -J-Dfile.encoding=utf-8 -file \"#{sig_files.first}\""
       log cmd
       fingerprints = `#{cmd}`
       md5_fingerprint = extract_md5_fingerprint(fingerprints)
@@ -104,7 +104,9 @@ end
 def extract_md5_fingerprint(fingerprints)
   m = fingerprints.scan(/MD5.*((?:[a-fA-F\d]{2}:){15}[a-fA-F\d]{2})/).flatten
   raise "No MD5 fingerprint found:\n #{fingerprints}" if m.empty?
-  m.first
+  a = fingerprints.scan(/signature algorithm.*:\s*\w+with(rsa|dsa)\s*$/i).flatten
+  raise "No signature algorithm found:\n #{fingerprints}" if a.empty?
+  a.first.upcase + '/' + m.first
 end
 
 def log(message, error = false)

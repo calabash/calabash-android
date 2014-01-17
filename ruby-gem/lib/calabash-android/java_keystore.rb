@@ -1,6 +1,6 @@
 class JavaKeystore
-  attr_reader :errors, :location, :keystore_alias, :password, :fingerprint
-  def initialize(location, keystore_alias, password)
+  attr_reader :errors, :location, :keystore_alias, :password, :alias_password, :fingerprint
+  def initialize(location, keystore_alias, password, alias_password = nil)
     raise "No such file #{location}" unless File.exists?(File.expand_path(location))
 
     keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password, '-J-Dfile.encoding=utf-8')
@@ -14,6 +14,7 @@ class JavaKeystore
     @location = location
     @keystore_alias = keystore_alias
     @password = password
+    @alias_password = !alias_password.to_s.empty? ? alias_password : password
     log "Key store data:"
     log keystore_data
     @fingerprint = extract_md5_fingerprint(keystore_data)
@@ -22,8 +23,8 @@ class JavaKeystore
   def sign_apk(apk_path, dest_path)
     raise "Cannot sign with a miss configured keystore" if errors
     raise "No such file: #{apk_path}" unless File.exists?(apk_path)
-
-    unless system_with_stdout_on_success(Env.jarsigner_path, '-sigalg', 'MD5withRSA', '-digestalg', 'SHA1', '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
+    keyalg = fingerprint.scan(/\A(\w+)\//).flatten.first
+    unless system_with_stdout_on_success(Env.jarsigner_path, '-sigalg', "SHA1with#{keyalg}", '-digestalg', 'SHA1', '-signedjar', dest_path, '-storepass', password, '-keypass', alias_password, '-keystore',  location, apk_path, keystore_alias)
       raise "Could not sign app: #{apk_path}"
     end
   end
@@ -79,7 +80,7 @@ class JavaKeystore
       fail_if_key_missing(keystore, "keystore_password")
       fail_if_key_missing(keystore, "keystore_alias")
       keystore["keystore_location"] = File.expand_path(keystore["keystore_location"])
-      JavaKeystore.new(keystore["keystore_location"], keystore["keystore_alias"], keystore["keystore_password"])
+      JavaKeystore.new(keystore["keystore_location"], keystore["keystore_alias"], keystore["keystore_password"], keystore["keystore_alias_password"])
   end
 
   def self.fail_if_key_missing(map, key)
