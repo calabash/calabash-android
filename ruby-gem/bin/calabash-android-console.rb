@@ -17,5 +17,6 @@ def calabash_console(app_path = nil)
 
   build_test_server_if_needed(app_path)
 
-  system "#{RbConfig.ruby} -S irb"
+  require 'irb'
+  IRB.start
 end
