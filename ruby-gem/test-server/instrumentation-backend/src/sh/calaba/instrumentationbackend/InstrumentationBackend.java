@@ -56,6 +56,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
      */
 
     public void testHook() throws Exception {
+        solo = new SoloEnhanced(getInstrumentation());
 
         final AtomicReference<Activity> activityReference = new AtomicReference<Activity>();
         Thread activityStarter = new Thread() {
@@ -105,7 +106,6 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
             }
         }
         if (activity != null) {
-            solo = new SoloEnhanced(getInstrumentation(), activity);
             setActivity(activity);
 
             viewFetcher = new PublicViewFetcher(solo.getActivityUtils());
