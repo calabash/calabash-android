@@ -28,12 +28,12 @@ public class QueryResult {
         }
     }
 
-    public List<?> getResult() {
+    public List getResult() {
         return result;
     }
 
 
-    public List<?> asList() {
+    public List asList() {
         return ViewMapper.mapViews(result);
     }
 }
