@@ -1,13 +1,20 @@
 package sh.calaba.instrumentationbackend.query;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.Set;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import android.content.res.Resources;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -15,15 +22,16 @@ import android.widget.TextView;
 public class ViewMapper {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Object extractDataFromView(View v) {		
-		
+	public Object extractDataFromView(View v) {
+
 		Map data = new HashMap();
-		data.put("class", getClassNameForView(v));		
+		data.put("class", getClassNameForView(v));
 		data.put("description", v.toString());
 		data.put("contentDescription", getContentDescriptionForView(v));
 		data.put("enabled", v.isEnabled());
 		
 		data.put("id", getIdForView(v));
+		data.put("path", computePath(v));
 
 		Map rect = getRectForView(v);
 
@@ -45,8 +53,35 @@ public class ViewMapper {
 
 	}
 
-	public static Map getRectForView(View v) {
-		Map rect = new HashMap();
+
+	Map<View, String> mViewPaths = new HashMap<View, String>(1024);
+	Set<ViewGroup> mViewScanned = new HashSet<ViewGroup>(512);
+
+	private void computeChildPaths(ViewGroup parent) {
+		if (mViewScanned.add(parent)) {
+			String path = computePath(parent);
+			for (int i=0,n=parent.getChildCount(); i<n; i++) {
+				mViewPaths.put(parent.getChildAt(i), path + "/" + i);
+			}
+		}
+	}
+
+	private String computePath(View v) {
+		String path = mViewPaths.get(v);
+		if (path == null) {
+			ViewParent parent = v.getParent();
+			if (parent instanceof ViewGroup) {
+				computeChildPaths((ViewGroup) parent);
+				path = mViewPaths.get(v); // should be populated now
+			} else {
+				mViewPaths.put(v, path = "");
+			}
+		}
+		return path;
+	}
+
+	public static Map<String, Object> getRectForView(View v) {
+		Map<String, Object> rect = new HashMap<String, Object>();
 		int[] location = new int[2];
 		v.getLocationOnScreen(location);
 
@@ -83,7 +118,7 @@ public class ViewMapper {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Object mapView(Object o) {
+	public Object mapView(Object o) {
 		if (o instanceof View) {
 			return extractDataFromView((View) o);
 		} 
@@ -108,4 +143,15 @@ public class ViewMapper {
 		return o;
 	}
 
+	public static List<Object> mapViews(final List<?> input) {
+		return UIQueryUtils.evaluateSyncInMainThread(new Callable<List<Object>>() {
+			@Override
+			public List<Object> call() throws Exception {
+				List<Object> output = new ArrayList<Object>(input.size());
+				ViewMapper mapper = new ViewMapper();
+				for (Object o : input) output.add(mapper.mapView(o));
+				return output;
+			}
+		});
+	}
 }

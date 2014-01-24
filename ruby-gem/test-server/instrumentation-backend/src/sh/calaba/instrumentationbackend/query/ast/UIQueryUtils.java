@@ -194,13 +194,12 @@ public class UIQueryUtils {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Future evaluateAsyncInMainThread(final Callable callable) throws Exception {
+	public static <T> Future<T> evaluateAsyncInMainThread(final Callable<T> callable) throws Exception {
 
 		final AtomicReference<Future> result = new AtomicReference<Future>();
 		final AtomicReference<Exception> errorResult = new AtomicReference<Exception>();
 
 		InstrumentationBackend.instrumentation.runOnMainSync(new Runnable() {
-			@SuppressWarnings("unchecked")
 			public void run() {
 				try {
 					Object res = callable.call();
@@ -220,8 +219,7 @@ public class UIQueryUtils {
 		return result.get();
 	}
 
-	@SuppressWarnings("rawtypes")
-	public static Object evaluateSyncInMainThread(Callable callable) {
+	public static <T> T evaluateSyncInMainThread(Callable<T> callable) {
 		try {
 			return evaluateAsyncInMainThread(callable)
 					.get(10, TimeUnit.SECONDS);
