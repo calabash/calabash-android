@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    calabash-android (0.4.19.pre4)
+    calabash-android (0.4.20)
       awesome_print
       cucumber
       escape (~> 0.0.4)
@@ -29,8 +29,8 @@ GEM
       multi_json (~> 1.3)
     httpclient (2.3.4.1)
     json (1.8.1)
-    mime-types (2.0)
-    multi_json (1.8.2)
+    mime-types (1.25.1)
+    multi_json (1.8.4)
     multi_test (0.0.3)
     rake (10.1.0)
     rest-client (1.6.7)
@@ -40,9 +40,10 @@ GEM
     slowhandcuke (0.0.3)
       cucumber
     thor (0.18.1)
-    xamarin-test-cloud (0.9.27)
+    xamarin-test-cloud (0.9.28)
       bundler (>= 1.3.0, < 2.0)
       json
+      mime-types (< 2.0)
       rest-client (~> 1.6.7)
       retriable (~> 1.3.3.1)
       rubyzip (~> 0.9.9)
