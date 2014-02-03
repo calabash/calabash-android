@@ -22,7 +22,7 @@ def main_activity(app)
 end
 
 def aapt_dump(app, key)
-  lines = `#{Env.tools_dir}/aapt dump badging "#{app}"`.lines.collect(&:strip)
+  lines = `"#{Env.tools_dir}/aapt" dump badging "#{app}"`.lines.collect(&:strip)
   lines.select { |l| l.start_with?("#{key}:") }
 end
 
@@ -60,11 +60,11 @@ def resign_apk(app_path)
 end
 
 def unsign_apk(path)
-  files_to_remove = `#{Env.tools_dir}/aapt list "#{path}"`.lines.collect(&:strip).grep(/^META-INF\//)
+  files_to_remove = `"#{Env.tools_dir}/aapt" list "#{path}"`.lines.collect(&:strip).grep(/^META-INF\//)
   if files_to_remove.empty?
     log "App wasn't signed. Will not try to unsign it."
   else
-    system("#{Env.tools_dir}/aapt remove \"#{path}\" #{files_to_remove.join(" ")}")
+    system("\"#{Env.tools_dir}/aapt\" remove \"#{path}\" #{files_to_remove.join(" ")}")
   end
 end
 
