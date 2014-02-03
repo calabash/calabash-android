@@ -49,6 +49,12 @@ module Operations
   end
 
   def performAction(action, *arguments)
+    puts "Warning: The method performAction is deprecated. Please use perform_action instead."
+
+    perform_action(action, *arguments)
+  end
+
+  def perform_action(action, *arguments)
     default_device.perform_action(action, *arguments)
   end
 
