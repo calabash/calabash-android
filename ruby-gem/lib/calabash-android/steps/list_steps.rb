@@ -1,9 +1,9 @@
 # By default "get_list_item_text" returns an array of arrays of text for each entry in the first ListView
 # The "get_list_item_text" action also supports: 
-# (all items of 2nd list) <code>performAction( 'get_list_item_text', '2' )</code>
-# (1st item of 2nd list) <code>performAction( 'get_list_item_text', '2' , '1' )</code>
+# (all items of 2nd list) <code>perform_action( 'get_list_item_text', '2' )</code>
+# (1st item of 2nd list) <code>perform_action( 'get_list_item_text', '2' , '1' )</code>
 Then /^I should see following list:$/ do | expected_table |
-  result = performAction('get_list_item_text')
+  result = perform_action('get_list_item_text')
   response_table = result['bonusInformation']
   response_table_array = []
   response_table.each do | row_data|
@@ -22,7 +22,7 @@ end
 # Example ViewGroup row: {"children":[{"id":"title", "text":"My Title"}, {"id":"subtitle", "text":"Second line"}]}
 # Example TableLayout row: {"cells":[{"column":0, "id":"colA", "text": "This is a Test"}]}
 Then /^The "([^\"]*)" for row (\d+) should be "([^\"]*)"$/ do | view_id, row, value |
-  response = performAction( 'get_list_item_properties', '1' , row )['bonusInformation']
+  response = perform_action( 'get_list_item_properties', '1' , row )['bonusInformation']
   response = JSON.parse( response[0] ) 
   
   if( response['children'] )

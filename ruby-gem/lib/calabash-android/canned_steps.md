@@ -246,7 +246,7 @@ Waits until the text of the translated l10nkey is displayed.
 
 Note: you can assert or press interface elements using [Android's String resources](http://developer.android.com/reference/android/R.string.html) by passing a package in a custom step:
 
-    performAction('press_l10n_element', 'ok', nil, 'android')
+    perform_action('press_l10n_element', 'ok', nil, 'android')
 
 Rotation
 --------

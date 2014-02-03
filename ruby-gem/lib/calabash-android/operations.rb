@@ -713,7 +713,7 @@ module Operations
   def double_tap(uiquery, options = {})
     center_x, center_y = find_coordinate(uiquery)
 
-    performAction("double_tap_coordinate", center_x, center_y)
+    perform_action("double_tap_coordinate", center_x, center_y)
   end
 
   # Performs a "long press" operation on a selected view
@@ -727,17 +727,17 @@ module Operations
   def long_press(uiquery, options = {})
     center_x, center_y = find_coordinate(uiquery)
     length = options[:length]
-    performAction("long_press_coordinate", center_x, center_y, *(length unless length.nil?))
+    perform_action("long_press_coordinate", center_x, center_y, *(length unless length.nil?))
   end
 
   def touch(uiquery, options = {})
     center_x, center_y = find_coordinate(uiquery)
 
-    performAction("touch_coordinate", center_x, center_y)
+    perform_action("touch_coordinate", center_x, center_y)
   end
 
   def keyboard_enter_text(text, options = {})
-    performAction('keyboard_enter_text', text)
+    perform_action('keyboard_enter_text', text)
   end
 
   def enter_text(uiquery, text, options = {})
@@ -777,7 +777,7 @@ module Operations
     raise "Currently queries are only supported for webviews" unless view.downcase == "webview"
 
     if arguments =~ /(css|xpath):\s*(.*)/
-      r = performAction("set_text", $1, $2, txt)
+      r = perform_action("set_text", $1, $2, txt)
     else
      raise "Invalid query #{arguments}"
     end
@@ -872,7 +872,7 @@ module Operations
   end
 
   def backdoor(sel, arg)
-    result = performAction("backdoor", sel, arg)
+    result = perform_action("backdoor", sel, arg)
     if !result["success"]
       screenshot_and_raise(result["message"])
     end
