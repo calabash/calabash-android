@@ -710,19 +710,19 @@ module Operations
   def double_tap(uiquery, options = {})
     center_x, center_y = find_coordinate(uiquery)
 
-    performAction("double_tap_coordinate", center_x, center_y)
+    perform_action("double_tap_coordinate", center_x, center_y)
   end
 
   def long_press(uiquery, options = {})
     center_x, center_y = find_coordinate(uiquery)
 
-    performAction("long_press_coordinate", center_x, center_y)
+    perform_action("long_press_coordinate", center_x, center_y)
   end
 
   def touch(uiquery, options = {})
     center_x, center_y = find_coordinate(uiquery)
 
-    performAction("touch_coordinate", center_x, center_y)
+    perform_action("touch_coordinate", center_x, center_y)
   end
 
   def find_coordinate(uiquery)
@@ -756,7 +756,7 @@ module Operations
     raise "Currently queries are only supported for webviews" unless view.downcase == "webview"
 
     if arguments =~ /(css|xpath):\s*(.*)/
-      r = performAction("set_text", $1, $2, txt)
+      r = perform_action("set_text", $1, $2, txt)
     else
      raise "Invalid query #{arguments}"
     end
