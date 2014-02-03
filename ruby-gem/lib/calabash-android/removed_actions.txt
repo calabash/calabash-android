@@ -1,1 +1,12 @@
+inspect_current_dialog
+assert_view_property
+get_view_property
+press_image_button_description
+press_image_button_number
+click_on_view_by_id
+wait
+wait_for_text
+wait_for_no_progress_bars
+press_button_with_text
+wait_for_view_by_id
 toggle_numbered_checkbox
