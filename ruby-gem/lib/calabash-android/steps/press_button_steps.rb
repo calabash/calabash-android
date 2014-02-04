@@ -27,7 +27,7 @@ Then /^I press view with id "([^\"]*)"$/ do |view_id|
 end
 
 Then /^I press "([^\"]*)"$/ do |identifier|
-  perform_action('press',identifier)
+  touch("* marked:'#{identifier}'")
 end
 
 Then /^I click on screen (\d+)% from the left and (\d+)% from the top$/ do |x, y|
