@@ -15,3 +15,4 @@ is_enabled
 wait_for_button
 wait_for_view
 press
+click_on_text
