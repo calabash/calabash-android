@@ -14,3 +14,4 @@ has_view
 is_enabled
 wait_for_button
 wait_for_view
+press
