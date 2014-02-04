@@ -48,7 +48,7 @@ Then /^I wait for the view with id "([^\"]*)" to appear$/ do |id|
 end
 
 Then /^I wait for the "([^\"]*)" view to appear$/ do |text|
-  perform_action('wait_for_view', text)
+  wait_for_element_exist("* marked:'#{text}'")
 end
 
 
