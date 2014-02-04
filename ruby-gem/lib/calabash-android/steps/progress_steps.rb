@@ -40,7 +40,7 @@ Then /^I wait up to (\d+) seconds to see "([^\"]*)"$/ do |timeout, text|
 end
 
 Then /^I wait for the "([^\"]*)" button to appear$/ do |text|
-  perform_action('wait_for_button', text)
+  wait_for_element_exist("android.widget.Button marked:'#{text}'");
 end
 
 Then /^I wait for the view with id "([^\"]*)" to appear$/ do |id|
