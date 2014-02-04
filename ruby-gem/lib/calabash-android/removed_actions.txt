@@ -12,3 +12,4 @@ wait_for_view_by_id
 toggle_numbered_checkbox
 has_view
 is_enabled
+wait_for_button
