@@ -56,6 +56,7 @@ module Operations
 
   def perform_action(action, *arguments)
     @removed_actions = File.readlines(File.join(File.dirname(__FILE__), 'removed_actions.txt')) unless @removed_actions
+    @removed_actions.map! &:chomp
 
     if @removed_actions.include?(action)
       puts "Error: The action '#{action}' was removed in calabash-android x.x.x"
