@@ -43,5 +43,5 @@ Then /^I press list item number (\d+)$/ do |line_index|
 end
 
 Then /^I long press list item number (\d+)$/ do |line_index|
-  perform_action('long_press_list_item', line_index, 0)
+  long_press("android.widget.AbsListView index:0 * index:#{line_index.to_i-1}")
 end
