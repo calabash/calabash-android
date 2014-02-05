@@ -39,7 +39,7 @@ Then /^I touch the "([^\"]*)" text$/ do |text|
 end
 
 Then /^I press list item number (\d+)$/ do |line_index|
-  perform_action('press_list_item', line_index, 0)
+  touch("android.widget.AbsListView index:0 * index:#{line_index.to_i-1}")
 end
 
 Then /^I long press list item number (\d+)$/ do |line_index|
