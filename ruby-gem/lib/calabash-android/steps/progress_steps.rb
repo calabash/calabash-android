@@ -12,7 +12,7 @@ end
 
 
 Then /^I wait for (\d+) seconds$/ do |seconds|
-  sleep(seconds)
+  sleep(seconds.to_i)
 end
 
 Then /^I wait for 1 second$/ do
