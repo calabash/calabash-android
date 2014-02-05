@@ -8,5 +8,5 @@ Then /^I long press "([^\"]*)" and select "([^\"]*)"$/ do |text_to_press, contex
 end
 
 Then /^I long press "([^\"]*)"$/ do |text_to_press|
-  perform_action('press_long_on_text', text_to_press)
+  long_press("* {text CONTAINS '#{text_to_press}'}")
 end
