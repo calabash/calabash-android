@@ -18,3 +18,4 @@ press
 click_on_text
 click_on_view_by_description
 press_long_on_text
+get_text_by_id
