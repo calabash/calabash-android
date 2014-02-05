@@ -16,3 +16,4 @@ wait_for_button
 wait_for_view
 press
 click_on_text
+click_on_view_by_description
