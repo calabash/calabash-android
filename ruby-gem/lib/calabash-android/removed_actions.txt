@@ -20,3 +20,4 @@ click_on_view_by_description
 press_long_on_text
 get_text_by_id
 click_by_selector
+select_item_from_named_spinner
