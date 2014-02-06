@@ -1,19 +1,3 @@
-# By default "get_list_item_text" returns an array of arrays of text for each entry in the first ListView
-# The "get_list_item_text" action also supports: 
-# (all items of 2nd list) <code>perform_action( 'get_list_item_text', '2' )</code>
-# (1st item of 2nd list) <code>perform_action( 'get_list_item_text', '2' , '1' )</code>
-Then /^I should see following list:$/ do | expected_table |
-  result = perform_action('get_list_item_text')
-  response_table = result['bonusInformation']
-  response_table_array = []
-  response_table.each do | row_data|
-    row_data = JSON.parse( row_data )
-    tmpArray = [row_data.values.first]
-    response_table_array.push(tmpArray)
-  end
-  expected_table.diff!(response_table_array)
-end
-
 # Note: This step is currently intended as more of an example rather than a rock-solid, well-tested step.
 #       (The server implementation works well for me, but my test steps that use it are application-specific)
 # Similarly to the "get_list_item_text" action, the "get_list_item_properties" action defaults to
