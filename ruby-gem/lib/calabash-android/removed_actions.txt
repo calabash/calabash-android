@@ -28,3 +28,4 @@ get_list_data
 get_list_item_text
 get_list_item_properties
 press_long_on_text_and_select_with_index
+press_long_on_text_and_select_with_text
