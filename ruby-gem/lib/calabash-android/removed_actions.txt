@@ -24,3 +24,4 @@ select_item_from_named_spinner
 get_selected_spinner_item_text
 press_list_item
 long_press_list_item
+get_list_data
