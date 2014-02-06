@@ -1,7 +1,9 @@
 def calabash_console(app_path = nil)
   test_server_path = test_server_path(app_path)
 
-  ENV["IRBRC"] = File.join(File.dirname(__FILE__), '..', 'irbrc')
+  unless ENV['IRBRC']
+    ENV['IRBRC'] = File.join(File.dirname(__FILE__), '..', 'irbrc')
+  end
 
   unless ENV["MAIN_ACTIVITY"]
     ENV["MAIN_ACTIVITY"] = main_activity(app_path)

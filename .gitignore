@@ -13,3 +13,14 @@ ruby-gem/lib/calabash-android/lib/TestServer.apk
 calabash-android-*.gem
 .idea
 *.iml
+
+# rbenv
+.ruby-version
+
+# emacs and vim
+(.*/)?\#[^/]*\#$
+tags
+
+# mergetools
+*.orig
+
