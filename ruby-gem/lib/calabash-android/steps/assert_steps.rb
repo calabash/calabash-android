@@ -1,30 +1,29 @@
 Then /^I see the text "([^\"]*)"$/ do |text|
-  perform_action('assert_text',text, true)
+  assert_text(text)
 end
 
 Then /^I see "([^\"]*)"$/ do |text|
-  perform_action('assert_text', text, true)
+  assert_text(text)
 end
 
 Then /^I should see "([^\"]*)"$/ do |text|
-  perform_action('assert_text', text, true)
+  assert_text(text)
 end
 
 Then /^I should see text containing "([^\"]*)"$/ do |text|
-  perform_action('assert_text', text, true)
+  assert_text(text)
 end
 
 
 
 Then /^I should not see "([^\"]*)"$/ do |text|
-  perform_action('assert_text', text, false) #second param indicated that the text should _not_ be found
+  assert_text(text, false)
 end
 
-
-Then /^I don't see the text "([^\"]*)"$/ do |text|  
-  perform_action('assert_text', text, false) #second param indicated that the text should _not_ be found
+Then /^I don't see the text "([^\"]*)"$/ do |text|
+  assert_text(text, false)
 end
 
-Then /^I don't see "([^\"]*)"$/ do |text|  
-  perform_action('assert_text', text, false) #second param indicated that the text should _not_ be found
+Then /^I don't see "([^\"]*)"$/ do |text|
+  assert_text(text, false)
 end

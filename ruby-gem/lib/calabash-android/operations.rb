@@ -718,6 +718,16 @@ module Operations
     raise(msg)
   end
 
+  def has_text?(text)
+    query("android.widget.TextView {text CONTAINS '#{text}'}").empty?
+  end
+
+  def assert_text(text, should_find = true)
+    raise "Text \"#{text}\" was #{should_find ? 'not ' : ''}found." unless has_text?(text) ^ should_find
+
+    true
+  end
+
   def double_tap(uiquery, options = {})
     center_x, center_y = find_coordinate(uiquery)
 
