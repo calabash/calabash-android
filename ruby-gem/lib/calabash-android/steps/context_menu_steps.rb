@@ -1,4 +1,6 @@
 Then /^I long press "([^\"]*)" and select item number (\d+)$/ do |text_to_press, index|
+  puts 'Warning: This predefined step is deprecated. Implement a new, less vague step.'
+
   long_press("* {text CONTAINS '#{text_to_press}'}")
   wait_for_element_exist("com.android.internal.view.menu.ListMenuItemView")
 
@@ -8,6 +10,8 @@ Then /^I long press "([^\"]*)" and select item number (\d+)$/ do |text_to_press,
 end
 
 Then /^I long press "([^\"]*)" and select "([^\"]*)"$/ do |text_to_press, context_text|
+  puts 'Warning: This predefined step is deprecated. Implement a new, less vague step.'
+
   long_press("* {text CONTAINS '#{text_to_press}'}")
   wait_for_element_exist("com.android.internal.view.menu.ListMenuItemView")
 
