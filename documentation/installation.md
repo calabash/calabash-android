@@ -52,7 +52,7 @@ Installing Ruby:
 
 You might need to install the dev package when installing calabash:
 
-    sudo apt-get isntall ruby1.9.1-dev
+    sudo apt-get install ruby1.9.1-dev
 
 If you see something like this while installing calabash:
 
