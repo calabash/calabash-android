@@ -1,7 +1,7 @@
 package sh.calaba.instrumentationbackend.actions.softkey;
 
 
-import com.jayway.android.robotium.solo.Solo;
+import com.robotium.solo.Solo;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
