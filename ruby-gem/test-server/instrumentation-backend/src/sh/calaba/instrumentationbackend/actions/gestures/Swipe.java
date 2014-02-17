@@ -14,10 +14,10 @@ public class Swipe implements Action {
 
         if (args.length == 1) {
             if(direction.equalsIgnoreCase("left")) {
-                InstrumentationBackend.solo.scrollToSide(Solo.LEFT);
+                InstrumentationBackend.solo.scrollToSide(Solo.LEFT,1f);
                 return Result.successResult();
             } else if(direction.equalsIgnoreCase("right")) {
-                InstrumentationBackend.solo.scrollToSide(Solo.RIGHT);
+                InstrumentationBackend.solo.scrollToSide(Solo.RIGHT,1f);
                 return Result.successResult();
             }
             return Result.failedResult("Invalid direction to swipe: " + direction);
