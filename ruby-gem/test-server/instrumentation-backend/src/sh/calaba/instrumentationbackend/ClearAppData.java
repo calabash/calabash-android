@@ -5,6 +5,7 @@ import java.io.File;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.test.InstrumentationTestRunner;
 
@@ -34,7 +35,7 @@ public class ClearAppData extends InstrumentationTestRunner {
         }
 	}
 
-    //If provided a file will delete it. 
+    //If provided a file will delete it.
     //If provided a directory will recursively delete files but preserve directories
     private void delete(File file_or_directory) {
         if (file_or_directory == null) {
@@ -51,10 +52,14 @@ public class ClearAppData extends InstrumentationTestRunner {
             file_or_directory.delete();
         }
     }
-    
-	private File externalCacheDir() { 
-        return getTargetContext().getExternalCacheDir();
-    }
+
+  	@SuppressLint("NewApi")
+  	private File externalCacheDir() {
+  		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+  			return getTargetContext().getExternalCacheDir();
+  		}
+  		return null;
+  	}
 
     private File cacheDir() {
         return getTargetContext().getCacheDir();
