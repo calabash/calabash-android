@@ -15,7 +15,11 @@ class Calabash::ABase
   end
 
   def current_page?
-    element_exists(trait)
+    if (trait.kind_of?(Array))
+      trait.all? { |element| element_exists(element) }
+    else
+      element_exists(trait)
+    end
   end
 
   def page(clz, *args)
@@ -23,7 +27,12 @@ class Calabash::ABase
   end
 
   def await(wait_opts={})
-    wait_for_elements_exist([trait], wait_opts)
+    if (trait.kind_of?(Array))
+      trait_array = trait
+    else
+      trait_array = [trait]
+    end
+    wait_for_elements_exist(trait_array, wait_opts)
     self
   end
 
