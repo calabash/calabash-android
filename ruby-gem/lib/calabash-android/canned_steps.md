@@ -36,6 +36,8 @@ Long presses the text (if found) and select the specified number in the context 
     Then /^I long press "([^\"]*)" and select "([^\"]*)"$/ do |text_to_press, context_text|
 Long presses the text (if found) and select the specified number in the context menu that appear. 
 
+    Then /^I long press on screen (\d+)% from the left and (\d+)% from the top$/ do |x, y|
+Long presses coordinates based on % from the screen dimensions. 
 
     Given /^I set the date to "(\d\d-\d\d-\d\d\d\d)" on DatePicker with index "([^\"]*)"$/ do |date, index|
 Finds the datepicker with the specified index and changes the date.
