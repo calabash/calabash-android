@@ -10,3 +10,8 @@ end
 Then /^I long press "([^\"]*)"$/ do |text_to_press|
   performAction('press_long_on_text', text_to_press)
 end
+
+
+Then /^I long press on screen (\d+)% from the left and (\d+)% from the top$/ do |x, y|
+  performAction('press_long_on_coord',x, y)
+end
