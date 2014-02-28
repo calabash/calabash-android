@@ -553,7 +553,12 @@ module Operations
 
     def shutdown_test_server
       begin
-        http("/kill")
+        begin
+          http("/kill")
+        rescue HTTPClient::KeepAliveDisconnected
+          # Do not react if the server is not responding
+        end
+
         Timeout::timeout(3) do
           sleep 0.3 while app_running?
         end
