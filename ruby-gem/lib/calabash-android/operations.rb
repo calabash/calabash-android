@@ -853,6 +853,37 @@ module Operations
     ni
   end
 
+  # Sends a specific keyboard press to the device.
+  # Params:
+  # +keyevent+:: a string or number with the keyboard event code or name.
+  #
+  # Full list of keyevent codes:
+  # http://developer.android.com/reference/android/view/KeyEvent.html
+  #
+  # ==== Examples
+  #   keyboard_enter_keyevent('KEYCODE_ENTER') -> sends the enter key
+  #   keyboard_enter_keyevent('KEYCODE_DEL') -> sends the del key
+  #
+  def keyboard_enter_keyevent(keyevent)
+    input_command = "#{default_device.adb_command} shell input keyevent #{keyevent}"
+    raise "Could not send keyevent: #{keyevent}" unless system(input_command)
+  end
+
+  # Sends a text as a combination of keyboard button presses.
+  # Params:
+  # +text+:: a string with the given text
+  #
+  def keyboard_enter_text(text)
+    # escape all non-alphanumeric characters with \
+    processed_text = text.gsub(/([^\w\s])/) { |c| '\\' + c }
+
+    # replace spaces with %s
+    processed_text = processed_text.gsub! ' ', '%s'
+
+    input_command = "#{default_device.adb_command} shell input text #{processed_text}"
+    raise "Could not send keyboard text: #{text}" unless system(input_command)
+  end
+
   def map(query, method_name, *method_args)
     operation_map = {
         :method_name => method_name,
