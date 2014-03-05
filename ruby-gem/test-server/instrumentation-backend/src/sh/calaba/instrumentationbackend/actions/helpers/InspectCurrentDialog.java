@@ -14,7 +14,7 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.jayway.android.robotium.solo.Solo;
+import com.robotium.solo.Solo;
 
 /**
  * Command is inspecting the current dialog and returns a list of details about the current

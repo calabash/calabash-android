@@ -6,7 +6,7 @@ import sh.calaba.instrumentationbackend.TestHelpers;
 import sh.calaba.instrumentationbackend.actions.Action;
 import sh.calaba.instrumentationbackend.actions.Actions;
 
-import com.jayway.android.robotium.solo.Solo;
+import com.robotium.solo.Solo;
 
 public class SelectFromMenuByText implements Action {
 
