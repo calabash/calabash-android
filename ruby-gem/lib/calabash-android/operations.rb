@@ -845,7 +845,7 @@ module Operations
   end
 
   def backdoor(sel, arg)
-    ni
+    puts "Branched backdoors implementation: #{sel}(#{arg})"
   end
 
   def map(query, method_name, *method_args)
