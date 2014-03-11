@@ -66,7 +66,8 @@ elsif cmd == 'build'
 elsif cmd == 'run'
   Env.exit_if_env_not_set_up
   if ARGV.empty? or not is_apk_file?(ARGV.first)
-    exit calabash_run()
+    puts "The first parameter must be path to apk file."
+    exit 1
   else
     exit calabash_run(relative_to_full_path(ARGV.shift))
   end
