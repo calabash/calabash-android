@@ -51,52 +51,53 @@ def relative_to_full_path(file_path)
   File.expand_path(file_path)
 end
 
-if (ARGV.length == 0)
+if ARGV.length == 0
   print_usage
-end
-cmd = ARGV.shift
-if cmd == 'help'
-  print_help
-elsif cmd == 'build'
-  Env.exit_if_env_not_set_up
-  puts "Please specify the app you want to build a test server for" if (ARGV.empty? or not is_apk_file?(ARGV.first))
-  while not ARGV.empty? and is_apk_file?(ARGV.first)
-    calabash_build(relative_to_full_path(ARGV.shift))
-  end
-elsif cmd == 'run'
-  Env.exit_if_env_not_set_up
-  if ARGV.empty? or not is_apk_file?(ARGV.first)
-    puts "The first parameter must be path to apk file."
-    exit 1
-  else
-    exit calabash_run(relative_to_full_path(ARGV.shift))
-  end
-elsif cmd == 'gen'
-  calabash_scaffold
-elsif cmd == 'console'
-  Env.exit_if_env_not_set_up
-  if ARGV.empty?
-    puts "Please specify an app"
-    exit 1
-  end
-  unless File.exist? ARGV.first
-    puts "No such file #{ARGV.first}"
-    exit 1
-  end
-  calabash_console(relative_to_full_path(ARGV.shift))
-elsif cmd == 'setup'
-  Env.exit_if_env_not_set_up
-  calabash_setup
-elsif cmd == 'resign'
-  Env.exit_if_env_not_set_up
-  unless File.exist?(File.expand_path(ARGV.first))
-    puts "No such file #{ARGV.first}"
-    exit 1
-  end
-  resign_apk(File.expand_path(ARGV.first))
-
-elsif cmd == 'version'
-  puts Calabash::Android::VERSION
 else
-  print_usage
+  cmd = ARGV.shift
+  if cmd == 'help'
+    print_help
+  elsif cmd == 'build'
+    Env.exit_if_env_not_set_up
+    puts "Please specify the app you want to build a test server for" if (ARGV.empty? or not is_apk_file?(ARGV.first))
+    while not ARGV.empty? and is_apk_file?(ARGV.first)
+      calabash_build(relative_to_full_path(ARGV.shift))
+    end
+  elsif cmd == 'run'
+    Env.exit_if_env_not_set_up
+    if ARGV.empty? or not is_apk_file?(ARGV.first)
+      puts "The first parameter must be path to apk file."
+      exit 1
+    else
+      exit calabash_run(relative_to_full_path(ARGV.shift))
+    end
+  elsif cmd == 'gen'
+    calabash_scaffold
+  elsif cmd == 'console'
+    Env.exit_if_env_not_set_up
+    if ARGV.empty?
+      puts "Please specify an app"
+      exit 1
+    end
+    unless File.exist? ARGV.first
+      puts "No such file #{ARGV.first}"
+      exit 1
+    end
+    calabash_console(relative_to_full_path(ARGV.shift))
+  elsif cmd == 'setup'
+    Env.exit_if_env_not_set_up
+    calabash_setup
+  elsif cmd == 'resign'
+    Env.exit_if_env_not_set_up
+    unless File.exist?(File.expand_path(ARGV.first))
+      puts "No such file #{ARGV.first}"
+      exit 1
+    end
+    resign_apk(File.expand_path(ARGV.first))
+
+  elsif cmd == 'version'
+    puts Calabash::Android::VERSION
+  else
+    print_usage
+  end
 end
