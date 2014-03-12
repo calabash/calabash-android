@@ -321,7 +321,6 @@ module Operations
 
 
     def make_http_request(options)
-      body = nil
       begin
         unless @http
           @http = init_request(options)
@@ -330,11 +329,14 @@ module Operations
         header["Content-Type"] = "application/json;charset=utf-8"
         options[:header] = header
 
-        if options[:method] == :post
-          body = @http.post(options[:uri], options).body
+
+        response = if options[:method] == :post
+          @http.post(options[:uri], options)
         else
-          body = @http.get(options[:uri], options).body
+          @http.get(options[:uri], options)
         end
+        raise Errno::ECONNREFUSED if response.status_code == 502
+        response.body
       rescue Exception => e
         if @http
           @http.reset_all
@@ -342,7 +344,6 @@ module Operations
         end
         raise e
       end
-      body
     end
 
     def init_request(options)
