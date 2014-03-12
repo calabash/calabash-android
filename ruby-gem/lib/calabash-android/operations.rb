@@ -555,12 +555,11 @@ module Operations
     def shutdown_test_server
       begin
         http("/kill")
-
         Timeout::timeout(3) do
           sleep 0.3 while app_running?
         end
       rescue HTTPClient::KeepAliveDisconnected
-        log ("Server not responsding. Moving on.")
+        log ("Server not responding. Moving on.")
       rescue Timeout::Error
         log ("Could not kill app. Waited to 3 seconds.")
       rescue EOFError
