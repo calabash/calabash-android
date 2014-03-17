@@ -24,12 +24,11 @@ public class ViewMapper {
 		data.put("enabled", v.isEnabled());
 
 		data.put("id", getIdForView(v));
+		data.put("tag", getTagForView(v));
 
 		Map rect = getRectForView(v);
 
 		data.put("rect", rect);
-
-		data.put("tag", getTagForView(v));
 
 		if (v instanceof Button) {
 			Button b = (Button) v;
@@ -85,8 +84,6 @@ public class ViewMapper {
 	}
 
 	public static String getTagForView(View v) {
-		// return new String("tag-for-view");
-
 		String tag = null;
 		if (v instanceof View) {
 			tag = (v.getTag() != null ? v.getTag().toString() : null);
