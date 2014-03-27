@@ -42,7 +42,8 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        Intent i = new Intent();
+        Intent i = new Intent(Intent.ACTION_MAIN);
+        i.addCategory("android.intent.category.LAUNCHER");
         i.setClassName(testPackage, mainActivity.getName());
         i.putExtras(extras);
         setActivityIntent(i);
