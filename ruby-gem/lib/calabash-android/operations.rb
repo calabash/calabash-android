@@ -142,6 +142,25 @@ module Operations
     map(uiquery,:query,*converted_args)
   end
 
+  # returns the elements added/removed after taking an action
+  def diff(uiquery="*",sleep_time=1 ,action)
+    q1 = query(uiquery)
+    action.call
+    sleep(sleep_time)
+    q2 = query(uiquery)
+    q1.map { |x| x.delete("description") }
+    q2.map { |x| x.delete("description") }
+    {"added"=>(q2-q1), "removed"=>(q1-q2)}
+  end
+
+  def items_removed(uiquery="*", sleep_time=1, action)
+    diff(uiquery, sleep_time, action)["removed"]
+  end
+
+  def items_added(uiquery="*", sleep_time=1, action)
+    diff(uiquery, sleep_time, action)["added"]
+  end
+
   def each_item(opts={:query => "android.widget.ListView", :post_scroll => 0.2}, &block)
     uiquery = opts[:query] || "android.widget.ListView"
     skip_if = opts[:skip_if] || lambda { |i| false }
