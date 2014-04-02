@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Activity> {
     public static String testPackage;
-    public static Class<? extends Activity> mainActivity;
+    public static String mainActivity;
     public static Bundle extras;
     
     private static final String TAG = "InstrumentationBackend";
@@ -34,16 +34,36 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
     public static PublicViewFetcher viewFetcher;
     public static Actions actions;
 
-    @SuppressWarnings({ "deprecation", "unchecked" })
     public InstrumentationBackend() {
-        super(testPackage, (Class<Activity>) mainActivity);
+        super(null);
+    }
+
+    @Override
+    public Activity getActivity() {
+        try {
+            setMainActivity(Class.forName(mainActivity).asSubclass(Activity.class));
+            return super.getActivity();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void setMainActivity(Class<? extends Activity> mainActivity) {
+        try {
+            Field mActivityClass = ActivityInstrumentationTestCase2.class.getDeclaredField("mActivityClass");
+            mActivityClass.setAccessible(true);
+            mActivityClass.set(this, mainActivity);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        Intent i = new Intent();
-        i.setClassName(testPackage, mainActivity.getName());
+        Intent i = new Intent(Intent.ACTION_MAIN);
+        i.setClassName(testPackage, mainActivity);
+        i.addCategory("android.intent.category.LAUNCHER");
         i.putExtras(extras);
         setActivityIntent(i);
 
