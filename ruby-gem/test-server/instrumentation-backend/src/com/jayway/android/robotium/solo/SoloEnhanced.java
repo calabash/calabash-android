@@ -78,4 +78,8 @@ public class SoloEnhanced extends Solo {
         clicker.clickOnScreen(x,y);
         clicker.clickOnScreen(x,y);
     }
+
+    public void runOnMainSync(Runnable runner) {
+        instrumentation.runOnMainSync(runner);
+    }
 }
