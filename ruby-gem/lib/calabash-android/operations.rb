@@ -722,6 +722,16 @@ module Operations
     performAction("touch_coordinate", center_x, center_y)
   end
 
+  def keyboard_enter_text(text, options = {})
+    performAction('keyboard_enter_text', text)
+  end
+
+  def enter_text(uiquery, text, options = {})
+    touch(uiquery, options)
+    sleep 0.5
+    keyboard_enter_text(text, options)
+  end
+
   def find_coordinate(uiquery)
     raise "Cannot find nil" unless uiquery
 
