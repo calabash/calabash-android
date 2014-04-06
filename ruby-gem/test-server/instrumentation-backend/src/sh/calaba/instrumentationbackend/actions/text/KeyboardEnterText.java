@@ -5,7 +5,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 
 import java.lang.Character;
 import java.lang.reflect.Field;
