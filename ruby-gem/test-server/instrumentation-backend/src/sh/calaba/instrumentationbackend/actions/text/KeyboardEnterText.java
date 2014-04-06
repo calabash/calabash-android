@@ -21,44 +21,43 @@ public class KeyboardEnterText implements Action {
             return Result.failedResult("This action takes one argument ([String] text).");
         }
 
+        final InputConnection inputConnection = getInputConnection();
+
         final String textToEnter = args[0];
-        final char[] textToEnterCharArray = textToEnter.toCharArray();
-
-        Activity currentActivity = InstrumentationBackend.solo.getCurrentActivity();
-        final View view = currentActivity.getCurrentFocus();
-        final InputConnection inputConnection;
-
-        try {
-            Context context = view.getContext();
-
-            if (context == null) {
-                context = currentActivity.getApplicationContext();
-            }
-
-            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            Field servedInputConnectionField = InputMethodManager.class.getDeclaredField("mServedInputConnection");
-            servedInputConnectionField.setAccessible(true);
-            inputConnection = (InputConnection)servedInputConnectionField.get(inputMethodManager);
-        } catch (NoSuchFieldException e) {
-            return Result.failedResult(e.getMessage());
-        } catch (IllegalAccessException e) {
-            return Result.failedResult(e.getMessage());
-        }
-
         InstrumentationBackend.solo.runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                for (char c : textToEnterCharArray) {
+                for (char c : textToEnter.toCharArray()) {
                     inputConnection.commitText(Character.toString(c), 0);
                 }
             }
         });
 
-        return new Result(true, "Entered text '" + textToEnter + "'");
+        return Result.successResult();
     }
 
     @Override
     public String key() {
         return "keyboard_enter_text";
+    }
+
+    InputConnection getInputConnection() {
+        Activity currentActivity = InstrumentationBackend.solo.getCurrentActivity();
+        final View view = currentActivity.getCurrentFocus();
+
+        Context context = view.getContext();
+
+        if (context == null) {
+            context = currentActivity.getApplicationContext();
+        }
+
+        try {
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            Field servedInputConnectionField = InputMethodManager.class.getDeclaredField("mServedInputConnection");
+            servedInputConnectionField.setAccessible(true);
+            return (InputConnection)servedInputConnectionField.get(inputMethodManager);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
