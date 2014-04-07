@@ -41,14 +41,7 @@ public class KeyboardEnterText implements Action {
     }
 
     InputConnection getInputConnection() {
-        Activity currentActivity = InstrumentationBackend.solo.getCurrentActivity();
-        final View view = currentActivity.getCurrentFocus();
-
-        Context context = view.getContext();
-
-        if (context == null) {
-            context = currentActivity.getApplicationContext();
-        }
+        Context context = InstrumentationBackend.instrumentation.getTargetContext();
 
         try {
             InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
