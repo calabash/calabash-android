@@ -1,9 +1,20 @@
 def calabash_console(app_path = nil)
   test_server_path = test_server_path(app_path)
 
-  unless ENV['IRBRC']
-    ENV['IRBRC'] = File.join(File.dirname(__FILE__), '..', 'irbrc')
+
+  path = ENV['CALABASH_IRBRC']
+  unless path
+    if File.exist?('.irbrc')
+      path = File.expand_path('.irbrc')
+    end
   end
+
+  unless path
+    path = File.join(File.dirname(__FILE__), '..', 'irbrc')
+  end
+
+  ENV['IRBRC'] = path
+
 
   unless ENV["MAIN_ACTIVITY"]
     ENV["MAIN_ACTIVITY"] = main_activity(app_path)
@@ -19,5 +30,7 @@ def calabash_console(app_path = nil)
 
   build_test_server_if_needed(app_path)
 
-  system "#{RbConfig.ruby} -S irb"
+  puts "Running irb..."
+  exec("irb")
+
 end
