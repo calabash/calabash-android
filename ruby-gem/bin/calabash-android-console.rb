@@ -10,7 +10,7 @@ def calabash_console(app_path = nil)
   end
 
   unless path
-    path = File.join(File.dirname(__FILE__), '..', 'irbrc')
+    path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'irbrc'))
   end
 
   ENV['IRBRC'] = path
@@ -30,6 +30,8 @@ def calabash_console(app_path = nil)
 
   build_test_server_if_needed(app_path)
 
+  puts 'Starting calabash-android console...'
+  puts "Loading #{ENV['IRBRC']}"
   puts 'Running irb...'
   exec('irb')
 
