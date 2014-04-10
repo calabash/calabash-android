@@ -16,21 +16,21 @@ def calabash_console(app_path = nil)
   ENV['IRBRC'] = path
 
 
-  unless ENV["MAIN_ACTIVITY"]
-    ENV["MAIN_ACTIVITY"] = main_activity(app_path)
+  unless ENV['MAIN_ACTIVITY']
+    ENV['MAIN_ACTIVITY'] = main_activity(app_path)
   end
 
-  unless ENV["APP_PATH"]
-    ENV["APP_PATH"] = app_path
+  unless ENV['APP_PATH']
+    ENV['APP_PATH'] = app_path
   end
 
-  unless ENV["TEST_APP_PATH"]
-    ENV["TEST_APP_PATH"] = test_server_path
+  unless ENV['TEST_APP_PATH']
+    ENV['TEST_APP_PATH'] = test_server_path
   end
 
   build_test_server_if_needed(app_path)
 
-  puts "Running irb..."
-  exec("irb")
+  puts 'Running irb...'
+  exec('irb')
 
 end
