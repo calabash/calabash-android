@@ -5,6 +5,7 @@ import java.util.List;
 import android.widget.ListView;
 import android.widget.ListAdapter;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.MeasureSpec;
 
 import org.json.JSONArray;
@@ -68,10 +69,10 @@ public class GetListProperties implements Action {
 		ListView listView = listViews.get(0);
 		ListAdapter mAdapter = listView.getAdapter();
 
-        int totalHeight = 0;
-        int listWidth = listView.getWidth();
-        int widthSpec = MeasureSpec.makeMeasureSpec(listWidth, MeasureSpec.AT_MOST);
-        int offsetX = 0, offsetY = 0;
+        float totalHeight = 0;
+        float listWidth = listView.getWidth();
+        int widthSpec = MeasureSpec.makeMeasureSpec((int)listWidth, MeasureSpec.AT_MOST);
+        float offsetX = 0, offsetY = 0, offsetCorrection = 0;
         String rowHeights = "";
         for (int i = 0; i < mAdapter.getCount(); i++) {
             View listItem = mAdapter.getView(i, null, listView);
@@ -87,6 +88,25 @@ public class GetListProperties implements Action {
             	offsetY += listItem.getMeasuredHeight();
             	offsetY += (i > 0 ? listView.getDividerHeight() : 0);	// count in dividers
             	// ???: padding top?
+            } else if (i == listView.getFirstVisiblePosition()) {
+            	// if it's part visible, subtract it's hidden part from total offset
+            	// the Y coordinate of list item is relative to list view that contains it
+            	// it also accounts for the cases when previous item is more than 50% hidden
+            	// thus is not "visible", but still contributes to the offset and list item Y will be positive
+            	// but if current visible item is less than 50% hidden, then it's Y coordinate is negative
+            	// and need to subtract divider height in that case (unless first item)
+
+            	// also, can't use listItem returned by ListAdapter's getView, that one has only measures, but no actual coordinates
+            	// instead get the first child of ListView
+            	offsetCorrection = offsetY;
+            	View firstVisibleItem = ((ViewGroup)listView).getChildAt(0);
+            	offsetY -= firstVisibleItem.getY();
+            	if (firstVisibleItem.getY() > 0) {
+            		offsetY -= listView.getDividerHeight();
+            	} else if (firstVisibleItem.getY() < 0 && i > 0) {
+					offsetY += listView.getDividerHeight();
+            	}
+            	offsetCorrection -= offsetY;
             }
         }
 
@@ -103,6 +123,7 @@ public class GetListProperties implements Action {
 			json.put("row_heights", rowHeights);
 			json.put("offset_x", offsetX);
 			json.put("offset_y", offsetY);
+			json.put("offset_correction", offsetCorrection);
 		} catch (JSONException e) {
             return Result.failedResult(e.getMessage());
         }
