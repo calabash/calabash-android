@@ -845,8 +845,8 @@ module Operations
   end
 
   def backdoor(sel, arg)
-    # puts "Branched backdoors implementation: #{sel}(#{arg})"
-    performAction('backdoor', sel, arg)["message"]
+    # for android results are returned in bonusInformation
+    performAction('backdoor', sel, arg)["bonusInformation"].first
   end
 
   def map(query, method_name, *method_args)
