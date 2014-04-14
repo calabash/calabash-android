@@ -31,15 +31,18 @@ public class Backdoor implements Action {
   		Operation op = new InvocationOperation(methodName, arguments);
   		// get an application object to call operation on
   		Context app = InstrumentationBackend.solo.getCurrentActivity().getApplication();
-  		String message = null;
+  		String backdoorResult = null;
     	try {
-  			message = (String)op.apply(app);
+  			backdoorResult = (String)op.apply(app);
   		} catch (Exception e) {
   			e.printStackTrace();
   			return Result.failedResult("No such backdoor method found: " + op.getName() + "Exception: " + e.getMessage());
   		}
 
-      return Result.successResult(message);
+      // set backdoor result as bonus
+      Result result = Result.successResult();
+      result.addBonusInformation(backdoorResult);
+      return result;
     }
 
     @Override

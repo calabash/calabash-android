@@ -9,7 +9,7 @@ import sh.calaba.instrumentationbackend.query.UIQueryResultVoid;
 import sh.calaba.instrumentationbackend.query.ViewMapper;
 
 public class UIQueryEvaluator {
-	
+
 	@SuppressWarnings({ "rawtypes" })
 	public static QueryResult evaluateQueryWithOptions(List<UIQueryAST> query, List inputViews, List<Operation> operations) {
         List views = evaluateQueryForPath(query, inputViews);
@@ -26,11 +26,11 @@ public class UIQueryEvaluator {
 			List nextResult = new ArrayList(result.size());
 			for (Object obj : result) {
 				try {
-					nextResult.add(op.apply(obj));	
+					nextResult.add(op.apply(obj));
 				} catch (Exception e) {
 					e.printStackTrace();
 					nextResult.add(UIQueryResultVoid.instance.asMap(op.getName(), obj, e.getMessage()));
-				}				
+				}
 			}
 			result = nextResult;
 		}
@@ -38,15 +38,18 @@ public class UIQueryEvaluator {
 	}
 
 
+	/**
+	 * !!!: exposed this method to use in Query to return list of views for the query
+	 */
 	@SuppressWarnings("rawtypes")
-	private static List evaluateQueryForPath(List<UIQueryAST> queryPath,
+	public static List evaluateQueryForPath(List<UIQueryAST> queryPath,
 			List inputViews) {
 
 		List currentResult = inputViews;
 		UIQueryDirection currentDirection = UIQueryDirection.DESCENDANT;
 		UIQueryVisibility currentVisibility = UIQueryVisibility.VISIBLE;
-		
-		for (UIQueryAST step : queryPath) {			
+
+		for (UIQueryAST step : queryPath) {
 			if (step instanceof UIQueryDirection) {
 				currentDirection = (UIQueryDirection) step;
 			}
@@ -60,10 +63,10 @@ public class UIQueryEvaluator {
 		}
 		return currentResult;
 	}
-		
+
 
 	public static boolean isDirection(UIQueryAST step) {
 		return step instanceof UIQueryDirection;
 	}
-			
+
 }

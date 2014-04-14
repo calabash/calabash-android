@@ -769,8 +769,8 @@ module Operations
     ni
   end
 
-  def scroll(uiquery,direction)
-    ni
+  def scroll(uiquery = "android.view.View", direction, position)
+    performAction("scroll", direction, position || "1")
   end
 
   def scroll_to_row(uiquery,number)

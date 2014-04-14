@@ -8,6 +8,14 @@ import com.jayway.android.robotium.solo.Solo;
 
 public class Swipe implements Action {
 
+    // TODO: add up/down swipe support via scroll action
+    // !!!: iOS swipe supports offset, can't do it via scroll,
+    // looks like using Drag for swipe might be an option
+    // or, think of the following, if there's no offset and no query - then do simple scroll to side
+    // but if there's a query, then use scroll to side with view arg
+    // and add support for options that can include offset and scroll position
+    // in other words, first implement "right" scroll then use it here
+
     @Override
     public Result execute(String... args) {
         String direction = args[0];
