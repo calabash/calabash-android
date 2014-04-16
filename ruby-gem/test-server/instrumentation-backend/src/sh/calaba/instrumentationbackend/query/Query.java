@@ -48,7 +48,14 @@ public class Query {
 	}
 
 	public QueryResult executeQuery() {
-		return UIQueryEvaluator.evaluateQueryWithOptions(parseQuery(this.queryString), rootViews(), parseOperations(this.operations));		
+		return UIQueryEvaluator.evaluateQueryWithOptions(parseQuery(this.queryString), rootViews(), parseOperations(this.operations));
+	}
+
+	/**
+	 * Returns list of views for this query
+	 */
+	public List viewsForQuery() {
+		return UIQueryEvaluator.evaluateQueryForPath(parseQuery(this.queryString), rootViews());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -57,13 +64,13 @@ public class Query {
 		for (Object o : ops) {
 			Operation op = null;
 			if (o instanceof Operation) {
-				op = (Operation) o;												
+				op = (Operation) o;
 			}
 			else if (o instanceof String) {
-				op = new PropertyOperation((String) o);	
+				op = new PropertyOperation((String) o);
 			}
 			else if (o instanceof Map) {
-				Map mapOp = (Map) o;				
+				Map mapOp = (Map) o;
 				String methodName = (String) mapOp.get("method_name");
 				if (methodName == null) {
 					throw new IllegalArgumentException("Trying to convert a Map without method_name to an operation. " + mapOp.toString());
@@ -74,7 +81,7 @@ public class Query {
 				}
 				op = new InvocationOperation(methodName, arguments);
 			}
-			result.add(op);								
+			result.add(op);
 		}
 		return result;
 	}
@@ -123,7 +130,7 @@ public class Query {
 			}
 		case UIQueryParser.NAME:
 			return new UIQueryASTClassName(step.getText());
-		
+
 		case UIQueryParser.WILDCARD:
 			try {
 				return new UIQueryASTClassName(Class.forName("android.view.View"));
@@ -131,23 +138,23 @@ public class Query {
 				//Cannot happen
 				throw new IllegalStateException(e);
 			}
-			
 
-			
+
+
 		case UIQueryParser.FILTER_COLON:
 			return UIQueryASTWith.fromAST(step);
-			
+
 		case UIQueryParser.ALL:
-			return UIQueryVisibility.ALL;	
-			
+			return UIQueryVisibility.ALL;
+
 		case UIQueryParser.VISIBLE:
 			return UIQueryVisibility.VISIBLE;
-			
+
 		case UIQueryParser.BEGINPRED:
 			return UIQueryASTPredicate.newPredicateFromAST(step);
 		case UIQueryParser.DIRECTION:
-			return UIQueryDirection.valueOf(step.getText().toUpperCase());			
-			
+			return UIQueryDirection.valueOf(step.getText().toUpperCase());
+
 		default:
 			throw new InvalidUIQueryException("Unknown query: " + stepType
 					+ " with text: " + step.getText());
@@ -160,7 +167,7 @@ public class Query {
         Set<View> parents = new HashSet<View>();
         for (View v : viewFetcher.getAllViews(false))
         {
-            View parent = viewFetcher.getTopParent(v);            
+            View parent = viewFetcher.getTopParent(v);
             parents.add(parent);
         }
         List<View> results = new ArrayList<View>();
