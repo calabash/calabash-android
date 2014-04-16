@@ -27,9 +27,9 @@ public class Backdoor implements Action {
 		String methodName = args[0];
 		List arguments = new ArrayList(1);
 		arguments.add(args[1]);
-			// create invocation operation to call method
+		// create invocation operation to call method
 		Operation op = new InvocationOperation(methodName, arguments);
-			// get an application object to call operation on
+		// get an application object to call operation on
 		Context app = InstrumentationBackend.solo.getCurrentActivity().getApplication();
 		String backdoorResult = null;
 		try {
@@ -39,7 +39,7 @@ public class Backdoor implements Action {
 			return Result.failedResult("No such backdoor method found: " + op.getName() + "Exception: " + e.getMessage());
 		}
 
-			// set backdoor result as bonus
+		// set backdoor result as bonus
 		Result result = Result.successResult();
 		result.addBonusInformation(backdoorResult);
 		return result;
