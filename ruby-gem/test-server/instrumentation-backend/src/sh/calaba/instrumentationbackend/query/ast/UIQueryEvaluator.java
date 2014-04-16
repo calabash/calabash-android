@@ -37,10 +37,6 @@ public class UIQueryEvaluator {
 		return result;
 	}
 
-
-	/**
-	 * !!!: exposed this method to use in Query to return list of views for the query
-	 */
 	@SuppressWarnings("rawtypes")
 	public static List evaluateQueryForPath(List<UIQueryAST> queryPath,
 			List inputViews) {

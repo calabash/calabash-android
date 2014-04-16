@@ -20,24 +20,24 @@ public class Backdoor implements Action {
 
     @Override
     public Result execute(String... args) {
-    	if (args.length < 2) {
-    		return Result.failedResult("You must provide method name and an argument.");
-    	}
+      if (args.length < 2) {
+        return Result.failedResult("You must provide method name and an argument.");
+      }
 
-    	String methodName = args[0];
-    	List arguments = new ArrayList(1);
-    	arguments.add(args[1]);
-    	// create invocation operation to call method
-  		Operation op = new InvocationOperation(methodName, arguments);
-  		// get an application object to call operation on
-  		Context app = InstrumentationBackend.solo.getCurrentActivity().getApplication();
-  		String backdoorResult = null;
-    	try {
-  			backdoorResult = (String)op.apply(app);
-  		} catch (Exception e) {
-  			e.printStackTrace();
-  			return Result.failedResult("No such backdoor method found: " + op.getName() + "Exception: " + e.getMessage());
-  		}
+      String methodName = args[0];
+      List arguments = new ArrayList(1);
+      arguments.add(args[1]);
+      // create invocation operation to call method
+      Operation op = new InvocationOperation(methodName, arguments);
+      // get an application object to call operation on
+      Context app = InstrumentationBackend.solo.getCurrentActivity().getApplication();
+      String backdoorResult = null;
+      try {
+        backdoorResult = (String)op.apply(app);
+      } catch (Exception e) {
+        e.printStackTrace();
+        return Result.failedResult("No such backdoor method found: " + op.getName() + "Exception: " + e.getMessage());
+      }
 
       // set backdoor result as bonus
       Result result = Result.successResult();
