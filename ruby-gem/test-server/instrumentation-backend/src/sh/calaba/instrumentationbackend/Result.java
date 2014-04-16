@@ -6,18 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Result {
-	
+
     boolean success;
     String message;
     List<String> bonusInformation = new ArrayList<String>();
-    	
+
     public Result() {
     }
-    
+
     public Result(boolean success) {
 		this(success, "");
     }
-    
+
     public Result(boolean success, String message) {
 		this.success = success;
 		this.message = message;
@@ -32,19 +32,19 @@ public class Result {
     public String getMessage() {
     	return message;
     }
-    
+
     public void setMessage(String message) {
     	this.message = message;
     }
-    
+
     public boolean isSuccess() {
     	return success;
     }
-    
+
     public void setSuccess(boolean success) {
     	this.success = success;
     }
-    
+
     public void addBonusInformation(String information) {
     	bonusInformation.add(information);
 	}
@@ -52,11 +52,11 @@ public class Result {
     public List<String> getBonusInformation() {
 		return bonusInformation;
 	}
-    
+
     public void setExtras(List<String> bonusInformation) {
 		this.bonusInformation = bonusInformation;
     }
-        
+
     public static Result fromThrowable(Throwable t) {
     	Result r = new Result(false, t.getMessage());
     	CharArrayWriter caw = new CharArrayWriter();
@@ -64,9 +64,13 @@ public class Result {
     	r.addBonusInformation("Exception stack trace:\n" + caw.toString());
     	return r;
     }
-    
+
     public static Result successResult() {
     	return new Result(true);
+    }
+
+    public static Result successResult(final String message) {
+        return new Result(true, message);
     }
 
     public static Result failedResult() {
@@ -76,7 +80,7 @@ public class Result {
     public static Result failedResult(final String message) {
         return new Result(false, message);
     }
-    
+
     public String toString() {
         return "Success: " + success + ", message: " + message;
     }
