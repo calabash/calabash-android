@@ -321,7 +321,6 @@ module Operations
 
 
     def make_http_request(options)
-      body = nil
       begin
         unless @http
           @http = init_request(options)
@@ -330,11 +329,14 @@ module Operations
         header["Content-Type"] = "application/json;charset=utf-8"
         options[:header] = header
 
-        if options[:method] == :post
-          body = @http.post(options[:uri], options).body
+
+        response = if options[:method] == :post
+          @http.post(options[:uri], options)
         else
-          body = @http.get(options[:uri], options).body
+          @http.get(options[:uri], options)
         end
+        raise Errno::ECONNREFUSED if response.status_code == 502
+        response.body
       rescue Exception => e
         if @http
           @http.reset_all
@@ -342,7 +344,6 @@ module Operations
         end
         raise e
       end
-      body
     end
 
     def init_request(options)
@@ -557,6 +558,8 @@ module Operations
         Timeout::timeout(3) do
           sleep 0.3 while app_running?
         end
+      rescue HTTPClient::KeepAliveDisconnected
+        log ("Server not responding. Moving on.")
       rescue Timeout::Error
         log ("Could not kill app. Waited to 3 seconds.")
       rescue EOFError
@@ -717,6 +720,16 @@ module Operations
     center_x, center_y = find_coordinate(uiquery)
 
     performAction("touch_coordinate", center_x, center_y)
+  end
+
+  def keyboard_enter_text(text, options = {})
+    performAction('keyboard_enter_text', text)
+  end
+
+  def enter_text(uiquery, text, options = {})
+    touch(uiquery, options)
+    sleep 0.5
+    keyboard_enter_text(text, options)
   end
 
   def find_coordinate(uiquery)
