@@ -870,9 +870,6 @@ module Operations
     res = http("/map",
                {:query => query, :operation => operation_map})
     res = JSON.parse(res)
-    # TODO: remove before release
-    puts "Result keys: #{res.keys.join(",")}"
-    res.keys.each { |k| puts res[k] }
     if res['outcome'] != 'SUCCESS'
       screenshot_and_raise "map #{query}, #{method_name} failed because: #{res['reason']}\n#{res['details']}"
     end
