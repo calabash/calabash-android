@@ -20,14 +20,14 @@ public class InvocationOperation implements Operation {
 		this.arguments = arguments;
 		this.classes = extractArgumentTypes(false);
 		this.classesWithCharseq = extractArgumentTypes(true);
-	}	
+	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Object apply(final Object o) throws Exception {
 		final AtomicReference ref = new AtomicReference();
 		final AtomicReference<Exception> refEx = new AtomicReference<Exception>();
-		
+
 		InstrumentationBackend.instrumentation.runOnMainSync(new Runnable() {
 
 			@SuppressWarnings("unchecked")
@@ -43,7 +43,7 @@ public class InvocationOperation implements Operation {
 							result = "<VOID>";
 			            }
 						else {
-							result = invokeMethod(o, method);							
+							result = invokeMethod(o, method);
 						}
 						ref.set(result);
 						return;
@@ -62,10 +62,10 @@ public class InvocationOperation implements Operation {
 								result = "<VOID>";
 				            }
 							else {
-								result = invokeMethod(o, method);							
+								result = invokeMethod(o, method);
 							}
 							ref.set(result);
-							return;						
+							return;
 						} catch (Exception ee) {
 							refEx.set(e);
 							return;
@@ -78,8 +78,8 @@ public class InvocationOperation implements Operation {
 				Method[] methods = o.getClass().getMethods();
 				for (Method m : methods) {
 					if (m.getName().equals(InvocationOperation.this.methodName)) {
-						Class<?>[] parameterTypes = m.getParameterTypes();						
-						if (parameterTypes.length == InvocationOperation.this.classes.length && areArgumentsConvertibleTo(parameterTypes)) {							
+						Class<?>[] parameterTypes = m.getParameterTypes();
+						if (parameterTypes.length == InvocationOperation.this.classes.length && areArgumentsConvertibleTo(parameterTypes)) {
 							try {
 								Object result;
 								if( m.getReturnType().equals(Void.TYPE)){
@@ -87,7 +87,7 @@ public class InvocationOperation implements Operation {
 									result = "<VOID>";
 					            }
 								else {
-									result = invokeMethod(o, m);							
+									result = invokeMethod(o, m);
 								}
 								ref.set(result);
 								return;
@@ -96,21 +96,21 @@ public class InvocationOperation implements Operation {
 								refEx.set(e);
 								return;
 							}
-							
-						}							
+
+						}
 					}
 				}
-		
+
 			}
-			 
+
 		 });
-				
+
 		 if (refEx.get() != null) {
 			 throw refEx.get();
 		 }
-		 return ref.get();				
+		 return ref.get();
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	private Class[] extractArgumentTypes(boolean convertStringCharSeq) {
 		Class[] types = new Class[arguments.size()];
@@ -120,16 +120,16 @@ public class InvocationOperation implements Operation {
 				Class<?> c = o.getClass();
 				if (convertStringCharSeq && c.equals(String.class)) {
 					c = CharSequence.class;//Android API specific optimization
-				} 								
-				types[i] = mapToPrimitiveClass(c); 	
+				}
+				types[i] = mapToPrimitiveClass(c);
 			}
 			else {
 				types[i] = null;
-			}			
+			}
 		}
 		return types;
 	}
-	
+
 	private Class<?> mapToPrimitiveClass(Class<?> c) {
 		if (c.equals(Integer.class)) {
 			return int.class;
@@ -142,17 +142,17 @@ public class InvocationOperation implements Operation {
 		}
 		else if (c.equals(Boolean.class)) {
 			return boolean.class;
-		}		
+		}
 		return c;
 	}
-	
-	
+
+
 	//parameterType.length == this.classes.length
-	//Note: right now we don't do any clever mapping, we 
+	//Note: right now we don't do any clever mapping, we
 	//only use Java's sub type relation: isAssigableFrom
-	private boolean areArgumentsConvertibleTo(Class<?>[] parameterTypes) {		
+	private boolean areArgumentsConvertibleTo(Class<?>[] parameterTypes) {
 		for (int i=0; i < parameterTypes.length; i++) {
-			Class<?> typei = parameterTypes[i];			
+			Class<?> typei = parameterTypes[i];
 			if (this.arguments.get(i) == null) {
 				if (typei.isPrimitive()) {
 					//Can't pass null as primitive
@@ -169,7 +169,7 @@ public class InvocationOperation implements Operation {
 		}
 		return true;
 	}
-	
+
 	private Object invokeMethod(Object o, Method m) throws Exception {
 		List<?> a = this.arguments;
 		int size = a.size();
@@ -203,14 +203,14 @@ public class InvocationOperation implements Operation {
 			case 13:
 				return m.invoke(o,a.get(0),a.get(1),a.get(2),a.get(3),a.get(4),a.get(5),a.get(6),a.get(7),a.get(8),a.get(9),a.get(10),a.get(11),a.get(12));
 			case 14:
-				return m.invoke(o,a.get(0),a.get(1),a.get(2),a.get(3),a.get(4),a.get(5),a.get(6),a.get(7),a.get(8),a.get(9),a.get(10),a.get(11),a.get(12),a.get(13));				
+				return m.invoke(o,a.get(0),a.get(1),a.get(2),a.get(3),a.get(4),a.get(5),a.get(6),a.get(7),a.get(8),a.get(9),a.get(10),a.get(11),a.get(12),a.get(13));
 			case 15:
-				return m.invoke(o,a.get(0),a.get(1),a.get(2),a.get(3),a.get(4),a.get(5),a.get(6),a.get(7),a.get(8),a.get(9),a.get(10),a.get(11),a.get(12),a.get(13),a.get(14));				
+				return m.invoke(o,a.get(0),a.get(1),a.get(2),a.get(3),a.get(4),a.get(5),a.get(6),a.get(7),a.get(8),a.get(9),a.get(10),a.get(11),a.get(12),a.get(13),a.get(14));
 			case 16:
-				return m.invoke(o,a.get(0),a.get(1),a.get(2),a.get(3),a.get(4),a.get(5),a.get(6),a.get(7),a.get(8),a.get(9),a.get(10),a.get(11),a.get(12),a.get(13),a.get(14),a.get(15));				
+				return m.invoke(o,a.get(0),a.get(1),a.get(2),a.get(3),a.get(4),a.get(5),a.get(6),a.get(7),a.get(8),a.get(9),a.get(10),a.get(11),a.get(12),a.get(13),a.get(14),a.get(15));
 		}
 		throw new UnsupportedOperationException("Method with more than 16 arguments are not supported");
-		
+
 	}
 
 

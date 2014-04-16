@@ -782,8 +782,8 @@ module Operations
     ni
   end
 
-  def scroll(uiquery,direction)
-    ni
+  def scroll(uiquery = "android.view.View", direction, position)
+    performAction("scroll", direction, position || "1")
   end
 
   def scroll_to_row(uiquery,number)
@@ -858,7 +858,8 @@ module Operations
   end
 
   def backdoor(sel, arg)
-    ni
+    # for android results are returned in bonusInformation
+    performAction('backdoor', sel, arg)["bonusInformation"].first
   end
 
   def map(query, method_name, *method_args)
