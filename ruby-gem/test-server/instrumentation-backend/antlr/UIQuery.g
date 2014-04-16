@@ -32,13 +32,13 @@ options {
   }
 }
 
-query	:	expr (WHITE! expr)*  
+query	:	expr (WHITE! expr)*
 		;
-	
 
-expr	:	(className | filter | visibility | predicate | DIRECTION^) 
+
+expr	:	(className | filter | visibility | predicate | DIRECTION^)
 		;
-		
+
 DIRECTION : 'descendant' | 'child' | 'parent' | 'sibling'
 		;
 
@@ -66,12 +66,12 @@ BEGINPRED : '{'
 	;
 ENDPRED	  : '}'
 	;
-	
-RELATION : | '=' | '>' | '>=' | '<' | '<=' | 
-			(( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE' 
+
+RELATION : | '=' | '>' | '>=' | '<' | '<=' | '!=' | '<>' |
+			(( 'BEGINSWITH' | 'ENDSWITH' | 'CONTAINS' | 'LIKE'
 		       | 'beginswith' | 'endswith' | 'contains' | 'like') ('[' ('a'..'z' | 'A'..'Z')* ']')?)
-		       
-	; 
+
+	;
 
 INT :	'0'..'9'+
     ;
@@ -86,8 +86,8 @@ NAME  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'$')*
     ;
 
 STRING
-    :  '\'' ( ESC_SEQ | ~('\\'|'\'') )* '\'' 
-    |  '"' ( DOUBLE_ESC_SEQ | ~('\\'|'"') )* '"'    
+    :  '\'' ( ESC_SEQ | ~('\\'|'\'') )* '\''
+    |  '"' ( DOUBLE_ESC_SEQ | ~('\\'|'"') )* '"'
     ;
 
 WHITE   :	' '+ ;
