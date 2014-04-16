@@ -20,7 +20,7 @@ public class Backdoor implements Action {
 
 	@Override
 	public Result execute(String... args) {
-		if (args.length < 2) {
+		if (args.length != 2) {
 			return Result.failedResult("You must provide method name and an argument.");
 		}
 
