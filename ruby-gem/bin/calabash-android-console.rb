@@ -33,6 +33,5 @@ def calabash_console(app_path = nil)
   puts 'Starting calabash-android console...'
   puts "Loading #{ENV['IRBRC']}"
   puts 'Running irb...'
-  exec('irb')
-
+  system "#{RbConfig.ruby} -S irb"
 end
