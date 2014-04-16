@@ -12,7 +12,7 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
 	@Override
     public void onCreate(Bundle arguments) {
 		try {
-			Context context = getTargetContext ();
+			Context context = getTargetContext();
 			Class<?> c = Class.forName("mono.MonoPackageManager");
 			Method  method = c.getDeclaredMethod ("LoadApplication", Context.class, String.class, String[].class);
 			method.invoke (null, context, null, new String[]{context.getApplicationInfo ().sourceDir});
@@ -28,8 +28,8 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
         InstrumentationBackend.extras = arguments;
 
         try {
-            InstrumentationBackend.mainActivity = Class.forName(arguments.getString("main_activity")).asSubclass(Activity.class);
-        } catch (ClassNotFoundException e) {
+            InstrumentationBackend.mainActivity = arguments.getString("main_activity");
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
