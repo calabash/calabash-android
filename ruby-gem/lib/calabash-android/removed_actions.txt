@@ -8,6 +8,7 @@ wait
 wait_for_text
 wait_for_no_progress_bars
 press_button_with_text
+press_button_number
 wait_for_view_by_id
 toggle_numbered_checkbox
 has_view
@@ -31,3 +32,5 @@ press_long_on_text_and_select_with_index
 press_long_on_text_and_select_with_text
 assert_text
 assert_text_in_textview
+long_press_on_view_by_id
+press_long_on_text_and_select_with_id
