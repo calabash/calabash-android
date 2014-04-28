@@ -393,7 +393,7 @@ module Operations
           f.write res
         end
       else
-        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenshotTaker.jar')} #{serial} #{path}"
+        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenshotTaker.jar')} #{serial} \"#{path}\""
         log screenshot_cmd
         raise "Could not take screenshot" unless system(screenshot_cmd)
       end
