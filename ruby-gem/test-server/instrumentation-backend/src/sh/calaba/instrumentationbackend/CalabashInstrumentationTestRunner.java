@@ -2,8 +2,8 @@ package sh.calaba.instrumentationbackend;
 
 import java.lang.reflect.Method;
 
-import sh.calaba.instrumentationbackend.actions.HttpServer;
 import android.app.Activity;
+import sh.calaba.instrumentationbackend.actions.HttpServer;
 import android.content.Context;
 import android.os.Bundle;
 import android.test.InstrumentationTestRunner;
@@ -17,6 +17,7 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
 			Method  method = c.getDeclaredMethod ("LoadApplication", Context.class, String.class, String[].class);
 			method.invoke (null, context, null, new String[]{context.getApplicationInfo ().sourceDir});
 			System.out.println("Calabash loaded Mono");
+            InstrumentationBackend.mainActivity = Class.forName(arguments.getString("main_activity")).asSubclass(Activity.class);
 		} catch (Exception e) {
 			System.out.println("Calabash did not load Mono. This is only a problem if you are trying to test a Mono application");
 		}
@@ -28,7 +29,7 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
         InstrumentationBackend.extras = arguments;
 
         try {
-            InstrumentationBackend.mainActivity = arguments.getString("main_activity");
+            InstrumentationBackend.mainActivityName = arguments.getString("main_activity");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

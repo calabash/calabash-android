@@ -24,7 +24,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Activity> {
     public static String testPackage;
-    public static String mainActivity;
+    public static String mainActivityName;
+    public static Class<? extends Activity> mainActivity;
     public static Bundle extras;
     
     private static final String TAG = "InstrumentationBackend";
@@ -35,13 +36,17 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
     public static Actions actions;
 
     public InstrumentationBackend() {
-        super(null);
+        super((Class<Activity>)mainActivity);
     }
 
     @Override
     public Activity getActivity() {
+        if (mainActivity != null) {
+            return super.getActivity();
+        }
+
         try {
-            setMainActivity(Class.forName(mainActivity).asSubclass(Activity.class));
+            setMainActivity(Class.forName(mainActivityName).asSubclass(Activity.class));
             return super.getActivity();
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -62,7 +67,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
     protected void setUp() throws Exception {
         super.setUp();
         Intent i = new Intent(Intent.ACTION_MAIN);
-        i.setClassName(testPackage, mainActivity);
+        i.setClassName(testPackage, mainActivityName);
         i.addCategory("android.intent.category.LAUNCHER");
         i.putExtras(extras);
         setActivityIntent(i);
