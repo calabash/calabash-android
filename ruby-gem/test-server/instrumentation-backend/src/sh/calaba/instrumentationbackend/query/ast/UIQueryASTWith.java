@@ -63,13 +63,13 @@ public class UIQueryASTWith implements UIQueryAST {
 					}
 
 				}
-				List visibilityFilteredResults = visibility.evaluateWithViews(futureResult, direction,
-						visibility);
-				return new PartialFutureList(visibilityFilteredResults);
+
+				return new PartialFutureList(futureResult);
 			}
 		});
 		
-		List processedResult = new ArrayList(queryResult.size());
+		final List processedResult = new ArrayList(queryResult.size());
+
 		for (Object o : queryResult) {
 			if (o instanceof Map) {
 				Map m = (Map) o;
@@ -85,9 +85,16 @@ public class UIQueryASTWith implements UIQueryAST {
 				processedResult.add(o);
 			}
 		}
-		return processedResult;
-		
 
+        List visibilityFilteredResults = (List) UIQueryUtils.evaluateSyncInMainThread(new Callable() {
+
+            @Override
+            public Object call() throws Exception {
+                return visibility.evaluateWithViews(processedResult, direction, visibility);
+            }
+        });
+
+		return visibilityFilteredResults;
 	}
 
     private boolean isDomQuery() {
