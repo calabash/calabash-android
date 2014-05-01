@@ -30,6 +30,7 @@ import sh.calaba.org.codehaus.jackson.type.TypeReference;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewParent;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -177,8 +178,59 @@ public class UIQueryUtils {
 			return false;
 		}
 
-		return view.isShown() && viewFetcher.isViewSufficientlyShown(view);
+		return view.isShown() && isViewSufficientlyShown(view);
 	}
+
+    public static boolean isViewSufficientlyShown(View view) {
+        if (view == null) return false;
+
+        ViewParent viewParent = view.getParent();
+
+        if (!(viewParent instanceof View)) {
+            return true;
+        }
+
+        View parent = (View)viewParent;
+
+        Map<String,Integer> viewRect = ViewMapper.getRectForView(view);
+        Map<String,Integer> parentViewRect = null;
+        int parentX = 0;
+        int parentY = 0;
+        int parentWidth = 0;
+        int parentHeight = 0;
+
+        if (view.equals(parent)) {
+            return true;
+        } else if (parent != null) {
+            parentViewRect = ViewMapper.getRectForView(parent);
+            parentX = parentViewRect.get("x");
+            parentY = parentViewRect.get("y");
+            parentWidth = parentViewRect.get("width");
+            parentHeight = parentViewRect.get("height");
+        }
+
+        int windowWidth = 0;
+        int windowHeight = 0;
+
+        if (parent == null) {
+            View rootView = view.getRootView();
+
+            if (rootView != null && !view.equals(rootView)) {
+                Map<String,Integer> rootViewRect = ViewMapper.getRectForView(view);
+                windowWidth = rootViewRect.get("x") + rootViewRect.get("width");
+                windowHeight = rootViewRect.get("y") + rootViewRect.get("height");
+            }
+        } else {
+            windowWidth = parentX + parentWidth;
+            windowHeight = parentY + parentHeight;
+        }
+
+        int centerX = viewRect.get("center_x");
+        int centerY = viewRect.get("center_y");
+
+        return (windowWidth > centerX && parentX < centerX &&
+                windowHeight > centerY && parentY < centerY);
+    }
 
 	public static boolean isClickable(Object v) {
 		if (!(v instanceof View)) {
