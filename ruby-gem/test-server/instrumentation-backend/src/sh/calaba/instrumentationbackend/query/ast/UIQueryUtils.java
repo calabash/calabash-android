@@ -463,7 +463,7 @@ public class UIQueryUtils {
 			m.put("id", getId(view));
 			m.put("el", view);
 
-			Map rect = ViewMapper.getRectForView(view);
+			Map<String,Integer> rect = ViewMapper.getRectForView(view);
 			Map hitPoint = extractHitPointFromRect(rect);
 
 			m.put("rect", rect);

@@ -26,7 +26,7 @@ public class ViewMapper {
 		data.put("id", getIdForView(v));
 		data.put("tag", getTagForView(v));
 
-		Map rect = getRectForView(v);
+		Map<String,Integer> rect = getRectForView(v);
 
 		data.put("rect", rect);
 
@@ -46,19 +46,20 @@ public class ViewMapper {
 
 	}
 
-	public static Map getRectForView(View v) {
-		Map rect = new HashMap();
+    public static Map<String, Integer> getRectForView(View v) {
+        Map<String,Integer> rect = new HashMap<String,Integer>();
 		int[] location = new int[2];
 		v.getLocationOnScreen(location);
 
 		rect.put("x", location[0]);
 		rect.put("y", location[1]);
-
-		rect.put("center_x", location[0] + v.getWidth()/2.0);
-		rect.put("center_y", location[1] + v.getHeight()/2.0);
+        
+		rect.put("center_x", (int)(location[0] + v.getWidth()/2.0));
+		rect.put("center_y", (int)(location[1] + v.getHeight()/2.0));
 
 		rect.put("width", v.getWidth());
 		rect.put("height", v.getHeight());
+
 		return rect;
 	}
 
