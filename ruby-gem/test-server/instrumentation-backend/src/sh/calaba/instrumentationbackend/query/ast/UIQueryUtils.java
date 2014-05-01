@@ -302,8 +302,8 @@ public class UIQueryUtils {
 							new TypeReference<List<HashMap<String, Object>>>() {
 							});
 					for (Map<String, Object> data : parsedResult) {
-						Map<String, Object> rect = (Map<String, Object>) data.get("rect");
-						Map<String, Object> updatedRect = QueryHelper.translateRectToScreenCoordinates(webView, rect);
+						Map<String, Integer> rect = (Map<String, Integer>) data.get("rect");
+						Map<String, Integer> updatedRect = QueryHelper.translateRectToScreenCoordinates(webView, rect);
 						data.put("rect", updatedRect);
 						data.put("webView", webView);
 					}

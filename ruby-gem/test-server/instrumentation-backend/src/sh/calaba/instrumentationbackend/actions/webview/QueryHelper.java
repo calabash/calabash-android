@@ -34,32 +34,27 @@ public class QueryHelper {
 		return offset + ((Number)point).floatValue() *scale;
 	}
 
-	public static Map<String, Object> translateRectToScreenCoordinates(WebView webView, Map<String, Object> rectangle) {
+	public static Map<String, Integer> translateRectToScreenCoordinates(WebView webView, Map<String, Integer> rectangle) {
 		try {
-
             float scale = webView.getScale();
 
 			int[] webviewLocation = new int[2];
 			webView.getLocationOnScreen(webviewLocation);
 			//center_x, center_y
 			//left, top, width, height
-			float center_x = translateCoordToScreen(webviewLocation[0], scale,
-					rectangle.get("center_x"));
-			float center_y = translateCoordToScreen(webviewLocation[1], scale,
-					rectangle.get("center_y"));
+			int center_x = (int)translateCoordToScreen(webviewLocation[0], scale, rectangle.get("center_x"));
+			int center_y = (int)translateCoordToScreen(webviewLocation[1], scale, rectangle.get("center_y"));
 
-			float x = translateCoordToScreen(webviewLocation[0], scale, rectangle.get("left"));
-			float y = translateCoordToScreen(webviewLocation[0], scale, rectangle.get("top"));
-			Map<String,Object> result = new HashMap<String, Object>(rectangle);
+			int x = (int)translateCoordToScreen(webviewLocation[0], scale, rectangle.get("left"));
+			int y = (int)translateCoordToScreen(webviewLocation[0], scale, rectangle.get("top"));
+			Map<String,Integer> result = new HashMap<String, Integer>(rectangle);
 
-			result.put("x",x);
-			result.put("y",y);
-			result.put("center_x",center_x);
-			result.put("center_y",center_y);
+			result.put("x", x);
+			result.put("y", y);
+			result.put("center_x", center_x);
+			result.put("center_y", center_y);
 
 			return result;
-
-
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
