@@ -116,6 +116,7 @@ else
   when 'version'
     puts Calabash::Android::VERSION
   else
+    puts "Invalid command '#{cmd}'"
     print_usage
   end
 end
