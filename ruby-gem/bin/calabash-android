@@ -61,14 +61,25 @@ else
     print_help
   when 'build'
     Env.exit_if_env_not_set_up
-    puts "Please specify the app you want to build a test server for" if (ARGV.empty? or not is_apk_file?(ARGV.first))
-    while not ARGV.empty? and is_apk_file?(ARGV.first)
-      calabash_build(relative_to_full_path(ARGV.shift))
+
+    if ARGV.empty?
+      puts "Please specify the app you want to build a test server for"
+      exit 1
+    elsif !File.exist?(ARGV.first)
+      puts "Could not find file '#{ARGV.first}'"
+      exit 1
+    elsif !is_apk_file?(ARGV.first)
+      puts "'#{ARGV.first}' is not a valid android application"
+      exit 1
+    else
+      while not ARGV.empty? and is_apk_file?(ARGV.first)
+        calabash_build(relative_to_full_path(ARGV.shift))
+      end
     end
   when 'run'
     Env.exit_if_env_not_set_up
     if ARGV.empty? or not is_apk_file?(ARGV.first)
-      puts "The first parameter must be path to apk file."
+      puts "The first parameter must be the path to the apk file."
       exit 1
     else
       exit calabash_run(relative_to_full_path(ARGV.shift))
@@ -77,26 +88,31 @@ else
     calabash_scaffold
   when 'console'
     Env.exit_if_env_not_set_up
-    if ARGV.empty?
-      puts "Please specify an app"
+
+    if ARGV.empty? or not is_apk_file?(ARGV.first)
+      puts "The first parameter must be the path to the apk file."
       exit 1
+    else
+      calabash_console(relative_to_full_path(ARGV.shift))
     end
-    unless File.exist? ARGV.first
-      puts "No such file #{ARGV.first}"
-      exit 1
-    end
-    calabash_console(relative_to_full_path(ARGV.shift))
   when 'setup'
     Env.exit_if_env_not_set_up
     calabash_setup
   when 'resign'
     Env.exit_if_env_not_set_up
-    unless File.exist?(File.expand_path(ARGV.first))
-      puts "No such file #{ARGV.first}"
-      exit 1
-    end
-    resign_apk(File.expand_path(ARGV.first))
 
+    if ARGV.empty?
+      puts "Please specify the app you want to resign"
+      exit 1
+    elsif !File.exist?(ARGV.first)
+      puts "Could not find file '#{ARGV.first}'"
+      exit 1
+    elsif !is_apk_file?(ARGV.first)
+      puts "'#{ARGV.first}' is not a valid android application"
+      exit 1
+    else
+      resign_apk(File.expand_path(ARGV.first))
+    end
   when 'version'
     puts Calabash::Android::VERSION
   else
