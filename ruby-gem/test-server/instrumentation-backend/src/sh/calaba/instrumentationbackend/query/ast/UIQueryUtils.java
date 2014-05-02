@@ -204,34 +204,7 @@ public class UIQueryUtils {
     }
 
     public static boolean isViewSufficientlyShown(View view) {
-        if (view == null) return false;
-
-        ViewParent viewParent = view.getParent();
-
-        if (!(viewParent instanceof View)) return true;
-
-        View parent = (View)viewParent;
-
-        if (view.equals(parent)) {
-            return true;
-        }
-
-        Map<String,Integer> viewRect = ViewMapper.getRectForView(view);
-        Map<String,Integer> parentViewRect = null;
-
-        if (parent == null) {
-            View rootView = view.getRootView();
-
-            if (!view.equals(rootView)) {
-                parentViewRect = ViewMapper.getRectForView(view);
-            } else {
-                return true;
-            }
-        } else {
-            parentViewRect = ViewMapper.getRectForView(parent);
-        }
-
-        return isViewSufficientlyShown(viewRect, parentViewRect);
+        return isViewSufficientlyShown(view, view.getParent());
     }
 
 	public static boolean isClickable(Object v) {
@@ -537,6 +510,21 @@ public class UIQueryUtils {
 
 
 	}
+
+    private static boolean isViewSufficientlyShown(View view, ViewParent viewParent) {
+        if (!(viewParent instanceof View)) return true;
+
+        View parent = (View)viewParent;
+
+        if (view.equals(parent) || parent == null) {
+            return true;
+        }
+
+        Map<String,Integer> viewRect = ViewMapper.getRectForView(view);
+        Map<String,Integer> parentRect = ViewMapper.getRectForView(parent);
+
+        return isViewSufficientlyShown(viewRect, parentRect) && isViewSufficientlyShown(view, parent.getParent());
+    }
 
 	private static boolean isDomTextType(String domType) {
 		if (domType == null) {
