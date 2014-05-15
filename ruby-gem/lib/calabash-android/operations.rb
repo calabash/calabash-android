@@ -710,10 +710,18 @@ module Operations
     performAction("double_tap_coordinate", center_x, center_y)
   end
 
+  # Performs a "long press" operation on a selected view
+  # Params:
+  # +uiquery+: a uiquery identifying one view
+  # +options[:length]+: the length of the long press in milliseconds (optional)
+  #
+  # Examples:
+  #   - long_press("* id:'my_id'")
+  #   - long_press("* id:'my_id'", {:length=>5000})
   def long_press(uiquery, options = {})
     center_x, center_y = find_coordinate(uiquery)
-
-    performAction("long_press_coordinate", center_x, center_y)
+    length = options[:length]
+    performAction("long_press_coordinate", center_x, center_y, *(length unless length.nil?))
   end
 
   def touch(uiquery, options = {})
