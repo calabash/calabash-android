@@ -10,13 +10,20 @@ Then /^I press the enter button$/ do
   performAction('send_key_enter')
 end
 
-
 Then /^I swipe left$/ do
   performAction('swipe', 'left')
 end
 
 Then /^I swipe right$/ do
   performAction('swipe', 'right')
+end
+
+Then /^I deep swipe left$/ do
+    performAction('drag',1,99,50,50,5)
+end
+
+Then /^I deep swipe right$/ do
+    performAction('drag',99,1,50,50,5)
 end
 
 Then /^I select "([^\"]*)" from the menu$/ do |item|  
