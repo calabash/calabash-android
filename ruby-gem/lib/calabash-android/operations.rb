@@ -858,7 +858,13 @@ module Operations
   end
 
   def backdoor(sel, arg)
-    ni
+    result = performAction("backdoor", sel, arg)
+    if !result["success"]
+      screenshot_and_raise(result["message"])
+    end
+
+    # for android results are returned in bonusInformation
+    result["bonusInformation"].first
   end
 
   def map(query, method_name, *method_args)

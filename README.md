@@ -6,7 +6,7 @@ This repository contains support for Android, for iOS, see [Calabash Landing Pag
 
 Calabash is a free open source project, developed and maintained by [Xamarin](http://xamarin.com).
 
-While Calabash is completely free, Xamarin provides a number of commercial services centered around Calabash and quality assurance for mobile, namely Xamarin Test Cloud consisting of hosted test-execution environments which let you execute Calabash tests on a large number of Android and iOS devices. 
+While Calabash is completely free, Xamarin provides a number of commercial services centered around Calabash and quality assurance for mobile, namely Xamarin Test Cloud consisting of hosted test-execution environments which let you execute Calabash tests on a large number of Android and iOS devices.
 
 Please see [xamarin.com/test-cloud](http://xamarin.com/test-cloud).
 
