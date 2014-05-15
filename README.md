@@ -28,6 +28,7 @@ in the current folder like this:
     | |_app_installation_hooks.rb
     | |_app_life_cycle_hooks.rb
     | |_env.rb
+    | |_hooks.rb
     |_step_definitions
     | |_calabash_steps.rb
     |_my_first.feature
