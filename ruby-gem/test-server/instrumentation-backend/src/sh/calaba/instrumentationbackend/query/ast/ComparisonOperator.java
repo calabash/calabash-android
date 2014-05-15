@@ -25,7 +25,13 @@ public enum ComparisonOperator implements UIQueryASTPredicateRelation {
 			if (firstValue == secondValue) {
 				return true;
 			}
-			return (firstValue != null) && firstValue.equals(secondValue);					
+			return (firstValue != null) && firstValue.equals(secondValue);
+		}
+	},
+
+	NOTEQUAL {
+		public boolean areRelated(Object firstValue, Object secondValue) {
+			return !EQUAL.areRelated(firstValue, secondValue);
 		}
 	},
 

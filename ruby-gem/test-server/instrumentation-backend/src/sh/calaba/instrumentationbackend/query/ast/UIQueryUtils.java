@@ -47,7 +47,7 @@ public class UIQueryUtils {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List subviews(Object o) {
-		
+
 		try {
 			Method getChild = o.getClass().getMethod("getChildAt", int.class);
 			getChild.setAccessible(true);
@@ -74,15 +74,15 @@ public class UIQueryUtils {
 
 	@SuppressWarnings({ "rawtypes" })
 	public static Future webViewSubViews(WebView o) {
-		
+
 		Log.i("Calabash", "About to webViewSubViews");
-		
+
 
 		WebFuture controls = QueryHelper.executeAsyncJavascriptInWebviews(o,
 				"calabash.js", "input,button","css");
-		
+
 		return controls;
-		
+
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -193,6 +193,10 @@ public class UIQueryUtils {
 		return ViewMapper.getIdForView(view);
 	}
 
+	public static String getTag(View view) {
+		return ViewMapper.getTagForView(view);
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Future evaluateAsyncInMainThread(final Callable callable) throws Exception {
 
@@ -301,7 +305,7 @@ public class UIQueryUtils {
 	}
 
 	/*
-	 * 
+	 *
 	 * {"rect"=>{"x"=>0, "y"=>0, "width"=>768, "height"=>1024},
 	 * "hit-point"=>{"x"=>384, "y"=>512}, "id"=>"", "action"=>false,
 	 * "enabled"=>1, "visible"=>1, "value"=>nil, "type"=>"[object UIAWindow]",
@@ -343,7 +347,7 @@ public class UIQueryUtils {
 				childrenArray.add(dumpRecursively(serializedChild,
 						childrenList));
 			}
-			
+
 		}
 
 		parentView.put("children", childrenArray);
@@ -373,7 +377,7 @@ public class UIQueryUtils {
 	}
 
 	/*
- * 
+ *
                                             "enabled" => true,
                                             "visible" => true,
                                            "children" => [],
@@ -412,16 +416,16 @@ public class UIQueryUtils {
 		if (viewOrMap == null) {
 			return null;
 		}
-		
-		if (viewOrMap instanceof Map) 
+
+		if (viewOrMap instanceof Map)
 		{
-			Map map = (Map) viewOrMap;			
+			Map map = (Map) viewOrMap;
 			map.put("el", map);
 
 			Map rect = (Map) map.get("rect");
 			Map hitPoint = extractHitPointFromRect(rect);
-			
-			map.put("hit-point", hitPoint);			
+
+			map.put("hit-point", hitPoint);
 			map.put("enabled", true);
 			map.put("visible", true);
 			map.put("value", null);
@@ -430,31 +434,31 @@ public class UIQueryUtils {
 			map.put("label", null);
 			map.put("children", Collections.EMPTY_LIST);
 			String html = (String)map.get("html");
-			String nodeName = (String) map.get("nodeName");			
-			if (nodeName != null && nodeName.toLowerCase().equals("input")) {				
+			String nodeName = (String) map.get("nodeName");
+			if (nodeName != null && nodeName.toLowerCase().equals("input")) {
 				String domType = extractDomType(html);
 				if (isDomPasswordType(domType)) {
 					map.put("entry_types", Collections.singletonList("password"));
 				}
 				else if (isDomTextType(domType)) {
 					map.put("entry_types", Collections.singletonList("text"));
-				} 
+				}
 				else {
-					map.put("entry_types", Collections.emptyList());	
-				}					
+					map.put("entry_types", Collections.emptyList());
+				}
 				map.put("value", extractAttribute(html, "value"));
 				map.put("type", "dom");
 				map.put("name", extractAttribute(html, "name"));
 				map.put("label", extractAttribute(html, "title"));
-			}					
-						
-			return map;	
-			
+			}
+
+			return map;
+
 		}
-		else 
+		else
 		{
 			Map m = new HashMap();
-			
+
 			View view = (View) viewOrMap;
 			m.put("id", getId(view));
 			m.put("el", view);
@@ -472,12 +476,12 @@ public class UIQueryUtils {
 			m.put("type", ViewMapper.getClassNameForView(view));
 			m.put("name", getNameForView(view));
 			m.put("label", ViewMapper.getContentDescriptionForView(view));
-			return m;	
+			return m;
 		}
 
-		
 
-		
+
+
 	}
 
 	private static boolean isDomTextType(String domType) {
@@ -487,25 +491,25 @@ public class UIQueryUtils {
 		return DOM_TEXT_TYPES.contains(domType);
 	}
 
-	private static boolean isDomPasswordType(String domType) {		
+	private static boolean isDomPasswordType(String domType) {
 		return "password".equalsIgnoreCase(domType);
 	}
 
 	// naive implementation only works for (valid) input tags
 	public static String extractDomType(String input) {
-		return extractAttribute(input, "type");		
+		return extractAttribute(input, "type");
 	}
-	
+
 	public static String extractAttribute(String input, String attribute) {
 		String[] split = input.split(attribute+"=");
 		if (split.length == 1) {
-			split = input.split(attribute+" =");			
+			split = input.split(attribute+" =");
 		}
 		if (split.length > 1) {
 			String lastPart = split[1];
 			if (lastPart == null) {
-				return null;	
-			}				
+				return null;
+			}
 			if (lastPart.charAt(0) == '"' || lastPart.charAt(0) == '\'') {
 				int endIndex = -1;
 				for (int i=1;i<lastPart.length();i++) {
@@ -514,15 +518,15 @@ public class UIQueryUtils {
 						break;
 					}
 				}
-				
+
 				if (endIndex > 0) {
 					return lastPart.substring(1,endIndex);
 				}
-				
-			}			
+
+			}
 		}
 		return null;
-		
+
 	}
 
 
