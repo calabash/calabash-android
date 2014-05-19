@@ -4,49 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sh.calaba.instrumentationbackend.query.Operation;
+import sh.calaba.instrumentationbackend.query.QueryResult;
 import sh.calaba.instrumentationbackend.query.UIQueryResultVoid;
 import sh.calaba.instrumentationbackend.query.ViewMapper;
 
 public class UIQueryEvaluator {
 	
 	@SuppressWarnings({ "rawtypes" })
-	public static List evaluateQueryWithOptions(List<UIQueryAST> query, List inputViews,
-			List<Operation> operations) {
-		
-        long before = System.currentTimeMillis();
-        
+	public static QueryResult evaluateQueryWithOptions(List<UIQueryAST> query, List inputViews, List<Operation> operations) {
         List views = evaluateQueryForPath(query, inputViews);
-        
-        long after = System.currentTimeMillis();              
-        String action = "EvaluateQuery";                               
-        System.out.println(action+ " took: "+ (after-before) + "ms");
-        
-        before = System.currentTimeMillis();
-        
         List result = applyOperations(views, operations);
-        
-        after = System.currentTimeMillis();              
-        action = "ApplyOperations";                               
-        System.out.println(action+ " took: "+ (after-before) + "ms");
-
-        before = System.currentTimeMillis();
-        
-		List finalResult = mapViews(result);
-        
-		after = System.currentTimeMillis();              
-        action = "MapViews";                               
-        return finalResult;         	
+        return new QueryResult(result);
 	}
 
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static List mapViews(List result) {		
-		List finalResult = new ArrayList(result.size());
-		for (Object o : result) {
-			finalResult.add(ViewMapper.mapView(o));
-		}
-		return finalResult;
-	}
 
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.graphics.PointF;
 
 public class SoloEnhanced extends Solo {
 	private MapViewUtils mapViewUtils;
@@ -72,4 +73,13 @@ public class SoloEnhanced extends Solo {
 	public List<String> getMapBounds() {
 		return mapViewUtils.getBounds();
 	}
+
+    public void doubleTapOnScreen(float x, float y) {
+        clicker.clickOnScreen(x,y);
+        clicker.clickOnScreen(x,y);
+    }
+
+    public void runOnMainSync(Runnable runner) {
+        instrumentation.runOnMainSync(runner);
+    }
 }

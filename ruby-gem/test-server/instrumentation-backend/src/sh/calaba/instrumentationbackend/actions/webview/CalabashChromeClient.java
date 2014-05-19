@@ -1,5 +1,7 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
+import java.io.IOException;
+import java.lang.RuntimeException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -13,10 +15,14 @@ import java.util.concurrent.TimeoutException;
 
 import android.os.Looper;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
+import sh.calaba.org.codehaus.jackson.type.TypeReference;
+
 import android.os.Build;
 import android.os.ConditionVariable;
 import android.view.View;
 import android.webkit.JsPromptResult;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
@@ -144,7 +150,25 @@ public class CalabashChromeClient extends WebChromeClient {
 		return scriptFuture;
 	}
 
-	@SuppressWarnings("rawtypes")
+    public void evaluateCalabashScript(String script) {
+        webView.evaluateJavascript(script, new ValueCallback<String>() {
+            public void onReceiveValue(String rawResponseJSON) {
+                String jsonResponse = null;
+
+                try {
+                    jsonResponse = new ObjectMapper().readValue(
+                            rawResponseJSON, new TypeReference<String>() {
+                    });
+                } catch (IOException e) {
+                    throw new RuntimeException("Incorrect JSON format returned from javascript: " + rawResponseJSON, e);
+                }
+
+                scriptFuture.setResult(jsonResponse);
+            }
+        });
+    }
+
+    @SuppressWarnings("rawtypes")
 	public static class WebFuture implements Future {
 		private final ConditionVariable eventHandled;
 		private volatile boolean complete;

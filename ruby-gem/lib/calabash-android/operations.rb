@@ -22,7 +22,7 @@ module Operations
   include Calabash::Android::TouchHelpers
 
   def current_activity
-    `#{default_device.adb_command} shell dumpsys window windows`.each_line.grep(/mFocusedApp.+[\.\/]([^.\/\}]+)\}/){$1}.first
+    `#{default_device.adb_command} shell dumpsys window windows`.each_line.grep(/mFocusedApp.+[\.\/]([^.\s\/\}]+)/){$1}.first
   end
 
   def log(message)
@@ -275,7 +275,7 @@ module Operations
         raise "Empty result from TestServer" if result.chomp.empty?
         result = JSON.parse(result)
         if not result["success"] then
-          raise "Step unsuccessful: #{result["message"]}"
+          raise "Action '#{action}' unsuccessful: #{result["message"]}"
         end
         result
       end
@@ -321,7 +321,6 @@ module Operations
 
 
     def make_http_request(options)
-      body = nil
       begin
         unless @http
           @http = init_request(options)
@@ -330,11 +329,14 @@ module Operations
         header["Content-Type"] = "application/json;charset=utf-8"
         options[:header] = header
 
-        if options[:method] == :post
-          body = @http.post(options[:uri], options).body
+
+        response = if options[:method] == :post
+          @http.post(options[:uri], options)
         else
-          body = @http.get(options[:uri], options).body
+          @http.get(options[:uri], options)
         end
+        raise Errno::ECONNREFUSED if response.status_code == 502
+        response.body
       rescue Exception => e
         if @http
           @http.reset_all
@@ -342,7 +344,6 @@ module Operations
         end
         raise e
       end
-      body
     end
 
     def init_request(options)
@@ -392,7 +393,7 @@ module Operations
           f.write res
         end
       else
-        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenshotTaker.jar')} #{serial} #{path}"
+        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenshotTaker.jar')} #{serial} \"#{path}\""
         log screenshot_cmd
         raise "Could not take screenshot" unless system(screenshot_cmd)
       end
@@ -557,6 +558,8 @@ module Operations
         Timeout::timeout(3) do
           sleep 0.3 while app_running?
         end
+      rescue HTTPClient::KeepAliveDisconnected
+        log ("Server not responding. Moving on.")
       rescue Timeout::Error
         log ("Could not kill app. Waited to 3 seconds.")
       rescue EOFError
@@ -701,11 +704,47 @@ module Operations
     raise(msg)
   end
 
-  def touch(uiquery,*args)
-    raise "Cannot touch nil" unless uiquery
+  def double_tap(uiquery, options = {})
+    center_x, center_y = find_coordinate(uiquery)
+
+    performAction("double_tap_coordinate", center_x, center_y)
+  end
+
+  # Performs a "long press" operation on a selected view
+  # Params:
+  # +uiquery+: a uiquery identifying one view
+  # +options[:length]+: the length of the long press in milliseconds (optional)
+  #
+  # Examples:
+  #   - long_press("* id:'my_id'")
+  #   - long_press("* id:'my_id'", {:length=>5000})
+  def long_press(uiquery, options = {})
+    center_x, center_y = find_coordinate(uiquery)
+    length = options[:length]
+    performAction("long_press_coordinate", center_x, center_y, *(length unless length.nil?))
+  end
+
+  def touch(uiquery, options = {})
+    center_x, center_y = find_coordinate(uiquery)
+
+    performAction("touch_coordinate", center_x, center_y)
+  end
+
+  def keyboard_enter_text(text, options = {})
+    performAction('keyboard_enter_text', text)
+  end
+
+  def enter_text(uiquery, text, options = {})
+    touch(uiquery, options)
+    sleep 0.5
+    keyboard_enter_text(text, options)
+  end
+
+  def find_coordinate(uiquery)
+    raise "Cannot find nil" unless uiquery
 
     if uiquery.instance_of? String
-      elements = query(uiquery, *args)
+      elements = query(uiquery)
       raise "No elements found. Query: #{uiquery}" if elements.empty?
       element = elements.first
     else
@@ -713,10 +752,10 @@ module Operations
       element = element.first if element.instance_of?(Array)
     end
 
-
     center_x = element["rect"]["center_x"]
     center_y = element["rect"]["center_y"]
-    performAction("touch_coordinate", center_x, center_y)
+
+    [center_x, center_y]
   end
 
   def http(path, data = {}, options = {})
@@ -728,14 +767,13 @@ module Operations
   end
 
   def set_text(uiquery, txt)
-    raise "Currently queries are only supported for webviews" unless uiquery.start_with? "webView"
+    view,arguments = uiquery.split(" ",2)
+    raise "Currently queries are only supported for webviews" unless view.downcase == "webview"
 
-    uiquery.slice!(0, "webView".length)
-    if uiquery =~ /(css|xpath):\s*(.*)/
+    if arguments =~ /(css|xpath):\s*(.*)/
       r = performAction("set_text", $1, $2, txt)
-      JSON.parse(r["message"])
     else
-     raise "Invalid query #{uiquery}"
+     raise "Invalid query #{arguments}"
     end
   end
 
@@ -828,7 +866,13 @@ module Operations
   end
 
   def backdoor(sel, arg)
-    ni
+    result = performAction("backdoor", sel, arg)
+    if !result["success"]
+      screenshot_and_raise(result["message"])
+    end
+
+    # for android results are returned in bonusInformation
+    result["bonusInformation"].first
   end
 
   def map(query, method_name, *method_args)

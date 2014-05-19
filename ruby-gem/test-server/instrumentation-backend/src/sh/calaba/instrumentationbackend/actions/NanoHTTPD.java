@@ -346,6 +346,10 @@ public class NanoHTTPD
 				// Decode the header into parms and header java properties
 				decodeHeader(hin, pre, parms, header);
 				String method = pre.getProperty("method");
+                if(method == null) {
+                    System.out.println("HTTP-method was null - ignoring request");
+                    return;
+                }
 				String uri = pre.getProperty("uri");
 
 				long size = 0x7FFFFFFFFFFFFFFFl;
