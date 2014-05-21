@@ -27,6 +27,7 @@ import sh.calaba.instrumentationbackend.query.ViewMapper;
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import sh.calaba.org.codehaus.jackson.type.TypeReference;
+import android.graphics.Rect;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -173,11 +174,35 @@ public class UIQueryUtils {
 		}
 		View view = (View) v;
 
-		if (view.getHeight() == 0 || view.getWidth() == 0) {
-			return false;
-		}
+		if (!view.isShown()) return false;
 
-		return view.isShown() && viewFetcher.isViewSufficientlyShown(view);
+		int height = view.getHeight();
+		int width = view.getWidth();
+		if (height == 0 || width == 0) return false;
+
+		// viewFetcher.isViewSufficientlyShown() does not handle all cases where a view is off-screen,
+		// because only vertical positions are checked against parent scrolling containers. This is
+		// a simple check to see if any of the view can possibly be on screen and catches the common
+		// case of off-screen pages in a ViewPager. Additional fun comes from the fact that
+		// view.getLocationInWindow() (which is called by getLocationview.getLocationOnScreen())
+		// uses (int) (x + 0.5f) for rounding float positions to int, which has round-to-zero semantics
+		// (rather than round-to-nearest), so for example for a view at position x=-10 it ends up returning
+		// (int) (-10 + 0.5f) = (int -9.5f) = -9. For the ViewPager case this means we would consider the
+		// off-screen page to the left of the current page to be on-screen by 1 pixel. We attempt to
+		// compensate for this, but of course this can go wrong if view positions aren't integers due to transforms.
+		int[] location = new int[2];
+		view.getLocationOnScreen(location);
+		if (location[0] < 0) location[0] -= 1;
+		if (location[1] < 0) location[1] -= 1;
+		Rect frame = new Rect();
+		view.getWindowVisibleDisplayFrame(frame);
+
+		if (location[0] >= frame.right ||
+		    location[1] >= frame.bottom ||
+		    location[0]+width <= frame.left ||
+		    location[1]+height <= frame.top) return false;
+
+		return viewFetcher.isViewSufficientlyShown(view);
 	}
 
 	public static boolean isClickable(Object v) {
