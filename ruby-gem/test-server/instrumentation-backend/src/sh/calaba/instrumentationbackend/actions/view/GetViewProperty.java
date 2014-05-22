@@ -61,7 +61,7 @@ public class GetViewProperty extends WaitForViewById implements Action {
 				value = Integer.toString(view.getVisibility());
 			}
 			
-			return new Result( true, value );
+			return processProperty( propertyName, value, args );
 		} else {
 			// resort to reflection
 			Class<? extends View> clazz = view.getClass();
