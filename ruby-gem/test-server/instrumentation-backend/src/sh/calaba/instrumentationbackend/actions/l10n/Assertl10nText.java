@@ -4,10 +4,9 @@ import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
 
-public class Assertl10nText extends Action{
+public class Assertl10nText implements Action{
 
 
-    @Override
     public Result execute(String... args) {
         String l10nKey = args[0];
         boolean shouldBeFound = Boolean.parseBoolean(args[1]);
@@ -27,7 +26,6 @@ public class Assertl10nText extends Action{
         }
     }
 
-    @Override
     public String key() {
         return "assert_l10n_text";
     }
