@@ -768,7 +768,7 @@ module Operations
 
   def set_text(uiquery, txt)
     view,arguments = uiquery.split(" ",2)
-    raise "Currently queries are only supported for webviews" unless view.downcase == "webview"
+    raise "Currently queries are only supported for webviews" unless view.downcase.end_with?("webview")
 
     if arguments =~ /(css|xpath):\s*(.*)/
       r = performAction("set_text", $1, $2, txt)
