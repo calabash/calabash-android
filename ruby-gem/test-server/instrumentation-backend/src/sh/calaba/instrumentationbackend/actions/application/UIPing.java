@@ -20,14 +20,14 @@ public class UIPing implements Action {
     private final Runnable pingerRunnable = new Runnable() {
         @Override
         public void run() {
-        	try {
-        		lock.lockInterruptibly();                		
-        	} catch (InterruptedException e) {
-        		Thread.currentThread().interrupt();        		
-        	} finally {
-        		pingCondition.signal();        		
-        		lock.unlock();
-        	}               
+            try {
+                lock.lockInterruptibly();                		
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();        		
+            } finally {
+                pingCondition.signal();        		
+                lock.unlock();
+            }               
         }
     };
 
