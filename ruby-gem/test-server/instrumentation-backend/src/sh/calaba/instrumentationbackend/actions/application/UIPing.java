@@ -11,7 +11,7 @@ import android.os.Looper;
 
 public class UIPing implements Action {
 
-	private static final int DEFAULT_TIMEOUT = 5000;
+    private static final int DEFAULT_TIMEOUT = 5000;
 
     private final Handler mainLooperHandler = new Handler(Looper.getMainLooper());
     private final ReentrantLock lock = new ReentrantLock();    
@@ -33,26 +33,25 @@ public class UIPing implements Action {
 
     
 	@Override
-	public Result execute(String... args) {
-		try {
-    		lock.tryLock(5, TimeUnit.SECONDS);
-    		long timeBefore = System.nanoTime();
-    		mainLooperHandler.post(pingerRunnable);
-    		pingCondition.await();
-    		long timeAfter = System.nanoTime();
-    		return new Result(true,""+TimeUnit.MILLISECONDS.convert(timeAfter-timeBefore, TimeUnit.NANOSECONDS));
-    		
+    public Result execute(String... args) {
+        try {
+            lock.tryLock(5, TimeUnit.SECONDS);
+            long timeBefore = System.nanoTime();
+            mainLooperHandler.post(pingerRunnable);
+            pingCondition.await();
+            long timeAfter = System.nanoTime();
+            return new Result(true,""+TimeUnit.MILLISECONDS.convert(timeAfter-timeBefore, TimeUnit.NANOSECONDS));
     	} catch (InterruptedException e) {
-    		Thread.currentThread().interrupt();
-    		return new Result(false,"5");
+            Thread.currentThread().interrupt();
+            return new Result(false,"5");
     	} finally {
-    		lock.unlock();
+            lock.unlock();
     	} 		
-	}
+    }
 
-	@Override
-	public String key() {		
-		return "uiping";
-	}
+    @Override
+    public String key() {		
+        return "uiping";
+    }
 
 }
