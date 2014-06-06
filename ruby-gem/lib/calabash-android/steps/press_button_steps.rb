@@ -35,7 +35,7 @@ Then /^I click on screen (\d+)% from the left and (\d+)% from the top$/ do |x, y
 end
 
 Then /^I touch the "([^\"]*)" text$/ do |text|
-  touch("* {text CONTAINS[c] '#{text}'}")
+  touch("* {text LIKE[c] '#{text}'}")
 end
 
 Then /^I press list item number (\d+)$/ do |line_index|
