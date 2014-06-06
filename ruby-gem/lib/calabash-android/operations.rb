@@ -767,19 +767,29 @@ module Operations
   def find_coordinate(uiquery)
     raise "Cannot find nil" unless uiquery
 
-    if uiquery.instance_of? String
-      elements = query(uiquery)
-      raise "No elements found. Query: #{uiquery}" if elements.empty?
-      element = elements.first
-    else
-      element = uiquery
-      element = element.first if element.instance_of?(Array)
-    end
+    element = execute_uiquery(uiquery)
+
+    raise "No elements found. Query: #{uiquery}" if element.nil?
 
     center_x = element["rect"]["center_x"]
     center_y = element["rect"]["center_y"]
 
     [center_x, center_y]
+  end
+
+  def execute_uiquery(uiquery)
+    if uiquery.instance_of? String
+      elements = query(uiquery)
+
+      return elements.first unless elements.empty?
+    else
+      elements = uiquery
+
+      return elements.first if elements.instance_of?(Array)
+      return elements if elements.instance_of?(Hash)
+    end
+
+    nil
   end
 
   def http(path, data = {}, options = {})
