@@ -805,6 +805,9 @@ module Operations
     perform_action('go_back')
   end
 
+  def press_menu_button
+    perform_action('press_menu')
+  end
   def swipe(dir,options={})
       ni
   end
