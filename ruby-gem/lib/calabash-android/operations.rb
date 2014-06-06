@@ -838,6 +838,12 @@ module Operations
     touch(combined_query_string)
   end
 
+  def touch_when_element_exists(uiquery, options={})
+    when_element_exists(uiquery, options) do |element|
+      touch(element)
+    end
+  end
+
   def swipe(dir,options={})
       ni
   end
