@@ -2,7 +2,7 @@ Then /^I long press "([^\"]*)" and select item number (\d+)$/ do |text_to_press,
   puts 'Warning: This predefined step is deprecated. Implement a new, less vague step.'
 
   long_press("* {text CONTAINS '#{text_to_press}'}")
-  wait_for_element_exist("com.android.internal.view.menu.ListMenuItemView")
+  wait_for_element_exists("com.android.internal.view.menu.ListMenuItemView")
 
   touch_index = index.to_i - 1
 
@@ -13,7 +13,7 @@ Then /^I long press "([^\"]*)" and select "([^\"]*)"$/ do |text_to_press, contex
   puts 'Warning: This predefined step is deprecated. Implement a new, less vague step.'
 
   long_press("* {text CONTAINS '#{text_to_press}'}")
-  wait_for_element_exist("com.android.internal.view.menu.ListMenuItemView")
+  wait_for_element_exists("com.android.internal.view.menu.ListMenuItemView")
 
   touch("com.android.internal.view.menu.ListMenuItemView android.widget.TextView marked:'#{context_text}'")
 end

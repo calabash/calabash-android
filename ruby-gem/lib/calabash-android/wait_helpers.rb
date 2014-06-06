@@ -84,7 +84,7 @@ module Calabash
       end
 
       #options for wait_for apply
-      def wait_for_element_exist(uiquery, options={})
+      def wait_for_element_exists(uiquery, options={})
         wait_for_elements_exist([uiquery], options)
       end
 

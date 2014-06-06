@@ -115,7 +115,7 @@ A Ruby block always returns the value of its last expression (`res.first == true
 
 *Notes:* Waiting for a condition to occur is superior to using the `sleep` function. With `sleep` you end up either specifying too long waits which slows the test down or you become sensitive to timing issues. Sometimes you do need sleep (to wait for animations to complete), but try to use waiting as much as possible.
 
-### wait_for_element_exist(uiquery, options={})
+### wait_for_element_exists(uiquery, options={})
 
 A high-level waiting function. This captures the common practice of waiting for UI elements, i.e., combining `wait_for` and `element_exists`.
 
@@ -127,14 +127,14 @@ Takes a query and waits for it to return a results. Calls `wait_for` supplying `
 
 ### wait_for_elements_exist(elements_arr, options={})
 
-Like `wait_for_element_exist` but takes an *array* of queries and waits for all of those queries to return results. Calls `wait_for` supplying `options`.
+Like `wait_for_element_exists` but takes an *array* of queries and waits for all of those queries to return results. Calls `wait_for` supplying `options`.
 
 
     irb(main):008:0> wait_for_elements_exist( ["button marked:'Save'", "* marked:'Please sign in'"], :timeout => 2)
 
 ### wait_for_element_do_not_exist(uiquery, options={})
 
-Similar to `wait_for_element_exist`, but waits for an element to not exist.
+Similar to `wait_for_element_exists`, but waits for an element to not exist.
 
 
 ### wait_for_elements_do_not_exist(elements_arr, options={})
