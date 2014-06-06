@@ -19,9 +19,8 @@ Then /^I swipe right$/ do
   perform_action('swipe', 'right')
 end
 
-Then /^I select "([^\"]*)" from the menu$/ do |item|
-  perform_action("press_menu")
-  touch("DropDownListView descendant * {text CONTAINS '#{item}'}")
+Then /^I select "([^\"]*)" from the menu$/ do |text|
+  select_options_menu_item(text)
 end
 
 Then /^I select tab number (\d+)$/ do | tab |
