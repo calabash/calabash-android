@@ -62,5 +62,7 @@ end
 
 # @param - the "tag" associated with the tab, or the text within the tab label
 Then /^I wait for the "([^\"]*)" tab to appear$/ do | tab |
-  perform_action('wait_for_tab', tab)
+  wait_for do
+    query("android.widget.TabWidget descendant TextView {text LIKE[c] '#{tab}'}", :isSelected).first
+  end
 end

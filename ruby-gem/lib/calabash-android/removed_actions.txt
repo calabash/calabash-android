@@ -46,3 +46,4 @@ assert_no_duplicates_in_grid
 select_tab
 wait_for_dialog_to_close
 wait_for_screen
+wait_for_tab
