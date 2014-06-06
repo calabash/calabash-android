@@ -24,12 +24,12 @@ Then /^I select "([^\"]*)" from the menu$/ do |text|
 end
 
 Then /^I select tab number (\d+)$/ do | tab |
-  touch("android.widget.TabHost descendant TextView index:#{tab.to_i-1}")
+  touch("android.widget.TabWidget descendant TextView index:#{tab.to_i-1}")
 end
 
 # @param - the "tag" associated with the tab, or the text within the tab label
 Then /^I select the "([^\"]*)" tab$/ do | tab |
-  touch("android.widget.TabHost descendant TextView {text LIKE[c] '#{tab}'}")
+  touch("android.widget.TabWidget descendant TextView {text LIKE[c] '#{tab}'}")
 end
 
 Then /^I scroll down$/ do
