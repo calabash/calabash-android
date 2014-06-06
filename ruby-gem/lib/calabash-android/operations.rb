@@ -821,11 +821,9 @@ module Operations
     perform_action('press_menu')
   end
 
-  def select_options_menu_item(text)
+  def select_options_menu_item(text, options={})
     press_menu_button
-    when_element_exists("DropDownListView * marked:'#{text}'") do |element|
-      touch(element)
-    end
+    touch_when_element_exists("DropDownListView * marked:'#{text}'", options)
   end
 
   def select_context_menu_item(view_uiquery, menu_item_query_string)
