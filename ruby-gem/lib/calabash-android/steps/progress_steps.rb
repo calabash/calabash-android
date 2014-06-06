@@ -49,15 +49,15 @@ end
 
 
 Then /^I wait for the "([^\"]*)" screen to appear$/ do |text|
-  perform_action('wait_for_screen', text)
+  wait_for_activity(text)
 end
 
 Then /^I wait upto (\d+) seconds for the "([^\"]*)" screen to appear$/ do |timeout, text|
-  perform_action('wait_for_screen', text, timeout)
+  wait_for_activity(text, timeout: timeout.to_i)
 end
 
 Then /^I wait up to (\d+) seconds for the "([^\"]*)" screen to appear$/ do |timeout, text|
-  perform_action('wait_for_screen', text, timeout)
+  wait_for_activity(text, timeout: timeout.to_i)
 end
 
 # @param - the "tag" associated with the tab, or the text within the tab label
