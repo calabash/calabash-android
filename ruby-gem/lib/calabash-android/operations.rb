@@ -764,6 +764,14 @@ module Operations
     keyboard_enter_text(text, options)
   end
 
+  def clear_text(query_string, options={})
+    result = query(query_string, setText: '')
+
+    raise "No elements found. Query: #{query_string}" if result.empty?
+
+    true
+  end
+
   def find_coordinate(uiquery)
     raise "Cannot find nil" unless uiquery
 
