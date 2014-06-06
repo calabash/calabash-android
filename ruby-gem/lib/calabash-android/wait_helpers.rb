@@ -182,7 +182,7 @@ module Calabash
       end
 
       def wait_for_text(text, options={})
-        wait_for_element_exists("* {text CONTAINS '#{text}'}", options)
+        wait_for_element_exists("* {text CONTAINS[c] '#{text}'}", options)
       end
     end
   end
