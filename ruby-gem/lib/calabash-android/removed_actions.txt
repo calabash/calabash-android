@@ -34,3 +34,4 @@ assert_text
 assert_text_in_textview
 long_press_on_view_by_id
 press_long_on_text_and_select_with_id
+enter_query_into_numbered_field
