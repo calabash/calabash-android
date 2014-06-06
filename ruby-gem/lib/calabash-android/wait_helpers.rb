@@ -184,6 +184,12 @@ module Calabash
       def wait_for_text(text, options={})
         wait_for_element_exists("* {text CONTAINS[c] '#{text}'}", options)
       end
+
+      def wait_for_activity(activity_name, options={})
+        wait_for(options) do
+          perform_action('get_activity_name')['message'] == activity_name
+        end
+      end
     end
   end
 end
