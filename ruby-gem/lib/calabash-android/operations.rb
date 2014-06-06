@@ -828,6 +828,16 @@ module Operations
     end
   end
 
+  def select_context_menu_item(view_uiquery, menu_item_query_string)
+    long_press(view_uiquery)
+
+    container_class = 'com.android.internal.view.menu.ListMenuItemView'
+    wait_for_element_exists(container_class)
+
+    combined_query_string = "#{container_class} descendant #{menu_item_query_string}"
+    touch(combined_query_string)
+  end
+
   def swipe(dir,options={})
       ni
   end
