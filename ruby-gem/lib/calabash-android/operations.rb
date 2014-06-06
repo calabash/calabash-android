@@ -791,14 +791,8 @@ module Operations
   end
 
   def set_text(uiquery, txt)
-    view,arguments = uiquery.split(" ",2)
-    raise "Currently queries are only supported for webviews" unless view.downcase == "webview"
-
-    if arguments =~ /(css|xpath):\s*(.*)/
-      r = perform_action("set_text", $1, $2, txt)
-    else
-     raise "Invalid query #{arguments}"
-    end
+    puts "set_text is deprecated. Use enter_text instead"
+    enter_text(uiquery, txt)
   end
 
   def press_back_button
