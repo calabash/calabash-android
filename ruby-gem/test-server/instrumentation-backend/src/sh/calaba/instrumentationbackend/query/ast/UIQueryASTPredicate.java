@@ -100,8 +100,8 @@ public class UIQueryASTPredicate implements UIQueryAST {
 		if (this.relation.areRelated(value, this.valueToMatch)) {
 			return o;
 		} else if (this.valueToMatch instanceof String
-				&& this.relation
-						.areRelated(value.toString(), this.valueToMatch)) {
+                    && value != null
+                    && this.relation.areRelated(value.toString(), this.valueToMatch)) {
 			return o;
 		} else {
 			return null;
