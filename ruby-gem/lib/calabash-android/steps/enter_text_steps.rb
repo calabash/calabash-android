@@ -15,7 +15,7 @@ Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, id|
 end
 
 Then /^I clear "([^\"]*)"$/ do |name|
-  clear_text("android.widget.EditText {contentDescription LIKE[c] '#{name}'}")
+  clear_text("android.widget.EditText marked:'#{name}'}")
 end
 
 Then /^I clear input field number (\d+)$/ do |number|
