@@ -181,7 +181,9 @@ module Calabash
         opts[:action].call
       end
 
-
+      def wait_for_text(text, options={})
+        wait_for_element_exists("* {text CONTAINS '#{text}'}", options)
+      end
     end
   end
 end
