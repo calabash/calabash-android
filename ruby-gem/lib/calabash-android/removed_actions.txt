@@ -42,3 +42,4 @@ clear_named_field
 enter_text_into_named_field
 enter_text_into_id_field
 enter_text_into_numbered_field
+assert_no_duplicates_in_grid
