@@ -3,7 +3,7 @@ Then /^I enter "([^\"]*)" as "([^\"]*)"$/ do |text, content_description|
 end
 
 Then /^I enter "([^\"]*)" into "([^\"]*)"$/ do |text, content_description|
-  enter_text("EditText contentDescription:'#{content_description}'", text)
+  enter_text("EditText {contentDescription LIKE[c] '#{content_description}'}", text)
 end
 
 Then /^I enter "([^\"]*)" into input field number (\d+)$/ do |text, index|
@@ -15,7 +15,7 @@ Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, id|
 end
 
 Then /^I clear "([^\"]*)"$/ do |name|
-  query("EditText contentDescription:'#{name}'", setText: '')
+  query("EditText {contentDescription LIKE[c] '#{name}'}", setText: '')
 end
 
 Then /^I clear input field number (\d+)$/ do |number|
