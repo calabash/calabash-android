@@ -39,3 +39,6 @@ select_from_menu
 clear_id_field
 clear_numbered_field
 clear_named_field
+enter_text_into_named_field
+enter_text_into_id_field
+enter_text_into_numbered_field

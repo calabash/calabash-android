@@ -1,13 +1,17 @@
-Then /^I enter "([^\"]*)" as "([^\"]*)"$/ do |text, target|
-  perform_action('enter_text_into_named_field', text, target)
+Then /^I enter "([^\"]*)" as "([^\"]*)"$/ do |text, content_description|
+  enter_text("EditText contentDescription:'#{content_description}'", text)
 end
 
-Then /^I enter "([^\"]*)" into input field number (\d+)$/ do |text, number|
-  perform_action('enter_text_into_numbered_field',text, number)
+Then /^I enter "([^\"]*)" into "([^\"]*)"$/ do |text, content_description|
+  enter_text("EditText contentDescription:'#{content_description}'", text)
 end
 
-Then /^I enter "([^\"]*)" into "([^\"]*)"$/ do |text, name|
-  perform_action('enter_text_into_named_field',text, name)
+Then /^I enter "([^\"]*)" into input field number (\d+)$/ do |text, index|
+  enter_text("EditText index:#{index.to_i-1}", text)
+end
+
+Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, id|
+  enter_text("EditText id:'#{id}'", text)
 end
 
 Then /^I clear "([^\"]*)"$/ do |name|
@@ -20,8 +24,4 @@ end
 
 Then /^I clear input field with id "([^\"]*)"$/ do |view_id|
   query("EditText id:'#{view_id}'", setText: '')
-end
-
-Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, view_id|
-  perform_action('enter_text_into_id_field', text, view_id)
 end
