@@ -808,6 +808,14 @@ module Operations
   def press_menu_button
     perform_action('press_menu')
   end
+
+  def select_options_menu_item(text)
+    press_menu_button
+    when_element_exists("DropDownListView * marked:'#{text}'") do |element|
+      touch(element)
+    end
+  end
+
   def swipe(dir,options={})
       ni
   end
