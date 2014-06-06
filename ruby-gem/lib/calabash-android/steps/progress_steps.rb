@@ -6,10 +6,6 @@ Then /^I wait$/ do
   sleep 2
 end
 
-Then /^I wait for dialog to close$/ do
-  perform_action('wait_for_dialog_to_close')
-end
-
 
 Then /^I wait for (\d+) seconds$/ do |seconds|
   sleep(seconds.to_i)
