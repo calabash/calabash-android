@@ -15,13 +15,13 @@ Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, id|
 end
 
 Then /^I clear "([^\"]*)"$/ do |name|
-  query("android.widget.EditText {contentDescription LIKE[c] '#{name}'}", setText: '')
+  clear_text("android.widget.EditText {contentDescription LIKE[c] '#{name}'}")
 end
 
 Then /^I clear input field number (\d+)$/ do |number|
-  query("android.widget.EditText index:#{number.to_i-1}", setText: '')
+  clear_text("android.widget.EditText index:#{number.to_i-1}")
 end
 
 Then /^I clear input field with id "([^\"]*)"$/ do |view_id|
-  query("android.widget.EditText id:'#{view_id}'", setText: '')
+  clear_text("android.widget.EditText id:'#{view_id}'")
 end
