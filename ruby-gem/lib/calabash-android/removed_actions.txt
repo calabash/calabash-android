@@ -36,3 +36,6 @@ long_press_on_view_by_id
 press_long_on_text_and_select_with_id
 enter_query_into_numbered_field
 select_from_menu
+clear_id_field
+clear_numbered_field
+clear_named_field

@@ -11,15 +11,15 @@ Then /^I enter "([^\"]*)" into "([^\"]*)"$/ do |text, name|
 end
 
 Then /^I clear "([^\"]*)"$/ do |name|
-  perform_action('clear_named_field',name)
+  query("EditText contentDescription:'#{name}'", setText: '')
 end
 
 Then /^I clear input field number (\d+)$/ do |number|
-  perform_action('clear_numbered_field',number)
+  query("EditText index:#{number.to_i-1}", setText: '')
 end
 
 Then /^I clear input field with id "([^\"]*)"$/ do |view_id|
-  perform_action('clear_id_field', view_id)
+  query("EditText id:'#{view_id}'", setText: '')
 end
 
 Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, view_id|
