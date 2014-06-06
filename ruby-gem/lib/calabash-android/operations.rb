@@ -719,11 +719,11 @@ module Operations
   end
 
   def has_text?(text)
-    query("android.widget.TextView {text CONTAINS '#{text}'}").empty?
+    !query("* {text CONTAINS[c] '#{text}'}").empty?
   end
 
   def assert_text(text, should_find = true)
-    raise "Text \"#{text}\" was #{should_find ? 'not ' : ''}found." unless has_text?(text) ^ should_find
+    raise "Text \"#{text}\" was #{should_find ? 'not ' : ''}found." if has_text?(text) ^ should_find
 
     true
   end
