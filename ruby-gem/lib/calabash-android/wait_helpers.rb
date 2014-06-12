@@ -185,6 +185,10 @@ module Calabash
         wait_for_element_exists("* {text CONTAINS[c] '#{text}'}", options)
       end
 
+      def wait_for_text_to_disappear(text, options={})
+        wait_for_element_do_not_exist("* {text CONTAINS[c] '#{text}'}", options)
+      end
+
       def wait_for_activity(activity_name, options={})
         wait_for(options) do
           perform_action('get_activity_name')['message'] == activity_name
