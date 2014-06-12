@@ -27,9 +27,13 @@ Then /^I touch the "([^\"]*)" text$/ do |text|
 end
 
 Then /^I press list item number (\d+)$/ do |line_index|
-  touch("android.widget.AbsListView index:0 * index:#{line_index.to_i-1}")
+  puts 'Warning: This predefined step is deprecated. Implement a new, less vague step.'
+
+  touch_when_element_exists("android.widget.ListView index:0 android.widget.TextView index:#{line_index.to_i-1}")
 end
 
 Then /^I long press list item number (\d+)$/ do |line_index|
-  long_press("android.widget.AbsListView index:0 * index:#{line_index.to_i-1}")
+  puts 'Warning: This predefined step is deprecated. Implement a new, less vague step.'
+
+  long_press_when_element_exists("android.widget.ListView index:0 android.widget.TextView index:#{line_index.to_i-1}")
 end
