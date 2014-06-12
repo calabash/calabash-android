@@ -1,9 +1,9 @@
 Then /^I go back$/ do
-  perform_action('go_back')
+  press_back_button
 end
 
 Then /^I press the menu key$/ do
-  perform_action('press_menu')
+  press_menu_button
 end
 
 Then /^I press the enter button$/ do
