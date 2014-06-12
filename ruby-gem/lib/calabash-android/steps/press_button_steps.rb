@@ -11,11 +11,11 @@ Then /^I press image button number (\d+)$/ do |button_number|
 end
 
 Then /^I press view with id "([^\"]*)"$/ do |view_id|
-  touch("* id:'#{view_id}'")
+  touch_when_element_exists("* id:'#{view_id}'")
 end
 
 Then /^I press "([^\"]*)"$/ do |identifier|
-  touch("* marked:'#{identifier}'")
+  touch_when_element_exists("* marked:'#{identifier}'")
 end
 
 Then /^I click on screen (\d+)% from the left and (\d+)% from the top$/ do |x, y|
@@ -23,7 +23,7 @@ Then /^I click on screen (\d+)% from the left and (\d+)% from the top$/ do |x, y
 end
 
 Then /^I touch the "([^\"]*)" text$/ do |text|
-  touch("* {text LIKE[c] '#{text}'}")
+  touch_when_element_exists("* {text LIKE[c] '#{text}'}")
 end
 
 Then /^I press list item number (\d+)$/ do |line_index|
