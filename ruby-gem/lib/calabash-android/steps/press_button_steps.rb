@@ -1,25 +1,13 @@
 Given /^I press the "([^\"]*)" button$/ do |button_text|
-  touch("android.widget.Button {text CONTAINS '#{button_text}'}")
+  touch_when_element_exists("android.widget.Button {text CONTAINS[c] '#{button_text}'}")
 end
 
 Then /^I press button number (\d+)$/ do |button_number|
-  button_number = button_number.to_i - 1
-  buttons = query("android.widget.Button")
-
-  if button_number >= buttons.count
-    raise "Could not press Button number #{button_number}. Only #{buttons.count} was found"
-  end
-  touch(buttons[button_number])
+  touch_when_element_exists("android.widget.Button index:#{button_number.to_i-1}")
 end
 
 Then /^I press image button number (\d+)$/ do |button_number|
-  button_number = button_number.to_i - 1
-  image_buttons = query("android.widget.ImageButton")
-
-  if button_number >= image_buttons.count
-    raise "Could not press ImageButton number #{button_number}. Only #{image_buttons.count} was found"
-  end
-  touch(image_buttons[button_number])
+  touch_when_element_exists("android.widget.ImageButton index:#{button_number.to_i-1}")
 end
 
 Then /^I press view with id "([^\"]*)"$/ do |view_id|
