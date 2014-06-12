@@ -759,7 +759,7 @@ module Operations
   end
 
   def enter_text(uiquery, text, options = {})
-    touch_when_element_exists(uiquery, options)
+    tap_when_element_exists(uiquery, options)
     sleep 0.5
     keyboard_enter_text(text, options)
   end
@@ -823,7 +823,7 @@ module Operations
 
   def select_options_menu_item(text, options={})
     press_menu_button
-    touch_when_element_exists("DropDownListView * marked:'#{text}'", options)
+    tap_when_element_exists("DropDownListView * marked:'#{text}'", options)
   end
 
   def select_context_menu_item(view_uiquery, menu_item_query_string)
@@ -836,7 +836,7 @@ module Operations
     touch(combined_query_string)
   end
 
-  def touch_when_element_exists(uiquery, options={})
+  def tap_when_element_exists(uiquery, options={})
     when_element_exists(uiquery, options)
   end
 
