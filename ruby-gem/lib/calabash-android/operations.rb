@@ -800,6 +800,10 @@ module Operations
     nil
   end
 
+  def step_deprecated
+    puts 'Warning: This predefined step is deprecated.'
+  end
+
   def http(path, data = {}, options = {})
     default_device.http(path, data, options)
   end
