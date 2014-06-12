@@ -837,9 +837,11 @@ module Operations
   end
 
   def touch_when_element_exists(uiquery, options={})
-    when_element_exists(uiquery, options) do |element|
-      touch(element)
-    end
+    when_element_exists(uiquery, options)
+  end
+
+  def long_press_when_element_exists(uiquery, options={})
+    when_element_exists(uiquery, options.merge({action: lambda {long_press(uiquery)}}))
   end
 
   def swipe(dir,options={})
