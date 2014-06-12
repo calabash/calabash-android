@@ -1,29 +1,29 @@
 Then /^I see the text "([^\"]*)"$/ do |text|
-  assert_text(text)
+  wait_for_text(text)
 end
 
 Then /^I see "([^\"]*)"$/ do |text|
-  assert_text(text)
+  wait_for_text(text)
 end
 
 Then /^I should see "([^\"]*)"$/ do |text|
-  assert_text(text)
+  wait_for_text(text)
 end
 
 Then /^I should see text containing "([^\"]*)"$/ do |text|
-  assert_text(text)
+  wait_for_text(text)
 end
 
 
 
 Then /^I should not see "([^\"]*)"$/ do |text|
-  assert_text(text, false)
+  wait_for_text_to_disappear(text)
 end
 
 Then /^I don't see the text "([^\"]*)"$/ do |text|
-  assert_text(text, false)
+  wait_for_text_to_disappear(text)
 end
 
 Then /^I don't see "([^\"]*)"$/ do |text|
-  assert_text(text, false)
+  wait_for_text_to_disappear(text)
 end
