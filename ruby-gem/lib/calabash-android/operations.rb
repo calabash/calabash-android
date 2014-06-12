@@ -759,7 +759,7 @@ module Operations
   end
 
   def enter_text(uiquery, text, options = {})
-    touch(uiquery, options)
+    touch_when_element_exists(uiquery, options)
     sleep 0.5
     keyboard_enter_text(text, options)
   end
