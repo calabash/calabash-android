@@ -860,8 +860,82 @@ module Operations
     ni
   end
 
-  def scroll(uiquery,direction)
-    ni
+  def scroll_up
+    scroll("android.widget.ScrollView", :up)
+  end
+
+  def scroll_down
+    scroll("android.widget.ScrollView", :down)
+  end
+
+  def scroll(query_string, direction)
+    if direction != :up && direction != :down
+      raise 'Only upwards and downwards scrolling is supported for now'
+    end
+
+    scroll_x = 0
+    scroll_y = 0
+
+    action = lambda do
+      element = query(query_string).first
+      raise "No elements found. Query: #{query_string}" if element.nil?
+
+      width = element['rect']['width']
+      height = element['rect']['height']
+
+      if direction == :up
+        scroll_y = -height/2
+      else
+        scroll_y = height/2
+      end
+
+      query(query_string, {scrollBy: [scroll_x.to_i, scroll_y.to_i]})
+    end
+
+    when_element_exists(query_string, action: action)
+  end
+
+  def scroll_to(query_string, options={})
+    options[:action] ||= lambda {}
+
+    all_query_string = query_string
+
+    unless all_query_string.chomp.downcase.start_with?('all')
+      all_query_string = "all #{all_query_string}"
+    end
+
+    wait_for_element_exists(all_query_string)
+
+    visibility_query_string = all_query_string[4..-1]
+
+    unless query(visibility_query_string).empty?
+      when_element_exists(visibility_query_string, options)
+      return
+    end
+
+    element = query(all_query_string).first
+    raise "No elements found. Query: #{all_query_string}" if element.nil?
+    element_center_y = element['rect']['center_y']
+
+    scroll_view_query_string = "#{all_query_string} parent android.widget.ScrollView index:0"
+    scroll_element = query(scroll_view_query_string).first
+
+    raise "Could not find parent scroll view. Query: #{scroll_view_query_string}" if element.nil?
+
+    scroll_element_y = scroll_element['rect']['y']
+    scroll_element_height = scroll_element['rect']['height']
+
+    if element_center_y > scroll_element_y + scroll_element_height
+      scroll_by_y = element_center_y - (scroll_element_y + scroll_element_height) + 2
+    else
+      scroll_by_y = element_center_y - scroll_element_y - 2
+    end
+
+    result = query(scroll_view_query_string, {scrollBy: [0, scroll_by_y.to_i]}).first
+    raise 'Could not scroll parent view' if result != '<VOID>'
+
+    visibility_query_string = all_query_string[4..-1]
+    when_element_exists(visibility_query_string, options)
   end
 
   def scroll_to_row(uiquery,number)
