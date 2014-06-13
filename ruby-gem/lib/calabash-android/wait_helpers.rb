@@ -178,7 +178,12 @@ module Calabash
         action = { :action => lambda { touch uiquery } }
         opts = DEFAULT_OPTS.merge(action).merge(opts)
         wait_for_elements_exist([uiquery], opts)
-        opts[:action].call
+
+        if opts[:action].parameters.length == 0
+          opts[:action].call
+        else
+          opts[:action].call(uiquery)
+        end
       end
 
       def wait_for_text(text, options={})
