@@ -48,3 +48,5 @@ wait_for_dialog_to_close
 wait_for_screen
 wait_for_tab
 set_text
+scroll_down
+scroll_up
