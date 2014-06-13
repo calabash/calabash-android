@@ -33,11 +33,11 @@ Then /^I select the "([^\"]*)" tab$/ do | tab |
 end
 
 Then /^I scroll down$/ do
-  perform_action('scroll_down')
+  scroll_down
 end
 
 Then /^I scroll up$/ do
-  perform_action('scroll_up')
+  scroll_up
 end
 
 Then /^I drag from (\d+):(\d+) to (\d+):(\d+) moving with (\d+) steps$/ do |fromX, fromY, toX, toY, steps|
