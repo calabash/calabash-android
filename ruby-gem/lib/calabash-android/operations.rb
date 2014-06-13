@@ -840,12 +840,24 @@ module Operations
     touch(combined_query_string)
   end
 
-  def tap_when_element_exists(uiquery, options={})
-    when_element_exists(uiquery, options)
+  def tap_when_element_exists(query_string, options={})
+    options.merge!({action: lambda {|q| touch(q)}})
+
+    if options[:scroll] == true
+      scroll_to(query_string, options)
+    else
+      when_element_exists(query_string, options)
+    end
   end
 
-  def long_press_when_element_exists(uiquery, options={})
-    when_element_exists(uiquery, options.merge({action: lambda {long_press(uiquery)}}))
+  def long_press_when_element_exists(query_string, options={})
+    options.merge!({action: lambda {|q| long_press(q)}})
+
+    if options[:scroll] == true
+      scroll_to(query_string, options)
+    else
+      when_element_exists(query_string, options)
+    end
   end
 
   def swipe(dir,options={})
