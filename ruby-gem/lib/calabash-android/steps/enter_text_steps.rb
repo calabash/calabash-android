@@ -14,14 +14,14 @@ Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, id|
   enter_text("android.widget.EditText id:'#{id}'", text)
 end
 
-Then /^I clear "([^\"]*)"$/ do |name|
-  clear_text("android.widget.EditText marked:'#{name}'}")
+Then /^I clear "([^\"]*)"$/ do |identifier|
+  clear_text("android.widget.EditText marked:'#{identifier}'}")
 end
 
-Then /^I clear input field number (\d+)$/ do |number|
-  clear_text("android.widget.EditText index:#{number.to_i-1}")
+Then /^I clear input field number (\d+)$/ do |index|
+  clear_text("android.widget.EditText index:#{index.to_i-1}")
 end
 
-Then /^I clear input field with id "([^\"]*)"$/ do |view_id|
-  clear_text("android.widget.EditText id:'#{view_id}'")
+Then /^I clear input field with id "([^\"]*)"$/ do |id|
+  clear_text("android.widget.EditText id:'#{id}'")
 end
