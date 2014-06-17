@@ -40,7 +40,7 @@ Then /^I scroll up$/ do
   scroll_up
 end
 
-Then /^I drag from (\d+):(\d+) to (\d+):(\d+) moving with (\d+) steps$/ do |fromX, fromY, toX, toY, steps|
-  perform_action('drag',fromX,toX,fromY,toY,steps)
+Then /^I drag from (\d+):(\d+) to (\d+):(\d+) moving with (\d+) steps$/ do |from_x, from_y, to_x, to_y, steps|
+  perform_action('drag', from_x, to_x, from_y, to_y, steps)
 end
    
