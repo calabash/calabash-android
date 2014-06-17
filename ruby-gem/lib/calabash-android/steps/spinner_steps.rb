@@ -1,4 +1,4 @@
-Then /^I select "([^\"]*)" from "([^\"]*)"$/ do |item_text, spinner_identifier|
+Then /^I select "([^\"]*)" from "([^\"]*)"$/ do |item_identifier, spinner_identifier|
   spinner = query("android.widget.Spinner marked:'#{spinner_identifier}'")
 
   if spinner.empty?
@@ -7,5 +7,5 @@ Then /^I select "([^\"]*)" from "([^\"]*)"$/ do |item_text, spinner_identifier|
     touch(spinner)
   end
 
-  tap_when_element_exists("android.widget.PopupWindow$PopupViewContainer * marked:'#{item_text}'")
+  tap_when_element_exists("android.widget.PopupWindow$PopupViewContainer * marked:'#{item_identifier}'")
 end
