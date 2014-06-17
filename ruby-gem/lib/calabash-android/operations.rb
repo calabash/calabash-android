@@ -461,8 +461,8 @@ module Operations
 
     def connected_devices
       lines = `#{Env.adb_path} devices`.split("\n")
-      lines.shift
-      lines.collect { |l| l.split("\t").first}
+      start_index = lines.index{ |x| x =~ /List of devices attached/ } + 1
+      lines[start_index..-1].collect { |l| l.split("\t").first }
     end
 
     def wake_up
