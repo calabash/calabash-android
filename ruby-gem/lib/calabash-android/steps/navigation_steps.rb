@@ -19,8 +19,8 @@ Then /^I swipe right$/ do
   perform_action('swipe', 'right')
 end
 
-Then /^I select "([^\"]*)" from the menu$/ do |text|
-  select_options_menu_item(text)
+Then /^I select "([^\"]*)" from the menu$/ do |identifier|
+  select_options_menu_item(identifier)
 end
 
 Then /^I select tab number (\d+)$/ do | tab |

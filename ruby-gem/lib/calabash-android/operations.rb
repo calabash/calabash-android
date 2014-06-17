@@ -831,9 +831,9 @@ module Operations
     perform_action('press_menu')
   end
 
-  def select_options_menu_item(text, options={})
+  def select_options_menu_item(identifier, options={})
     press_menu_button
-    tap_when_element_exists("DropDownListView * marked:'#{text}'", options)
+    tap_when_element_exists("DropDownListView * marked:'#{identifier}'", options)
   end
 
   def select_context_menu_item(view_uiquery, menu_item_query_string)
