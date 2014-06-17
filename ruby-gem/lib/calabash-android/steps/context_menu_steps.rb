@@ -2,7 +2,6 @@ Then /^I long press "([^\"]*)" and select item number (\d+)$/ do |text, index|
   step_deprecated
 
   long_press_when_element_exists("* {text CONTAINS[c] '#{text}'}")
-
   tap_when_element_exists("com.android.internal.view.menu.ListMenuItemView android.widget.TextView index:#{index.to_i - 1}")
 end
 
