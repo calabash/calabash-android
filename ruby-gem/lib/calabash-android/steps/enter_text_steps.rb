@@ -1,5 +1,5 @@
 Then /^I enter "([^\"]*)" as "([^\"]*)"$/ do |text, content_description|
-  enter_text("android.widget.EditText contentDescription:'#{content_description}'", text)
+  enter_text("android.widget.EditText {contentDescription LIKE[c] '#{content_description}'}", text)
 end
 
 Then /^I enter "([^\"]*)" into "([^\"]*)"$/ do |text, content_description|
