@@ -764,6 +764,10 @@ module Operations
     perform_action('keyboard_enter_text', text)
   end
 
+  def keyboard_enter_char(text, options = {})
+    keyboard_enter_text(text[0,1], options)
+  end
+
   def enter_text(uiquery, text, options = {})
     tap_when_element_exists(uiquery, options)
     sleep 0.5
