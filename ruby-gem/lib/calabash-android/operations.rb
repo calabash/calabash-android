@@ -782,6 +782,10 @@ module Operations
     true
   end
 
+  def hide_soft_keyboard
+    perform_action('hide_soft_keyboard')
+  end
+
   def find_coordinate(uiquery)
     raise "Cannot find nil" unless uiquery
 
