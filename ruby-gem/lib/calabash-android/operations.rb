@@ -163,6 +163,10 @@ module Operations
     map(uiquery,:query,*converted_args)
   end
 
+  def flash(query_string)
+    map(query_string, :flash)
+  end
+
   def each_item(opts={:query => "android.widget.ListView", :post_scroll => 0.2}, &block)
     uiquery = opts[:query] || "android.widget.ListView"
     skip_if = opts[:skip_if] || lambda { |i| false }
