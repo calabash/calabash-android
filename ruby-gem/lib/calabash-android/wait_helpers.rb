@@ -100,7 +100,7 @@ module Calabash
       end
 
       #options for wait_for apply
-      def wait_for_element_do_not_exist(uiquery, options={})
+      def wait_for_element_does_not_exist(uiquery, options={})
         wait_for_elements_do_not_exist([uiquery], options)
       end
 
@@ -191,7 +191,7 @@ module Calabash
       end
 
       def wait_for_text_to_disappear(text, options={})
-        wait_for_element_do_not_exist("* {text CONTAINS[c] '#{text}'}", options)
+        wait_for_element_does_not_exist("* {text CONTAINS[c] '#{text}'}", options)
       end
 
       def wait_for_activity(activity_name, options={})

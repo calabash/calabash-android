@@ -1,5 +1,5 @@
 Then /^I wait for progress$/ do
-  wait_for_element_do_not_exist("android.widget.ProgressBar")
+  wait_for_element_does_not_exist("android.widget.ProgressBar")
 end
 
 Then /^I wait$/ do

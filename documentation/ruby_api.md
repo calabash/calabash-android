@@ -132,7 +132,7 @@ Like `wait_for_element_exists` but takes an *array* of queries and waits for all
 
     irb(main):008:0> wait_for_elements_exist( ["button marked:'Save'", "* marked:'Please sign in'"], :timeout => 2)
 
-### wait_for_element_do_not_exist(uiquery, options={})
+### wait_for_element_does_not_exist(uiquery, options={})
 
 Similar to `wait_for_element_exists`, but waits for an element to not exist.
 
