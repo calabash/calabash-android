@@ -162,9 +162,9 @@ raise 'Text not found' if query("* marked:'my description' {text CONTAINS[c] 'fo
 #### clear_..._field
 
 Removed three actions:
-* ###### clear_named_field
-* ###### clear_numbered_field
-* ###### clear_id_field
+* ##### clear_named_field
+* ##### clear_numbered_field
+* ##### clear_id_field
 
 Before:
 
@@ -265,9 +265,9 @@ enter_text("android.widget.SearchView index:0", 'foo')
 #### enter_text_...
 
 Removed three actions:
-* ###### enter_text_into_numbered_field
-* ###### enter_text_into_id_field
-* ###### enter_text_into_named_field
+* ##### enter_text_into_numbered_field
+* ##### enter_text_into_id_field
+* ##### enter_text_into_named_field
 
 Before:
 
@@ -289,9 +289,9 @@ After:
 #### get_list_...
 
 Removed three actions:
-* ###### get_list_data
-* ###### get_list_item_properties
-* ###### get_list_item_text
+* ##### get_list_data
+* ##### get_list_item_properties
+* ##### get_list_item_text
 
 Use queries instead.
 
@@ -503,9 +503,9 @@ long_press("* marked:'foo'")
 
 Removed three actions:
 
-* ###### press_long_on_text_and_select_with_id
-* ###### press_long_on_text_and_select_with_text
-* ###### press_long_on_text_and_select_with_index
+* ##### press_long_on_text_and_select_with_id
+* ##### press_long_on_text_and_select_with_text
+* ##### press_long_on_text_and_select_with_index
 
 
 Before:
