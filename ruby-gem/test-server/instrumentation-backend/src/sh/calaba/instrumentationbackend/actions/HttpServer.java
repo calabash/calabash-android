@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.InterruptedException;
 import java.lang.Override;
 import java.lang.Runnable;
 import java.util.Enumeration;
@@ -152,21 +153,28 @@ public class HttpServer extends NanoHTTPD {
                                 FranklyResult.failedResult("Only views can be flashed", "").asJson());
                     }
 
-                    final View firstView = (View)firstItem;
+                    for (final View view : views) {
+                        InstrumentationBackend.solo.runOnMainSync(new Runnable() {
+                            @Override
+                            public void run() {
+                                Animation animation = new AlphaAnimation(1, 0);
+                                animation.setRepeatMode(Animation.REVERSE);
+                                animation.setDuration(200);
+                                animation.setRepeatCount(5);
+                                view.startAnimation(animation);
+                            }
+                        });
 
-                    InstrumentationBackend.solo.runOnMainSync(new Runnable() {
-                        @Override
-                        public void run() {
-                            Animation animation = new AlphaAnimation(1, 0);
-                            animation.setRepeatMode(Animation.REVERSE);
-                            animation.setDuration(200);
-                            animation.setRepeatCount(5);
-                            firstView.startAnimation(animation);
+                        try {
+                            Thread.sleep(1200);
+                        } catch (InterruptedException e) {
+                            return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
+                                    FranklyResult.failedResult("Interrupted while flashing", "").asJson());
                         }
-                    });
+                    }
 
                     return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
-                            FranklyResult.successResult(new QueryResult(java.util.Collections.emptyList())).asJson());
+                            FranklyResult.successResult(queryResult).asJson());
                 } else {
                     QueryResult queryResult = new Query(uiQuery,arguments).executeQuery();
 
