@@ -22,6 +22,10 @@ public class KeyboardEnterText implements Action {
 
         final InputConnection inputConnection = getInputConnection();
 
+        if (inputConnection == null) {
+            return Result.failedResult("Could not enter text. No element has focus.");
+        }
+
         final String textToEnter = args[0];
         InstrumentationBackend.solo.runOnMainSync(new Runnable() {
             @Override
