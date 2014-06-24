@@ -17,6 +17,9 @@ The documention is split into the following sections:
 * [Installation](documentation/installation.md)
 * [Ruby API](documentation/ruby_api.md)
 
+#### Upgrading to Calabash-android 0.5
+
+Calabash-android 0.5 introduced new features and removed a lot of actions. If your test project is dependent on some of the removed actions, you will have to reimplement the actions using ruby wrappers, queries and gestures. [This document describes all changes needed to migrate to calabash-android 0.5](migrating_to_calabash_0.5.md)
 
 Generate a Cucumber skeleton
 ------------------------
