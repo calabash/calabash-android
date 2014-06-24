@@ -61,7 +61,7 @@ module Operations
     if @removed_actions.include?(action)
       puts "\e[31mError: The action '#{action}' was removed in calabash-android 0.5\e[0m"
       puts 'Solutions that do not require the removed action can be found on:'
-      puts "\e[36mhttps://github.com/calabash/calabash-android/blob/master/ruby-gem/lib/calabash-android/migrating_to_calabash_0.5.md\##{action}\e[0m"
+      puts "\e[36mhttps://github.com/calabash/calabash-android/blob/master/migrating_to_calabash_0.5.md\##{action}\e[0m"
     end
     
     default_device.perform_action(action, *arguments)
