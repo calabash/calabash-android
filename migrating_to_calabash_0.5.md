@@ -1,6 +1,6 @@
 Migrating to Calabash-android 0.5
 =================================
-
+Calabash 0.5 introduced new features and removed a lot of actions that can be substituted by the query method.
 # New & changed features
 
 ## Entering text
