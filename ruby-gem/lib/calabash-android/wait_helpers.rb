@@ -176,7 +176,7 @@ module Calabash
       # Example usage: when_element_exists("Button", :timeout => 10)
       def when_element_exists(uiquery, opts = {})
         action = { :action => lambda { touch uiquery } }
-        opts = DEFAULT_OPTS.merge(action).merge(opts)
+        opts = action.merge(opts)
         wait_for_elements_exist([uiquery], opts)
 
         if opts[:action].parameters.length == 0
