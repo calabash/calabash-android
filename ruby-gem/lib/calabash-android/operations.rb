@@ -859,7 +859,12 @@ module Operations
     raise "No elements found. Query: #{all_query_string}" if element.nil?
     element_center_y = element['rect']['center_y']
 
-    scroll_view_query_string = "#{all_query_string} parent android.widget.ScrollView index:0"
+    if element.has_key?('html')
+      scroll_view_query_string = element['webView']
+    else
+      scroll_view_query_string = "#{all_query_string} parent android.widget.ScrollView index:0"
+    end
+
     scroll_element = query(scroll_view_query_string).first
 
     raise "Could not find parent scroll view. Query: #{scroll_view_query_string}" if element.nil?
