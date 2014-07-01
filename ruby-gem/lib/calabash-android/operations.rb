@@ -1078,6 +1078,9 @@ module Operations
     default_device.make_http_request(options)
   end
 
+  def escape_quotes(str)
+    str.gsub("'", "\\\\'")
+  end
 end
 
 
