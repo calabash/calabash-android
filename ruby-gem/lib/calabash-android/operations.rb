@@ -7,8 +7,9 @@ require 'json'
 require 'socket'
 require 'timeout'
 require 'calabash-android/helpers'
-require 'calabash-android/wait_helpers'
+require 'calabash-android/text_helpers'
 require 'calabash-android/touch_helpers'
+require 'calabash-android/wait_helpers'
 require 'calabash-android/version'
 require 'calabash-android/env'
 require 'retriable'
@@ -18,8 +19,9 @@ require 'cucumber'
 module Calabash module Android
 
 module Operations
-  include Calabash::Android::WaitHelpers
+  include Calabash::Android::TextHelpers
   include Calabash::Android::TouchHelpers
+  include Calabash::Android::WaitHelpers
 
   def current_activity
     `#{default_device.adb_command} shell dumpsys window windows`.each_line.grep(/mFocusedApp.+[\.\/]([^.\s\/\}]+)/){$1}.first
@@ -729,84 +731,8 @@ module Operations
     raise(msg)
   end
 
-  def has_text?(text)
-    !query("* {text CONTAINS[c] '#{text}'}").empty?
-  end
-
-  def assert_text(text, should_find = true)
-    raise "Text \"#{text}\" was #{should_find ? 'not ' : ''}found." if has_text?(text) ^ should_find
-
-    true
-  end
-
-  def double_tap(uiquery, options = {})
-    center_x, center_y = find_coordinate(uiquery, options)
-
-    perform_action("double_tap_coordinate", center_x, center_y)
-  end
-
-  # Performs a "long press" operation on a selected view
-  # Params:
-  # +uiquery+: a uiquery identifying one view
-  # +options[:length]+: the length of the long press in milliseconds (optional)
-  #
-  # Examples:
-  #   - long_press("* id:'my_id'")
-  #   - long_press("* id:'my_id'", {:length=>5000})
-  def long_press(uiquery, options = {})
-    center_x, center_y = find_coordinate(uiquery, options)
-    length = options[:length]
-    perform_action("long_press_coordinate", center_x, center_y, *(length unless length.nil?))
-  end
-
-  def touch(uiquery, options = {})
-    center_x, center_y = find_coordinate(uiquery, options)
-
-    perform_action("touch_coordinate", center_x, center_y)
-  end
-
-  def keyboard_enter_text(text, options = {})
-    perform_action('keyboard_enter_text', text)
-  end
-
-  def keyboard_enter_char(character, options = {})
-    keyboard_enter_text(character[0,1], options)
-  end
-
-  def enter_text(uiquery, text, options = {})
-    tap_when_element_exists(uiquery, options)
-    sleep 0.5
-    keyboard_enter_text(text, options)
-  end
-
-  def clear_text(query_string, options={})
-    result = query(query_string, setText: '')
-
-    raise "No elements found. Query: #{query_string}" if result.empty?
-
-    true
-  end
-
   def hide_soft_keyboard
     perform_action('hide_soft_keyboard')
-  end
-
-  def find_coordinate(uiquery, options={})
-    raise "Cannot find nil" unless uiquery
-
-    element = execute_uiquery(uiquery)
-
-    raise "No elements found. Query: #{uiquery}" if element.nil?
-
-    x = element["rect"]["center_x"]
-    y = element["rect"]["center_y"]
-
-    if options[:offset]
-      x += options[:offset][:x] || 0
-      y += options[:offset][:y] || 0
-    end
-
-    [x, y]
   end
 
   def execute_uiquery(uiquery)
@@ -862,26 +788,6 @@ module Operations
 
     combined_query_string = "#{container_class} descendant #{menu_item_query_string}"
     touch(combined_query_string)
-  end
-
-  def tap_when_element_exists(query_string, options={})
-    options.merge!({action: lambda {|q| touch(q, options)}})
-
-    if options[:scroll] == true
-      scroll_to(query_string, options)
-    else
-      when_element_exists(query_string, options)
-    end
-  end
-
-  def long_press_when_element_exists(query_string, options={})
-    options.merge!({action: lambda {|q| long_press(q, options)}})
-
-    if options[:scroll] == true
-      scroll_to(query_string, options)
-    else
-      when_element_exists(query_string, options)
-    end
   end
 
   def swipe(dir,options={})
@@ -1076,10 +982,6 @@ module Operations
 
   def make_http_request(options)
     default_device.make_http_request(options)
-  end
-
-  def escape_quotes(str)
-    str.gsub("'", "\\\\'")
   end
 end
 
