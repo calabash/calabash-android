@@ -50,8 +50,8 @@ def calabash_build(app)
         raise "Could not create dummy.apk"
       end
 
-      Zip::ZipFile.new("dummy.apk").extract("AndroidManifest.xml","customAndroidManifest.xml")
-      Zip::ZipFile.open("TestServer.apk") do |zip_file|
+      Zip::File.new("dummy.apk").extract("AndroidManifest.xml","customAndroidManifest.xml")
+      Zip::File.open("TestServer.apk") do |zip_file|
         zip_file.add("AndroidManifest.xml", "customAndroidManifest.xml")
       end
     end

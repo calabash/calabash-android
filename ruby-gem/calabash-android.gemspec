@@ -19,9 +19,8 @@ Gem::Specification.new do |s|
   s.add_dependency( "json" )
   s.add_dependency( "retriable", "~> 1.3.3.1" )
   s.add_dependency( "slowhandcuke" )
-  s.add_dependency( "rubyzip", "~> 0.9.9" )
+  s.add_dependency( "rubyzip", "~> 1.1" )
   s.add_dependency( "awesome_print" )
   s.add_dependency( 'httpclient', '~> 2.3.2')
-  s.add_dependency( 'xamarin-test-cloud', '>= 0.9.23')
   s.add_dependency( 'escape', '~> 0.0.4')
 end
