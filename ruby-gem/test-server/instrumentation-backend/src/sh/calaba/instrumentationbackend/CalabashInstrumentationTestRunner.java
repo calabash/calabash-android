@@ -26,7 +26,18 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
         HttpServer.instantiate(Integer.parseInt(arguments.getString("test_server_port")));
 
         InstrumentationBackend.testPackage = arguments.getString("target_package");
-        InstrumentationBackend.extras = arguments;
+
+        Bundle extras = (Bundle)arguments.clone();
+        extras.remove("target_package");
+        extras.remove("main_activity");
+        extras.remove("test_server_port");
+        extras.remove("class");
+
+        if (extras.isEmpty()) {
+            extras = null;
+        }
+
+        InstrumentationBackend.extras = extras;
 
         try {
             InstrumentationBackend.mainActivityName = arguments.getString("main_activity");

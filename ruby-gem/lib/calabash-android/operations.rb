@@ -508,7 +508,6 @@ module Operations
       env_options = {:target_package => package_name(@app_path),
                      :main_activity => main_activity(@app_path),
                      :test_server_port => @test_server_port,
-                     :debug => false,
                      :class => "sh.calaba.instrumentationbackend.InstrumentationBackend"}
 
       env_options = env_options.merge(options)

@@ -69,7 +69,12 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
         Intent i = new Intent(Intent.ACTION_MAIN);
         i.setClassName(testPackage, mainActivityName);
         i.addCategory("android.intent.category.LAUNCHER");
-        i.putExtras(extras);
+        i.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+        if (extras != null) {
+            i.putExtras(extras);
+        }
+
         setActivityIntent(i);
 
         actions = new Actions(getInstrumentation(), this);
