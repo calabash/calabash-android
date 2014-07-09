@@ -67,7 +67,7 @@ Scrolls the first instance of 'android.widget.ScrollView' either downwards or up
 ####scroll_to(query_string, options={})
 Scrolls the first parent with the class 'android.widget.ScrollView' of the query element found using `query(query_string)` until the element is visible on the screen. It will scroll either upwards or downwards depending on the location of the element.
 
-**Example** `scroll_to("TextView id:'my view")`
+**Example** `scroll_to("TextView id:'my view'")`
 
 As all options are passed on to the when_element_exists method, it is possible to decide what to do when the view is eventually found.
 
@@ -242,7 +242,7 @@ performAction('click_on_view_by_id', 'identifier')
 After:
 
 ```
-tap_when_element_exists("* marked:'identifier")
+tap_when_element_exists("* marked:'identifier'")
 ```
 
 
@@ -662,7 +662,7 @@ performAction('wait_for_button', 'identifier')
 After:
 
 ```
-wait_for_element_exist("android.widget.Button marked:'identifier'")
+wait_for_element_exists("android.widget.Button marked:'identifier'")
 ```
 
 
@@ -759,7 +759,7 @@ performAction('wait_for_view', 'identifier')
 After:
 
 ```
-wait_for_element_exist("* marked:'identifier'")
+wait_for_element_exists("* marked:'identifier'")
 ```
 
 
