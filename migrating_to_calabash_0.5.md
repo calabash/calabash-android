@@ -242,7 +242,7 @@ performAction('click_on_view_by_id', 'identifier')
 After:
 
 ```
-tap_when_element_exists("* marked:'identifier")
+tap_when_element_exists("* marked:'identifier'")
 ```
 
 
