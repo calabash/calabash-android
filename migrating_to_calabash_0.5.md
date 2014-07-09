@@ -5,7 +5,7 @@ Calabash 0.5 introduced new features and removed a lot of actions that can be su
 
 ## Entering text
 
-Any text entry is now using the keyboard instead of setting the text directly. This might effect some tests as the keyboard pops up and you might need to dismiss it. This can be done using hide_soft_keyboard.
+Any text entry is now using the keyboard instead of setting the text directly. This might effect some tests as the keyboard pops up and you might need to dismiss it. This can be done using `hide_soft_keyboard`.
 
 In addition the new `keyboard_enter_text` and `enter_text` methods have full unicode support.
 
