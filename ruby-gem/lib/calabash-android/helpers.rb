@@ -1,5 +1,5 @@
 require "stringio"
-require 'zip/zip'
+require 'zip'
 require 'tempfile'
 require 'escape'
 require 'rbconfig'
@@ -83,7 +83,7 @@ def fingerprint_from_apk(app_path)
     Dir.chdir(tmp_dir) do
       FileUtils.cp(app_path, "app.apk")
       FileUtils.mkdir("META-INF")
-      Zip::ZipFile.foreach("app.apk") do |z|
+      Zip::File.foreach("app.apk") do |z|
         z.extract if /^META-INF\/\w+.(RSA|rsa)/ =~ z.name
       end
       rsa_files = Dir["#{tmp_dir}/META-INF/*"]
