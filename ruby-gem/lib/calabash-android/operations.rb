@@ -57,16 +57,26 @@ module Operations
   end
 
   def perform_action(action, *arguments)
-    @removed_actions = File.readlines(File.join(File.dirname(__FILE__), 'removed_actions.txt')) unless @removed_actions
-    @removed_actions.map! &:chomp
-
-    if @removed_actions.include?(action)
+    if removed_actions.include?(action)
       puts "\e[31mError: The action '#{action}' was removed in calabash-android 0.5\e[0m"
       puts 'Solutions that do not require the removed action can be found on:'
       puts "\e[36mhttps://github.com/calabash/calabash-android/blob/master/migrating_to_calabash_0.5.md\##{action}\e[0m"
+    elsif deprecated_actions.has_key?(action)
+      puts "\e[31mWarning: The action '#{action}' is deprecated\e[0m"
+      puts "\e[32mUse '#{deprecated_actions[action]}' instead\e[0m"
     end
     
     default_device.perform_action(action, *arguments)
+  end
+
+  def removed_actions
+    @removed_actions ||= File.readlines(File.join(File.dirname(__FILE__), 'removed_actions.txt')).map(&:chomp)
+  end
+
+  def deprecated_actions
+    @deprecated_actions ||= Hash[
+        *File.readlines(File.join(File.dirname(__FILE__), 'deprecated_actions.map')).map{|e| e.chomp.split(',')}.flatten
+    ]
   end
 
   def reinstall_apps
