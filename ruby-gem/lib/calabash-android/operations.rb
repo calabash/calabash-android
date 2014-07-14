@@ -776,6 +776,14 @@ module Operations
     enter_text(uiquery, txt)
   end
 
+  def press_user_action_button(action_name=nil)
+    if action_name.nil?
+      perform_action("press_user_action_button")
+    else
+      perform_action("press_user_action_button", action_name)
+    end
+  end
+
   def press_button(key)
     perform_action('press_key', key)
   end
