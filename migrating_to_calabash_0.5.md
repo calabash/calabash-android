@@ -603,6 +603,80 @@ After:
   touch("android.widget.TabWidget descendant TextView {text LIKE[c] 'tab3'}")
 ```
 
+#### set_date_with_description
+Before:
+
+```
+performAction('set_date_with_description', '16-02-2012', 'identifier')
+```
+
+After:
+
+```
+set_date("android.widget.DatePicker marked:'identifier'", 2012, 2, 16)
+```
+or (not recommended):
+
+```
+set_date("android.widget.DatePicker marked:'identifier'", '16-02-2012')
+set_date("android.widget.DatePicker marked:'identifier'", '2012-02-16')
+```
+
+#### set_date_with_index
+Before:
+
+```
+performAction('set_date_with_index', '16-02-2012', 1)
+```
+
+After:
+
+```
+set_date("android.widget.DatePicker index:0", 2012, 2, 16)
+```
+or (not recommended):
+
+```
+set_date("android.widget.DatePicker index:0",, '16-02-2012')
+set_date("android.widget.DatePicker index:0",, '2012-02-16')
+```
+
+#### set_time_with_description
+Before:
+
+```
+performAction('set_time_with_description', '16:42', 'identifier')
+```
+
+After:
+
+```
+set_time("android.widget.TimePicker marked:'identifier'", 16, 42)
+```
+or (not recommended):
+
+```
+set_time("android.widget.TimePicker marked:'identifier'", '16:42')
+```
+
+#### set_time_with_index
+Before:
+
+```
+performAction('set_time_with_index', '16:42', 1)
+```
+
+After:
+
+```
+set_time("android.widget.TimePicker index:0", 16, 42)
+```
+or (not recommended):
+
+```
+set_time("android.widget.TimePicker index:0", '16:42')
+```
+
 
 #### set_text
 
@@ -617,6 +691,7 @@ After
 ```
 enter_text("WebView css:'input[type=\"text\"]'", "Hello World")
 ```
+
 
 
 #### toggle_numbered_checkbox
