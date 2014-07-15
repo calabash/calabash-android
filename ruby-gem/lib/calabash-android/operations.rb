@@ -14,6 +14,8 @@ require 'calabash-android/version'
 require 'calabash-android/env'
 require 'retriable'
 require 'cucumber'
+require 'date'
+require 'time'
 
 
 module Calabash module Android
@@ -192,6 +194,31 @@ module Operations
       scroll_to_row(opts[:query], item)
       sleep(opts[:post_scroll]) if opts[:post_scroll] and opts[:post_scroll] > 0
       yield(item)
+    end
+  end
+
+  def set_date(query_string, year_or_datestring, month=nil, day=nil)
+    wait_for_element_exists(query_string)
+
+    if month.nil? && day.nil? && year_or_datestring.is_a?(String)
+      date = Date.parse(year_or_datestring)
+      set_date(query_string, date.year, date.month, date.day)
+    else
+      year = year_or_datestring
+      query(query_string, updateDate: [year, month-1, day])
+    end
+  end
+
+  def set_time(query_string, hour_or_timestring, minute=nil)
+    wait_for_element_exists(query_string)
+
+    if minute.nil? && hour_or_timestring.is_a?(String)
+      time = Time.parse(hour_or_timestring)
+      set_time(query_string, time.hour, time.min)
+    else
+      hour = hour_or_timestring
+      query(query_string, setCurrentHour: hour)
+      query(query_string, setCurrentMinute: minute)
     end
   end
 
