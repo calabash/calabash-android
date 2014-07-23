@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.lang.InterruptedException;
 import java.lang.Override;
 import java.lang.Runnable;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -189,7 +190,26 @@ public class HttpServer extends NanoHTTPD {
 		} else if (uri.endsWith("/query")) {
 			return new Response(HTTP_BADREQUEST, MIME_PLAINTEXT,
 					"/query endpoint is discontinued - use /map with operation query");
-		} else if (uri.endsWith("/kill")) {
+        } else if (uri.endsWith("/gesture")) {
+            FranklyResult errorResult;
+
+            try {
+                String json = params.getProperty("json");
+                ObjectMapper mapper = new ObjectMapper();
+                Map gesture = mapper.readValue(json, Map.class);
+
+                (new MultiTouchGesture(gesture)).perform();
+
+                return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
+                        FranklyResult.successResult(new QueryResult(Collections.emptyList())).asJson());
+
+            } catch (Exception e ) {
+                e.printStackTrace();
+                errorResult = FranklyResult.fromThrowable(e);
+            }
+
+            return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", errorResult.asJson());
+        } else if (uri.endsWith("/kill")) {
 			lock.lock();
 			try {
 				running = false;
