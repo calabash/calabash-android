@@ -879,10 +879,6 @@ module Operations
     end
   end
 
-  def swipe(dir,options={})
-      ni
-  end
-
   def cell_swipe(options={})
     ni
   end
@@ -972,10 +968,6 @@ module Operations
   def scroll_to_row(uiquery,number)
     query(uiquery, {:smoothScrollToPosition => number})
     puts "TODO:detect end of scroll - use sleep for now"
-  end
-
-  def pinch(in_out,options={})
-    ni
   end
 
   def rotate(dir)
