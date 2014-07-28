@@ -283,11 +283,11 @@ module Operations
       result = `#{cmd}`
       log result
       pn = package_name(app_path)
-      succeeded = `#{adb_command} shell pm list packages`.include?("package:#{pn}")
+      succeeded = `#{adb_command} shell pm list packages`.lines.map{|line| line.chomp.sub("package:", "")}.include?(pn)
 
       unless succeeded
         ::Cucumber.wants_to_quit = true
-        raise "#{pn} did not get installed. Aborting!"
+        raise "#{pn} did not get installed. Reason: '#{result.lines.last.chomp}'. Aborting!"
       end
     end
 
