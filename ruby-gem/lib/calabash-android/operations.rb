@@ -135,6 +135,14 @@ module Operations
     default_device.screenshot(options)
   end
 
+  def client_version
+    default_device.client_version
+  end
+
+  def server_version
+    default_device.server_version
+  end
+
   def fail(msg="Error. Check log for details.", options={:prefix => nil, :name => nil, :label => nil})
    screenshot_and_raise(msg, options)
   end
@@ -466,6 +474,23 @@ module Operations
       path
     end
 
+    def client_version
+      Calabash::Android::VERSION
+    end
+
+    def server_version
+      begin
+        response = perform_action('version')
+        raise 'Invalid response' unless response['success']
+      rescue => e
+        log("Could not contact server")
+        log(e && e.backtrace && e.backtrace.join("\n"))
+        raise "The server did not respond. Make sure the server is running."
+      end
+
+      response['message']
+    end
+
     def adb_command
       "#{Env.adb_path} -s #{serial}"
     end
@@ -590,29 +615,32 @@ module Operations
       end
 
       log "Checking client-server version match..."
-      response = perform_action('version')
-      unless response['success']
+
+      begin
+        server_version = server_version()
+      rescue
         msg = ["Unable to obtain Test Server version. "]
         msg << "Please run 'reinstall_test_server' to make sure you have the correct version"
         msg_s = msg.join("\n")
         log(msg_s)
         raise msg_s
       end
-      unless response['message'] == Calabash::Android::VERSION
 
+      client_version = client_version()
+
+      unless server_version == client_version
         msg = ["Calabash Client and Test-server version mismatch."]
-        msg << "Client version #{Calabash::Android::VERSION}"
-        msg << "Test-server version #{response['message']}"
-        msg << "Expected Test-server version #{Calabash::Android::VERSION}"
+        msg << "Client version #{client_version}"
+        msg << "Test-server version #{server_version}"
+        msg << "Expected Test-server version #{client_version}"
         msg << "\n\nSolution:\n\n"
         msg << "Run 'reinstall_test_server' to make sure you have the correct version"
         msg_s = msg.join("\n")
         log(msg_s)
         raise msg_s
       end
-      log("Client and server versions match. Proceeding...")
 
-
+      log("Client and server versions match (client: #{client_version}, server: #{server_version}). Proceeding...")
     end
 
     def shutdown_test_server
