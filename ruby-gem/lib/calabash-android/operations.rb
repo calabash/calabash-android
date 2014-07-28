@@ -230,6 +230,10 @@ module Operations
     end
   end
 
+  def classes(query_string, *args)
+    query(query_string, :class, *args)
+  end
+
   def ni
     raise "Not yet implemented."
   end
