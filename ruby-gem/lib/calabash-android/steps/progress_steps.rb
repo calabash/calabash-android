@@ -1,71 +1,68 @@
 Then /^I wait for progress$/ do
-  performAction('wait_for_no_progress_bars') 
+  wait_for_element_does_not_exist("android.widget.ProgressBar")
 end
 
 Then /^I wait$/ do
-  performAction('wait', 2)
-end
-
-Then /^I wait for dialog to close$/ do
-  performAction('wait_for_dialog_to_close')
+  sleep 2
 end
 
 
 Then /^I wait for (\d+) seconds$/ do |seconds|
-  performAction('wait', seconds)
+  sleep(seconds.to_i)
 end
 
 Then /^I wait for 1 second$/ do
-  performAction('wait', 1)
+  sleep 1
 end
 
 Then /^I wait for a second$/ do
-  performAction('wait', 1)
+  sleep 1
 end
 
-
 Then /^I wait for "([^\"]*)" to appear$/ do |text|
-  performAction('wait_for_text', text)
+  wait_for_text(text)
 end
 
 Then /^I wait up to (\d+) seconds for "([^\"]*)" to appear$/ do |timeout, text|
-  performAction('wait_for_text', text, timeout)
+  wait_for_text(text, timeout: timeout.to_i)
 end
 
 Then /^I wait to see "([^\"]*)"$/ do |text|
-  performAction('wait_for_text', text)
+  wait_for_text(text)
 end
 
 Then /^I wait up to (\d+) seconds to see "([^\"]*)"$/ do |timeout, text|
-  performAction('wait_for_text', text, timeout)
+  wait_for_text(text, timeout: timeout.to_i)
 end
 
-Then /^I wait for the "([^\"]*)" button to appear$/ do |text|
-  performAction('wait_for_button', text)
+Then /^I wait for the "([^\"]*)" button to appear$/ do |identifier|
+  wait_for_element_exists("android.widget.Button marked:'#{identifier}'");
 end
 
-Then /^I wait for the view with id "([^\"]*)" to appear$/ do |text|
-  performAction('wait_for_view_by_id', text)
+Then /^I wait for the view with id "([^\"]*)" to appear$/ do |id|
+  wait_for_element_exists("* id:'#{id}'")
 end
 
 Then /^I wait for the "([^\"]*)" view to appear$/ do |text|
-  performAction('wait_for_view', text)
+  wait_for_element_exists("* marked:'#{text}'")
 end
 
 
-Then /^I wait for the "([^\"]*)" screen to appear$/ do |text|
-    performAction('wait_for_screen', text)
+Then /^I wait for the "([^\"]*)" screen to appear$/ do |activity_name|
+  wait_for_activity(activity_name)
 end
 
-Then /^I wait upto (\d+) seconds for the "([^\"]*)" screen to appear$/ do |timeout, text|
-    performAction('wait_for_screen', text, timeout)
+Then /^I wait upto (\d+) seconds for the "([^\"]*)" screen to appear$/ do |timeout, activity_name|
+  wait_for_activity(activity_name, timeout: timeout.to_i)
 end
 
-Then /^I wait up to (\d+) seconds for the "([^\"]*)" screen to appear$/ do |timeout, text|
-    performAction('wait_for_screen', text, timeout)
+Then /^I wait up to (\d+) seconds for the "([^\"]*)" screen to appear$/ do |timeout, activity_name|
+  wait_for_activity(activity_name, timeout: timeout.to_i)
 end
 
 # @param - the "tag" associated with the tab, or the text within the tab label
-Then /^I wait for the "([^\"]*)" tab to appear$/ do | tab |
-  performAction('wait_for_tab', tab)
+Then /^I wait for the "([^\"]*)" tab to appear$/ do |tab|
+  wait_for do
+    query("android.widget.TabWidget descendant TextView {text LIKE[c] '#{tab}'}", :isSelected).first
+  end
 end

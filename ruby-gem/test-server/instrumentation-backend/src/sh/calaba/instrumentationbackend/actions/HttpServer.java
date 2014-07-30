@@ -6,9 +6,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.InterruptedException;
+import java.lang.Override;
+import java.lang.Runnable;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -22,9 +26,12 @@ import sh.calaba.instrumentationbackend.json.JSONUtils;
 import sh.calaba.instrumentationbackend.query.Query;
 import sh.calaba.instrumentationbackend.query.QueryResult;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
+
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AlphaAnimation;
 
 public class HttpServer extends NanoHTTPD {
 	private static final String TAG = "InstrumentationBackend";
@@ -127,17 +134,53 @@ public class HttpServer extends NanoHTTPD {
 				String uiQuery = (String) command.get("query");
 				uiQuery = uiQuery.trim();
 				Map op = (Map) command.get("operation");
-				@SuppressWarnings("unused") //TODO: support other methods, e.g., flash
-				String methodName = (String) op.get("method_name");
-				List arguments = (List) op.get("arguments");
-				
-				//For now we only support query
-				
-				
-				QueryResult queryResult = new Query(uiQuery,arguments).executeQuery();
+                String methodName = (String) op.get("method_name");
+                List arguments = (List) op.get("arguments");
 
-				return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", 
-						FranklyResult.successResult(queryResult).asJson());
+                if (methodName.equals("flash")) {
+                    QueryResult queryResult = new Query(uiQuery, java.util.Collections.emptyList()).executeQuery();
+                    List<View> views = queryResult.getResult();
+
+                    if (views.isEmpty()) {
+                        return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
+                                FranklyResult.failedResult("Could not find view to flash", "").asJson());
+                    }
+
+                    final Object firstItem = views.get(0);
+
+                    if (!(firstItem instanceof View)) {
+                        return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
+                                FranklyResult.failedResult("Only views can be flashed", "").asJson());
+                    }
+
+                    for (final View view : views) {
+                        InstrumentationBackend.solo.runOnMainSync(new Runnable() {
+                            @Override
+                            public void run() {
+                                Animation animation = new AlphaAnimation(1, 0);
+                                animation.setRepeatMode(Animation.REVERSE);
+                                animation.setDuration(200);
+                                animation.setRepeatCount(5);
+                                view.startAnimation(animation);
+                            }
+                        });
+
+                        try {
+                            Thread.sleep(1200);
+                        } catch (InterruptedException e) {
+                            return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
+                                    FranklyResult.failedResult("Interrupted while flashing", "").asJson());
+                        }
+                    }
+
+                    return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
+                            FranklyResult.successResult(queryResult).asJson());
+                } else {
+                    QueryResult queryResult = new Query(uiQuery,arguments).executeQuery();
+
+                    return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
+                            FranklyResult.successResult(queryResult).asJson());
+                }
 			} catch (Exception e ) {
 				e.printStackTrace();
                 errorResult = FranklyResult.fromThrowable(e);

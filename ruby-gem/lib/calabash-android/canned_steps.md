@@ -23,18 +23,21 @@ To assert that specified text cannot be found use any of the following steps.
 Input steps
 -----------
 
-    Then /^I toggle checkbox number (\d+)$/ do |checkboxNumber|
-Toggles checkout with the specified index.
+    Then /^I toggle checkbox number (\d+)$/ do |index|
+Toggles the checkout with the specified index.
 
-    Then /^I long press "([^\"]*)"$/ do |text_to_press|
-Long presses the text if found.
+    Then /^I long press "([^\"]*)"$/ do |text|
+Long presses the view containing the specified text.
 
-    Then /^I long press "([^\"]*)" and select item number "([^\"]*)"$/ do |text_to_press, index|
+	Then /^I long press "([^\"]*)" and select item number (\d+)$/ do |text, index|
+**This predefined step is deprecated**
 
-Long presses the text (if found) and select the specified number in the context menu that appear.
+Long presses the view containing the specified text and selects the menu item with the specified index in the context menu that appears.
 
-    Then /^I long press "([^\"]*)" and select "([^\"]*)"$/ do |text_to_press, context_text|
-Long presses the text (if found) and select the specified number in the context menu that appear. 
+    Then /^I long press "([^\"]*)" and select "([^\"]*)"$/ do |text, identifier|
+**This predefined step is deprecated**
+
+Long presses the view containing the specified text and selects the menu item marked by the specified identifier in the context menu that appears. 
 
 
     Given /^I set the date to "(\d\d-\d\d-\d\d\d\d)" on DatePicker with index "([^\"]*)"$/ do |date, index|
@@ -46,148 +49,124 @@ Finds the datepicker with the specified index and changes the date.
 Finds the timepicker with the specified index and changes the time.
 
     Given /^I set the "([^\"]*)" date to "(\d\d-\d\d-\d\d\d\d)"$/ do |content_description, date|
-Find the datepicker by content description and changes the date.
+Finds the datepicker by content description and changes the date.
 
-    Then /^I enter "([^\"]*)" into input field number (\d+)$/ do |text, number|
-Enters the specified text into the input field with index `number`.
+    Then /^I enter "([^\"]*)" into input field number (\d+)$/ do |text, index|
+Enters the specified text into the input field with the specified index.
 
-    Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, view_id|
-Enters Text into the input field with id `view_id`.
+	Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, id|
+Enters the specified text into the input field with the specified id.
 
-    Then /^I enter "([^\"]*)" as "([^\"]*)"$/ do |text, target|
-    Then /^I enter "([^\"]*)" into "([^\"]*)"$/ do |text, target|
-Enters the specified text into the input field that has a content desciption that matches the provided target.
+    Then /^I enter "([^\"]*)" as "([^\"]*)"$/ do |text, content_description|
+    Then /^I enter "([^\"]*)" into "([^\"]*)"$/ do |text, content_description|
+Enters the specified text into the input field that has the specified content description.
 
+    Then /^I clear input field number (\d+)$/ do |index|
+Clears the text of the input field with the specified index.
 
+    Then /^I clear "([^\"]*)"$/ do |identifier|
+Clears the text of input fields marked by the identifier.
 
-    Then /^I clear input field number (\d+)$/ do |number|
-Finds a input field by index and blanks its value.
+    Then /^I clear input field with id "([^\"]*)"$/ do |id|
+Clears the text of the input field with the specified id.
 
-    Then /^I clear "([^\"]*)"$/ do |name|
-Finds a input field with matching content description and blanks its value.
-
-    Then /^I clear input field with id "([^\"]*)"$/ do |view_id|
-Finds the input field with id `view_id` and clears the text from it.
-
-    Then /^I select "([^\"]*)" from "([^\"]*)"$/ do |item_text, spinner_content_description|
-Finds the Spinner by 'spinner_content_description' and selects the item with the matching 'item_text'
+    Then /^I select "([^\"]*)" from "([^\"]*)"$/ do |item_identifier, spinner_identifier|
+Finds the spinner marked by the specified 'spinner_identifier' or has a childview marked by the specified 'spinner_identifier'. It then selects the menu item marked by the specified 'item_identifier'.
 
 Buttons
 -------
 
+    Then /^I go back$/
 Simulates that the user pressed the back button.
 
-    Then /^I go back$/
-
+    Then /^I press the menu key$/
 Simulates that the user pressed the menu button.    
 
-    Then /^I press the menu key$/
-
+    Then /^I press the enter button$/
 Simulates that the user pressed the enter button on the keyboard.    
-
-    Then /^I press the enter button$/ do
 
 Gestures
 --------
-To swipe left
-
     Then /^I swipe left$/
-
-To swipe right
+Swipes left.
 
     Then /^I swipe right$/
-
-To scroll down
+Swipes right.
     
     Then /^I scroll down$/
-
-To scroll up
+Scrolls down.
     
     Then /^I scroll up$/
+Scrolls up.
 
-To open the menu and press the specified text
+	Then /^I select "([^\"]*)" from the menu$/ do |identifier|
+Opens the menu by simulating pressing the menu button and then selects a menu item marked by the specified identifier.
 
-    Then /^I select "([^\"]*)" from the menu$/
     
-To drag from one point on the screen to another. 
+	Then /^I drag from (\d+):(\d+) to (\d+):(\d+) moving with (\d+) steps$/ do |from_x, from_y, to_x, to_y, steps|
+Drags from one point on the screen to another.
 
-	Then /^I drag from (\d+):(\d+) to (\d+):(\d+) moving with (\d+) steps$/ 
-Note: x:y co-ordinates are expressed as percentages of the screen width:height
+**Note: x:y co-ordinates are expressed as percentages of the screen width:height**
     
 Touching
 --------
     
-    Given /^I press the "([^\"]*)" button$/
+	Given /^I press the "([^\"]*)" button$/ do |text|
+Taps the button containing the specified text.
 
-Search for a button with the provided text and press it if found.
+    Then /^I press button number (\d+)$/ do |index|
+Taps the button with the specified index.
 
-    Then /^I press button number (\d+)$/
+    Then /^I press image button number (\d+)$/ do |index|
+Taps the image button with the specified index.
 
-Presses the button by index.
-
-    Then /^I press image button number (\d+)$/
-
-Presses the image button by index.
-
-    Then /^I press view with id "([^\"]*)"$/
-
-Looks for a view with the provided id. If it is found and visible tries to click it.
-Note that use the short name and not the fully quantified name. That means if your id
-is 'com.foo.R.id.bar_label' you would use 'I press view with id "bar_label"'.
+    Then /^I press view with id "([^\"]*)"$/ do |id|
+Taps the view with the give id.
 
     Then /^I press "([^\"]*)"$/ do |identifier|
-Will look for a view in the following order:
+Taps the view marked by the specified identifier.
 
-1. Looks for a visible button with matching text.
-2. Look for a visible view with a matching content description.
-3. Look for a visible view with class name that matches the provided indentifier.
+    Then /^I touch the "([^\"]*)" text$/ do |text|
+Taps the specified text.
 
-If a view is found we will try to click it.
+    Then /^I press list item number (\d+)$/ do |index|
+**This predefined step is deprecated**
 
-    Then /^I touch the "([^\"]*)" text$/
-Will look for the specified text and press it if found.
+Taps the list item with the specified index in the first visible list.
 
-    Then /^I press list item number (\d+)$/
-Will press the specified list item in the first visible list.
+    Then /^I long press list item number (\d+)$/ do |index|
+**This predefined step is deprecated**
 
-    Then /^I long press list item number (\d+)$/
+Long presses the list item with the specified index in the first visible list.
 
-Will long press the specified list item in the first visible list.
-
-    Then /^I click on screen (\d+)% from the left and (\d+)% from the top$/
-Simulates a touch on the screen at the specified location.
+    Then /^I click on screen (\d+)% from the left and (\d+)% from the top$/ do |x, y|     
+Taps the screen at the specified location.
 
 Waiting
 -------
 
     Then /^I wait for progress$/ do
-Will wait till there is no more progress bars.
+Will wait until there are no more progress bars.
 
-    Then /^I wait for dialog to close$/
-Waits for the current dialog to close.
-
-
-    Then /^I wait for "([^\"]*)" to appear$/
-    Then /^I wait to see "([^\"]*)"$/
+    Then /^I wait for "([^\"]*)" to appear$/ do |text|
+    Then /^I wait to see "([^\"]*)"$/ do |text|
 Waits for the specified text to appear.
 
-    Then /^I wait up to (\d+) seconds for "([^\"]*)" to appear$/
-    Then /^I wait up to (\d+) seconds to see "([^\"]*)"$/
+    Then /^I wait up to (\d+) seconds for "([^\"]*)" to appear$/ do |timeout, text|
+    Then /^I wait up to (\d+) seconds to see "([^\"]*)"$/ do |timeout, †ext|
 Waits for the specified text to appear, with a custom timeout
 
-    Then /^I wait for the "([^\"]*)" button to appear$/
-Waits for a button with the specified text to appear.
+    Then /^I wait for the "([^\"]*)" button to appear$/ do |identifier|
+Waits for a button marked by the specified identifier to appear.
 
-    Then /^I wait for the "([^\"]*)" screen to appear$/ 
+    Then /^I wait for the "([^\"]*)" screen to appear$/ do |activity_name|
 Waits for a particular screen (Android Activity) to appear.
 
-    Then /^I wait for the view with id "([^\"]*)" to appear$/ do |text|
-Waits for a view view that id to appear.
-Note that use the short name and not the fully quantified name. That means if your id
-is 'com.foo.R.id.bar_label' you would use 'I press view with id "bar_label"'.
+    Then /^I wait for the view with id "([^\"]*)" to appear$/ do |id|
+Waits for a view with the specified if to appear.
 
-    Then /^I wait up to (\d+) seconds for the "([^\"]*)" screen to appear$/ 
-    Then /^I wait upto (\d+) seconds for the "([^\"]*)" screen to appear$/ 
+    Then /^I wait up to (\d+) seconds for the "([^\"]*)" screen to appear$/ do |timeout, activity_name|
+    Then /^I wait upto (\d+) seconds for the "([^\"]*)" screen to appear$/ do |timeout, activity_name|
 Waits for a particular screen (Android Activity) to appear with a timeout.
 
     Then /^I wait for 1 second$/
@@ -197,7 +176,7 @@ Waits for one second.
     Then /^I wait$/
 Waits for two seonds.
   
-    Then /^I wait for (\d+) seconds$/
+    Then /^I wait for (\d+) seconds$/ do |seconds|
 Waits for a specified number of seconds.
 
 Screenshots
@@ -246,42 +225,5 @@ Waits until the text of the translated l10nkey is displayed.
 
 Note: you can assert or press interface elements using [Android's String resources](http://developer.android.com/reference/android/R.string.html) by passing a package in a custom step:
 
-    performAction('press_l10n_element', 'ok', nil, 'android')
-
-Rotation
---------
-
-These steps do nothing if you run them locally. 
-If you run the test on [LessPainful](https://www.lesspainful.com) they will actually rotate the physical device.
-
-    Then /^I rotate the device to landscape$/
-    Then /^I rotate the device to portrait$/
-
-Manual Steps
-------------
-
-These steps are useful for allowing mixed manual and automated tests and to be documented 
-and kept together. These steps do nothing when the tests are run automatically but are still
-documented in Cucumber output formatters such as the HTML report. This allows a 
-manual tester to perform the same test case but with extra manual steps such as manual image verification.
-
-To manually request a manual tester to compare the screen with a reference image
-
-    Then /^I compare the current screen with the reference image "([^\"]*) manually"$/ do |name|
-
-    For example:
-
-    Then I compare the current screen with the reference image "features/ref1.png" manually
-
-To manually perform a custom step    
-
-    Then /^I manually (.*)$/ do |action|
-
-    For example:
-
-    Then I manually check that the list scrolls smoothly
-
-
-    
-
+    perform_action('press_l10n_element', 'ok', nil, 'android')
 

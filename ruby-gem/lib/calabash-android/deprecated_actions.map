@@ -1,0 +1,7 @@
+send_key_enter,press_enter_button
+send_key_left,press_left_button
+send_key_right,press_right_button
+send_key_up,press_up_button
+send_key_down,press_down_button
+press_menu,press_menu_button
+go_back,press_back_button

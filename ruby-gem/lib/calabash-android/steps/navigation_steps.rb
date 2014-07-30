@@ -1,46 +1,46 @@
 Then /^I go back$/ do
-  performAction('go_back')
+  press_back_button
 end
 
 Then /^I press the menu key$/ do
-  performAction('press_menu')
+  press_menu_button
 end
 
 Then /^I press the enter button$/ do
-  performAction('send_key_enter')
+  perform_action('send_key_enter')
 end
 
 
 Then /^I swipe left$/ do
-  performAction('swipe', 'left')
+  perform_action('swipe', 'left')
 end
 
 Then /^I swipe right$/ do
-  performAction('swipe', 'right')
+  perform_action('swipe', 'right')
 end
 
-Then /^I select "([^\"]*)" from the menu$/ do |item|  
-  performAction('select_from_menu', item)
+Then /^I select "([^\"]*)" from the menu$/ do |identifier|
+  select_options_menu_item(identifier)
 end
 
 Then /^I select tab number (\d+)$/ do | tab |
-  performAction('select_tab', tab)
+  touch("android.widget.TabWidget descendant TextView index:#{tab.to_i-1}")
 end
 
 # @param - the "tag" associated with the tab, or the text within the tab label
 Then /^I select the "([^\"]*)" tab$/ do | tab |
-  performAction('select_tab', tab)
+  touch("android.widget.TabWidget descendant TextView {text LIKE[c] '#{tab}'}")
 end
 
 Then /^I scroll down$/ do
-  performAction('scroll_down')
+  scroll_down
 end
 
 Then /^I scroll up$/ do
-  performAction('scroll_up')
+  scroll_up
 end
 
-Then /^I drag from (\d+):(\d+) to (\d+):(\d+) moving with (\d+) steps$/ do |fromX, fromY, toX, toY, steps|
-  performAction('drag',fromX,toX,fromY,toY,steps)
+Then /^I drag from (\d+):(\d+) to (\d+):(\d+) moving with (\d+) steps$/ do |from_x, from_y, to_x, to_y, steps|
+  perform_action('drag', from_x, to_x, from_y, to_y, steps)
 end
    

@@ -1,12 +1,17 @@
+Then /^I long press "([^\"]*)" and select item number (\d+)$/ do |text, index|
+  step_deprecated
 
-Then /^I long press "([^\"]*)" and select item number "([^\"]*)"$/ do |text_to_press, index|
-  performAction('press_long_on_text_and_select_with_index', text_to_press, index)
+  long_press_when_element_exists("* {text CONTAINS[c] '#{text}'}")
+  tap_when_element_exists("com.android.internal.view.menu.ListMenuItemView android.widget.TextView index:#{index.to_i - 1}")
 end
 
-Then /^I long press "([^\"]*)" and select "([^\"]*)"$/ do |text_to_press, context_text|
-  performAction('press_long_on_text_and_select_with_text', text_to_press, context_text)
+Then /^I long press "([^\"]*)" and select "([^\"]*)"$/ do |text, identifier|
+  step_deprecated
+
+  long_press_when_element_exists("* {text CONTAINS[c] '#{text}'}")
+  tap_when_element_exists("com.android.internal.view.menu.ListMenuItemView android.widget.TextView marked:'#{identifier}'")
 end
 
-Then /^I long press "([^\"]*)"$/ do |text_to_press|
-  performAction('press_long_on_text', text_to_press)
+Then /^I long press "([^\"]*)"$/ do |text|
+  long_press_when_element_exists("* {text CONTAINS[c] '#{text}'}")
 end

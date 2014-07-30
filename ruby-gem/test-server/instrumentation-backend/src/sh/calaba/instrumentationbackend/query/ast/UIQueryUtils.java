@@ -30,6 +30,7 @@ import sh.calaba.org.codehaus.jackson.type.TypeReference;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewParent;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -47,7 +48,7 @@ public class UIQueryUtils {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List subviews(Object o) {
-		
+
 		try {
 			Method getChild = o.getClass().getMethod("getChildAt", int.class);
 			getChild.setAccessible(true);
@@ -74,15 +75,15 @@ public class UIQueryUtils {
 
 	@SuppressWarnings({ "rawtypes" })
 	public static Future webViewSubViews(WebView o) {
-		
+
 		Log.i("Calabash", "About to webViewSubViews");
-		
+
 
 		WebFuture controls = QueryHelper.executeAsyncJavascriptInWebviews(o,
 				"calabash.js", "input,button","css");
-		
+
 		return controls;
-		
+
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -168,17 +169,43 @@ public class UIQueryUtils {
 	}
 
 	public static boolean isVisible(Object v) {
-		if (!(v instanceof View)) {
-			return true;
-		}
-		View view = (View) v;
+        if (v instanceof Map) {
+            Map map = (Map)v;
+            Map<String,Integer> viewRect = (Map<String,Integer>)map.get("rect");
+            Map<String,Integer> parentViewRec = ViewMapper.getRectForView((WebView)map.get("webView"));
 
-		if (view.getHeight() == 0 || view.getWidth() == 0) {
-			return false;
-		}
+            return isViewSufficientlyShown(viewRect, parentViewRec);
+        } else if (v instanceof View) {
+            View view = (View) v;
 
-		return view.isShown() && viewFetcher.isViewSufficientlyShown(view);
+            if (view.getHeight() == 0 || view.getWidth() == 0) {
+                return false;
+            }
+
+            return view.isShown() && isViewSufficientlyShown(view);
+        } else {
+            return true;
+        }
 	}
+
+    public static boolean isViewSufficientlyShown(Map<String,Integer> viewRect, Map<String,Integer> parentViewRect) {
+        int centerX = viewRect.get("center_x");
+        int centerY = viewRect.get("center_y");
+
+        int parentX = parentViewRect.get("x");
+        int parentY = parentViewRect.get("y");
+        int parentWidth = parentViewRect.get("width");
+        int parentHeight = parentViewRect.get("height");
+        int windowWidth = parentX + parentWidth;
+        int windowHeight = parentY + parentHeight;
+
+        return (windowWidth > centerX && parentX < centerX &&
+                windowHeight > centerY && parentY < centerY);
+    }
+
+    public static boolean isViewSufficientlyShown(View view) {
+        return isViewSufficientlyShown(view, view.getParent());
+    }
 
 	public static boolean isClickable(Object v) {
 		if (!(v instanceof View)) {
@@ -191,6 +218,10 @@ public class UIQueryUtils {
 
 	public static String getId(View view) {
 		return ViewMapper.getIdForView(view);
+	}
+
+	public static String getTag(View view) {
+		return ViewMapper.getTagForView(view);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -246,8 +277,8 @@ public class UIQueryUtils {
 							new TypeReference<List<HashMap<String, Object>>>() {
 							});
 					for (Map<String, Object> data : parsedResult) {
-						Map<String, Object> rect = (Map<String, Object>) data.get("rect");
-						Map<String, Object> updatedRect = QueryHelper.translateRectToScreenCoordinates(webView, rect);
+						Map<String, Integer> rect = (Map<String, Integer>) data.get("rect");
+						Map<String, Integer> updatedRect = QueryHelper.translateRectToScreenCoordinates(webView, rect);
 						data.put("rect", updatedRect);
 						data.put("webView", webView);
 					}
@@ -301,7 +332,7 @@ public class UIQueryUtils {
 	}
 
 	/*
-	 * 
+	 *
 	 * {"rect"=>{"x"=>0, "y"=>0, "width"=>768, "height"=>1024},
 	 * "hit-point"=>{"x"=>384, "y"=>512}, "id"=>"", "action"=>false,
 	 * "enabled"=>1, "visible"=>1, "value"=>nil, "type"=>"[object UIAWindow]",
@@ -343,7 +374,7 @@ public class UIQueryUtils {
 				childrenArray.add(dumpRecursively(serializedChild,
 						childrenList));
 			}
-			
+
 		}
 
 		parentView.put("children", childrenArray);
@@ -373,7 +404,7 @@ public class UIQueryUtils {
 	}
 
 	/*
- * 
+ *
                                             "enabled" => true,
                                             "visible" => true,
                                            "children" => [],
@@ -412,16 +443,16 @@ public class UIQueryUtils {
 		if (viewOrMap == null) {
 			return null;
 		}
-		
-		if (viewOrMap instanceof Map) 
+
+		if (viewOrMap instanceof Map)
 		{
-			Map map = (Map) viewOrMap;			
+			Map map = (Map) viewOrMap;
 			map.put("el", map);
 
 			Map rect = (Map) map.get("rect");
 			Map hitPoint = extractHitPointFromRect(rect);
-			
-			map.put("hit-point", hitPoint);			
+
+			map.put("hit-point", hitPoint);
 			map.put("enabled", true);
 			map.put("visible", true);
 			map.put("value", null);
@@ -430,36 +461,36 @@ public class UIQueryUtils {
 			map.put("label", null);
 			map.put("children", Collections.EMPTY_LIST);
 			String html = (String)map.get("html");
-			String nodeName = (String) map.get("nodeName");			
-			if (nodeName != null && nodeName.toLowerCase().equals("input")) {				
+			String nodeName = (String) map.get("nodeName");
+			if (nodeName != null && nodeName.toLowerCase().equals("input")) {
 				String domType = extractDomType(html);
 				if (isDomPasswordType(domType)) {
 					map.put("entry_types", Collections.singletonList("password"));
 				}
 				else if (isDomTextType(domType)) {
 					map.put("entry_types", Collections.singletonList("text"));
-				} 
+				}
 				else {
-					map.put("entry_types", Collections.emptyList());	
-				}					
+					map.put("entry_types", Collections.emptyList());
+				}
 				map.put("value", extractAttribute(html, "value"));
 				map.put("type", "dom");
 				map.put("name", extractAttribute(html, "name"));
 				map.put("label", extractAttribute(html, "title"));
-			}					
-						
-			return map;	
-			
+			}
+
+			return map;
+
 		}
-		else 
+		else
 		{
 			Map m = new HashMap();
-			
+
 			View view = (View) viewOrMap;
 			m.put("id", getId(view));
 			m.put("el", view);
 
-			Map rect = ViewMapper.getRectForView(view);
+			Map<String,Integer> rect = ViewMapper.getRectForView(view);
 			Map hitPoint = extractHitPointFromRect(rect);
 
 			m.put("rect", rect);
@@ -472,13 +503,28 @@ public class UIQueryUtils {
 			m.put("type", ViewMapper.getClassNameForView(view));
 			m.put("name", getNameForView(view));
 			m.put("label", ViewMapper.getContentDescriptionForView(view));
-			return m;	
+			return m;
 		}
 
-		
 
-		
+
+
 	}
+
+    private static boolean isViewSufficientlyShown(View view, ViewParent viewParent) {
+        if (!(viewParent instanceof View)) return true;
+
+        View parent = (View)viewParent;
+
+        if (view.equals(parent) || parent == null) {
+            return true;
+        }
+
+        Map<String,Integer> viewRect = ViewMapper.getRectForView(view);
+        Map<String,Integer> parentRect = ViewMapper.getRectForView(parent);
+
+        return isViewSufficientlyShown(viewRect, parentRect) && isViewSufficientlyShown(view, parent.getParent());
+    }
 
 	private static boolean isDomTextType(String domType) {
 		if (domType == null) {
@@ -487,25 +533,25 @@ public class UIQueryUtils {
 		return DOM_TEXT_TYPES.contains(domType);
 	}
 
-	private static boolean isDomPasswordType(String domType) {		
+	private static boolean isDomPasswordType(String domType) {
 		return "password".equalsIgnoreCase(domType);
 	}
 
 	// naive implementation only works for (valid) input tags
 	public static String extractDomType(String input) {
-		return extractAttribute(input, "type");		
+		return extractAttribute(input, "type");
 	}
-	
+
 	public static String extractAttribute(String input, String attribute) {
 		String[] split = input.split(attribute+"=");
 		if (split.length == 1) {
-			split = input.split(attribute+" =");			
+			split = input.split(attribute+" =");
 		}
 		if (split.length > 1) {
 			String lastPart = split[1];
 			if (lastPart == null) {
-				return null;	
-			}				
+				return null;
+			}
 			if (lastPart.charAt(0) == '"' || lastPart.charAt(0) == '\'') {
 				int endIndex = -1;
 				for (int i=1;i<lastPart.length();i++) {
@@ -514,15 +560,15 @@ public class UIQueryUtils {
 						break;
 					}
 				}
-				
+
 				if (endIndex > 0) {
 					return lastPart.substring(1,endIndex);
 				}
-				
-			}			
+
+			}
 		}
 		return null;
-		
+
 	}
 
 

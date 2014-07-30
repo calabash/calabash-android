@@ -1,27 +1,27 @@
-Then /^I enter "([^\"]*)" as "([^\"]*)"$/ do |text, target|
-  performAction('enter_text_into_named_field', text, target)
+Then /^I enter "([^\"]*)" as "([^\"]*)"$/ do |text, content_description|
+  enter_text("android.widget.EditText {contentDescription LIKE[c] '#{content_description}'}", text)
 end
 
-Then /^I enter "([^\"]*)" into input field number (\d+)$/ do |text, number|
-  performAction('enter_text_into_numbered_field',text, number)
+Then /^I enter "([^\"]*)" into "([^\"]*)"$/ do |text, content_description|
+  enter_text("android.widget.EditText {contentDescription LIKE[c] '#{content_description}'}", text)
 end
 
-Then /^I enter "([^\"]*)" into "([^\"]*)"$/ do |text, name|
-  performAction('enter_text_into_named_field',text, name)
+Then /^I enter "([^\"]*)" into input field number (\d+)$/ do |text, index|
+  enter_text("android.widget.EditText index:#{index.to_i-1}", text)
 end
 
-Then /^I clear "([^\"]*)"$/ do |name|
-  performAction('clear_named_field',name)
+Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, id|
+  enter_text("android.widget.EditText id:'#{id}'", text)
 end
 
-Then /^I clear input field number (\d+)$/ do |number|
-  performAction('clear_numbered_field',number)
+Then /^I clear "([^\"]*)"$/ do |identifier|
+  clear_text("android.widget.EditText marked:'#{identifier}'}")
 end
 
-Then /^I clear input field with id "([^\"]*)"$/ do |view_id|
-  performAction('clear_id_field', view_id)
+Then /^I clear input field number (\d+)$/ do |index|
+  clear_text("android.widget.EditText index:#{index.to_i-1}")
 end
 
-Then /^I enter text "([^\"]*)" into field with id "([^\"]*)"$/ do |text, view_id|
-  performAction('enter_text_into_id_field', text, view_id)
+Then /^I clear input field with id "([^\"]*)"$/ do |id|
+  clear_text("android.widget.EditText id:'#{id}'")
 end

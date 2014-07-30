@@ -7,19 +7,23 @@ require 'json'
 require 'socket'
 require 'timeout'
 require 'calabash-android/helpers'
-require 'calabash-android/wait_helpers'
+require 'calabash-android/text_helpers'
 require 'calabash-android/touch_helpers'
+require 'calabash-android/wait_helpers'
 require 'calabash-android/version'
 require 'calabash-android/env'
 require 'retriable'
 require 'cucumber'
+require 'date'
+require 'time'
 
 
 module Calabash module Android
 
 module Operations
-  include Calabash::Android::WaitHelpers
+  include Calabash::Android::TextHelpers
   include Calabash::Android::TouchHelpers
+  include Calabash::Android::WaitHelpers
 
   def current_activity
     `#{default_device.adb_command} shell dumpsys window windows`.each_line.grep(/mFocusedApp.+[\.\/]([^.\s\/\}]+)/){$1}.first
@@ -49,7 +53,32 @@ module Operations
   end
 
   def performAction(action, *arguments)
+    puts "Warning: The method performAction is deprecated. Please use perform_action instead."
+
+    perform_action(action, *arguments)
+  end
+
+  def perform_action(action, *arguments)
+    if removed_actions.include?(action)
+      puts "\e[31mError: The action '#{action}' was removed in calabash-android 0.5\e[0m"
+      puts 'Solutions that do not require the removed action can be found on:'
+      puts "\e[36mhttps://github.com/calabash/calabash-android/blob/master/migrating_to_calabash_0.5.md\##{action}\e[0m"
+    elsif deprecated_actions.has_key?(action)
+      puts "\e[31mWarning: The action '#{action}' is deprecated\e[0m"
+      puts "\e[32mUse '#{deprecated_actions[action]}' instead\e[0m"
+    end
+    
     default_device.perform_action(action, *arguments)
+  end
+
+  def removed_actions
+    @removed_actions ||= File.readlines(File.join(File.dirname(__FILE__), 'removed_actions.txt')).map(&:chomp)
+  end
+
+  def deprecated_actions
+    @deprecated_actions ||= Hash[
+        *File.readlines(File.join(File.dirname(__FILE__), 'deprecated_actions.map')).map{|e| e.chomp.split(',')}.flatten
+    ]
   end
 
   def reinstall_apps
@@ -106,6 +135,14 @@ module Operations
     default_device.screenshot(options)
   end
 
+  def client_version
+    default_device.client_version
+  end
+
+  def server_version
+    default_device.server_version
+  end
+
   def fail(msg="Error. Check log for details.", options={:prefix => nil, :name => nil, :label => nil})
    screenshot_and_raise(msg, options)
   end
@@ -134,12 +171,22 @@ module Operations
     converted_args = []
     args.each do |arg|
       if arg.is_a?(Hash) and arg.count == 1
-        converted_args << {:method_name => arg.keys.first, :arguments => [ arg.values.first ]}
+        if arg.values.is_a?(Array) && arg.values.count == 1
+          values = arg.values.flatten
+        else
+          values = [arg.values]
+        end
+
+        converted_args << {:method_name => arg.keys.first, :arguments => values}
       else
         converted_args << arg
       end
     end
     map(uiquery,:query,*converted_args)
+  end
+
+  def flash(query_string)
+    map(query_string, :flash)
   end
 
   def each_item(opts={:query => "android.widget.ListView", :post_scroll => 0.2}, &block)
@@ -156,6 +203,35 @@ module Operations
       sleep(opts[:post_scroll]) if opts[:post_scroll] and opts[:post_scroll] > 0
       yield(item)
     end
+  end
+
+  def set_date(query_string, year_or_datestring, month=nil, day=nil)
+    wait_for_element_exists(query_string)
+
+    if month.nil? && day.nil? && year_or_datestring.is_a?(String)
+      date = Date.parse(year_or_datestring)
+      set_date(query_string, date.year, date.month, date.day)
+    else
+      year = year_or_datestring
+      query(query_string, updateDate: [year, month-1, day])
+    end
+  end
+
+  def set_time(query_string, hour_or_timestring, minute=nil)
+    wait_for_element_exists(query_string)
+
+    if minute.nil? && hour_or_timestring.is_a?(String)
+      time = Time.parse(hour_or_timestring)
+      set_time(query_string, time.hour, time.min)
+    else
+      hour = hour_or_timestring
+      query(query_string, setCurrentHour: hour)
+      query(query_string, setCurrentMinute: minute)
+    end
+  end
+
+  def classes(query_string, *args)
+    query(query_string, :class, *args)
   end
 
   def ni
@@ -219,11 +295,11 @@ module Operations
       result = `#{cmd}`
       log result
       pn = package_name(app_path)
-      succeeded = `#{adb_command} shell pm list packages`.include?("package:#{pn}")
+      succeeded = `#{adb_command} shell pm list packages`.lines.map{|line| line.chomp.sub("package:", "")}.include?(pn)
 
       unless succeeded
         ::Cucumber.wants_to_quit = true
-        raise "#{pn} did not get installed. Aborting!"
+        raise "#{pn} did not get installed. Reason: '#{result.lines.last.chomp}'. Aborting!"
       end
     end
 
@@ -393,13 +469,30 @@ module Operations
           f.write res
         end
       else
-        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenshotTaker.jar')} #{serial} #{path}"
+        screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenshotTaker.jar')} #{serial} \"#{path}\""
         log screenshot_cmd
         raise "Could not take screenshot" unless system(screenshot_cmd)
       end
 
       @@screenshot_count += 1
       path
+    end
+
+    def client_version
+      Calabash::Android::VERSION
+    end
+
+    def server_version
+      begin
+        response = perform_action('version')
+        raise 'Invalid response' unless response['success']
+      rescue => e
+        log("Could not contact server")
+        log(e && e.backtrace && e.backtrace.join("\n"))
+        raise "The server did not respond. Make sure the server is running."
+      end
+
+      response['message']
     end
 
     def adb_command
@@ -441,8 +534,8 @@ module Operations
 
     def connected_devices
       lines = `#{Env.adb_path} devices`.split("\n")
-      lines.shift
-      lines.collect { |l| l.split("\t").first}
+      start_index = lines.index{ |x| x =~ /List of devices attached/ } + 1
+      lines[start_index..-1].collect { |l| l.split("\t").first }
     end
 
     def wake_up
@@ -481,7 +574,6 @@ module Operations
       env_options = {:target_package => package_name(@app_path),
                      :main_activity => main_activity(@app_path),
                      :test_server_port => @test_server_port,
-                     :debug => false,
                      :class => "sh.calaba.instrumentationbackend.InstrumentationBackend"}
 
       env_options = env_options.merge(options)
@@ -527,29 +619,32 @@ module Operations
       end
 
       log "Checking client-server version match..."
-      response = perform_action('version')
-      unless response['success']
+
+      begin
+        server_version = server_version()
+      rescue
         msg = ["Unable to obtain Test Server version. "]
         msg << "Please run 'reinstall_test_server' to make sure you have the correct version"
         msg_s = msg.join("\n")
         log(msg_s)
         raise msg_s
       end
-      unless response['message'] == Calabash::Android::VERSION
 
+      client_version = client_version()
+
+      unless server_version == client_version
         msg = ["Calabash Client and Test-server version mismatch."]
-        msg << "Client version #{Calabash::Android::VERSION}"
-        msg << "Test-server version #{response['message']}"
-        msg << "Expected Test-server version #{Calabash::Android::VERSION}"
+        msg << "Client version #{client_version}"
+        msg << "Test-server version #{server_version}"
+        msg << "Expected Test-server version #{client_version}"
         msg << "\n\nSolution:\n\n"
         msg << "Run 'reinstall_test_server' to make sure you have the correct version"
         msg_s = msg.join("\n")
         log(msg_s)
         raise msg_s
       end
-      log("Client and server versions match. Proceeding...")
 
-
+      log("Client and server versions match (client: #{client_version}, server: #{server_version}). Proceeding...")
     end
 
     def shutdown_test_server
@@ -704,50 +799,27 @@ module Operations
     raise(msg)
   end
 
-  def double_tap(uiquery, options = {})
-    center_x, center_y = find_coordinate(uiquery)
-
-    performAction("double_tap_coordinate", center_x, center_y)
+  def hide_soft_keyboard
+    perform_action('hide_soft_keyboard')
   end
 
-  def long_press(uiquery, options = {})
-    center_x, center_y = find_coordinate(uiquery)
-
-    performAction("long_press_coordinate", center_x, center_y)
-  end
-
-  def touch(uiquery, options = {})
-    center_x, center_y = find_coordinate(uiquery)
-
-    performAction("touch_coordinate", center_x, center_y)
-  end
-
-  def keyboard_enter_text(text, options = {})
-    performAction('keyboard_enter_text', text)
-  end
-
-  def enter_text(uiquery, text, options = {})
-    touch(uiquery, options)
-    sleep 0.5
-    keyboard_enter_text(text, options)
-  end
-
-  def find_coordinate(uiquery)
-    raise "Cannot find nil" unless uiquery
-
+  def execute_uiquery(uiquery)
     if uiquery.instance_of? String
       elements = query(uiquery)
-      raise "No elements found. Query: #{uiquery}" if elements.empty?
-      element = elements.first
+
+      return elements.first unless elements.empty?
     else
-      element = uiquery
-      element = element.first if element.instance_of?(Array)
+      elements = uiquery
+
+      return elements.first if elements.instance_of?(Array)
+      return elements if elements.instance_of?(Hash)
     end
 
-    center_x = element["rect"]["center_x"]
-    center_y = element["rect"]["center_y"]
+    nil
+  end
 
-    [center_x, center_y]
+  def step_deprecated
+    puts 'Warning: This predefined step is deprecated.'
   end
 
   def http(path, data = {}, options = {})
@@ -759,16 +831,64 @@ module Operations
   end
 
   def set_text(uiquery, txt)
-    view,arguments = uiquery.split(" ",2)
-    raise "Currently queries are only supported for webviews" unless view.downcase == "webview"
+    puts "set_text is deprecated. Use enter_text instead"
+    enter_text(uiquery, txt)
+  end
 
-    if arguments =~ /(css|xpath):\s*(.*)/
-      r = performAction("set_text", $1, $2, txt)
+  def press_user_action_button(action_name=nil)
+    if action_name.nil?
+      perform_action("press_user_action_button")
     else
-     raise "Invalid query #{arguments}"
+      perform_action("press_user_action_button", action_name)
     end
   end
 
+  def press_button(key)
+    perform_action('press_key', key)
+  end
+
+  def press_back_button
+    press_button('KEYCODE_BACK')
+  end
+
+  def press_menu_button
+    press_button('KEYCODE_MENU')
+  end
+
+  def press_down_button
+    press_button('KEYCODE_DPAD_DOWN')
+  end
+
+  def press_up_button
+    press_button('KEYCODE_DPAD_UP')
+  end
+
+  def press_left_button
+    press_button('KEYCODE_DPAD_LEFT')
+  end
+
+  def press_right_button
+    press_button('KEYCODE_DPAD_RIGHT')
+  end
+
+  def press_enter_button
+    press_button('KEYCODE_ENTER')
+  end
+
+  def select_options_menu_item(identifier, options={})
+    press_menu_button
+    tap_when_element_exists("DropDownListView * marked:'#{identifier}'", options)
+  end
+
+  def select_context_menu_item(view_uiquery, menu_item_query_string)
+    long_press(view_uiquery)
+
+    container_class = 'com.android.internal.view.menu.ListMenuItemView'
+    wait_for_element_exists(container_class)
+
+    combined_query_string = "#{container_class} descendant #{menu_item_query_string}"
+    touch(combined_query_string)
+  end
 
   def swipe(dir,options={})
       ni
@@ -782,8 +902,87 @@ module Operations
     ni
   end
 
-  def scroll(uiquery,direction)
-    ni
+  def scroll_up
+    scroll("android.widget.ScrollView", :up)
+  end
+
+  def scroll_down
+    scroll("android.widget.ScrollView", :down)
+  end
+
+  def scroll(query_string, direction)
+    if direction != :up && direction != :down
+      raise 'Only upwards and downwards scrolling is supported for now'
+    end
+
+    scroll_x = 0
+    scroll_y = 0
+
+    action = lambda do
+      element = query(query_string).first
+      raise "No elements found. Query: #{query_string}" if element.nil?
+
+      width = element['rect']['width']
+      height = element['rect']['height']
+
+      if direction == :up
+        scroll_y = -height/2
+      else
+        scroll_y = height/2
+      end
+
+      query(query_string, {scrollBy: [scroll_x.to_i, scroll_y.to_i]})
+    end
+
+    when_element_exists(query_string, action: action)
+  end
+
+  def scroll_to(query_string, options={})
+    options[:action] ||= lambda {}
+
+    all_query_string = query_string
+
+    unless all_query_string.chomp.downcase.start_with?('all')
+      all_query_string = "all #{all_query_string}"
+    end
+
+    wait_for_element_exists(all_query_string)
+
+    visibility_query_string = all_query_string[4..-1]
+
+    unless query(visibility_query_string).empty?
+      when_element_exists(visibility_query_string, options)
+      return
+    end
+
+    element = query(all_query_string).first
+    raise "No elements found. Query: #{all_query_string}" if element.nil?
+    element_center_y = element['rect']['center_y']
+
+    if element.has_key?('html')
+      scroll_view_query_string = element['webView']
+    else
+      scroll_view_query_string = "#{all_query_string} parent android.widget.ScrollView index:0"
+    end
+
+    scroll_element = query(scroll_view_query_string).first
+
+    raise "Could not find parent scroll view. Query: #{scroll_view_query_string}" if element.nil?
+
+    scroll_element_y = scroll_element['rect']['y']
+    scroll_element_height = scroll_element['rect']['height']
+
+    if element_center_y > scroll_element_y + scroll_element_height
+      scroll_by_y = element_center_y - (scroll_element_y + scroll_element_height) + 2
+    else
+      scroll_by_y = element_center_y - scroll_element_y - 2
+    end
+
+    result = query(scroll_view_query_string, {scrollBy: [0, scroll_by_y.to_i]}).first
+    raise 'Could not scroll parent view' if result != '<VOID>'
+
+    visibility_query_string = all_query_string[4..-1]
+    when_element_exists(visibility_query_string, options)
   end
 
   def scroll_to_row(uiquery,number)
@@ -858,7 +1057,13 @@ module Operations
   end
 
   def backdoor(sel, arg)
-    ni
+    result = perform_action("backdoor", sel, arg)
+    if !result["success"]
+      screenshot_and_raise(result["message"])
+    end
+
+    # for android results are returned in bonusInformation
+    result["bonusInformation"].first
   end
 
   def map(query, method_name, *method_args)
@@ -883,7 +1088,6 @@ module Operations
   def make_http_request(options)
     default_device.make_http_request(options)
   end
-
 end
 
 

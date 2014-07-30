@@ -84,6 +84,11 @@ module Calabash
       end
 
       #options for wait_for apply
+      def wait_for_element_exists(uiquery, options={})
+        wait_for_elements_exist([uiquery], options)
+      end
+
+      #options for wait_for apply
       def wait_for_elements_exist(elements_arr, options={})
         if elements_arr.is_a?(String) || elements_arr.is_a?(Symbol)
           elements_arr = [elements_arr.to_s]
@@ -93,6 +98,12 @@ module Calabash
           elements_arr.all? { |q| element_exists(q) }
         end
       end
+
+      #options for wait_for apply
+      def wait_for_element_does_not_exist(uiquery, options={})
+        wait_for_elements_do_not_exist([uiquery], options)
+      end
+
       #options for wait_for apply
       def wait_for_elements_do_not_exist(elements_arr, options={})
         if elements_arr.is_a?(String)
@@ -165,12 +176,29 @@ module Calabash
       # Example usage: when_element_exists("Button", :timeout => 10)
       def when_element_exists(uiquery, opts = {})
         action = { :action => lambda { touch uiquery } }
-        opts = DEFAULT_OPTS.merge(action).merge(opts)
+        opts = action.merge(opts)
         wait_for_elements_exist([uiquery], opts)
-        opts[:action].call
+
+        if opts[:action].parameters.length == 0
+          opts[:action].call
+        else
+          opts[:action].call(uiquery)
+        end
       end
 
+      def wait_for_text(text, options={})
+        wait_for_element_exists("* {text CONTAINS[c] '#{text}'}", options)
+      end
 
+      def wait_for_text_to_disappear(text, options={})
+        wait_for_element_does_not_exist("* {text CONTAINS[c] '#{text}'}", options)
+      end
+
+      def wait_for_activity(activity_name, options={})
+        wait_for(options) do
+          perform_action('get_activity_name')['message'] == activity_name
+        end
+      end
     end
   end
 end

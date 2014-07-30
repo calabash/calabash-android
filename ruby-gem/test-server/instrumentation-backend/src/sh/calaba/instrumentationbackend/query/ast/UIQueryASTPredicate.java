@@ -80,6 +80,16 @@ public class UIQueryASTPredicate implements UIQueryAST {
 			}
 		}
 
+		// there's no tag property for non Views, handle them all here
+		if (this.propertyName.equals("tag")) {
+			String tag = (o instanceof View ? UIQueryUtils.getTag((View) o) : null);
+			if (this.relation.areRelated(tag, this.valueToMatch)) {
+				return o;
+			} else {
+				return null;
+			}
+		}
+
 		Method propertyAccessor = UIQueryUtils
 				.hasProperty(o, this.propertyName);
 		if (propertyAccessor == null) {
@@ -90,8 +100,8 @@ public class UIQueryASTPredicate implements UIQueryAST {
 		if (this.relation.areRelated(value, this.valueToMatch)) {
 			return o;
 		} else if (this.valueToMatch instanceof String
-				&& this.relation
-						.areRelated(value.toString(), this.valueToMatch)) {
+                    && value != null
+                    && this.relation.areRelated(value.toString(), this.valueToMatch)) {
 			return o;
 		} else {
 			return null;
@@ -109,7 +119,7 @@ public class UIQueryASTPredicate implements UIQueryAST {
 		return new UIQueryASTPredicate(prop.getText(),
 				UIQueryASTPredicate.parseRelation(rel),
 				UIQueryUtils.parseValue(val));
-			
+
 	}
 
 	private static UIQueryASTPredicateRelation parseRelation(CommonTree rel) {
@@ -120,7 +130,7 @@ public class UIQueryASTPredicate implements UIQueryAST {
 			caseSensitive = false;
 			relText = relText.substring(0,relText.length() - CASE_INSENSITIVE_SPEC.length());
 		}
-		
+
 		if ("BEGINSWITH".equals(relText)) {
 			return new BeginsWithRelation(caseSensitive);
 		} else if ("ENDSWITH".equals(relText)) {
@@ -139,6 +149,8 @@ public class UIQueryASTPredicate implements UIQueryAST {
 			return ComparisonOperator.GREATERTHAN;
 		} else if (">=".equals(relText)) {
 			return ComparisonOperator.GREATERTHANOREQUAL;
+		} else if ("!=".equals(relText) || "<>".equals(relText)) {
+			return ComparisonOperator.NOTEQUAL;
 		} else {
 			throw new IllegalStateException("Unsupported Relation: " + relText);
 		}

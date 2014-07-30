@@ -1,3 +1,23 @@
+0.5.0:
+      Removed many actions. They all have equivalent ruby wrappers/queries.
+      
+      Added new ruby wrappers for scrolling and more complex gestures that would requre an action before.
+      
+      Implemented flash method. It 'flashes' all found elements visually on the device to help the tester locate a view.
+      Its syntax is equivalent to query.
+      
+      Added keyboard_enter_text/enter_text methods.
+      
+      Updated all predefined steps. Their implementation is now more alike their naming.
+      
+      Backoor method to invoke methods in the tested app.
+      
+      Fixed visibility bugs:
+            - Views that were invisible were returned as visible in some cases.
+            - No visibility filtering on webviews.
+      
+      Fixed various small bugs.
+      
 0.3.7:
       Added calabash-android resign command
 
