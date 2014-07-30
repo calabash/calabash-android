@@ -319,6 +319,13 @@ module Operations
     def uninstall_app(package_name)
       log "Uninstalling: #{package_name}"
       log `#{adb_command} uninstall #{package_name}`
+
+      succeeded = !(`#{adb_command} shell pm list packages`.lines.map{|line| line.chomp.sub("package:", "")}.include?(package_name))
+
+      unless succeeded
+        ::Cucumber.wants_to_quit = true
+        raise "#{package_name} was not uninstalled. Aborting!"
+      end
     end
 
     def app_running?
