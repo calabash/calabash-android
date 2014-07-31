@@ -116,7 +116,9 @@ def unsign_apk(path)
 end
 
 def zipalign_apk(inpath, outpath)
-  system(%Q(#{Env.zipalign_path} -f 4 "#{inpath}" "#{outpath}"))
+  cmd = %Q("#{Env.zipalign_path}" -f 4 "#{inpath}" "#{outpath}")
+  log "Zipaligning using: #{cmd}"
+  system(cmd)
 end
 
 def sign_apk(app_path, dest_path)
