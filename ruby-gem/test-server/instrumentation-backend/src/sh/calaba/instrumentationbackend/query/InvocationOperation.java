@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import sh.calaba.instrumentationbackend.Result;
 
 public class InvocationOperation implements Operation {
 
@@ -122,7 +123,27 @@ public class InvocationOperation implements Operation {
 						}							
 					}
 				}
-		
+
+                StringBuilder stringBuilder = new StringBuilder("No such method found: ");
+                stringBuilder.append(InvocationOperation.this.methodName);
+                stringBuilder.append("(");
+                int length = InvocationOperation.this.arguments.size();
+
+                for (int i = 0; i < length; i++) {
+                    Object argument = InvocationOperation.this.arguments.get(i);
+
+                    if (i != 0) {
+                        stringBuilder.append(", ");
+                    }
+
+                    stringBuilder.append("[").append(argument.getClass().getSimpleName()).append("]");
+                }
+
+                stringBuilder.append(")");
+
+
+                ref.set(UIQueryResultVoid.instance
+                        .asMap(InvocationOperation.this.methodName, o, stringBuilder.toString()));
 			}
 			 
 		 });
