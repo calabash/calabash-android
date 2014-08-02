@@ -910,11 +910,11 @@ module Operations
   end
 
   def scroll_up
-    scroll("android.widget.ScrollView", :up)
+    scroll("android.widget.ScrollView index:0", :up)
   end
 
   def scroll_down
-    scroll("android.widget.ScrollView", :down)
+    scroll("android.widget.ScrollView index:0", :down)
   end
 
   def scroll(query_string, direction)
