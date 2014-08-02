@@ -922,23 +922,43 @@ module Operations
       raise 'Only upwards and downwards scrolling is supported for now'
     end
 
-    scroll_x = 0
-    scroll_y = 0
-
     action = lambda do
-      element = query(query_string).first
-      raise "No elements found. Query: #{query_string}" if element.nil?
+      elements = query(query_string)
+      raise "No elements found. Query: #{query_string}" if elements.empty?
 
-      width = element['rect']['width']
-      height = element['rect']['height']
-
-      if direction == :up
-        scroll_y = -height/2
-      else
-        scroll_y = height/2
+      if elements.length > 1
+        query_string = "#{query_string} index:0"
       end
 
-      query(query_string, {scrollBy: [scroll_x.to_i, scroll_y.to_i]})
+      element = elements.first
+
+      response = query(query_string, :getFirstVisiblePosition).first
+
+      if response.is_a?(Hash) && response.has_key?("error") # View is not of type android.widget.AbsListView
+        scroll_x = 0
+        scroll_y = 0
+        width = element['rect']['width']
+        height = element['rect']['height']
+
+        if direction == :up
+          scroll_y = -height/2
+        else
+          scroll_y = height/2
+        end
+
+        query(query_string, {scrollBy: [scroll_x.to_i, scroll_y.to_i]})
+      else # View is of type android.widget.AbsListView
+        first_position = response.to_i
+        last_position = query(query_string, :getLastVisiblePosition).first.to_i
+
+        selection_index = if direction == :up
+                            [first_position + [first_position - last_position, -1].min, 0].max
+                          elsif direction == :down
+                            first_position + [last_position - first_position, 1].max
+                          end
+
+        query(query_string, setSelection: selection_index)
+      end
     end
 
     when_element_exists(query_string, action: action)
