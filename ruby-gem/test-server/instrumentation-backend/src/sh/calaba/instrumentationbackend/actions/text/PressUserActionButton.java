@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import java.lang.Integer;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -38,8 +39,7 @@ public class PressUserActionButton implements Action {
             return Result.failedResult("This action takes zero arguments or one argument ([String] action name)");
         }
 
-        Activity currentActivity = InstrumentationBackend.solo.getCurrentActivity();
-        final View view = currentActivity.getCurrentFocus();
+        final View view = getServedView();
         final InputConnection inputConnection = getInputConnection();
         final int imeActionCode;
 
@@ -81,6 +81,20 @@ public class PressUserActionButton implements Action {
             servedInputConnectionField.setAccessible(true);
 
             return (InputConnection)servedInputConnectionField.get(inputMethodManager);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    View getServedView() {
+        Context context = InstrumentationBackend.instrumentation.getTargetContext();
+
+        try {
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            Field servedViewField = InputMethodManager.class.getDeclaredField("mServedView");
+            servedViewField.setAccessible(true);
+
+            return (View)servedViewField.get(inputMethodManager);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
