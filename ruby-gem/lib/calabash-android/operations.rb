@@ -984,7 +984,10 @@ module Operations
 
     element = query(all_query_string).first
     raise "No elements found. Query: #{all_query_string}" if element.nil?
+    element_y = element['rect']['y']
     element_center_y = element['rect']['center_y']
+    element_height = element['rect']['height']
+    element_bottom = element_y + element_height
 
     if element.has_key?('html')
       scroll_view_query_string = element['webView']
@@ -1000,9 +1003,9 @@ module Operations
     scroll_element_height = scroll_element['rect']['height']
 
     if element_center_y > scroll_element_y + scroll_element_height
-      scroll_by_y = element_center_y - (scroll_element_y + scroll_element_height) + 2
+      scroll_by_y = element_bottom - (scroll_element_y + scroll_element_height)
     else
-      scroll_by_y = element_center_y - scroll_element_y - 2
+      scroll_by_y = element_y - scroll_element_y
     end
 
     result = query(scroll_view_query_string, {scrollBy: [0, scroll_by_y.to_i]}).first
