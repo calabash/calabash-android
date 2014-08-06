@@ -989,15 +989,15 @@ module Operations
     element_height = element['rect']['height']
     element_bottom = element_y + element_height
 
-    if element.has_key?('html')
-      scroll_view_query_string = element['webView']
+    scroll_view_query_string = options[:container] || if element.has_key?('html')
+      element['webView']
     else
-      scroll_view_query_string = "#{all_query_string} parent android.widget.ScrollView index:0"
+      "#{all_query_string} parent android.widget.ScrollView index:0"
     end
 
     scroll_element = query(scroll_view_query_string).first
 
-    raise "Could not find parent scroll view. Query: #{scroll_view_query_string}" if element.nil?
+    raise "Could not find parent scroll view. Query: '#{escape_quotes(scroll_view_query_string)}'" if scroll_element.nil?
 
     scroll_element_y = scroll_element['rect']['y']
     scroll_element_height = scroll_element['rect']['height']
