@@ -954,7 +954,7 @@ module Operations
         last_position = query(query_string, :getLastVisiblePosition).first.to_i
 
         selection_index = if direction == :up
-                            [first_position + [first_position - last_position, -1].min, 0].max
+                            [first_position + [first_position - last_position + 1, -1].min, 0].max
                           elsif direction == :down
                             first_position + [last_position - first_position, 1].max
                           end
