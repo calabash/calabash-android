@@ -7,6 +7,7 @@ require 'json'
 require 'socket'
 require 'timeout'
 require 'calabash-android/helpers'
+require 'calabash-android/environment_helpers'
 require 'calabash-android/text_helpers'
 require 'calabash-android/touch_helpers'
 require 'calabash-android/wait_helpers'
@@ -21,6 +22,7 @@ require 'time'
 module Calabash module Android
 
 module Operations
+  include Calabash::Android::EnvironmentHelpers
   include Calabash::Android::TextHelpers
   include Calabash::Android::TouchHelpers
   include Calabash::Android::WaitHelpers
