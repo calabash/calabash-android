@@ -975,17 +975,9 @@ module Operations
 
     wait_for_element_exists(all_query_string)
 
-    visibility_query_string = all_query_string[4..-1]
-
-    unless query(visibility_query_string).empty?
-      when_element_exists(visibility_query_string, options)
-      return
-    end
-
     element = query(all_query_string).first
     raise "No elements found. Query: #{all_query_string}" if element.nil?
     element_y = element['rect']['y']
-    element_center_y = element['rect']['center_y']
     element_height = element['rect']['height']
     element_bottom = element_y + element_height
 
@@ -1002,14 +994,18 @@ module Operations
     scroll_element_y = scroll_element['rect']['y']
     scroll_element_height = scroll_element['rect']['height']
 
-    if element_center_y > scroll_element_y + scroll_element_height
+    if element_bottom > scroll_element_y + scroll_element_height
       scroll_by_y = element_bottom - (scroll_element_y + scroll_element_height)
-    else
+    elsif element_y < scroll_element_y
       scroll_by_y = element_y - scroll_element_y
+    else
+      scroll_by_y = 0
     end
 
-    result = query(scroll_view_query_string, {scrollBy: [0, scroll_by_y.to_i]}).first
-    raise 'Could not scroll parent view' if result != '<VOID>'
+    if scroll_by_y != 0
+      result = query(scroll_view_query_string, {scrollBy: [0, scroll_by_y]}).first
+      raise 'Could not scroll parent view' if result != '<VOID>'
+    end
 
     visibility_query_string = all_query_string[4..-1]
     when_element_exists(visibility_query_string, options)
