@@ -982,7 +982,7 @@ module Operations
     element_bottom = element_y + element_height
 
     scroll_view_query_string = options[:container] || if element.has_key?('html')
-      element['webView']
+      "android.webkit.WebView id:'#{element['webView']}'"
     else
       "#{all_query_string} parent android.widget.ScrollView index:0"
     end
