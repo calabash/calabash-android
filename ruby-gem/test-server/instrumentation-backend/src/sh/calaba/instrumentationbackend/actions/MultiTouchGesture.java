@@ -18,12 +18,12 @@ public class MultiTouchGesture {
     Map<String, Object> multiTouchGestureMap;
     Instrumentation instrumentation;
     List<Gesture> pressedGestures;
-    List<Gesture> gesturesToPress;
+    List<Gesture> gesturesToPerform;
 
     public MultiTouchGesture(Map<String, Object> multiTouchGesture) {
         this.multiTouchGestureMap = multiTouchGesture;
         instrumentation = InstrumentationBackend.instrumentation;
-        gesturesToPress = new ArrayList<Gesture>();
+        gesturesToPerform = new ArrayList<Gesture>();
     }
 
     public void parseGesture() {
@@ -98,7 +98,7 @@ public class MultiTouchGesture {
                 if (release) {
                     gesture.addEvent(new Event(gesture.upEvent().getCoordinate(), 0l), true);
                     long endTime = gesture.upEvent().getTime();
-                    gesturesToPress.add(gesture);
+                    gesturesToPerform.add(gesture);
                     gesture = new Gesture(endTime);
                 }
             }
@@ -160,25 +160,20 @@ public class MultiTouchGesture {
         throw new RuntimeException("Could not find views '" + distinctQueryStrings.toString() + "'");
     }
 
-    private static void log(String output) {
-        System.out.println("CALABASH " + output);
-    }
-
     private void sendPointerSync(MotionEvent motionEvent) {
-        log(motionEvent.toString());
         instrumentation.sendPointerSync(motionEvent);
     }
 
     private void pressGestures(long currentTime) {
         int i = 0;
 
-        while (i < gesturesToPress.size()) {
-            Gesture gesture = gesturesToPress.get(i);
+        while (i < gesturesToPerform.size()) {
+            Gesture gesture = gesturesToPerform.get(i);
 
             if (gesture.shouldPress(currentTime)) {
                 sendPointerSync(gesture.generateDownEvent(pressedGestures));
                 pressedGestures.add(gesture);
-                gesturesToPress.remove(i);
+                gesturesToPerform.remove(i);
             } else {
                 i++;
             }
@@ -249,7 +244,7 @@ public class MultiTouchGesture {
     private long findEndTime() {
         long endTime = 0;
 
-        for (Gesture gesture : gesturesToPress) {
+        for (Gesture gesture : gesturesToPerform) {
             endTime = Math.max(gesture.upEvent().getTime(), endTime);
         }
 
