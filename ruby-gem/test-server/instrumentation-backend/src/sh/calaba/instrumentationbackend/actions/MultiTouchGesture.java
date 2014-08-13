@@ -1,11 +1,15 @@
 package sh.calaba.instrumentationbackend.actions;
 
 import android.app.Instrumentation;
+import android.os.Build;
 import android.os.SystemClock;
 import android.util.Pair;
 import android.view.MotionEvent;
 
+import java.lang.reflect.Method;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -161,6 +165,7 @@ public class MultiTouchGesture {
     }
 
     private void sendPointerSync(MotionEvent motionEvent) {
+        System.out.println("CALABASH " + motionEvent.toString());
         instrumentation.sendPointerSync(motionEvent);
     }
 
@@ -211,20 +216,7 @@ public class MultiTouchGesture {
         int gestureLength = gesturesToMove.size();
 
         if (gestureLength > 0) {
-            //MotionEvent.PointerProperties[] pointerProperties = new MotionEvent.PointerProperties[gestureLength];
-            MotionEvent.PointerCoords[] pointerCoords = new MotionEvent.PointerCoords[gestureLength];
-            int[] pointerIds = new int[gestureLength];
-
-            for (int i = 0; i < gestureLength; i++) {
-                Gesture gesture = gesturesToMove.get(i);
-                //pointerProperties[i] = gesture.getPointerProperty();
-                pointerCoords[i] = gesture.getPointerCoord(currentTime);
-                pointerIds[i] = gesture.getId();
-            }
-
-            //MotionEvent motionEvent = MotionEvent.obtain(findAbsoluteStartTime(), SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, gestureLength, pointerProperties, pointerCoords, 0, 0, 1, 1, 4, 0, 4098, 0);
-            MotionEvent motionEvent = MotionEvent.obtain(findAbsoluteStartTime(), SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, gestureLength, pointerIds, pointerCoords, 0, 1, 1, 0, 0, 0, 0);
-
+            MotionEvent motionEvent = obtainMotionEvent(gesturesToMove, MotionEvent.ACTION_MOVE, currentTime, findAbsoluteStartTime());
             sendPointerSync(motionEvent);
         }
     }
@@ -249,6 +241,51 @@ public class MultiTouchGesture {
         }
 
         return endTime;
+    }
+
+    public static MotionEvent obtainMotionEvent(List<Gesture> pressedGestures, int motionEventAction, long currentTime, long absoluteDownTime) {
+        int gestureLength = pressedGestures.size();
+
+        Coordinate[] coordinates = new Coordinate[gestureLength];
+        int[] pointerIds = new int[gestureLength];
+
+        for (int i = 0; i < gestureLength; i++) {
+            Gesture gesture = pressedGestures.get(i);
+            coordinates[i] = gesture.getPosition(currentTime);
+            pointerIds[i] = gesture.getId();
+        }
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
+            MotionEvent.PointerCoords[] pointerCoords = new MotionEvent.PointerCoords[gestureLength];
+
+            for (int i = 0; i < gestureLength; i++) {
+                MotionEvent.PointerCoords pointerCoord = new MotionEvent.PointerCoords();
+                pointerCoord.x = coordinates[i].getX();
+                pointerCoord.y = coordinates[i].getY();
+                pointerCoord.pressure = 1;
+                pointerCoord.size = 1;
+                pointerCoords[i] = pointerCoord;
+            }
+
+            return MotionEvent.obtain(absoluteDownTime, SystemClock.uptimeMillis(), motionEventAction, gestureLength, pointerIds, pointerCoords, 0, 1, 1, 0, 0, 0, 0);
+        } else {
+            try {
+                Method method = MotionEvent.class.getMethod("obtainNano", long.class, long.class, long.class, int.class, int.class, int[].class, float[].class, int.class, float.class, float.class, int.class, int.class);
+                float[] inData = new float[4*(gestureLength)];
+
+                for (int i = 0; i < gestureLength; i++) {
+                    inData[i*4] = coordinates[i].getX();
+                    inData[i*4+1] = coordinates[i].getY();
+                    inData[i*4+2] = 1.0f;
+                    inData[i*4+3] = 1.0f;
+                }
+
+                return (MotionEvent)method.invoke(null, absoluteDownTime, SystemClock.uptimeMillis(), SystemClock.uptimeMillis() * 1000000, motionEventAction, gestureLength, pointerIds, inData, 0, 1, 1, 0, 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private class Gesture {
@@ -428,64 +465,37 @@ public class MultiTouchGesture {
 
         public MotionEvent generateDownEvent(List<Gesture> pressedGestures) {
             setId(pressedGestures);
-            int gestureLength = pressedGestures.size();
-            int motionEvent;
+            int motionEventAction;
 
             if (getId() > 0) {
-                motionEvent = (getId() << MotionEvent.ACTION_POINTER_INDEX_SHIFT) + MotionEvent.ACTION_POINTER_DOWN;
+                motionEventAction = (getId() << MotionEvent.ACTION_POINTER_INDEX_SHIFT) + MotionEvent.ACTION_POINTER_DOWN;
             } else {
-                motionEvent = MotionEvent.ACTION_DOWN;
+                motionEventAction = MotionEvent.ACTION_DOWN;
             }
 
             long time = downEvent().getTime();
 
-            //MotionEvent.PointerProperties[] pointerProperties = new MotionEvent.PointerProperties[gestureLength+1];
-            MotionEvent.PointerCoords[] pointerCoords = new MotionEvent.PointerCoords[gestureLength+1];
-            int[] pointerIds = new int[gestureLength+1];
+             // Because this gesture is not yet down, it is not included in the list of gestures passed as the first parameter
+            List<Gesture> allPressedGestures = new ArrayList<Gesture>(pressedGestures);
+            allPressedGestures.add(this);
 
-            for (int i = 0; i < gestureLength; i++) {
-                Gesture gesture = pressedGestures.get(i);
-                //pointerProperties[i] = gesture.getPointerProperty();
-                pointerCoords[i] = gesture.getPointerCoord(time);
-                pointerIds[i] = gesture.getId();
-            }
-
-            // Because this gesture is not yet down, it is not included in the list of gestures passed as the first parameter
-            //pointerProperties[gestureLength] = getPointerProperty();
-            pointerCoords[gestureLength] = getPointerCoord(time);
-            pointerIds[gestureLength] = getId();
-            absoluteDownTime = SystemClock.uptimeMillis();
-
-            //return MotionEvent.obtain(findAbsoluteStartTime(), SystemClock.uptimeMillis(), motionEvent, id+1, pointerProperties, pointerCoords, 0, 0, 1, 1, 4, 0, 4098, 0);
-            return MotionEvent.obtain(findAbsoluteStartTime(), SystemClock.uptimeMillis(), motionEvent, gestureLength+1, pointerIds, pointerCoords, 0, 1, 1, 0, 0, 0, 0);
+            return obtainMotionEvent(allPressedGestures, motionEventAction, time, SystemClock.uptimeMillis());
         }
 
         public MotionEvent generateUpEvent(List<Gesture> pressedGestures) {
             int gestureLength = pressedGestures.size();
-            int motionEvent;
+            int motionEventAction;
 
             // The up action is based on the amount of gestures currently down, not its own id/timing.
             if (gestureLength > 1) {
-                motionEvent = (getId() << MotionEvent.ACTION_POINTER_INDEX_SHIFT) + MotionEvent.ACTION_POINTER_UP;
+                motionEventAction = (getId() << MotionEvent.ACTION_POINTER_INDEX_SHIFT) + MotionEvent.ACTION_POINTER_UP;
             } else {
-                motionEvent = MotionEvent.ACTION_UP;
+                motionEventAction = MotionEvent.ACTION_UP;
             }
 
             long time = upEvent().getTime();
 
-            //MotionEvent.PointerProperties[] pointerProperties = new MotionEvent.PointerProperties[gestureLength];
-            MotionEvent.PointerCoords[] pointerCoords = new MotionEvent.PointerCoords[gestureLength];
-            int[] pointerIds = new int[gestureLength];
-
-            for (int i = 0; i < gestureLength; i++) {
-                Gesture gesture = pressedGestures.get(i);
-                //pointerProperties[i] = gesture.getPointerProperty();
-                pointerCoords[i] = gesture.getPointerCoord(time);
-                pointerIds[i] = gesture.getId();
-            }
-
-            //return MotionEvent.obtain(findAbsoluteStartTime(), SystemClock.uptimeMillis(), motionEvent, gestureLength, pointerProperties, pointerCoords, 0, 0, 1, 1, 4, 0, 4098, 0);
-            return MotionEvent.obtain(findAbsoluteStartTime(), SystemClock.uptimeMillis(), motionEvent, gestureLength, pointerIds, pointerCoords, 0, 1, 1, 0, 0, 0, 0);
+            return obtainMotionEvent(pressedGestures, motionEventAction, time, SystemClock.uptimeMillis());
         }
 
         public String toString() {
