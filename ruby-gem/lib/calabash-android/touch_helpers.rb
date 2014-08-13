@@ -1,19 +1,29 @@
 module Calabash
   module Android
     module TouchHelpers
+      include ::Calabash::Android::Gestures
+
+      def execute_gesture(multi_touch_gesture)
+        result = JSON.parse(http("/gesture", JSON.parse(multi_touch_gesture.to_json)))
+
+        if result['outcome'] != 'SUCCESS'
+          raise "Failed to perform gesture. #{result['reason']}"
+        end
+      end
+      
       def tap(query_string, options={})
-        Gesture.generate_gesture(Gesture.tap(options), query_string).execute
+        execute_gesture(Gesture.with_parameters(Gesture.tap(options), {query_string: query_string}.merge(options)))
       end
 
       def double_tap(query_string, options={})
-        Gesture.generate_gesture(Gesture.double_tap(options), query_string).execute
+        execute_gesture(Gesture.with_parameters(Gesture.double_tap(options), {query_string: query_string}.merge(options)))
       end
 
       def long_press(query_string, options={})
         length = options[:length]
 
         if length
-          puts "Using the length parameter is deprecated. Use 'time' (in seconds) instead."
+          puts "Using the length key is deprecated. Use 'time' (in seconds) instead."
           options[:time] = length/1000.0
         end
 
@@ -22,54 +32,60 @@ module Calabash
         tap(query_string, options)
       end
 
-      def swipe(*args)
-        if args.length == 1 || (args.length == 2 && args[1].is_a?(Hash))
-          query_string = "* id:'content'"
-          direction = args[0]
-          options = args[1] || {}
-        elsif args.length == 2 || (args.length == 3 && args[2].is_a?(Hash))
-          query_string = args[0]
-          direction = args[1]
-          options = args[2] || {}
-        else
-          raise ArgumentError.new "wrong number of arguments (#{args.length} for 1..3)"
-        end
-
-        Gesture.generate_gesture(Gesture.swipe(direction, options), query_string).execute
+      def drag(*args)
+        pan(*args)
       end
 
-      def fling(*args)
-        if args.length == 1
-          raise ArgumentError.new "first parameter must be either direction or query_string" if args.last.is_a?(Hash)
-
-          swipe(args[0], {fling: true})
-        elsif args.length == 2
-          if args.last.is_a?(Hash)
-            swipe(args[0], {fling: true}.merge(args[1]))
-          else
-            swipe(args[0], args[1], {fling: true})
-          end
-        elsif args.length == 3
-          swipe(args[0], args[1], {fling: true}.merge(args[2]))
-        else
-          raise ArgumentError.new "wrong number of arguments (#{args.length} for 1..3)"
-        end
+      def pan_left(options={})
+        pan("DecorView", :left, options)
       end
 
-      def pinch(*args)
-        if args.length == 1 || (args.length == 2 && args[1].is_a?(Hash))
-          query_string = "* id:'content'"
-          direction = args[0]
-          options = args[1] || {}
-        elsif args.length == 2 || (args.length == 3 && args[2].is_a?(Hash))
-          query_string = args[0]
-          direction = args[1]
-          options = args[2] || {}
-        else
-          raise ArgumentError.new "wrong number of arguments (#{args.length} for 1..3)"
-        end
+      def pan_right(options={})
+        pan("DecorView", :right, options)
+      end
 
-        Gesture.generate_gesture(Gesture.pinch(direction, options), query_string).execute
+      def pan_up(options={})
+        pan("* id:'content'", :up, options)
+      end
+
+      def pan_down(options={})
+        pan("* id:'content'", :down, options)
+      end
+
+      def pan(query_string, direction, options={})
+        execute_gesture(Gesture.with_parameters(Gesture.swipe(direction, options), {query_string: query_string}.merge(options)))
+      end
+
+      def flick_left(options={})
+        flick("DecorView", :left, options)
+      end
+
+      def flick_right(options={})
+        flick("DecorView", :right, options)
+      end
+
+      def flick_up(options={})
+        flick("* id:'content'", :up, options)
+      end
+
+      def flick_down(options={})
+        flick("* id:'content'", :down, options)
+      end
+
+      def flick(query_string, direction, options={})
+        execute_gesture(Gesture.with_parameters(Gesture.swipe(direction, {flick: true}.merge(options)), {query_string: query_string}.merge(options)))
+      end
+
+      def pinch_out
+        pinch("* id:'content'", :out)
+      end
+
+      def pinch_in
+        pinch("* id:'content'", :in)
+      end
+
+      def pinch(query_string, direction, options={})
+        execute_gesture(Gesture.with_parameters(Gesture.pinch(direction, options), {query_string: query_string}.merge(options)))
       end
 
       def find_coordinate(uiquery, options={})

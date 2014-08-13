@@ -1,7 +1,9 @@
 require 'json'
 
+module Calabash
+  module Android
+    module Gestures
 class MultiTouchGesture
-  include Calabash::Android::Operations
   attr_reader :gestures
   attr_accessor :timeout
 
@@ -50,14 +52,6 @@ class MultiTouchGesture
         query_timeout: @timeout.to_f,
         gestures: @gestures
     }.to_json(*object)
-  end
-
-  def execute
-    result = JSON.parse(http("/gesture", JSON.parse(to_json)))
-
-    if result['outcome'] != 'SUCCESS'
-      raise "Failed to perform gesture. #{result['reason']}"
-    end
   end
 
   def query_string=(query_string)
@@ -131,8 +125,9 @@ class Gesture
     @touches.each {|touch| touch.offset=offset}
   end
 
-  def self.generate_gesture(multi_touch_gesture, query_string)
-    multi_touch_gesture.query_string = query_string
+  def self.with_parameters(multi_touch_gesture, params={})
+    multi_touch_gesture.query_string = params[:query_string] if params[:query_string]
+    multi_touch_gesture.timeout = params[:timeout] if params[:timeout]
 
     multi_touch_gesture
   end
@@ -161,7 +156,7 @@ class Gesture
     from_params = from_hash.merge(opt).merge(opt[:from] || {})
     to_params = {time: 0}.merge(to_hash).merge(opt[:to] || {})
 
-    if opt[:fling] === true
+    if opt[:flick]
       to_params.merge!(wait: 0)
     else
       to_params = {wait: 0.2}.merge(to_params)
@@ -286,5 +281,9 @@ class Touch
   def offset=(offset)
     @offset_x = offset[:x]
     @offset_y = offset[:y]
+  end
+end
+
+    end
   end
 end
