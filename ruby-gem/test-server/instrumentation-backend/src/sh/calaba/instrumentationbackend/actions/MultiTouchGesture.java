@@ -185,22 +185,29 @@ public class MultiTouchGesture {
     }
 
     private void releaseGestures(long currentTime) {
-        List<Gesture> released = new ArrayList<Gesture>();
+        int i = 0;
 
-        for (Gesture gesture : pressedGestures) {
+        while (i < pressedGestures.size()) {
+            Gesture gesture = pressedGestures.get(i);
+
             if (gesture.shouldRelease(currentTime)) {
                 // Ensure that the gesture will always move to its end-coordinate
-                moveGestures(currentTime);
+                long uptimeMillis = SystemClock.uptimeMillis();
+                moveGestures(currentTime, uptimeMillis);
 
-                sendPointerSync(gesture.generateUpEvent(pressedGestures));
-                released.add(gesture);
+                sendPointerSync(gesture.generateUpEvent(pressedGestures, uptimeMillis+1));
+                pressedGestures.remove(i);
+            } else {
+                i++;
             }
         }
-
-        pressedGestures.removeAll(released);
     }
 
     private void moveGestures(long currentTime) {
+        moveGestures(currentTime, null);
+    }
+
+    private void moveGestures(long currentTime, Long systemClockUptimeMillis) {
         List<Gesture> gesturesToMove = new ArrayList<Gesture>();
 
         for (Gesture gesture : pressedGestures) {
@@ -213,7 +220,7 @@ public class MultiTouchGesture {
         int gestureLength = gesturesToMove.size();
 
         if (gestureLength > 0) {
-            MotionEvent motionEvent = obtainMotionEvent(gesturesToMove, MotionEvent.ACTION_MOVE, currentTime, findAbsoluteStartTime());
+            MotionEvent motionEvent = obtainMotionEvent(gesturesToMove, MotionEvent.ACTION_MOVE, currentTime, findAbsoluteStartTime(), systemClockUptimeMillis);
             sendPointerSync(motionEvent);
         }
     }
@@ -240,7 +247,11 @@ public class MultiTouchGesture {
         return endTime;
     }
 
-    public static MotionEvent obtainMotionEvent(List<Gesture> pressedGestures, int motionEventAction, long currentTime, long absoluteDownTime) {
+    public static MotionEvent obtainMotionEvent(List<Gesture> pressedGestures, int motionEventAction, long currentTime, Long absoluteDownTime) {
+        return obtainMotionEvent(pressedGestures, motionEventAction, currentTime, absoluteDownTime, null);
+    }
+
+    public static MotionEvent obtainMotionEvent(List<Gesture> pressedGestures, int motionEventAction, long currentTime, Long absoluteDownTime, Long systemClockUptimeMillis) {
         int gestureLength = pressedGestures.size();
 
         Coordinate[] coordinates = new Coordinate[gestureLength];
@@ -264,7 +275,15 @@ public class MultiTouchGesture {
                 pointerCoords[i] = pointerCoord;
             }
 
-            return MotionEvent.obtain(absoluteDownTime, SystemClock.uptimeMillis(), motionEventAction, gestureLength, pointerIds, pointerCoords, 0, 1, 1, 0, 0, 0, 0);
+            if (systemClockUptimeMillis == null) {
+                systemClockUptimeMillis = SystemClock.uptimeMillis();
+            }
+
+            if (absoluteDownTime == null) {
+                absoluteDownTime = systemClockUptimeMillis;
+            }
+
+            return MotionEvent.obtain(absoluteDownTime, systemClockUptimeMillis, motionEventAction, gestureLength, pointerIds, pointerCoords, 0, 1, 1, 0, 0, 0, 0);
         } else {
             try {
                 Method method = MotionEvent.class.getMethod("obtainNano", long.class, long.class, long.class, int.class, int.class, int[].class, float[].class, int.class, float.class, float.class, int.class, int.class);
@@ -277,7 +296,15 @@ public class MultiTouchGesture {
                     inData[i*4+3] = 1.0f;
                 }
 
-                return (MotionEvent)method.invoke(null, absoluteDownTime, SystemClock.uptimeMillis(), SystemClock.uptimeMillis() * 1000000, motionEventAction, gestureLength, pointerIds, inData, 0, 1, 1, 0, 0);
+                if (systemClockUptimeMillis == null) {
+                    systemClockUptimeMillis = SystemClock.uptimeMillis();
+                }
+
+                if (absoluteDownTime == null) {
+                    absoluteDownTime = systemClockUptimeMillis;
+                }
+
+                return (MotionEvent)method.invoke(null, absoluteDownTime, systemClockUptimeMillis, systemClockUptimeMillis * 1000000, motionEventAction, gestureLength, pointerIds, inData, 0, 1, 1, 0, 0);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
@@ -470,11 +497,13 @@ public class MultiTouchGesture {
         }
 
         public MotionEvent generateDownEvent(List<Gesture> pressedGestures) {
+            int gestureLength = pressedGestures.size();
             setId(pressedGestures);
             int motionEventAction;
 
-            if (getId() > 0) {
-                motionEventAction = (getId() << MotionEvent.ACTION_POINTER_INDEX_SHIFT) + MotionEvent.ACTION_POINTER_DOWN;
+            // The down action is based on the amount of gestures currently down, not its own id/timing.
+            if (gestureLength > 0) {
+                motionEventAction = (gestureLength << MotionEvent.ACTION_POINTER_INDEX_SHIFT) + MotionEvent.ACTION_POINTER_DOWN;
             } else {
                 motionEventAction = MotionEvent.ACTION_DOWN;
             }
@@ -485,23 +514,30 @@ public class MultiTouchGesture {
             List<Gesture> allPressedGestures = new ArrayList<Gesture>(pressedGestures);
             allPressedGestures.add(this);
 
-            return obtainMotionEvent(allPressedGestures, motionEventAction, time, SystemClock.uptimeMillis());
+            absoluteDownTime = SystemClock.uptimeMillis();
+
+            return obtainMotionEvent(allPressedGestures, motionEventAction, time, absoluteDownTime);
         }
 
         public MotionEvent generateUpEvent(List<Gesture> pressedGestures) {
+            return generateUpEvent(pressedGestures, null);
+        }
+
+        public MotionEvent generateUpEvent(List<Gesture> pressedGestures, Long systemClockUptimeMillis) {
             int gestureLength = pressedGestures.size();
             int motionEventAction;
+            int indexInPressedGestures = pressedGestures.indexOf(this);
 
             // The up action is based on the amount of gestures currently down, not its own id/timing.
             if (gestureLength > 1) {
-                motionEventAction = (getId() << MotionEvent.ACTION_POINTER_INDEX_SHIFT) + MotionEvent.ACTION_POINTER_UP;
+                motionEventAction = (indexInPressedGestures << MotionEvent.ACTION_POINTER_INDEX_SHIFT) + MotionEvent.ACTION_POINTER_UP;
             } else {
                 motionEventAction = MotionEvent.ACTION_UP;
             }
 
             long time = upEvent().getTime();
 
-            return obtainMotionEvent(pressedGestures, motionEventAction, time, SystemClock.uptimeMillis());
+            return obtainMotionEvent(pressedGestures, motionEventAction, time, getAbsoluteDownTime(), systemClockUptimeMillis);
         }
 
         public String toString() {
