@@ -9,7 +9,6 @@ import android.view.MotionEvent;
 import java.lang.reflect.Method;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,10 +189,8 @@ public class MultiTouchGesture {
 
         for (Gesture gesture : pressedGestures) {
             if (gesture.shouldRelease(currentTime)) {
-                // Ensure that the gesture will always move to its end-coordinate to avoid flinging, unless the gesture is supposed to fling.
-                if (!gesture.getFling()) {
-                    moveGestures(currentTime);
-                }
+                // Ensure that the gesture will always move to its end-coordinate
+                moveGestures(currentTime);
 
                 sendPointerSync(gesture.generateUpEvent(pressedGestures));
                 released.add(gesture);
@@ -397,7 +394,16 @@ public class MultiTouchGesture {
         }
 
         public boolean shouldMove(long time) {
-            return !(getFling() && getPosition(time).equals(upEvent().getCoordinate(), 2.0d));
+            if (!getFling() || time >= upEvent().getTime()) {
+                return true;
+            }
+
+            Coordinate position = getPosition(time);
+            Coordinate upCoordinate = upEvent().getCoordinate();
+            double fullDistance = getEventPair(time).first.getCoordinate().distance(upCoordinate);
+            double distance = position.distance(upCoordinate);
+
+            return (distance / fullDistance > 0.05);
         }
 
         public Coordinate getPosition(long time) {
