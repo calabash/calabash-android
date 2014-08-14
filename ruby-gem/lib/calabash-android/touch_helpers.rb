@@ -76,12 +76,12 @@ module Calabash
         execute_gesture(Gesture.with_parameters(Gesture.swipe(direction, {flick: true}.merge(options)), {query_string: query_string}.merge(options)))
       end
 
-      def pinch_out
-        pinch("* id:'content'", :out)
+      def pinch_out(options={})
+        pinch("* id:'content'", :out, options)
       end
 
-      def pinch_in
-        pinch("* id:'content'", :in)
+      def pinch_in(options={})
+        pinch("* id:'content'", :in, options)
       end
 
       def pinch(query_string, direction, options={})
