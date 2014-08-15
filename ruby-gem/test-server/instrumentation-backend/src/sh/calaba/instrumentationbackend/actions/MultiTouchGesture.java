@@ -187,7 +187,7 @@ public class MultiTouchGesture {
 
             // Avoid affecting the UI Thread and device performance too much
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -197,7 +197,6 @@ public class MultiTouchGesture {
     }
 
     private void sendPointerSync(MotionEvent motionEvent) {
-        System.out.println("CALABASH " + motionEvent.toString());
         instrumentation.sendPointerSync(motionEvent);
     }
 
