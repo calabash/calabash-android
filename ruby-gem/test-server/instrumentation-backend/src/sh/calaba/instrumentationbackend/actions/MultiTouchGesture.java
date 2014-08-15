@@ -25,11 +25,13 @@ public class MultiTouchGesture {
     Instrumentation instrumentation;
     List<Gesture> pressedGestures;
     List<Gesture> gesturesToPerform;
+    boolean hasPressedFirstGesture;
 
     public MultiTouchGesture(Map<String, Object> multiTouchGesture) {
         this.multiTouchGestureMap = multiTouchGesture;
         instrumentation = InstrumentationBackend.instrumentation;
         gesturesToPerform = new ArrayList<Gesture>();
+        hasPressedFirstGesture = false;
     }
 
     public void parseGesture() {
@@ -116,7 +118,7 @@ public class MultiTouchGesture {
 
         // Sometimes the keyguard window or a service pops up very briefly.
         // We handle it by waiting a fixed time
-        tryWaitForKeyguard(10);
+        tryWaitForKeyguard(2);
 
         long time;
         long startTime = SystemClock.uptimeMillis();
@@ -125,8 +127,24 @@ public class MultiTouchGesture {
 
         while ((time = SystemClock.uptimeMillis() - startTime) <= endTime) {
             releaseGestures(time);
-            pressGestures(time);
-            moveGestures(time);
+
+            if (hasPressedFirstGesture) {
+                pressGestures(time);
+
+                // Instead of reassigning the time variable we only move gestures when we no longer offset the time
+                moveGestures(time);
+            } else {
+                // We catch the security exception thrown when the keyguard is visible briefly and retry if it's the first press
+                // Offset the startTime by the needed extra time if needed
+                long currentTime = SystemClock.uptimeMillis();
+                pressGestures(time);
+                long timeTaken =  SystemClock.uptimeMillis() - currentTime;
+
+                // Offset the start time (this changing the future values of time). This is done to keep relative timings consistent
+                if (hasPressedFirstGesture) { // We just pressed our first gesture
+                    startTime += timeTaken;
+                }
+            }
         }
 
         releaseGestures(endTime);
@@ -189,12 +207,37 @@ public class MultiTouchGesture {
         while (i < gesturesToPerform.size()) {
             Gesture gesture = gesturesToPerform.get(i);
 
-            if (gesture.shouldPress(currentTime)) {
-                sendPointerSync(gesture.generateDownEvent(pressedGestures));
-                pressedGestures.add(gesture);
-                gesturesToPerform.remove(i);
-            } else {
-                i++;
+            // Sometimes the keyguard window or a service pops up very briefly.
+            // We handle it by retrying - but only if no gestures are currently down to avoid mistiming gestures.
+            int retries = hasPressedFirstGesture ? 1 : 10;
+            SecurityException ex = null;
+
+            for (int j = 0; j < retries; j++) {
+                try {
+                    if (gesture.shouldPress(currentTime)) {
+                        sendPointerSync(gesture.generateDownEvent(pressedGestures));
+                        hasPressedFirstGesture = true;
+                        pressedGestures.add(gesture);
+                        gesturesToPerform.remove(i);
+                    } else {
+                        i++;
+                    }
+
+                    ex = null;
+                    break;
+                } catch (SecurityException e) {
+                    ex = e;
+
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException interruptedException) {
+                        throw new RuntimeException(interruptedException);
+                    }
+                }
+            }
+
+            if (ex != null) {
+                throw new SecurityException(ex);
             }
         }
     }
