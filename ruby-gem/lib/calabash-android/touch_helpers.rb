@@ -1,34 +1,114 @@
 module Calabash
   module Android
     module TouchHelpers
+      include ::Calabash::Android::Gestures
+
+      def execute_gesture(multi_touch_gesture)
+        result = JSON.parse(http("/gesture", JSON.parse(multi_touch_gesture.to_json), read_timeout: multi_touch_gesture.timeout+10))
+
+        if result['outcome'] != 'SUCCESS'
+          raise "Failed to perform gesture. #{result['reason']}"
+        end
+      end
+
       def tap(mark, *args)
         touch("* marked:'#{mark}'", *args)
       end
 
-      def double_tap(uiquery, options = {})
-        center_x, center_y = find_coordinate(uiquery, options)
+      def touch(query_string, options={})
+        if query_string.is_a?(String)
+          execute_gesture(Gesture.with_parameters(Gesture.tap(options), {query_string: query_string}.merge(options)))
+        else
+          center_x, center_y = find_coordinate(query_string, options)
 
-        perform_action("double_tap_coordinate", center_x, center_y)
+          perform_action("touch_coordinate", center_x, center_y)
+        end
       end
 
-      # Performs a "long press" operation on a selected view
-      # Params:
-      # +uiquery+: a uiquery identifying one view
-      # +options[:length]+: the length of the long press in milliseconds (optional)
-      #
-      # Examples:
-      #   - long_press("* id:'my_id'")
-      #   - long_press("* id:'my_id'", {:length=>5000})
-      def long_press(uiquery, options = {})
-        center_x, center_y = find_coordinate(uiquery, options)
-        length = options[:length]
-        perform_action("long_press_coordinate", center_x, center_y, *(length unless length.nil?))
+      def double_tap(query_string, options={})
+        if query_string.is_a?(String)
+          execute_gesture(Gesture.with_parameters(Gesture.double_tap(options), {query_string: query_string}.merge(options)))
+        else
+          center_x, center_y = find_coordinate(uiquery, options)
+
+          perform_action("double_tap_coordinate", center_x, center_y)
+        end
       end
 
-      def touch(uiquery, options = {})
-        center_x, center_y = find_coordinate(uiquery, options)
+      def long_press(query_string, options={})
+        if query_string.is_a?(String)
+          length = options[:length]
 
-        perform_action("touch_coordinate", center_x, center_y)
+          if length
+            puts "Using the length key is deprecated. Use 'time' (in seconds) instead."
+            options[:time] = length/1000.0
+          end
+
+          options[:time] ||= 1
+
+          touch(query_string, options)
+        else
+          center_x, center_y = find_coordinate(uiquery, options)
+          length = options[:length]
+
+          perform_action("long_press_coordinate", center_x, center_y, *(length unless length.nil?))
+        end
+      end
+
+      def drag(*args)
+        pan(*args)
+      end
+
+      def pan_left(options={})
+        pan("DecorView", :left, options)
+      end
+
+      def pan_right(options={})
+        pan("DecorView", :right, options)
+      end
+
+      def pan_up(options={})
+        pan("* id:'content'", :up, options)
+      end
+
+      def pan_down(options={})
+        pan("* id:'content'", :down, options)
+      end
+
+      def pan(query_string, direction, options={})
+        execute_gesture(Gesture.with_parameters(Gesture.swipe(direction, options), {query_string: query_string}.merge(options)))
+      end
+
+      def flick_left(options={})
+        flick("DecorView", :left, options)
+      end
+
+      def flick_right(options={})
+        flick("DecorView", :right, options)
+      end
+
+      def flick_up(options={})
+        flick("* id:'content'", :up, options)
+      end
+
+      def flick_down(options={})
+        flick("* id:'content'", :down, options)
+      end
+
+      def flick(query_string, direction, options={})
+        execute_gesture(Gesture.with_parameters(Gesture.swipe(direction, {flick: true}.merge(options)), {query_string: query_string}.merge(options)))
+      end
+
+      def pinch_out(options={})
+        pinch("* id:'content'", :out, options)
+      end
+
+      def pinch_in(options={})
+        pinch("* id:'content'", :in, options)
+      end
+
+      def pinch(query_string, direction, options={})
+        execute_gesture(Gesture.with_parameters(Gesture.pinch(direction, options), {query_string: query_string}.merge(options)))
       end
 
       def find_coordinate(uiquery, options={})

@@ -48,16 +48,18 @@ public class QueryHelper {
 			int x = (int)translateCoordToScreen(webviewLocation[0], scale, rectangle.get("left"));
 			int y = (int)translateCoordToScreen(webviewLocation[1], scale, rectangle.get("top"));
 
-			int width = (int)translateCoordToScreen(0, scale, rectangle.get("width"));
-			int height = (int)translateCoordToScreen(0, scale, rectangle.get("height"));
+            int width = (int)translateCoordToScreen(0, scale, rectangle.get("width"));
+            int height = (int)translateCoordToScreen(0, scale, rectangle.get("height"));
+
 			Map<String,Integer> result = new HashMap<String, Integer>(rectangle);
 
 			result.put("x", x);
 			result.put("y", y);
 			result.put("center_x", center_x);
 			result.put("center_y", center_y);
-			result.put("width", width);
-			result.put("height", height);
+            
+            result.put("width", width);
+            result.put("height", height);
 
 			return result;
 		} catch (Exception e) {
