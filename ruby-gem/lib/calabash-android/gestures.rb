@@ -61,6 +61,10 @@ module Calabash
         def offset=(offset)
           @gestures.each {|gesture| gesture.offset=offset}
         end
+
+        def max_execution_time
+          (@gestures.map {|gesture| gesture.max_execution_time}).max
+        end
       end
 
       class Gesture
@@ -123,6 +127,10 @@ module Calabash
 
         def offset=(offset)
           @touches.each {|touch| touch.offset=offset}
+        end
+
+        def max_execution_time
+          (@touches.map {|touch| touch.wait + touch.time}).reduce(:+)
         end
 
         def self.with_parameters(multi_touch_gesture, params={})

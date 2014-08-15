@@ -4,7 +4,7 @@ module Calabash
       include ::Calabash::Android::Gestures
 
       def execute_gesture(multi_touch_gesture)
-        result = JSON.parse(http("/gesture", JSON.parse(multi_touch_gesture.to_json)))
+        result = JSON.parse(http("/gesture", JSON.parse(multi_touch_gesture.to_json), read_timeout: multi_touch_gesture.timeout+10))
 
         if result['outcome'] != 'SUCCESS'
           raise "Failed to perform gesture. #{result['reason']}"
