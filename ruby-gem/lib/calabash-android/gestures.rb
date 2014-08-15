@@ -194,7 +194,7 @@ module Calabash
               raise "Cannot swipe in #{direction}"
           end
 
-          opt[:time] ||= 0.5
+          opt[:time] ||= 0.3
 
           generate_swipe(from, to, opt)
         end
