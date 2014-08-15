@@ -1,6 +1,9 @@
 package sh.calaba.instrumentationbackend.actions;
 
+import android.app.Activity;
 import android.app.Instrumentation;
+import android.app.KeyguardManager;
+import android.content.Context;
 import android.os.Build;
 import android.os.SystemClock;
 import android.util.Pair;
@@ -110,6 +113,11 @@ public class MultiTouchGesture {
 
     public void perform() {
         parseGesture();
+
+        // Sometimes the keyguard window or a service pops up very briefly.
+        // We handle it by waiting a fixed time
+        tryWaitForKeyguard(10);
+
         long time;
         long startTime = SystemClock.uptimeMillis();
         long endTime = findEndTime();
@@ -245,6 +253,32 @@ public class MultiTouchGesture {
         }
 
         return endTime;
+    }
+
+    public static void tryWaitForKeyguard(int timeoutSeconds) {
+        Activity activity = InstrumentationBackend.solo.getCurrentActivity();
+        KeyguardManager keyguardManager = (KeyguardManager) activity.getSystemService(Context.KEYGUARD_SERVICE);
+
+        if (!keyguardManager.inKeyguardRestrictedInputMode()) {
+            return;
+        }
+
+        long startTime = SystemClock.uptimeMillis();
+
+        while (SystemClock.uptimeMillis() - startTime <= timeoutSeconds * 1000) {
+            if (!keyguardManager.inKeyguardRestrictedInputMode()) {
+                break;
+            }
+        }
+
+        // For now, if the keyguard has shown up once, we sleep a bit more.
+        // TODO: Improve the implementation to detect focus of the activity to replace stopping when the keyguard is gone
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static MotionEvent obtainMotionEvent(List<Gesture> pressedGestures, int motionEventAction, long currentTime, Long absoluteDownTime) {
