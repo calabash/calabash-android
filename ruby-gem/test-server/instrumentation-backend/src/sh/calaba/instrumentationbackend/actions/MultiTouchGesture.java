@@ -166,6 +166,13 @@ public class MultiTouchGesture {
                 // All the queries have been evaluated
                 return evaluatedQueries;
             }
+
+            // Avoid affecting the UI Thread and device performance too much
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         } while (SystemClock.uptimeMillis() <= endTime);
 
         throw new RuntimeException("Could not find views '" + distinctQueryStrings.toString() + "'");
