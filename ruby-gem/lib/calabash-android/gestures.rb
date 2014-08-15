@@ -13,7 +13,7 @@ module Calabash
           end
 
           @gestures = gestures
-          @timeout = 30
+          @timeout = 5
         end
 
         def +(gesture_collection)
