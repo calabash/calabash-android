@@ -5,7 +5,7 @@ Calabash 0.5 introduced new features and removed a lot of actions that can be su
 
 ## Entering text
 
-Any text entry is now using the keyboard instead of setting the text directly. This might effect some tests as the keyboard pops up and you might need to dismiss it. This can be done using hide_soft_keyboard.
+Any text entry is now using the keyboard instead of setting the text directly. This might effect some tests as the keyboard pops up and you might need to dismiss it. This can be done using `hide_soft_keyboard`.
 
 In addition the new `keyboard_enter_text` and `enter_text` methods have full unicode support.
 
@@ -67,7 +67,7 @@ Scrolls the first instance of 'android.widget.ScrollView' either downwards or up
 ####scroll_to(query_string, options={})
 Scrolls the first parent with the class 'android.widget.ScrollView' of the query element found using `query(query_string)` until the element is visible on the screen. It will scroll either upwards or downwards depending on the location of the element.
 
-**Example** `scroll_to("TextView id:'my view")`
+**Example** `scroll_to("TextView id:'my view'")`
 
 As all options are passed on to the when_element_exists method, it is possible to decide what to do when the view is eventually found.
 
@@ -242,7 +242,7 @@ performAction('click_on_view_by_id', 'identifier')
 After:
 
 ```
-tap_when_element_exists("* marked:'identifier")
+tap_when_element_exists("* marked:'identifier'")
 ```
 
 
@@ -603,6 +603,80 @@ After:
   touch("android.widget.TabWidget descendant TextView {text LIKE[c] 'tab3'}")
 ```
 
+#### set_date_with_description
+Before:
+
+```
+performAction('set_date_with_description', '16-02-2012', 'identifier')
+```
+
+After:
+
+```
+set_date("android.widget.DatePicker marked:'identifier'", 2012, 2, 16)
+```
+or (not recommended):
+
+```
+set_date("android.widget.DatePicker marked:'identifier'", '16-02-2012')
+set_date("android.widget.DatePicker marked:'identifier'", '2012-02-16')
+```
+
+#### set_date_with_index
+Before:
+
+```
+performAction('set_date_with_index', '16-02-2012', 1)
+```
+
+After:
+
+```
+set_date("android.widget.DatePicker index:0", 2012, 2, 16)
+```
+or (not recommended):
+
+```
+set_date("android.widget.DatePicker index:0",, '16-02-2012')
+set_date("android.widget.DatePicker index:0",, '2012-02-16')
+```
+
+#### set_time_with_description
+Before:
+
+```
+performAction('set_time_with_description', '16:42', 'identifier')
+```
+
+After:
+
+```
+set_time("android.widget.TimePicker marked:'identifier'", 16, 42)
+```
+or (not recommended):
+
+```
+set_time("android.widget.TimePicker marked:'identifier'", '16:42')
+```
+
+#### set_time_with_index
+Before:
+
+```
+performAction('set_time_with_index', '16:42', 1)
+```
+
+After:
+
+```
+set_time("android.widget.TimePicker index:0", 16, 42)
+```
+or (not recommended):
+
+```
+set_time("android.widget.TimePicker index:0", '16:42')
+```
+
 
 #### set_text
 
@@ -617,6 +691,7 @@ After
 ```
 enter_text("WebView css:'input[type=\"text\"]'", "Hello World")
 ```
+
 
 
 #### toggle_numbered_checkbox
@@ -662,7 +737,7 @@ performAction('wait_for_button', 'identifier')
 After:
 
 ```
-wait_for_element_exist("android.widget.Button marked:'identifier'")
+wait_for_element_exists("android.widget.Button marked:'identifier'")
 ```
 
 
@@ -759,7 +834,7 @@ performAction('wait_for_view', 'identifier')
 After:
 
 ```
-wait_for_element_exist("* marked:'identifier'")
+wait_for_element_exists("* marked:'identifier'")
 ```
 
 

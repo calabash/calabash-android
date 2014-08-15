@@ -1,3 +1,4 @@
+require_relative 'helpers'
 
 class Env
   require 'win32/registry' if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
@@ -79,7 +80,28 @@ class Env
   end
 
   def self.zipalign_path
-    %Q("#{android_home_path}/tools/zipalign")
+    zipalign_path = File.join(android_home_path, 'tools', zipalign_executable)
+
+    unless File.exists?(zipalign_path)
+      log "Did not find zipalign at '#{zipalign_path}'. Trying to find zipalign in tools directories."
+
+      tools_directories.each do |dir|
+        zipalign_path = File.join(dir, zipalign_executable)
+        break if File.exists?(zipalign_path)
+      end
+    end
+
+    if File.exists?(zipalign_path)
+      log "Found zipalign at '#{zipalign_path}'"
+      zipalign_path
+    else
+      log("Did not find zipalign in any of '#{tools_directories.join("','")}'.", true)
+      raise 'Could not find zipalign'
+    end
+  end
+
+  def self.zipalign_executable
+    is_windows? ? 'zipalign.exe' : 'zipalign'
   end
 
   def self.jarsigner_executable
@@ -107,10 +129,16 @@ class Env
   end
 
   def self.tools_dir
+    tools_dir = tools_directories.first
+    log "Found tools directory at '#{tools_dir}'"
+    tools_dir
+  end
+
+  def self.tools_directories
     Dir.chdir(android_home_path) do
       dirs = Dir["build-tools/*"] + Dir["platform-tools"]
       raise "Could not find tools directory in #{android_home_path}" if dirs.empty?
-      File.expand_path(dirs.first)
+      dirs.map {|dir| File.expand_path(dir)}
     end
   end
 

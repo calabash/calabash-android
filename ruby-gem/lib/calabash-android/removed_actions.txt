@@ -50,3 +50,7 @@ wait_for_tab
 set_text
 scroll_down
 scroll_up
+set_date_with_description
+set_date_with_index
+set_time_with_description
+set_time_with_index

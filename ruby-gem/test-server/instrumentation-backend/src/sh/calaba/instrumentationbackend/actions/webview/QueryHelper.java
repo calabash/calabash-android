@@ -50,12 +50,14 @@ public class QueryHelper {
 
             int width = (int)translateCoordToScreen(0, scale, rectangle.get("width"));
             int height = (int)translateCoordToScreen(0, scale, rectangle.get("height"));
+
 			Map<String,Integer> result = new HashMap<String, Integer>(rectangle);
 
 			result.put("x", x);
 			result.put("y", y);
 			result.put("center_x", center_x);
 			result.put("center_y", center_y);
+            
             result.put("width", width);
             result.put("height", height);
 
