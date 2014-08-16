@@ -177,7 +177,15 @@ The following are all equivalent
     touch(query("button index:0"))
     touch(query("button").first)
     touch(query("button"))
+    
+# Entering text
+### `keyboard_enter_text(text, options={})`
 
+Enters **text** into the currently focused view.
+
+### `enter_text(uiquery, text, options={})`
+
+Taps the first element returned by **uiquery**, then enters **text** into the view.
 
 # Screenshot
 ### `screenshot(options={:prefix=>nil, :name=>nil})`
