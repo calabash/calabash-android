@@ -58,6 +58,10 @@ module Calabash
           @gestures.each {|gesture| gesture.query_string=query_string}
         end
 
+        def reset_query_string
+          @gestures.each {|gesture| gesture.reset_query_string}
+        end
+
         def offset=(offset)
           @gestures.each {|gesture| gesture.offset=offset}
         end
@@ -123,6 +127,10 @@ module Calabash
 
         def query_string=(query_string)
           @query_string = query_string
+        end
+
+        def reset_query_string
+          touches.each {|touch| touch.query_string=nil}
         end
 
         def offset=(offset)
@@ -228,7 +236,7 @@ module Calabash
       end
 
       class Touch
-        attr_accessor :x, :y, :offset_x, :offset_y, :wait, :time, :release
+        attr_accessor :x, :y, :offset_x, :offset_y, :wait, :time, :release, :query_string
 
         def initialize(touch)
           if touch.is_a?(Touch)
@@ -246,6 +254,7 @@ module Calabash
           @wait = touch[:wait] || 0
           @time = touch[:time] || 0
           @release = touch[:release].nil? ? false : touch[:release]
+          @query_string = touch[:query_string]
         end
 
         def merge(touch)
@@ -260,7 +269,8 @@ module Calabash
               offset_y: @offset_y || 0,
               wait: @wait.to_f,
               time: @time.to_f,
-              release: @release
+              release: @release,
+              query_string: @query_string
           }
         end
 
@@ -291,7 +301,6 @@ module Calabash
           @offset_y = offset[:y]
         end
       end
-
     end
   end
 end

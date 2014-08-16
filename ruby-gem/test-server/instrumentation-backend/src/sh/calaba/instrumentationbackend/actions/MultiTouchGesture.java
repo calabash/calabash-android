@@ -45,6 +45,18 @@ public class MultiTouchGesture {
             if (queryString != null) {
                 queryStrings.add(queryString);
             }
+
+            ArrayList<Map<String, Object>> sentTouches = (ArrayList<Map<String, Object>>) gestureMap.get("touches");
+
+            for (Map<String,Object> sentTouch : sentTouches) {
+                if (sentTouch.containsKey("query_string")) {
+                    queryString = (String) sentTouch.get("query_string");
+
+                    if (queryString != null) {
+                        queryStrings.add(queryString);
+                    }
+                }
+            }
         }
 
         long timeout = (long) ((Double) multiTouchGestureMap.get("query_timeout") * 1000);
@@ -53,14 +65,6 @@ public class MultiTouchGesture {
         for (Map<String, Object> gestureMap : sentGestures) {
             String queryString = (String) gestureMap.get("query_string");
             Map<String,Integer> rect = evaluatedQueries.get(queryString);
-            int resultX = 0, resultY = 0, resultWidth = 0, resultHeight = 0;
-
-            if (queryString != null) {
-                resultX = rect.get("x");
-                resultY = rect.get("y");
-                resultWidth = rect.get("width");
-                resultHeight = rect.get("height");
-            }
 
             ArrayList<Map<String, Object>> sentTouches = (ArrayList<Map<String, Object>>) gestureMap.get("touches");
 
@@ -69,11 +73,30 @@ public class MultiTouchGesture {
 
             for (int i = 0; i < length; i++) {
                 Map<String, Object> touch = sentTouches.get(i);
+                Map<String,Integer> specificRect = rect;
+
+                if (touch.containsKey("query_string")) {
+                    String specificQueryString = (String) touch.get("query_string");
+
+                    if (specificQueryString != null) {
+                        specificRect = evaluatedQueries.get(specificQueryString);
+                    }
+                }
+
+                int resultX = 0, resultY = 0, resultWidth = 0, resultHeight = 0;
+
+                if (specificRect != null) {
+                    resultX = specificRect.get("x");
+                    resultY = specificRect.get("y");
+                    resultWidth = specificRect.get("width");
+                    resultHeight = specificRect.get("height");
+                }
+
                 int offsetX = (Integer) touch.get("offset_x");
                 int offsetY = (Integer) touch.get("offset_y");
                 int x, y;
 
-                if (queryString == null) {
+                if (specificRect == null) {
                     x = offsetX;
                     y = offsetY;
                 } else {
