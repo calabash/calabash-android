@@ -7,13 +7,15 @@ module Calabash
         attr_reader :gestures
         attr_accessor :timeout
 
+        DEFAULT_TIMEOUT = 5
+
         def initialize(gestures = [])
           unless gestures.is_a?(Array)
             gestures = [gestures]
           end
 
           @gestures = gestures
-          @timeout = 5
+          @timeout = ENV['CALABASH_DEFAULT_TIMEOUT'].to_i || DEFAULT_TIMEOUT
         end
 
         def +(gesture_collection)
