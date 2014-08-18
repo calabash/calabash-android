@@ -80,7 +80,7 @@ module Calabash module Android
 
     def deprecated_actions
       @deprecated_actions ||= Hash[
-          *File.readlines(File.join(File.dirname(__FILE__), 'deprecated_actions.map')).map{|e| e.chomp.split(',')}.flatten
+          *File.readlines(File.join(File.dirname(__FILE__), 'deprecated_actions.map')).map{|e| e.chomp.split(',', 2)}.flatten
       ]
     end
 
@@ -1106,14 +1106,16 @@ module Calabash module Android
       ni
     end
 
-    def backdoor(sel, arg)
-      result = perform_action("backdoor", sel, arg)
-      if !result["success"]
-        screenshot_and_raise(result["message"])
+    def backdoor(method_name, arguments = [], options={})
+      arguments = [arguments] unless arguments.is_a?(Array)
+
+      result = JSON.parse(http('/backdoor', {method_name: method_name, arguments: arguments}))
+
+      if result['outcome'] != 'SUCCESS'
+        raise result.to_s
       end
 
-      # for android results are returned in bonusInformation
-      result["bonusInformation"].first
+      result['result']
     end
 
     def map(query, method_name, *method_args)

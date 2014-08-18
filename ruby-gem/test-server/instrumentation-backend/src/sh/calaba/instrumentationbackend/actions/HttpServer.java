@@ -24,10 +24,14 @@ import sh.calaba.instrumentationbackend.FranklyResult;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.json.JSONUtils;
+import sh.calaba.instrumentationbackend.query.InvocationOperation;
+import sh.calaba.instrumentationbackend.query.Operation;
 import sh.calaba.instrumentationbackend.query.Query;
 import sh.calaba.instrumentationbackend.query.QueryResult;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 
+import android.app.Application;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
@@ -124,7 +128,48 @@ public class HttpServer extends NanoHTTPD {
                 errorResult = FranklyResult.fromThrowable(e);
             }
             return new NanoHTTPD.Response(HTTP_INTERNALERROR, "application/json;charset=utf-8", errorResult.asJson());
-		} 
+		}
+        else if (uri.endsWith("/backdoor")) {
+            try {
+                String json = params.getProperty("json");
+                ObjectMapper mapper = new ObjectMapper();
+                Map backdoorMethod = mapper.readValue(json, Map.class);
+
+                String methodName = (String) backdoorMethod.get("method_name");
+                List arguments = (List) backdoorMethod.get("arguments");
+                Operation operation = new InvocationOperation(methodName, arguments);
+
+                Application application = InstrumentationBackend.solo.getCurrentActivity().getApplication();
+                Object invocationResult;
+
+                invocationResult = operation.apply(application);
+
+                if (invocationResult instanceof Map && ((Map) invocationResult).containsKey("error")) {
+                    Context context = getRootView().getContext();
+                    invocationResult = operation.apply(context);
+                }
+
+                Map<String, String> result = new HashMap<String, String>();
+
+                if (invocationResult instanceof Map && ((Map) invocationResult).containsKey("error")) {
+                    result.put("outcome", "ERROR");
+                    result.put("result", (String) ((Map) invocationResult).get("error"));
+                    result.put("details", invocationResult.toString());
+                } else {
+                    result.put("outcome", "SUCCESS");
+                    result.put("result", String.valueOf(invocationResult));
+                }
+
+                ObjectMapper resultMapper = new ObjectMapper();
+
+                return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", resultMapper.writeValueAsString(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+                Exception ex = new Exception("Could not invoke method", e);
+
+                return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", FranklyResult.fromThrowable(ex).asJson());
+            }
+        }
 		else if (uri.endsWith("/map")) {
 			FranklyResult errorResult = null;
 			try {
