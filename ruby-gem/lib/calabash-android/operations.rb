@@ -913,12 +913,36 @@ module Calabash module Android
       ni
     end
 
-    def scroll_up
-      scroll("android.widget.ScrollView index:0", :up)
+    def find_scrollable_view(options={})
+      timeout = options[:timeout] || 30
+
+      begin
+        Timeout.timeout(timeout, WaitError) do
+          scroll_view_query_string = "android.widget.ScrollView index:0"
+          list_view_query_string = "android.widget.AbsListView index:0"
+          web_view_query_string = "android.webkit.WebView index:0"
+
+          loop do
+            if element_exists(scroll_view_query_string)
+              return scroll_view_query_string
+            elsif element_exists(list_view_query_string)
+              return list_view_query_string
+            elsif element_exists(web_view_query_string)
+              return web_view_query_string
+            end
+          end
+        end
+      rescue WaitError
+        raise WaitError.new('Could not find any scrollable views')
+      end
     end
 
-    def scroll_down
-      scroll("android.widget.ScrollView index:0", :down)
+    def scroll_up(options={})
+      scroll(find_scrollable_view(options), :up)
+    end
+
+    def scroll_down(options={})
+      scroll(find_scrollable_view(options), :down)
     end
 
     def scroll(query_string, direction)
