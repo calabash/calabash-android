@@ -12,6 +12,12 @@ module Calabash
       end
 
       def tap(mark, *args)
+        puts "Warning: The method tap is deprecated. Use tap_mark instead. In later Calabash versions we will change the semantics of `tap` to take a general query."
+
+        tap_mark(mark, *args)
+      end
+
+      def tap_mark(mark, *args)
         touch("* marked:'#{mark}'", *args)
       end
 
