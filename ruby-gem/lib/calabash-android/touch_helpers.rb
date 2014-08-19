@@ -22,27 +22,32 @@ module Calabash
       end
 
       def touch(query_string, options={})
-        if query_string.is_a?(String)
-          execute_gesture(Gesture.with_parameters(Gesture.tap(options), {query_string: query_string}.merge(options)))
-        else
+        if query_result?(query_string)
           center_x, center_y = find_coordinate(query_string, options)
 
           perform_action("touch_coordinate", center_x, center_y)
+        else
+          execute_gesture(Gesture.with_parameters(Gesture.tap(options), {query_string: query_string}.merge(options)))
         end
       end
 
       def double_tap(query_string, options={})
-        if query_string.is_a?(String)
-          execute_gesture(Gesture.with_parameters(Gesture.double_tap(options), {query_string: query_string}.merge(options)))
-        else
-          center_x, center_y = find_coordinate(uiquery, options)
+        if query_result?(query_string)
+          center_x, center_y = find_coordinate(query_string, options)
 
           perform_action("double_tap_coordinate", center_x, center_y)
+        else
+          execute_gesture(Gesture.with_parameters(Gesture.double_tap(options), {query_string: query_string}.merge(options)))
         end
       end
 
       def long_press(query_string, options={})
-        if query_string.is_a?(String)
+        if query_result?(query_string)
+          center_x, center_y = find_coordinate(query_string, options)
+          length = options[:length]
+
+          perform_action("long_press_coordinate", center_x, center_y, *(length unless length.nil?))
+        else
           length = options[:length]
 
           if length
@@ -53,11 +58,6 @@ module Calabash
           options[:time] ||= 1
 
           touch(query_string, options)
-        else
-          center_x, center_y = find_coordinate(uiquery, options)
-          length = options[:length]
-
-          perform_action("long_press_coordinate", center_x, center_y, *(length unless length.nil?))
         end
       end
 
@@ -153,6 +153,16 @@ module Calabash
         else
           when_element_exists(query_string, options)
         end
+      end
+
+      def query_result?(uiquery)
+        element = if uiquery.is_a?(Array)
+          uiquery.first
+        else
+          uiquery
+        end
+
+        element.is_a?(Hash) && element.has_key?('rect') && element['rect'].has_key?('center_x') && element['rect'].has_key?('center_y')
       end
     end
   end
