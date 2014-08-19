@@ -301,13 +301,13 @@ Use queries instead.
 Before:
 
 ```
-performAction('get_selected_spinner_item_text', 'my_id')
+performAction('get_selected_spinner_item_text', 'identifier')
 ```
 
 After:
 
 ```
-query("android.widget.Spinner id:'my_id'", :getSelectedItem).first
+query("android.widget.Spinner marked:'identifier'", :getSelectedItem).first
 ```
 
 
@@ -577,14 +577,14 @@ Note: `select_options_menu_item` can take either an id, content description or t
 Before:
 
 ```
-performAction("select_item_from_named_spinner", 'my_spinner_id', 'Option 1')
+performAction("select_item_from_named_spinner", 'identifier', 'Option 1')
 ```
 
 After:
 
 ```
-query("android.widget.Spinner id:'my_spinner_id'", :getSelectedItem).first
-touch_when_element_exists("* text:'Option 1'")
+touch("android.widget.Spinner marked:'identifier'")
+tap_when_element_exists("* text:'Option 1'")
 ```
 
 
