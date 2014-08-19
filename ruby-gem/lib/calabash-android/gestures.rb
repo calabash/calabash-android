@@ -15,7 +15,7 @@ module Calabash
           end
 
           @gestures = gestures
-          @timeout = ENV['CALABASH_DEFAULT_TIMEOUT'].to_i || DEFAULT_TIMEOUT
+          @timeout = (ENV['CALABASH_DEFAULT_TIMEOUT'] && ENV['CALABASH_DEFAULT_TIMEOUT'].to_i) || DEFAULT_TIMEOUT
         end
 
         def +(gesture_collection)
