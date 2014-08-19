@@ -1,7 +1,7 @@
 class JavaKeystore
   attr_reader :errors, :location, :keystore_alias, :password, :fingerprint
   def initialize(location, keystore_alias, password)
-    raise "No such file #{location}" unless File.exists?(File.expand_path(location))
+    raise "No such keystore file '#{location}'" unless File.exists?(File.expand_path(location))
 
     keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"')
     if keystore_data.nil?
@@ -79,6 +79,7 @@ class JavaKeystore
       fail_if_key_missing(keystore, "keystore_password")
       fail_if_key_missing(keystore, "keystore_alias")
       keystore["keystore_location"] = File.expand_path(keystore["keystore_location"])
+      log("Keystore location specified in #{File.exist?(".calabash_settings") ? ".calabash_settings" : "calabash_settings"}.")
       JavaKeystore.new(keystore["keystore_location"], keystore["keystore_alias"], keystore["keystore_password"])
   end
 
