@@ -901,6 +901,47 @@ module Calabash module Android
       touch(combined_query_string)
     end
 
+    def select_item_from_spinner(item_query_string, options={})
+      spinner_query_string = options[:spinner] || "android.widget.AbsSpinner"
+      direction = options[:direction] || :down
+      count = query(spinner_query_string, :getCount).first
+      scroll_view_query_string = options[:scroll_view] || "android.widget.AbsListView index:0"
+
+      unless direction == :up || direction == :down
+        raise "Invalid direction '#{direction}'. Only upwards and downwards scrolling is supported"
+      end
+
+      touch(spinner_query_string)
+
+      change_direction = false
+
+      wait_for({retry_frequency: 0}.merge(options)) do
+        if query(item_query_string).empty?
+          scroll(scroll_view_query_string, direction)
+
+          if change_direction
+            direction = direction == :up ? :down : :up
+            change_direction = false
+          else
+            # Because getLastVisiblePosition returns the last element even though it is not visible,
+            # we have to scroll one more time to make sure we do not change direction before the last
+            # element is fully visible
+            if direction == :down
+              change_direction = true if query(scroll_view_query_string, :getLastVisiblePosition).first+1 == count
+            elsif direction == :up
+              change_direction = true if query(scroll_view_query_string, :getFirstVisiblePosition).first == 0
+            end
+          end
+
+          false
+        else
+          true
+        end
+      end
+
+      touch(item_query_string)
+    end
+
     def swipe(query_string, options={})
       raise 'Swipe not implemented. Use flick or pan instead.'
     end
