@@ -922,18 +922,14 @@ module Calabash module Android
           if change_direction
             direction = direction == :up ? :down : :up
             change_direction = false
-          end
-
-          # Because getLastVisiblePosition returns the last element even though it is not visible,
-          # we have to scroll one more time to make sure we do not change direction before the last
-          # element is fully visible
-          if direction == :down
-            if query(scroll_view_query_string, :getLastVisiblePosition).first+1 == count
-              change_direction = true
-            end
-          elsif direction == :up
-            if query(scroll_view_query_string, :getFirstVisiblePosition).first == 0
-              change_direction = true
+          else
+            # Because getLastVisiblePosition returns the last element even though it is not visible,
+            # we have to scroll one more time to make sure we do not change direction before the last
+            # element is fully visible
+            if direction == :down
+              change_direction = true if query(scroll_view_query_string, :getLastVisiblePosition).first+1 == count
+            elsif direction == :up
+              change_direction = true if query(scroll_view_query_string, :getFirstVisiblePosition).first == 0
             end
           end
 
