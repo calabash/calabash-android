@@ -907,6 +907,10 @@ module Calabash module Android
       count = query(spinner_query_string, :getCount).first
       scroll_view_query_string = options[:scroll_view] || "android.widget.AbsListView index:0"
 
+      unless direction == :up || direction == :down
+        raise 'Only upwards and downwards scrolling is supported'
+      end
+
       touch(spinner_query_string)
 
       change_direction = false
