@@ -583,8 +583,7 @@ performAction("select_item_from_named_spinner", 'identifier', 'Option 1')
 After:
 
 ```
-touch("android.widget.Spinner marked:'identifier'")
-tap_when_element_exists("* text:'Option 1'")
+select_item_from_spinner("* text:'Option 1'")
 ```
 
 
