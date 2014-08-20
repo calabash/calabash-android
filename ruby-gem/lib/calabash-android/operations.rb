@@ -917,7 +917,7 @@ module Calabash module Android
 
       wait_for({retry_frequency: 0}.merge(options)) do
         if query(item_query_string).empty?
-          scroll("android.widget.AbsListView index:0", direction)
+          scroll(scroll_view_query_string, direction)
 
           if change_direction
             direction = direction == :up ? :down : :up
