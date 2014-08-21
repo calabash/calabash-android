@@ -65,9 +65,14 @@ Scrolls halfway across the view found by **query_string**.
 Scrolls the first instance of 'android.widget.ScrollView' either downwards or upwards.
 
 ####scroll_to(query_string, options={})
-Scrolls the first parent with the class 'android.widget.ScrollView' of the query element found using `query(query_string)` until the element is visible on the screen. It will scroll either upwards or downwards depending on the location of the element.
+Scrolls the first parent with the class 'android.widget.ScrollView' or 'android.webkit.WebView' of the query element found using `query(query_string)` so the element is visible on the screen. It will scroll either upwards or downwards depending on the location of the element. If given a container, it will scroll the container instead of trying to find a parent.
 
 **Example** `scroll_to("TextView id:'my view'")`
+
+**Example** `scroll_to("TextView id:'my view'", container: "* id:'scoller'")`
+
+**Example** `scroll_to("WebView css:'#id'")`
+
 
 As all options are passed on to the when_element_exists method, it is possible to decide what to do when the view is eventually found.
 
