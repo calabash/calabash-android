@@ -123,6 +123,11 @@ end
 
 def sign_apk(app_path, dest_path)
   java_keystore = JavaKeystore.get_keystores.first
+
+  if java_keystore.nil?
+    raise 'No keystores found. You can specify the keystore location and credentials using calabash-android setup'
+  end
+
   java_keystore.sign_apk(app_path, dest_path)
 end
 
