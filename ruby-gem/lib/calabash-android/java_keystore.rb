@@ -1,8 +1,13 @@
 class JavaKeystore
   attr_reader :errors, :location, :keystore_alias, :password, :fingerprint
+
+  DEFAULT_ALIAS = 'mykey'
+
   def initialize(location, keystore_alias, password)
     raise "No such keystore file '#{location}'" unless File.exists?(File.expand_path(location))
     log "Reading keystore data from keystore file '#{File.expand_path(location)}'"
+
+    keystore_alias = DEFAULT_ALIAS if keystore_alias.empty?
 
     keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"')
     if keystore_data.nil?
