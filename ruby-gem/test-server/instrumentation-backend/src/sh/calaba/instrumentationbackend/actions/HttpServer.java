@@ -30,8 +30,10 @@ import sh.calaba.instrumentationbackend.query.Query;
 import sh.calaba.instrumentationbackend.query.QueryResult;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
@@ -129,6 +131,31 @@ public class HttpServer extends NanoHTTPD {
             }
             return new NanoHTTPD.Response(HTTP_INTERNALERROR, "application/json;charset=utf-8", errorResult.asJson());
 		}
+        else if (uri.endsWith("/broadcast-intent")) {
+            try {
+                String json = params.getProperty("json");
+                ObjectMapper mapper = new ObjectMapper();
+                Map data = mapper.readValue(json, Map.class);
+
+                Intent intent = new Intent();
+
+                if (data.containsKey("action")) {
+                    intent.setAction((String) data.get("action"));
+                }
+
+                Activity activity = InstrumentationBackend.solo.getCurrentActivity();
+
+                Log.d(TAG, "Broadcasting intent " + intent);
+                activity.sendBroadcast(intent);
+
+                return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", "");
+            } catch (Exception e) {
+                e.printStackTrace();
+                Exception ex = new Exception("Could not invoke method", e);
+
+                return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", FranklyResult.fromThrowable(ex).asJson());
+            }
+        }
         else if (uri.endsWith("/backdoor")) {
             try {
                 String json = params.getProperty("json");
