@@ -253,24 +253,26 @@ public class HttpServer extends NanoHTTPD {
                 }
                 else if (methodName.equals("execute-javascript")) {
                     String javascript = (String) command.get("javascript");
-                    QueryResult queryResult = new Query(uiQuery).executeQuery();
-                    List results = queryResult.getResult();
+                    List queryResult = new Query(uiQuery).executeQuery().getResult();
                     List<CalabashChromeClient.WebFuture> webFutures = new ArrayList<CalabashChromeClient.WebFuture>();
 
                     List<String> webFutureResults = new ArrayList<String>(webFutures.size());
                     boolean success = true;
 
-                    for (Object object : results) {
-                        String result = ExecuteJavascript.evaluateJavascript((WebView) object, javascript);
+                    for (Object object : queryResult) {
+                        String result;
+                        if(object instanceof WebView) {
+                            result = ExecuteJavascript.evaluateJavascript((WebView) object, javascript);
 
-                        if (result.startsWith("Exception:")) {
+                            if (result.startsWith("Exception:")) {
+                                success = false;
+                            }
+                        } else {
+                            result = "Error: will only call javascript on WebView, not " + object.getClass().getSimpleName();
                             success = false;
                         }
-
                         webFutureResults.add(result);
                     }
-
-                    System.out.println("Webfutureresults: " + webFutureResults.toString());
 
                     QueryResult jsQueryResults = new QueryResult(webFutureResults);
                     FranklyResult result = new FranklyResult(success, jsQueryResults, "", "");
@@ -278,7 +280,7 @@ public class HttpServer extends NanoHTTPD {
                     return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
                             result.asJson());
                 }
-                else {
+               else {
                     QueryResult queryResult = new Query(uiQuery,arguments).executeQuery();
 
                     return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
