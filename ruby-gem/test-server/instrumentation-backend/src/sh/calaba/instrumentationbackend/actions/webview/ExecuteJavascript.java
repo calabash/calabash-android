@@ -1,13 +1,17 @@
 package sh.calaba.instrumentationbackend.actions.webview;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient.WebFuture;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
+
+import android.os.Build;
 import android.webkit.WebView;
 
 public class ExecuteJavascript implements Action {
@@ -66,6 +70,42 @@ public class ExecuteJavascript implements Action {
 			return new Result(success, allResults);
 		}
 	}
+
+    public static String evaluateJavascript(final WebView webView, final String javascript) {
+        Map result = (HashMap)UIQueryUtils.evaluateSyncInMainThread(new Callable<WebFuture>() {
+
+            public WebFuture call() throws Exception {
+                CalabashChromeClient ccc = CalabashChromeClient.prepareWebView(webView);
+
+                final String script = "javascript:(function() {"
+                        + " var r;"
+                        + " try {"
+                        + "  r = (function() {"
+                        + javascript + ";"
+                        + "  }());"
+                        + " } catch (e) {"
+                        + "  r = 'Exception: ' + e;"
+                        + " }"
+                        + " prompt('calabash:'+r);"
+                        + "}())";
+
+                System.out.println("execute javascript: " + script);
+
+                if (Build.VERSION.SDK_INT < 19) { // Android 4.4
+                    JavaScriptExecuter javaScriptExecuter = new JavaScriptExecuter(webView);
+                    javaScriptExecuter.executeJavaScript(script);
+                } else {
+                    webView.evaluateJavascript(script, null);
+                }
+
+                Object o = ccc.getResult();
+
+                return (WebFuture)o;
+            }
+        });
+
+        return (String) result.get("result");
+    }
 
 	@Override
 	public String key() {
