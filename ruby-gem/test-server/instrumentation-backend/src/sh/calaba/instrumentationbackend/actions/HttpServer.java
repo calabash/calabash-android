@@ -87,9 +87,6 @@ public class HttpServer extends NanoHTTPD {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Response serve(String uri, String method, Properties header,
 			Properties params, Properties files) {
-		System.out.println("URI: " + uri);
-		System.out.println("params: " + params);
-		
 		if (uri.endsWith("/ping")) {
 			return new NanoHTTPD.Response(HTTP_OK, MIME_HTML, "pong");
 
@@ -260,21 +257,9 @@ public class HttpServer extends NanoHTTPD {
                     List results = queryResult.getResult();
                     List<CalabashChromeClient.WebFuture> webFutures = new ArrayList<CalabashChromeClient.WebFuture>();
 
-                    System.out.println("About to go in");
-
-                    /*for (Object object : results) {
-                        System.out.println("Found: " + object.getClass());
-                        if (object instanceof android.webkit.WebView) {
-                            System.out.println("added it");
-                            webFutures.add(ExecuteJavascript.evaluateJavascript((WebView) object, javascript));
-                        }
-                    }*/
-
-                    System.out.println("Webfutures: " + webFutures.toString());
                     List<String> webFutureResults = new ArrayList<String>(webFutures.size());
                     boolean success = true;
 
-//                    for (CalabashChromeClient.WebFuture webFuture : webFutures) {
                     for (Object object : results) {
                         String result = ExecuteJavascript.evaluateJavascript((WebView) object, javascript);
 
