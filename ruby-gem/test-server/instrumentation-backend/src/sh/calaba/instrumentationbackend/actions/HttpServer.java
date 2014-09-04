@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.lang.InterruptedException;
 import java.lang.Override;
 import java.lang.Runnable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -23,6 +24,9 @@ import sh.calaba.instrumentationbackend.Command;
 import sh.calaba.instrumentationbackend.FranklyResult;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
+import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient;
+import sh.calaba.instrumentationbackend.actions.webview.ExecuteAsyncJavascript;
+import sh.calaba.instrumentationbackend.actions.webview.ExecuteJavascript;
 import sh.calaba.instrumentationbackend.json.JSONUtils;
 import sh.calaba.instrumentationbackend.query.InvocationOperation;
 import sh.calaba.instrumentationbackend.query.Operation;
@@ -39,6 +43,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AlphaAnimation;
+import android.webkit.WebView;
 
 public class HttpServer extends NanoHTTPD {
 	private static final String TAG = "InstrumentationBackend";
@@ -248,7 +253,47 @@ public class HttpServer extends NanoHTTPD {
 
                     return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
                             FranklyResult.successResult(queryResult).asJson());
-                } else {
+                }
+                else if (methodName.equals("execute-javascript")) {
+                    String javascript = (String) command.get("javascript");
+                    QueryResult queryResult = new Query(uiQuery).executeQuery();
+                    List results = queryResult.getResult();
+                    List<CalabashChromeClient.WebFuture> webFutures = new ArrayList<CalabashChromeClient.WebFuture>();
+
+                    System.out.println("About to go in");
+
+                    /*for (Object object : results) {
+                        System.out.println("Found: " + object.getClass());
+                        if (object instanceof android.webkit.WebView) {
+                            System.out.println("added it");
+                            webFutures.add(ExecuteJavascript.evaluateJavascript((WebView) object, javascript));
+                        }
+                    }*/
+
+                    System.out.println("Webfutures: " + webFutures.toString());
+                    List<String> webFutureResults = new ArrayList<String>(webFutures.size());
+                    boolean success = true;
+
+//                    for (CalabashChromeClient.WebFuture webFuture : webFutures) {
+                    for (Object object : results) {
+                        String result = ExecuteJavascript.evaluateJavascript((WebView) object, javascript);
+
+                        if (result.startsWith("Exception:")) {
+                            success = false;
+                        }
+
+                        webFutureResults.add(result);
+                    }
+
+                    System.out.println("Webfutureresults: " + webFutureResults.toString());
+
+                    QueryResult jsQueryResults = new QueryResult(webFutureResults);
+                    FranklyResult result = new FranklyResult(success, jsQueryResults, "", "");
+
+                    return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
+                            result.asJson());
+                }
+                else {
                     QueryResult queryResult = new Query(uiQuery,arguments).executeQuery();
 
                     return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
