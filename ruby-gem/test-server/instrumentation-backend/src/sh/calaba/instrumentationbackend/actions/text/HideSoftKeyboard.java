@@ -20,7 +20,7 @@ public class HideSoftKeyboard implements Action {
         Activity activity = InstrumentationBackend.solo.getCurrentActivity();
         View view;
 
-        view = tryGetServedView();
+        view = InfoMethodUtil.getServedView();
 
         if (view == null) {
             view = activity.getCurrentFocus();
@@ -33,20 +33,6 @@ public class HideSoftKeyboard implements Action {
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
         return Result.successResult();
-    }
-
-    View tryGetServedView() {
-        Context context = InstrumentationBackend.instrumentation.getTargetContext();
-
-        try {
-            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            Field servedViewField = InputMethodManager.class.getDeclaredField("mServedView");
-            servedViewField.setAccessible(true);
-
-            return (View)servedViewField.get(inputMethodManager);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     @Override

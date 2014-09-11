@@ -20,7 +20,7 @@ public class KeyboardEnterText implements Action {
             return Result.failedResult("This action takes one argument ([String] text).");
         }
 
-        final InputConnection inputConnection = getInputConnection();
+        final InputConnection inputConnection = InfoMethodUtil.getInputConnection();
 
         if (inputConnection == null) {
             return Result.failedResult("Could not enter text. No element has focus.");
@@ -42,18 +42,5 @@ public class KeyboardEnterText implements Action {
     @Override
     public String key() {
         return "keyboard_enter_text";
-    }
-
-    InputConnection getInputConnection() {
-        Context context = InstrumentationBackend.instrumentation.getTargetContext();
-
-        try {
-            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            Field servedInputConnectionField = InputMethodManager.class.getDeclaredField("mServedInputConnection");
-            servedInputConnectionField.setAccessible(true);
-            return (InputConnection)servedInputConnectionField.get(inputMethodManager);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
