@@ -10,7 +10,6 @@ instrumentation_backend/assets/foo.bar
 ruby-gem/pkg
 ruby-gem/lib/calabash-android/lib/TestServer.apk
 ruby-gem/test-server/out
-.rbenv-version
 calabash-android-*.gem
 .idea
 *.iml
