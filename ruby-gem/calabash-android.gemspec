@@ -23,4 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency( "awesome_print" )
   s.add_dependency( 'httpclient', '~> 2.3.2')
   s.add_dependency( 'escape', '~> 0.0.4')
+
+  s.add_development_dependency( 'yard', '~> 0.8' )
+  s.add_development_dependency( 'redcarpet', '~> 3.1' )
 end
