@@ -20,7 +20,7 @@ public class KeyboardEnterText implements Action {
             return Result.failedResult("This action takes one argument ([String] text).");
         }
 
-        final InputConnection inputConnection = InfoMethodUtil.getInputConnection();
+        final InputConnection inputConnection = InfoMethodUtil.tryGetInputConnection();
 
         if (inputConnection == null) {
             return Result.failedResult("Could not enter text. No element has focus.");

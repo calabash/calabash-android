@@ -40,13 +40,12 @@ public class PressUserActionButton implements Action {
         }
 
         final View view = InfoMethodUtil.getServedView();
-        final InputConnection inputConnection = InfoMethodUtil.getInputConnection();
+        final InputConnection inputConnection = InfoMethodUtil.tryGetInputConnection();
         final int imeActionCode;
 
         if (inputConnection == null) {
             return Result.failedResult("Could not press user action button. No element has focus.");
         }
-
 
         if (args.length >= 1) {
             try {

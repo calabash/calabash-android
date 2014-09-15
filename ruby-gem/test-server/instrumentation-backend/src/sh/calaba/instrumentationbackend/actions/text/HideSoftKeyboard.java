@@ -20,7 +20,7 @@ public class HideSoftKeyboard implements Action {
         Activity activity = InstrumentationBackend.solo.getCurrentActivity();
         View view;
 
-        view = InfoMethodUtil.getServedView();
+        view = InfoMethodUtil.tryGetServedView();
 
         if (view == null) {
             view = activity.getCurrentFocus();

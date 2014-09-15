@@ -23,6 +23,14 @@ public class InfoMethodUtil {
         }
     }
 
+    static View tryGetServedView() {
+        try {
+            return getServedView();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     static InputConnection getInputConnection() {
         Context context = InstrumentationBackend.instrumentation.getTargetContext();
 
@@ -31,12 +39,17 @@ public class InfoMethodUtil {
             Field servedInputConnectionField = InputMethodManager.class.getDeclaredField("mServedInputConnection");
             servedInputConnectionField.setAccessible(true);
 
-            return (InputConnection)servedInputConnectionField.get(inputMethodManager);
+            return (InputConnection) servedInputConnectionField.get(inputMethodManager);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-
-
+    static InputConnection tryGetInputConnection() {
+        try {
+            return getInputConnection();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
