@@ -22,15 +22,15 @@ public class PressUserActionButton implements Action {
 
     static {
         actionCodeMap = new HashMap<String, Integer>();
-        actionCodeMap.put("normal", 0);
-        actionCodeMap.put("unspecified", 0);
-        actionCodeMap.put("none", 1);
-        actionCodeMap.put("go", 2);
-        actionCodeMap.put("search", 3);
-        actionCodeMap.put("send", 4);
-        actionCodeMap.put("next", 5);
-        actionCodeMap.put("done", 6);
-        actionCodeMap.put("previous", 7);
+        actionCodeMap.put("normal", EditorInfo.IME_ACTION_UNSPECIFIED);
+        actionCodeMap.put("unspecified", EditorInfo.IME_ACTION_UNSPECIFIED);
+        actionCodeMap.put("none", EditorInfo.IME_ACTION_NONE);
+        actionCodeMap.put("go", EditorInfo.IME_ACTION_GO);
+        actionCodeMap.put("search", EditorInfo.IME_ACTION_SEARCH);
+        actionCodeMap.put("send", EditorInfo.IME_ACTION_SEND);
+        actionCodeMap.put("next", EditorInfo.IME_ACTION_NEXT);
+        actionCodeMap.put("done", EditorInfo.IME_ACTION_DONE);
+        actionCodeMap.put("previous", EditorInfo.IME_ACTION_PREVIOUS);
     }
 
     @Override
@@ -39,8 +39,8 @@ public class PressUserActionButton implements Action {
             return Result.failedResult("This action takes zero arguments or one argument ([String] action name)");
         }
 
-        final View view = getServedView();
-        final InputConnection inputConnection = getInputConnection();
+        final View view = InfoMethodUtil.getServedView();
+        final InputConnection inputConnection = InfoMethodUtil.tryGetInputConnection();
         final int imeActionCode;
 
         if (inputConnection == null) {
@@ -72,33 +72,7 @@ public class PressUserActionButton implements Action {
         return "press_user_action_button";
     }
 
-    InputConnection getInputConnection() {
-        Context context = InstrumentationBackend.instrumentation.getTargetContext();
 
-        try {
-            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            Field servedInputConnectionField = InputMethodManager.class.getDeclaredField("mServedInputConnection");
-            servedInputConnectionField.setAccessible(true);
-
-            return (InputConnection)servedInputConnectionField.get(inputMethodManager);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    View getServedView() {
-        Context context = InstrumentationBackend.instrumentation.getTargetContext();
-
-        try {
-            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            Field servedViewField = InputMethodManager.class.getDeclaredField("mServedView");
-            servedViewField.setAccessible(true);
-
-            return (View)servedViewField.get(inputMethodManager);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private int findActionCode(View view) {
         EditorInfo editorInfo = new EditorInfo();
