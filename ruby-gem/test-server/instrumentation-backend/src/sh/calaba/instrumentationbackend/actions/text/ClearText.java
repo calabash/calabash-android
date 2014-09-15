@@ -48,8 +48,10 @@ public class ClearText implements Action {
         InputConnection inputConnection = InfoMethodUtil.getInputConnection();
         if (inputConnection instanceof BaseInputConnection) {
             return (BaseInputConnection) inputConnection;
+        } else {
+            System.out.println("InputConnection is not an instance of BaseInputConnection. ( " + inputConnection.getClass().toString() + ")");
+            return null;
         }
-        return null;
     }
 
     @Override
