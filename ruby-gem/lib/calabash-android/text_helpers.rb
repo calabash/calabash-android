@@ -25,12 +25,13 @@ module Calabash
         keyboard_enter_text(text, options)
       end
 
-      def clear_text(query_string, options={})
-        result = query(query_string, setText: '')
+      def clear_text(query_string=nil, options={})
+        unless query_string.nil?
+          touch(query_string, options)
+          sleep 0.5
+        end
 
-        raise "No elements found. Query: #{query_string}" if result.empty?
-
-        true
+        perform_action('clear_text')
       end
 
       def escape_quotes(str)
