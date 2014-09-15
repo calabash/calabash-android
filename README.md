@@ -73,7 +73,7 @@ Troubleshooting
 
 If it seems that buttons/text aren't being clicked properly, you need to add the following xml to your AndroidManifest.xml:
 
-```
+```xml
 <uses-sdk android:targetSdkVersion="SDK_VERSION" />
 ```
 
