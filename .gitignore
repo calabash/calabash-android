@@ -10,13 +10,16 @@ instrumentation_backend/assets/foo.bar
 ruby-gem/pkg
 ruby-gem/lib/calabash-android/lib/TestServer.apk
 ruby-gem/test-server/out
-.rbenv-version
 calabash-android-*.gem
 .idea
 *.iml
 
-# rbenv
+# For a library or gem, ignore these files since the code is intended to run in
+# multiple environments; otherwise, check them in.
+Gemfile.lock
 .ruby-version
+.ruby-gemset
+.bundle
 
 # emacs and vim
 (.*/)?\#[^/]*\#$
