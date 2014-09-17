@@ -174,7 +174,7 @@ Waits for a particular screen (Android Activity) to appear with a timeout.
 Waits for one second.
 
     Then /^I wait$/
-Waits for two seonds.
+Waits for two seconds.
   
     Then /^I wait for (\d+) seconds$/ do |seconds|
 Waits for a specified number of seconds.
