@@ -2,40 +2,6 @@
 
 Calabash Android references Unix environment variables to control its runtime behavior.
 
-The behavior of a variable might differ from across Xcode or iOS versions.  Please read the documentation  carefully.
-
-## Deprecated Variables
-
-New versions of Xcode and iOS often require new environment variables or require that existing environment variables become deprecated.  Please note your Xcode and iOS versions and read the following deprecated variables section carefully.
-
-### Deprecated Xcode 6.0
-
-* `CALABASH_FULL_CONSOLE_OUTPUT`
-* `DETECT_CONNECTED_DEVICE`
-
-### Deprecated Xcode 5.1
-
-* `SDK_VERSION`
-* Setting `DEVICE_TARGET` to `device` or `simulator` has been deprecated.
-
-**Note** The `NO_LAUNCH` variable is still supported in Xcode >= 5.1, but it is almost never correct to set this variable.  See the docs below.
-
-### Deprecated Xcode 4.6.3
-
-* `LAUNCH_VIA`
-
-### Deprecated iOS > 5
-
-* `OS`
-
-### Deprecated LessPainful (pre April 2013)
-
-* `NO_DOWNLOAD`
-* `NO_BUILD`
-* `NO_GEN`
-* `SUBMIT_URL`
-* `http_proxy`
-
 ## Conventions
 
 Variables that take boolean values should be passed as `0` or `1`, _not_ as `true` or `false`.
@@ -52,8 +18,8 @@ Paths or values with spaces need double or single quotes.
 #### Example: Quoting values with spaces.
 
 ```
-APP_BUNDLE_PATH="~/path with/a spaces/in it"   # Correct!
-APP_BUNDLE_PATH=~/path with/a spaces/in it     # Incorrect.
+APP_PATH="~/path with/a spaces/in it"   # Correct!
+APP_PATH=~/path with/a spaces/in it     # Incorrect.
 
 DEVICE_TARGET='iPhone Retina (3.5-inch) - Simulator - iOS 7.1'  # Correct!
 DEVICE_TARGET=iPhone Retina (3.5-inch) - Simulator - iOS 7.1    # Incorrect.
