@@ -35,9 +35,6 @@ EOF
 end
 
 def print_help
-  file = File.join(File.dirname(__FILE__), '..', 'doc', 'calabash-android-help.txt')
-  #system("less #{file}")
-  #TODO
   print_usage
 end
 
