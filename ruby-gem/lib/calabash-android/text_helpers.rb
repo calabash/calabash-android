@@ -25,7 +25,7 @@ module Calabash
         keyboard_enter_text(text, options)
       end
 
-      def clear_text(query_string=nil, options={})
+      def clear_text(query_string, options={})
         unless query_string.nil?
           touch(query_string, options)
           sleep 0.5
