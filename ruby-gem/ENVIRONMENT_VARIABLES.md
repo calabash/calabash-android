@@ -4,15 +4,6 @@ Calabash Android references Unix environment variables to control its runtime be
 
 ## Conventions
 
-Variables that take boolean values should be passed as `0` or `1`, _not_ as `true` or `false`.
-
-#### Example: Turn on verbose logging.
-
-```
-DEBUG=1      # Correct!
-DEBUG=true   # Incorrect.
-```
-
 Paths or values with spaces need double or single quotes.
 
 #### Example: Quoting values with spaces.
@@ -35,13 +26,22 @@ ADB_DEVICE_ARG=C4F12B41QB6E89E
 
 ### `APP_PATH`
 
-@Tobias here.
+The path to apk that is being tested.
+
+Use this variable if your apk is located in a non-default location or your environment requires special configuration (e.g. example a CI environment).
+
+### `MAIN_ACTIVITY`
+
+Calabash Android will automatically try to detect the main activity of
+the application.  Use this variable to specify an alternative main activity.
 
 #### Example
 
-### `CALABASH_IRBRC`
+```
+MAIN_ACTIVITY="com.example.myactivity" calabash-android run example.apk
+```
 
-@Tobias - Maybe docs here for IRBRC?  Update the load-order rules?
+### `CALABASH_IRBRC`
 
 Use this variable to load a custom .irbrc when opening calabash-ios console.  This is useful if you have multiple calabash projects and want to share an .irbrc across all of them.
 
@@ -61,70 +61,15 @@ Calling `calabash-ios console` sets the `IRBRC` environment variable.
 $ CALABASH_IRBRC="~/.irbrc-calabash" calabash-ios console
 ```
 
-### `CALABASH_NO_DEPRECATION`
-
-@Tobias Do you have something like this?
-
-Calabash deprecation warnings getting you down?  Use this variable to turn off deprecation warnings.
-
-It is not recommended that you turn off deprecation warnings. One morning you will wake up and find that everything is broken; it will make you grumpy.
-
-#### Example
-
-```
-CALABASH_NO_DEPRECATION=1 cucumber
-```
-
-#### Pro Tip: Read the deprecation warnings.
-
-Read the deprecation warnings for the replacement API.
-
-### `DEBUG`
-
-Set this variable to `1` to enable verbose logging.
-
-#### Example
-
-```
-DEBUG=1 cucumber
-```
-
-#### Pro Tip: Reduce console spam from third-party gems.
-
-If you are seeing a bunch of spam from tools like bundler you should unset this variable.
-
-```
-shell: unset DEBUG
- ruby: ENV.delete('DEBUG')
-```
-
 ### `RESET_BETWEEN_SCENARIOS`
 
-@Tobias - Update this to describe the behavior on Calabash Android
+Use this variable to reset your app's data between cucumber Scenarios.
 
-***The behavior of this variable differs depending on test platform.  Read this carefully.***
+#### Pro Tip:  Reset the app data before certain Scenarios.
 
-Use this variable to reset your app's sandbox between cucumber Scenarios.
-
-Outside of the Xamarin Test Cloud, it is not possible to reset an app's sandbox on physical devices.  The app must be deleted and re-installed.  Calabash cannot delete .ipas from or deploy .ipas to physical devices.
-
-When testing locally on physical devices, this variable is ignored.
-
-To recap:
-
-1. You can use this variable when targeting simulators.
-2. You can use this variable when testing on the Xamarin Test Cloud.
-3. This variable is ignored during local testing against physical devices.
-
-#### Pro Tip:  Reset the app sandbox before certain Scenarios.
-
-Use a `Before` hook + a `tag` to control when calabash will reset the app sandbox.
-
-See this Stack Overflow post: http://stackoverflow.com/questions/24493634/reset-ios-app-in-calabash-ios 
+Use a `Before` hook + a `tag` to control when calabash will reset the app data.
 
 ### `SCREENSHOT_PATH`
-
-@Tobias How about this?
 
 Use this variable to apply a 'prefix' to a screenshot when saving.  See the examples.
 
@@ -136,13 +81,13 @@ The behavior of this variable is subject to change.
 
 If the the *path* portion of SCREENSHOT_PATH does not exist, `screenshot` will raise an error.
 
-@see {Calabash::Cucumber::FailureHelpers#screenshot}
+@see {Calabash::Android::Operations#screenshot}
 
 #### Example: Specify a prefix
 
 ```
-SCREENSHOT_PATH=ipad_                   => ipad_screenshot_0.png
-SCREENSHOT_PATH="screenshots/iphone5s-" => screenshots/iphone5s-screenshot_0.png
+SCREENSHOT_PATH=galaxy_s5_                   => galaxy_s5_screenshot_0.png
+SCREENSHOT_PATH="screenshots/nexus5-" => screenshots/nexus5-screenshot_0.png
 ```
 
 #### Example: Specify a directory
@@ -156,52 +101,6 @@ SCREENSHOT_PATH=/path/to/a/directory  => path/to/a/directoryscreenshot_0.png
 
 ### `TEST_APP_PATH`
 
-@Tobias - here
+Calabash Android will detect the test-server apt based on the checksum of the application and the Calabash Android version.
 
-#### Example
-
-
-## Variables for Predefined Steps
-
-@Tobias - Update or remove this section.
-
-Using the predefined steps is not recommended; they are provided as a way of introducing BDD concepts, cucumber, gherkin, and calabash.  Every project should cultivate its own vernacular - a shared language
-between developers, clients, and users.
-
-There is an internal debate about whether or not deprecate  the predefined steps.
-
-Outside of the predefined steps, these variable have no effect.
-
-### `WAIT_TIMEOUT`
-
-If you are using the calabash predefined steps, you can use this variable to globally control the timeout for the `wait_*` methods.
-
-Defaults to 30 seconds.
-
-#### Pro Tip: Enforce a global wait timeout.
-
-It is good idea to set a global timeout for your project and to never deviate from that timeout without documenting why.  A common bad practice is to fix failing tests by increasing the timeout.  This slows down the tests and hides bugs.  In practice, a 14 second wait time is recommended.
-
-### `STEP_PAUSE`
-
-If you are using the calabash predefined steps, you can use this variable to globally control how long to `sleep`.
-
-Defaults to 0.5 seconds.
-
-#### Pro Tip: Avoid sleeps.
-
-You should avoid `sleep` whenever possible.  You should always prefer to `wait` for something and then proceed.  Waiting has the advantage that you only ever wait as long as you need to, which optimizes test run times.
-
-#### Pro Tip: Enforce a global sleep value.
-
-There are times when sleep cannot be avoided.   It is very good idea to set a global sleep value and to never deviate from that value without documenting why.  A common bad practice is to fix failing tests by
-increasing sleep times.  This slows down the tests and hides bugs.
-
-* @see {Calabash::Cucumber::Core#wait_tap}
-* @see {Calabash::Cucumber::WaitHelpers}
-
-## Variables for Gem Developers
-
-@Tobias - Update or remove this section.
-
-These variables are reserved for gem developers.  Normal users should not set alter these variables.
+Use this variable if your test-server is located in a non-default location or environment requires special configuration (e.g. example a CI environment).
