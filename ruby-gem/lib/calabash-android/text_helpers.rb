@@ -25,12 +25,16 @@ module Calabash
         keyboard_enter_text(text, options)
       end
 
-      def clear_text(query_string, options={})
+      def clear_text_in(query_string, options={})
         unless query_string.nil?
           touch(query_string, options)
           sleep 0.5
         end
 
+        clear_text(options)
+      end
+
+      def clear_text(options={})
         perform_action('clear_text')
       end
 
