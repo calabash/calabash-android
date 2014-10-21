@@ -1,17 +1,37 @@
 class JavaKeystore
   attr_reader :errors, :location, :keystore_alias, :password, :fingerprint
+
   def initialize(location, keystore_alias, password)
     raise "No such keystore file '#{location}'" unless File.exists?(File.expand_path(location))
     log "Reading keystore data from keystore file '#{File.expand_path(location)}'"
 
     keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"')
+
     if keystore_data.nil?
-      error = "Could not list certificates in keystore. Probably because the password was incorrect."
-      @errors = [{:message => error}]
-      log error
-      raise error
-      #TODO: Handle the case where password is correct but the alias is missing.
+      if keystore_alias.empty?
+        log "Could not obtain keystore data. Will try to extract alias automatically"
+
+        keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"')
+        aliases = keystore_data.scan(/Alias name\:\s*(.*)/).flatten
+
+        if aliases.length == 0
+          raise 'Could not extract alias automatically. Please specify alias using calabash-android setup'
+        elsif aliases.length > 1
+          raise 'Multiple aliases found in keystore. Please specify alias using calabash-android setup'
+        else
+          keystore_alias = aliases.first
+          log "Extracted keystore alias '#{keystore_alias}'. Continuing"
+
+          return initialize(location, keystore_alias, password)
+        end
+      else
+        error = "Could not list certificates in keystore. Probably because the password was incorrect."
+        @errors = [{:message => error}]
+        log error
+        raise error
+      end
     end
+
     @location = location
     @keystore_alias = keystore_alias
     @password = password
