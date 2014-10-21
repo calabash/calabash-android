@@ -49,7 +49,7 @@ public class ClearText implements Action {
         if (inputConnection instanceof BaseInputConnection) {
             return (BaseInputConnection) inputConnection;
         } else {
-            System.out.println("InputConnection is not an instance of BaseInputConnection. ( " + inputConnection.getClass().toString() + ")");
+            System.out.println("InputConnection is not an instance of BaseInputConnection. (" + (inputConnection == null ? "null" : inputConnection.getClass().toString()) + ")");
             return null;
         }
     }
