@@ -9,9 +9,9 @@ class JavaKeystore
 
     if keystore_data.nil?
       if keystore_alias.empty?
-        keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"')
-
         log "Could not obtain keystore data. Will try to extract alias automatically"
+
+        keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"')
         aliases = keystore_data.scan(/Alias name\:\s*(.*)/).flatten
 
         if aliases.length == 0
