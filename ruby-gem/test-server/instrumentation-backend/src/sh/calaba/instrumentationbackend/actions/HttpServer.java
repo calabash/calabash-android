@@ -87,6 +87,9 @@ public class HttpServer extends NanoHTTPD {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Response serve(String uri, String method, Properties header,
 			Properties params, Properties files) {
+		System.out.println("URI: " + uri);
+		System.out.println("params: " + params);
+
 		if (uri.endsWith("/ping")) {
 			return new NanoHTTPD.Response(HTTP_OK, MIME_HTML, "pong");
 
