@@ -28,7 +28,7 @@ public class ClearText implements Action {
             @Override
             public void run() {
                 connection.setSelection(0, editable.length());
-                connection.commitText("", 0);
+                connection.commitText("", 1);
                 latch.countDown();
             }
         });
