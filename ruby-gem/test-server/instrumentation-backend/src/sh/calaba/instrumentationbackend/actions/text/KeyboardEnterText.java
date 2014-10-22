@@ -31,7 +31,7 @@ public class KeyboardEnterText implements Action {
             @Override
             public void run() {
                 for (char c : textToEnter.toCharArray()) {
-                    inputConnection.commitText(Character.toString(c), 0);
+                    inputConnection.commitText(Character.toString(c), 1);
                 }
             }
         });
