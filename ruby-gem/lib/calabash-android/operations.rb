@@ -1148,6 +1148,7 @@ module Calabash module Android
     end
 
     def evaluate_javascript(query_string, javascript, opt={})
+      wait_for_elements_exist(query_string, {timeout: Calabash::Android::Defaults.query_timeout})
       result = JSON.parse(http("/map", {query: query_string, operation: {method_name: 'execute-javascript'}, javascript: javascript}))
 
       if result['outcome'] != 'SUCCESS' || result['results'].nil?
