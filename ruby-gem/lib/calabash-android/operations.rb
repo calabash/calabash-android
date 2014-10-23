@@ -1147,6 +1147,21 @@ module Calabash module Android
       ni
     end
 
+    def evaluate_javascript(query_string, javascript, opt={})
+      result = JSON.parse(http("/map", {query: query_string, operation: {method_name: 'execute-javascript'}, javascript: javascript}))
+
+      if result['outcome'] != 'SUCCESS' || result['results'].nil?
+        raise %Q(Could not evaluate javascript:
+#{result['results'].join("\t\n")})
+      end
+
+      if result['results'].length == 0
+        raise "No views were found matching query '#{query_string}'"
+      end
+
+      result['results']
+    end
+
     def backdoor(method_name, arguments = [], options={})
       arguments = [arguments] unless arguments.is_a?(Array)
 
