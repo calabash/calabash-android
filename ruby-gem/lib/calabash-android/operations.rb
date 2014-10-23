@@ -1152,12 +1152,8 @@ module Calabash module Android
       result = JSON.parse(http("/map", {query: query_string, operation: {method_name: 'execute-javascript'}, javascript: javascript}))
 
       if result['outcome'] != 'SUCCESS' || result['results'].nil?
-        raise %Q(Could not evaluate javascript:
-#{result['results'].join("\t\n")})
-      end
-
-      if result['results'].length == 0
-        raise "No views were found matching query '#{query_string}'"
+        parsed_result = result['results'].map {|r| "\"#{r}\","}.join("\n")
+        raise "Could not evaluate javascript: \n#{parsed_result}"
       end
 
       result['results']
