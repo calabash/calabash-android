@@ -1,4 +1,5 @@
 require 'json'
+require 'calabash-android/defaults'
 
 module Calabash
   module Android
