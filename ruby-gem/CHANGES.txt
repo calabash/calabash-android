@@ -1,3 +1,12 @@
+0.5.3:
+      Added methods to clear text in a specified view or the view that has focus.
+
+      Added ability to invoke javascript in webviews specified by a query.
+
+      Improved keystore handling.
+
+      Fixed issue with a gemspec that was too loose (Cucumber beta is not supported).
+
 0.5.2:
       Added generic multi touch gestures and many predefined gestures.
 
