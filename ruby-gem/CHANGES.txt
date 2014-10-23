@@ -1,3 +1,8 @@
+0.5.4:
+      This version is only a fix of changes introduced in 0.5.3.
+
+      Fixed usage of old clear_text being invalid. Now calabash only prints a warning and proceeds.
+
 0.5.3:
       Added methods to clear text in a specified view or the view that has focus.
 
