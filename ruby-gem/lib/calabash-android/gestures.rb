@@ -7,15 +7,13 @@ module Calabash
         attr_reader :gestures
         attr_accessor :timeout
 
-        DEFAULT_TIMEOUT = 5
-
         def initialize(gestures = [])
           unless gestures.is_a?(Array)
             gestures = [gestures]
           end
 
           @gestures = gestures
-          @timeout = (ENV['CALABASH_DEFAULT_TIMEOUT'] && ENV['CALABASH_DEFAULT_TIMEOUT'].to_i) || DEFAULT_TIMEOUT
+          @timeout = Calabash::Android::Defaults.query_timeout
         end
 
         def +(gesture_collection)

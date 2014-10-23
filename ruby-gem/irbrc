@@ -14,6 +14,7 @@ IRB.conf[:SAVE_HISTORY] = 50
 # Store results in home directory with specified file name
 IRB.conf[:HISTORY_FILE] = ".irb-history"
 
+require 'calabash-android/defaults'
 require 'calabash-android/operations'
 extend Calabash::Android::Operations
 
