@@ -73,15 +73,17 @@ public class CalabashChromeClient extends WebChromeClient {
 							
 		}
 
+        Runnable setWebChromeClientRunnable = new Runnable() {
+            @Override
+            public void run() {
+                webView.setWebChromeClient(CalabashChromeClient.this);
+            }
+        };
+
         if ( Looper.getMainLooper().getThread() == Thread.currentThread()) {
-            webView.setWebChromeClient(this);
+            setWebChromeClientRunnable.run();
         } else {
-            InstrumentationBackend.instrumentation.runOnMainSync(new Runnable() {
-                @Override
-                public void run() {
-                    webView.setWebChromeClient(CalabashChromeClient.this);
-                }
-            });
+            InstrumentationBackend.instrumentation.runOnMainSync(setWebChromeClientRunnable);
         }
 	}
 
