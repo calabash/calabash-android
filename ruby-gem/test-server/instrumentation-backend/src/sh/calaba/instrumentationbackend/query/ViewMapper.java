@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 public class ViewMapper {
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Object extractDataFromView(View v) {
 
 		Map data = new HashMap();
@@ -72,26 +72,31 @@ public class ViewMapper {
 		return v.getClass().getName();
 	}
 
-	public static String getIdForView(View v) {
-		String id = null;
-		try {
-			id = InstrumentationBackend.solo.getCurrentActivity()
-					.getResources().getResourceEntryName(v.getId());
-		} catch (Resources.NotFoundException e) {
-			System.out.println("Resource not found for " + v.getId()
-					+ ". Moving on.");
-		}
-		return id;
-	}
+    public static String getIdForView(View v) {
+        int id = v.getId();
+        try {
+            if(v.getResources() != null) {
+                return v.getResources().getResourceEntryName(id);
+            } else {
+                return InstrumentationBackend.solo.getCurrentActivity().getResources().getResourceEntryName(id);
+            }
+        } catch (Resources.NotFoundException e) {
+            if(id == -1) {
+                return "NotSet";
+            }
+            return "NoResourceEntry-" + Integer.toString(id);
+        }
+    }
 
-	public static String getTagForView(View v) {
+
+    public static String getTagForView(View v) {
 		if (v.getTag() instanceof String || v.getTag() instanceof Integer) {
 			return v.getTag().toString();
 		}
 		return null;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes" })
 	public static Object mapView(Object o) {
 		if (o instanceof View) {
 			return extractDataFromView((View) o);

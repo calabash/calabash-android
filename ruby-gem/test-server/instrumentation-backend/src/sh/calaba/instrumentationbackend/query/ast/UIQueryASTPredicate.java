@@ -2,9 +2,10 @@ package sh.calaba.instrumentationbackend.query.ast;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.concurrent.*;
 
 import org.antlr.runtime.tree.CommonTree;
 
@@ -25,38 +26,73 @@ public class UIQueryASTPredicate implements UIQueryAST {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public List evaluateWithViews(final List inputViews,
-			final UIQueryDirection direction, final UIQueryVisibility visibility) {
-		return (List) UIQueryUtils.evaluateSyncInMainThread(new Callable() {
+    public List evaluateWithViews(final List inputViews,
+                                  final UIQueryDirection direction, final UIQueryVisibility visibility) {
 
-			@SuppressWarnings("unchecked")
-			@Override
-			public Object call() throws Exception {
-				List filteredResult = new ArrayList(16);
-				for (int i = 0; i < inputViews.size(); i++) {
-					Object o = inputViews.get(i);
+        List oldProcessing = new ArrayList();
+        List result = new ArrayList();
+        for (Object o : inputViews) {
+            if (o instanceof View) {
+                View view = (View) o;
+                FutureTask<List> march = new FutureTask<List>(new MatchForViews(Arrays.asList(view), direction, visibility));
+                view.post(march);
+                try {
+                    result.addAll(march.get(10, TimeUnit.SECONDS));
+                } catch (RuntimeException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                oldProcessing.add(o);
+            }
+        }
 
-					if (o instanceof Map) {
-						Map result = evaluateForMap((Map) o);
-						if (result != null) {
-							filteredResult.add(result);
-						}
+        if (oldProcessing.size() > 0) {
+            result.addAll((List) UIQueryUtils.evaluateSyncInMainThread(new MatchForViews(oldProcessing, direction, visibility)));
+        }
+        return result;
+    }
 
-					} else {
-						Object result = evaluateForObject(o, i);
-						if (result != null) {
-							filteredResult.add(result);
-						}
-					}
+    private class MatchForViews implements Callable<List> {
 
-				}
+        private final List views;
+        private final UIQueryDirection direction;
+        private final UIQueryVisibility visibility;
 
-				return visibility.evaluateWithViews(filteredResult, direction, visibility);
-			}
-		});
-	}
+        MatchForViews(List views, final UIQueryDirection direction, final UIQueryVisibility visibility) {
+            this.views = views;
+            this.direction = direction;
+            this.visibility = visibility;
+        }
 
-	@SuppressWarnings("rawtypes")
+        @Override
+        public List call() throws Exception {
+            List filteredResult = new ArrayList(16);
+            for (int i = 0; i < views.size(); i++) {
+                Object o = views.get(i);
+
+                if (o instanceof Map) {
+                    Map result = evaluateForMap((Map) o);
+                    if (result != null) {
+                        filteredResult.add(result);
+                    }
+
+                } else {
+                    Object result = evaluateForObject(o, i);
+                    if (result != null) {
+                        filteredResult.add(result);
+                    }
+                }
+
+            }
+
+            return visibility.evaluateWithViews(filteredResult, direction, visibility);
+        }
+    }
+
+
+        @SuppressWarnings("rawtypes")
 	private Map evaluateForMap(Map map) {
 		if (map.containsKey(this.propertyName)) {
 			Object value = map.get(this.propertyName);
