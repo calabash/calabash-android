@@ -34,20 +34,15 @@ public class UIQueryASTWith implements UIQueryAST {
     public List evaluateWithViews(final List inputViews,
                                   final UIQueryDirection direction, final UIQueryVisibility visibility) {
 
+        try {
         List oldProcessing = new ArrayList();
         List result = new ArrayList();
         for (Object o : inputViews) {
             if (o instanceof View) {
                 View view = (View) o;
                 FutureTask<List> march = new FutureTask<List>(new MatchForViews(Arrays.asList(view)));
-                view.post(march);
-                try {
+                UIQueryUtils.runOnViewThread(view, march);
                     result.addAll(march.get(10, TimeUnit.SECONDS));
-                } catch (RuntimeException e) {
-                    throw e;
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
             } else {
                 oldProcessing.add(o);
             }
@@ -63,7 +58,8 @@ public class UIQueryASTWith implements UIQueryAST {
             if (o instanceof Map) {
                 Map m = (Map) o;
                 if (m.containsKey("result")) {
-                    processedResult.addAll(UIQueryUtils.mapWebViewJsonResponse((String) m.get("result"),(WebView) m.get("webView")));
+//                    processedResult.addAll(UIQueryUtils.mapWebViewJsonResponse((String) m.get("result"),(WebView) m.get("webView")));
+                    processedResult.addAll(UIQueryUtils.mapWebViewJsonResponseOnViewThread((String) m.get("result"),(WebView) m.get("webView")).get(10, TimeUnit.SECONDS));
                 }
                 else {
                     processedResult.add(m);
@@ -77,6 +73,11 @@ public class UIQueryASTWith implements UIQueryAST {
 
         List visibilityFilteredResults = visibility.evaluateWithViews(processedResult, direction, visibility);
         return visibilityFilteredResults;
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private class MatchForViews implements Callable<List> {

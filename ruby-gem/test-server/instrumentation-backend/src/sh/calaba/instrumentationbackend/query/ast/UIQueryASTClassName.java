@@ -40,7 +40,7 @@ public class UIQueryASTClassName implements UIQueryAST {
             if (o instanceof View) {
                 View view = (View) o;
                 FutureTask<List> march = new FutureTask<List>(new MatchForViews(Arrays.asList(view), direction, visibility));
-                view.post(march);
+                UIQueryUtils.runOnViewThread(view, march);
                 try {
                     result.addAll(march.get(10, TimeUnit.SECONDS));
                 } catch (RuntimeException e) {

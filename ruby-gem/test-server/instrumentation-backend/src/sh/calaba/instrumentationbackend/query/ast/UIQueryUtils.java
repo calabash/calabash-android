@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -264,46 +265,72 @@ public class UIQueryUtils {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+    public static void runOnViewThread(View view, Runnable runnable) {
+        if(view.getHandler().getLooper().getThread() == Thread.currentThread()) {
+            runnable.run();
+        } else {
+            view.post(runnable);
+        }
+    }
+
+    public static Future<List<Map<String, Object>>> mapWebViewJsonResponseOnViewThread(
+            final String jsonResponse, final WebView webView) {
+        FutureTask<List<Map<String, Object>>>  future = new FutureTask<List<Map<String, Object>>>(new MapWebView(jsonResponse, webView));
+        runOnViewThread(webView, future);
+        return future;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List<Map<String, Object>> mapWebViewJsonResponse(
 			final String jsonResponse, final WebView webView) {
-		return (List<Map<String, Object>>) evaluateSyncInMainThread(new Callable() {
-
-			@Override
-			public Object call() throws Exception {
-				List<Map<String, Object>> parsedResult;
-				try {
-					parsedResult = new ObjectMapper().readValue(jsonResponse,
-							new TypeReference<List<HashMap<String, Object>>>() {
-							});
-					for (Map<String, Object> data : parsedResult) {
-						Map<String, Integer> rect = (Map<String, Integer>) data.get("rect");
-						Map<String, Integer> updatedRect = QueryHelper.translateRectToScreenCoordinates(webView, rect);
-						data.put("rect", updatedRect);
-						data.put("webView", webView);
-					}
-					return parsedResult;
-				} catch (Exception igored) {
-					try {
-						Map resultAsMap = new ObjectMapper().readValue(
-								jsonResponse, new TypeReference<HashMap>() {
-								});
-						// This usually happens in case of error
-						// check this case
-						System.out.println(resultAsMap);
-						String errorMsg = (String) resultAsMap.get("error");
-						System.out.println(errorMsg);
-						return Collections.singletonList(resultAsMap);
-					} catch (Exception e) {
-						e.printStackTrace();
-						throw new RuntimeException(e);
-					}
-
-				}
-			}
-		});
+		return (List<Map<String, Object>>) evaluateSyncInMainThread(new MapWebView(jsonResponse, webView));
 
 	}
+
+    private static class MapWebView implements Callable<List<Map<String, Object>>> {
+
+        private final String jsonResponse;
+        private final WebView webView;
+
+        MapWebView(String jsonResponse, WebView webView) {
+            this.jsonResponse = jsonResponse;
+            this.webView = webView;
+        }
+
+        @Override
+        public List<Map<String, Object>> call() throws Exception {
+            List<Map<String, Object>> parsedResult;
+            try {
+                parsedResult = new ObjectMapper().readValue(jsonResponse,
+                        new TypeReference<List<HashMap<String, Object>>>() {
+                        });
+                for (Map<String, Object> data : parsedResult) {
+                    Map<String, Integer> rect = (Map<String, Integer>) data.get("rect");
+                    Map<String, Integer> updatedRect = QueryHelper.translateRectToScreenCoordinates(webView, rect);
+                    data.put("rect", updatedRect);
+                    data.put("webView", webView);
+                }
+                return parsedResult;
+            } catch (Exception ignored) {
+                try {
+                    Map<String, Object> resultAsMap = new ObjectMapper().readValue(
+                            jsonResponse, new TypeReference<HashMap>() {
+                            });
+                    // This usually happens in case of error
+                    // check this case
+                    System.out.println(resultAsMap);
+                    String errorMsg = (String) resultAsMap.get("error");
+                    System.out.println(errorMsg);
+                    return Collections.singletonList(resultAsMap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+
+            }
+        }
+    }
+
 
 	public static Object parseValue(CommonTree val) {
 		switch (val.getType()) {
