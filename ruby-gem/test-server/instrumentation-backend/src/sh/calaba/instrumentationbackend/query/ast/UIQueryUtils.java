@@ -280,13 +280,6 @@ public class UIQueryUtils {
         return future;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	public static List<Map<String, Object>> mapWebViewJsonResponse(
-			final String jsonResponse, final WebView webView) {
-		return (List<Map<String, Object>>) evaluateSyncInMainThread(new MapWebView(jsonResponse, webView));
-
-	}
-
     private static class MapWebView implements Callable<List<Map<String, Object>>> {
 
         private final String jsonResponse;

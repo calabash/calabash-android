@@ -36,29 +36,33 @@ public class UIQueryASTWith implements UIQueryAST {
 
         try {
         List oldProcessing = new ArrayList();
-        List result = new ArrayList();
+        List<PartialFutureList> futureResults = new ArrayList();
+        List results = new ArrayList();
         for (Object o : inputViews) {
             if (o instanceof View) {
                 View view = (View) o;
-                FutureTask<List> march = new FutureTask<List>(new MatchForViews(Arrays.asList(view)));
+                FutureTask<PartialFutureList> march = new FutureTask<PartialFutureList>(new MatchForViews(Arrays.asList(view)));
                 UIQueryUtils.runOnViewThread(view, march);
-                    result.addAll(march.get(10, TimeUnit.SECONDS));
+                    futureResults.add(march.get(10, TimeUnit.SECONDS));
             } else {
                 oldProcessing.add(o);
             }
         }
 
         if (oldProcessing.size() > 0) {
-            result.addAll((List) UIQueryUtils.evaluateSyncInMainThread(new MatchForViews(oldProcessing)));
+            results.addAll((List) UIQueryUtils.evaluateSyncInMainThread(new MatchForViews(oldProcessing)));
         }
 
-        final List processedResult = new ArrayList(result.size());
+        for(PartialFutureList plf : futureResults) {
+            results.addAll((List) plf.get());
+        }
 
-        for (Object o : result) {
+        final List processedResult = new ArrayList(results.size());
+
+        for (Object o : results) {
             if (o instanceof Map) {
                 Map m = (Map) o;
                 if (m.containsKey("result")) {
-//                    processedResult.addAll(UIQueryUtils.mapWebViewJsonResponse((String) m.get("result"),(WebView) m.get("webView")));
                     processedResult.addAll(UIQueryUtils.mapWebViewJsonResponseOnViewThread((String) m.get("result"),(WebView) m.get("webView")).get(10, TimeUnit.SECONDS));
                 }
                 else {
@@ -80,14 +84,14 @@ public class UIQueryASTWith implements UIQueryAST {
         }
     }
 
-    private class MatchForViews implements Callable<List> {
+    private class MatchForViews implements Callable<PartialFutureList> {
         private final List views;
 
         MatchForViews(List views) {
             this.views = views;
         }
 
-        public List call() throws Exception {
+        public PartialFutureList call() throws Exception {
             List futureResult = new ArrayList(8);
 
             for (int i = 0; i < views.size(); i++) {
@@ -112,7 +116,7 @@ public class UIQueryASTWith implements UIQueryAST {
                 }
 
             }
-            return (List) new PartialFutureList(futureResult).get(10, TimeUnit.SECONDS);
+            return new PartialFutureList(futureResult);
         }
     }
 
