@@ -14,6 +14,7 @@ import sh.calaba.instrumentationbackend.actions.webview.UnableToFindChromeClient
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import sh.calaba.instrumentationbackend.query.CompletedFuture;
 
 public class UIQueryASTWith implements UIQueryAST {
 	public final String propertyName;
@@ -35,48 +36,45 @@ public class UIQueryASTWith implements UIQueryAST {
                                   final UIQueryDirection direction, final UIQueryVisibility visibility) {
 
         try {
-        List oldProcessing = new ArrayList();
-        List<PartialFutureList> futureResults = new ArrayList();
-        List results = new ArrayList();
-        for (Object o : inputViews) {
-            if (o instanceof View) {
-                View view = (View) o;
-                FutureTask<PartialFutureList> march = new FutureTask<PartialFutureList>(new MatchForViews(Arrays.asList(view)));
-                UIQueryUtils.runOnViewThread(view, march);
-                    futureResults.add(march.get(10, TimeUnit.SECONDS));
-            } else {
-                oldProcessing.add(o);
+            List<Future<Future>> futureResults = new ArrayList();
+            int index = 0;
+            for (Object o : inputViews) {
+                if (o instanceof View) {
+                    View view = (View) o;
+                    FutureTask<Future> march = new FutureTask<Future>(new MatchForViews(view, index));
+                    UIQueryUtils.runOnViewThread(view, march);
+                    futureResults.add(march);
+                } else {
+                    futureResults.add(UIQueryUtils.evaluateAsyncInMainThread(new MatchForViews(o, index)));
+                }
+                index++;
             }
-        }
 
-        if (oldProcessing.size() > 0) {
-            results.addAll((List) UIQueryUtils.evaluateSyncInMainThread(new MatchForViews(oldProcessing)));
-        }
 
-        for(PartialFutureList plf : futureResults) {
-            results.addAll((List) plf.get());
-        }
+            final List processedResult = new ArrayList(futureResults.size());
 
-        final List processedResult = new ArrayList(results.size());
+            for (Future<Future> f : futureResults) {
+                Future futureResult = f.get(10, TimeUnit.SECONDS);
+                Object o = futureResult.get(10, TimeUnit.SECONDS);
 
-        for (Object o : results) {
-            if (o instanceof Map) {
-                Map m = (Map) o;
-                if (m.containsKey("result")) {
-                    processedResult.addAll(UIQueryUtils.mapWebViewJsonResponseOnViewThread((String) m.get("result"),(WebView) m.get("webView")).get(10, TimeUnit.SECONDS));
+                if(o == null) {
+                    continue;
+                } else if (o instanceof Map) {
+                    Map m = (Map) o;
+                    if (m.containsKey("result")) {
+                        processedResult.addAll(UIQueryUtils.mapWebViewJsonResponseOnViewThread((String) m.get("result"),(WebView) m.get("webView")).get(10, TimeUnit.SECONDS));
+                    }
+                    else {
+                        processedResult.add(m);
+                    }
                 }
                 else {
-                    processedResult.add(m);
+                    processedResult.add(o);
                 }
-
             }
-            else {
-                processedResult.add(o);
-            }
-        }
 
-        List visibilityFilteredResults = visibility.evaluateWithViews(processedResult, direction, visibility);
-        return visibilityFilteredResults;
+            List visibilityFilteredResults = visibility.evaluateWithViews(processedResult, direction, visibility);
+            return visibilityFilteredResults;
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -84,39 +82,34 @@ public class UIQueryASTWith implements UIQueryAST {
         }
     }
 
-    private class MatchForViews implements Callable<PartialFutureList> {
-        private final List views;
+    private class MatchForViews implements Callable<Future> {
+        private final Object o;
+        private final int index;
 
-        MatchForViews(List views) {
-            this.views = views;
+        MatchForViews(Object o, int index) {
+            this.o = o;
+            this.index = index;
         }
 
-        public PartialFutureList call() throws Exception {
-            List futureResult = new ArrayList(8);
-
-            for (int i = 0; i < views.size(); i++) {
-                Object o = views.get(i);
-
-                if (o instanceof WebView && isDomQuery()) {
-                    Future webResult = evaluateForWebView((WebView) o);
-                    if (webResult != null) {
-                        futureResult.add(webResult);
-                    }
-                } else if (o instanceof Map) {
-                    Map result = evaluateForMap((Map) o);
-                    if (result != null) {
-                        futureResult.add(result);
-                    }
-
-                } else {
-                    Object result = evaluateForObject(o, i);
-                    if (result != null) {
-                        futureResult.add(result);
-                    }
+        public Future call() throws Exception {
+            if (o instanceof WebView && isDomQuery()) {
+                Future webResult = evaluateForWebView((WebView) o);
+                if (webResult != null) {
+                    return webResult;
+                }
+            } else if (o instanceof Map) {
+                Map result = evaluateForMap((Map) o);
+                if (result != null) {
+                    return new CompletedFuture(result);
                 }
 
+            } else {
+                Object result = evaluateForObject(o, index);
+                if (result != null) {
+                    return new CompletedFuture(result);
+                }
             }
-            return new PartialFutureList(futureResult);
+            return new CompletedFuture(null);
         }
     }
 
