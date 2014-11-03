@@ -93,7 +93,6 @@ public class CalabashChromeClient extends WebChromeClient {
                     try {
                         CalabashChromeClient.this.webViewSetWebChromeClient(CalabashChromeClient.this);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         throw new RuntimeException(e);
                     }
                 } else {
