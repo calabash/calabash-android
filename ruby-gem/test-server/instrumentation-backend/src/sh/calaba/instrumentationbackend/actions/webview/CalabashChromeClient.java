@@ -17,6 +17,7 @@ import java.util.concurrent.TimeoutException;
 import android.graphics.Bitmap;
 import android.os.Looper;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import sh.calaba.org.codehaus.jackson.type.TypeReference;
 
@@ -101,11 +102,7 @@ public class CalabashChromeClient extends WebChromeClient {
             }
         };
 
-        if ( Looper.getMainLooper().getThread() == Thread.currentThread()) {
-            setWebChromeClientRunnable.run();
-        } else {
-            InstrumentationBackend.instrumentation.runOnMainSync(setWebChromeClientRunnable);
-        }
+        UIQueryUtils.runOnViewThread(webView, setWebChromeClientRunnable);
 	}
 
     private void webViewSetWebChromeClient(WebChromeClient webChromeClient) throws NoSuchFieldException, IllegalAccessException,
