@@ -26,7 +26,7 @@ public class JavaScriptExecuter {
     }
 
     private void callSwitchOutDrawHistory() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        Method method = provider.getClass().getDeclaredMethod("switchOutDrawHistory");
+        Method method = getMethod(provider.getClass(), "switchOutDrawHistory");
         method.setAccessible(true);
         method.invoke(provider);
     }
@@ -42,7 +42,7 @@ public class JavaScriptExecuter {
 
         int messageIdentifier = loadUrlMessage();
 
-        Method sendMessageMethod = webViewCore.getClass().getDeclaredMethod("sendMessage", int.class, Object.class);
+        Method sendMessageMethod = getMethod(webViewCore.getClass(), "sendMessage", int.class, Object.class);
         sendMessageMethod.setAccessible(true);
         sendMessageMethod.invoke(webViewCore, messageIdentifier, arg);
     }
@@ -51,7 +51,7 @@ public class JavaScriptExecuter {
 
     private int loadUrlMessage() throws NoSuchFieldException, ClassNotFoundException, IllegalAccessException {
         Class<?> eventHubClass = Class.forName(EVENT_HUB_CLASS_NAME);
-        Field loadUrlField = eventHubClass.getDeclaredField("LOAD_URL");
+        Field loadUrlField = getField(eventHubClass, "LOAD_URL");
         loadUrlField.setAccessible(true);
 
         return loadUrlField.getInt(String.class);
@@ -68,9 +68,9 @@ public class JavaScriptExecuter {
             Constructor<?> constructor = getUrlDataClass.getDeclaredConstructor();
             constructor.setAccessible(true);
 
-            Field mUrlField = getUrlDataClass.getDeclaredField("mUrl");
+            Field mUrlField = getField(getUrlDataClass, "mUrl");
             mUrlField.setAccessible(true);
-            Field mExtraHeadersField = getUrlDataClass.getDeclaredField("mExtraHeaders");
+            Field mExtraHeadersField = getField(getUrlDataClass, "mExtraHeaders");
             mExtraHeadersField.setAccessible(true);
 
             Object getUrlDataInstance = constructor.newInstance();
@@ -96,10 +96,36 @@ public class JavaScriptExecuter {
     private Object getWebViewCore() throws IllegalStateException, IllegalAccessException, NoSuchFieldException {
         if (provider == null) throw new IllegalStateException("Provider is null");
 
-        Field fieldCore = provider.getClass().getDeclaredField("mWebViewCore");
+        Field fieldCore = getField(provider.getClass(), "mWebViewCore");
         fieldCore.setAccessible(true);
         Object webViewCore = fieldCore.get(provider);
 
         return webViewCore;
+    }
+
+    private static Method getMethod(Class<?> objClass, String methodName, Class<?>... params)
+            throws NoSuchMethodException {
+        try {
+            return objClass.getDeclaredMethod(methodName, params);
+        } catch (NoSuchMethodException e) {
+            if (objClass == Object.class) {
+                throw e;
+            }
+
+            return getMethod(objClass.getSuperclass(), methodName, params);
+        }
+    }
+
+    private static Field getField(Class<?> objClass, String fieldName)
+            throws NoSuchFieldException {
+        try {
+            return objClass.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            if (objClass == Object.class) {
+                throw e;
+            }
+
+            return getField(objClass.getSuperclass(), fieldName);
+        }
     }
 }
