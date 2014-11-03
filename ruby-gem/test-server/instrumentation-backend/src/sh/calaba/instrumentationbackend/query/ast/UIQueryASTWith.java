@@ -2,10 +2,10 @@ package sh.calaba.instrumentationbackend.query.ast;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import org.antlr.runtime.tree.CommonTree;
 
@@ -14,6 +14,7 @@ import sh.calaba.instrumentationbackend.actions.webview.UnableToFindChromeClient
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import sh.calaba.instrumentationbackend.query.CompletedFuture;
 
 public class UIQueryASTWith implements UIQueryAST {
 	public final String propertyName;
@@ -30,72 +31,87 @@ public class UIQueryASTWith implements UIQueryAST {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public List evaluateWithViews(final List inputViews, final UIQueryDirection direction,
-			final UIQueryVisibility visibility) {
-		
-		List queryResult = (List) UIQueryUtils.evaluateSyncInMainThread(new Callable() {
-			
-			@Override
-			public Object call() throws Exception {
-				List futureResult = new ArrayList(8);
 
-				for (int i = 0; i < inputViews.size(); i++) {
-					Object o = inputViews.get(i);
+    public List evaluateWithViews(final List inputViews,
+                                  final UIQueryDirection direction, final UIQueryVisibility visibility) {
 
-					if (o instanceof WebView && isDomQuery()) {
-						Future webResult = evaluateForWebView((WebView) o);
-						if (webResult != null) {
-							futureResult.add(webResult);
-						}
-					}
-					else if (o instanceof Map) {
-						Map result = evaluateForMap((Map) o);
-						if (result != null) {
-							futureResult.add(result);
-						}
-						
-					}
-					else {
-						Object result = evaluateForObject(o, i);
-						if (result != null) {
-							futureResult.add(result);
-						}
-					}
-
-				}
-
-				return new PartialFutureList(futureResult);
-			}
-		});
-		
-		final List processedResult = new ArrayList(queryResult.size());
-
-		for (Object o : queryResult) {
-			if (o instanceof Map) {
-				Map m = (Map) o;
-				if (m.containsKey("result")) {
-					processedResult.addAll(UIQueryUtils.mapWebViewJsonResponse((String) m.get("result"),(WebView) m.get("webView")));	
-				}
-				else {
-					processedResult.add(m);
-				}
-				
-			}
-			else {
-				processedResult.add(o);
-			}
-		}
-
-        List visibilityFilteredResults = (List) UIQueryUtils.evaluateSyncInMainThread(new Callable() {
-
-            @Override
-            public Object call() throws Exception {
-                return visibility.evaluateWithViews(processedResult, direction, visibility);
+        try {
+            List<Future<Future>> futureResults = new ArrayList();
+            int index = 0;
+            for (Object o : inputViews) {
+                if (o instanceof View) {
+                    View view = (View) o;
+                    FutureTask<Future> march = new FutureTask<Future>(new MatchForViews(view, index));
+                    UIQueryUtils.runOnViewThread(view, march);
+                    futureResults.add(march);
+                } else {
+                    futureResults.add(UIQueryUtils.evaluateAsyncInMainThread(new MatchForViews(o, index)));
+                }
+                index++;
             }
-        });
 
-		return visibilityFilteredResults;
-	}
+
+            final List processedResult = new ArrayList(futureResults.size());
+
+            for (Future<Future> f : futureResults) {
+                Future futureResult = f.get(10, TimeUnit.SECONDS);
+                Object o = futureResult.get(10, TimeUnit.SECONDS);
+
+                if(o == null) {
+                    continue;
+                } else if (o instanceof Map) {
+                    Map m = (Map) o;
+                    if (m.containsKey("result")) {
+                        processedResult.addAll(UIQueryUtils.mapWebViewJsonResponseOnViewThread((String) m.get("result"),(WebView) m.get("webView")).get(10, TimeUnit.SECONDS));
+                    }
+                    else {
+                        processedResult.add(m);
+                    }
+                }
+                else {
+                    processedResult.add(o);
+                }
+            }
+
+            List visibilityFilteredResults = visibility.evaluateWithViews(processedResult, direction, visibility);
+            return visibilityFilteredResults;
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private class MatchForViews implements Callable<Future> {
+        private final Object o;
+        private final int index;
+
+        MatchForViews(Object o, int index) {
+            this.o = o;
+            this.index = index;
+        }
+
+        public Future call() throws Exception {
+            if (o instanceof WebView && isDomQuery()) {
+                Future webResult = evaluateForWebView((WebView) o);
+                if (webResult != null) {
+                    return webResult;
+                }
+            } else if (o instanceof Map) {
+                Map result = evaluateForMap((Map) o);
+                if (result != null) {
+                    return new CompletedFuture(result);
+                }
+
+            } else {
+                Object result = evaluateForObject(o, index);
+                if (result != null) {
+                    return new CompletedFuture(result);
+                }
+            }
+            return new CompletedFuture(null);
+        }
+    }
 
     private boolean isDomQuery() {
         System.out.println("isDomQuery: " + propertyName);

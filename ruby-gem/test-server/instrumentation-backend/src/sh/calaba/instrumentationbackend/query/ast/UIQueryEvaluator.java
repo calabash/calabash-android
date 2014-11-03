@@ -3,6 +3,7 @@ package sh.calaba.instrumentationbackend.query.ast;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.view.View;
 import sh.calaba.instrumentationbackend.query.Operation;
 import sh.calaba.instrumentationbackend.query.QueryResult;
 import sh.calaba.instrumentationbackend.query.UIQueryResultVoid;
@@ -11,7 +12,7 @@ import sh.calaba.instrumentationbackend.query.ViewMapper;
 public class UIQueryEvaluator {
 	
 	@SuppressWarnings({ "rawtypes" })
-	public static QueryResult evaluateQueryWithOptions(List<UIQueryAST> query, List inputViews, List<Operation> operations) {
+	public static QueryResult evaluateQueryWithOptions(List<UIQueryAST> query, List<View> inputViews, List<Operation> operations) {
         List views = evaluateQueryForPath(query, inputViews);
         List result = applyOperations(views, operations);
         return new QueryResult(result);
@@ -40,7 +41,7 @@ public class UIQueryEvaluator {
 
 	@SuppressWarnings("rawtypes")
 	private static List evaluateQueryForPath(List<UIQueryAST> queryPath,
-			List inputViews) {
+			List<View> inputViews) {
 
 		List currentResult = inputViews;
 		UIQueryDirection currentDirection = UIQueryDirection.DESCENDANT;
