@@ -82,7 +82,7 @@ public class ViewMapper {
             }
         } catch (Resources.NotFoundException e) {
             if(id == -1) {
-                return "NotSet";
+                return null;
             }
             return "NoResourceEntry-" + Integer.toString(id);
         }
