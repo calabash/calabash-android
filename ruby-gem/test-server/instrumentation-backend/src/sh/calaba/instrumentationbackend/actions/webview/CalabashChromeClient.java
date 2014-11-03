@@ -3,6 +3,7 @@ package sh.calaba.instrumentationbackend.actions.webview;
 import java.io.IOException;
 import java.lang.RuntimeException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,7 +77,22 @@ public class CalabashChromeClient extends WebChromeClient {
         Runnable setWebChromeClientRunnable = new Runnable() {
             @Override
             public void run() {
-                webView.setWebChromeClient(CalabashChromeClient.this);
+                Class<?> webViewClass = webView.getClass();
+                boolean isCordovaWebView = (webViewClass.getName().equals("org.apache.cordova.CordovaWebView"));
+
+                // Cordova web view changed its implementation of setWebChromeClient.
+                //   it will now try to cast the given WebChromeClient to a CordovaChromeClient,
+                //   thus failing
+                if (isCordovaWebView) {
+                    try {
+                        CalabashChromeClient.this.webViewSetWebChromeClient(CalabashChromeClient.this);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    webView.setWebChromeClient(CalabashChromeClient.this);
+                }
             }
         };
 
@@ -86,6 +102,25 @@ public class CalabashChromeClient extends WebChromeClient {
             InstrumentationBackend.instrumentation.runOnMainSync(setWebChromeClientRunnable);
         }
 	}
+
+    private void webViewSetWebChromeClient(WebChromeClient webChromeClient) throws NoSuchFieldException, IllegalAccessException,
+            NoSuchMethodException, InvocationTargetException {
+        String fieldName;
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            fieldName = "mProvider";
+        } else {
+            fieldName = "mCallbackProxy";
+        }
+
+        Field field = android.webkit.WebView.class.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        Object object = field.get(webView);
+
+        String methodName = "setWebChromeClient";
+        Method method = object.getClass().getMethod(methodName, WebChromeClient.class);
+        method.invoke(object, webChromeClient);
+    }
 
 	/*
 	 * returns the chromeClient from the WebView.
