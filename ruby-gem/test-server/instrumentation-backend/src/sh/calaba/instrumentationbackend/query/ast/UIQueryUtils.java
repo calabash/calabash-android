@@ -1,7 +1,5 @@
 package sh.calaba.instrumentationbackend.query.ast;
 
-import static sh.calaba.instrumentationbackend.InstrumentationBackend.viewFetcher;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -11,10 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.antlr.runtime.tree.CommonTree;
@@ -360,7 +355,6 @@ public class UIQueryUtils {
 	 */
 	public static Map<?, ?> dump() {
 		Query dummyQuery = new Query("not_used");
-
 		return dumpRecursively(emptyRootView(), dummyQuery.rootViews());
 	}
 
@@ -374,33 +368,71 @@ public class UIQueryUtils {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected static Map<?, ?> dumpRecursively(Map parentView,
-			List children) {
-		ArrayList childrenArray = new ArrayList(32);
+	protected static Map<?, ?> dumpRecursively(Map parentView, List<View> children) {
+        ArrayList childrenArray = new ArrayList(32);
+        List<Integer> parentPath = Collections.unmodifiableList((List<Integer>) parentView.get("path"));
 		for (int i = 0; i < children.size(); i++) {
-			Object view = children.get(i);
-			Map serializedChild = serializeViewToDump(view);
-			List<Integer> childPath = new ArrayList<Integer>(
-					(List) parentView.get("path"));
-			childPath.add(i);
-			serializedChild.put("path", childPath);
-			List childrenList = null;
-			if (view instanceof WebView) {
-				Future webViewSubViews = webViewSubViews((WebView) view);
-				childrenArray.add(webViewSubViews);
-			}
-			else {
-				childrenList = UIQueryUtils.subviews(view);
-				childrenArray.add(dumpRecursively(serializedChild,
-						childrenList));
-			}
+            View view = children.get(i);
+            FutureTask<Map<?, ?>> childrenForChild = new FutureTask<Map<?,?>>(new DumpChild(view, parentPath, i));
+            runOnViewThread(view, childrenForChild);
 
-		}
+            try {
+                childrenArray.add(childrenForChild.get(10, TimeUnit.SECONDS));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
 
 		parentView.put("children", childrenArray);
 
 		return parentView;
 	}
+
+    private static class DumpChild implements Callable<Map<?,?>> {
+
+        private final View initialView;
+        private final List<Integer> initialParentPath;
+        private final int initialIndex;
+
+        public DumpChild(View view, List<Integer> parentPath, int index) {
+            this.initialView = view;
+            this.initialParentPath = parentPath;
+            this.initialIndex = index;
+        }
+
+        @Override
+        public Map<?,?> call() throws Exception {
+            return doDump(initialView, initialParentPath, initialIndex);
+        }
+
+        private Map createViewMap(View view, List<Integer> path, int i) {
+            Map serializedChild = serializeViewToDump(view);
+            List<Integer> childPath = new ArrayList<Integer>(path);
+            childPath.add(i);
+            serializedChild.put("path", Collections.unmodifiableList(childPath));
+            return serializedChild;
+        }
+
+        private Map<?,?> doDump(View view, List<Integer> parentPath, int index) {
+            Map viewMap = createViewMap(view, parentPath, index);
+
+            if (view instanceof WebView) {
+                Future webViewSubViews = webViewSubViews((WebView) view);
+                viewMap.put("children", Collections.singletonList(webViewSubViews));
+            }
+            else {
+                // We are on the owning thread, recur directly
+                List<View> childrenList = UIQueryUtils.subviews(view);
+                List<Map<?, ?>> children = new ArrayList<Map<?, ?>>(childrenList.size());
+                List<Integer> path = Collections.unmodifiableList((List<Integer>) viewMap.get("path"));
+                for (int j = 0; j < childrenList.size(); j++) {
+                    children.add(doDump(childrenList.get(j), path, j));
+                }
+                viewMap.put("children", children);
+            }
+            return viewMap;
+        }
+    }
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Map<?, ?> dumpByPath(List<Integer> path) {

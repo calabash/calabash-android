@@ -24,12 +24,7 @@ import android.util.Log;
 public class ViewDump {
 
 	public Map<?,?> dumpWithoutElements() {
-		Map<?, ?> dumpTree = (Map) UIQueryUtils.evaluateSyncInMainThread(new Callable() {
-			public Object call() throws Exception {
-				return UIQueryUtils.dump();
-			}
-		});
-		
+		Map<?, ?> dumpTree = UIQueryUtils.dump();
 		return sameTreeWithoutElements(dumpTree);
 		
 	}
