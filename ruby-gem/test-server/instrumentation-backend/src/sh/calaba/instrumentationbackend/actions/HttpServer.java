@@ -39,6 +39,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -148,10 +149,27 @@ public class HttpServer extends NanoHTTPD {
                     intent.setAction((String) data.get("action"));
                 }
 
+                if (data.containsKey("data")) {
+                    intent.setData(Uri.parse((String) data.get("data")));
+                }
+
                 Activity activity = InstrumentationBackend.solo.getCurrentActivity();
 
+                String methodString = "send-broadcast";
+
+                if (data.containsKey("method")) {
+                    methodString = (String) data.get("method");
+                }
+
                 Log.d(TAG, "Broadcasting intent " + intent);
-                activity.sendBroadcast(intent);
+
+                if (methodString.equals("send-broadcast")) {
+                    activity.sendBroadcast(intent);
+                } else if (methodString.equals("start-activity")) {
+                    activity.startActivity(intent);
+                } else {
+                    return new Response(HTTP_OK, "application/json;charset=utf-8", FranklyResult.failedResult("Invalid method '" + methodString + "'", "").asJson());
+                }
 
                 return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", "");
             } catch (Exception e) {
