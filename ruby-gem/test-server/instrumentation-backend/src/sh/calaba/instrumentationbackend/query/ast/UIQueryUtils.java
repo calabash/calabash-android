@@ -261,7 +261,7 @@ public class UIQueryUtils {
 	}
 
     public static void runOnViewThread(View view, Runnable runnable) {
-        if(view.getHandler().getLooper().getThread() == Thread.currentThread()) {
+        if(view.getHandler() == null || view.getHandler().getLooper() == null || view.getHandler().getLooper().getThread() == Thread.currentThread()) {
             runnable.run();
         } else {
             view.post(runnable);
