@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="" default="test" basedir=".">
+<project name="" default="package" basedir=".">
     <description>
       Bits and pieces plucked out of $ANDROID_HOME/tools/ant/build.xml
     </description>
