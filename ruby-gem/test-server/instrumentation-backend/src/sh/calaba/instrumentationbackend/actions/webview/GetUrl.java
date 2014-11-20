@@ -8,6 +8,7 @@ import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 public class GetUrl implements Action {
 
@@ -26,7 +27,7 @@ public class GetUrl implements Action {
         UIQueryUtils.runOnViewThread(webView, urlResult);
 
         try {
-            return urlResult.get();
+            return urlResult.get(10, TimeUnit.SECONDS);
         } catch (Exception e) {
             return new Result(false, e.getMessage());
         }
