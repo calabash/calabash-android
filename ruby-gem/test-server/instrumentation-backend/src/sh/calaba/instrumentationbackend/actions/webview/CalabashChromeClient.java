@@ -211,117 +211,179 @@ public class CalabashChromeClient extends WebChromeClient {
 
     @Override
     public void onProgressChanged(WebView view, int newProgress) {
-        mWebChromeClient.onProgressChanged(view, newProgress);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onProgressChanged(view, newProgress);
+        }
     }
 
     @Override
     public void onReceivedTitle(WebView view, String title) {
-        mWebChromeClient.onReceivedTitle(view, title);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onReceivedTitle(view, title);
+        }
     }
 
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
-        mWebChromeClient.onReceivedIcon(view, icon);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onReceivedIcon(view, icon);
+        }
     }
 
     @Override
     public void onReceivedTouchIconUrl(WebView view, String url, boolean precomposed) {
-        mWebChromeClient.onReceivedTouchIconUrl(view, url, precomposed);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onReceivedTouchIconUrl(view, url, precomposed);
+        }
     }
 
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
-        mWebChromeClient.onShowCustomView(view, callback);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onShowCustomView(view, callback);
+        }
     }
 
     @Override
     public void onShowCustomView(View view, int requestedOrientation, CustomViewCallback callback) {
-        mWebChromeClient.onShowCustomView(view, requestedOrientation, callback);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onShowCustomView(view, requestedOrientation, callback);
+        }
     }
 
     @Override
     public void onHideCustomView() {
-        mWebChromeClient.onHideCustomView();
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onHideCustomView();
+        }
     }
 
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
-        return mWebChromeClient.onCreateWindow(view, isDialog, isUserGesture, resultMsg);
+        if (mWebChromeClient != null) {
+            return mWebChromeClient.onCreateWindow(view, isDialog, isUserGesture, resultMsg);
+        }
+
+        return false;
     }
 
     @Override
     public void onRequestFocus(WebView view) {
-        mWebChromeClient.onRequestFocus(view);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onRequestFocus(view);
+        }
     }
 
     @Override
     public void onCloseWindow(WebView window) {
-        mWebChromeClient.onCloseWindow(window);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onCloseWindow(window);
+        }
     }
 
     @Override
     public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-        return mWebChromeClient.onJsAlert(view, url, message, result);
+        if (mWebChromeClient != null) {
+            return mWebChromeClient.onJsAlert(view, url, message, result);
+        }
+
+        return false;
     }
 
     @Override
     public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
-        return mWebChromeClient.onJsConfirm(view, url, message, result);
+        if (mWebChromeClient != null) {
+            return mWebChromeClient.onJsConfirm(view, url, message, result);
+        }
+
+        return false;
     }
 
     @Override
     public boolean onJsBeforeUnload(WebView view, String url, String message, JsResult result) {
-        return mWebChromeClient.onJsBeforeUnload(view, url, message, result);
+        if (mWebChromeClient != null) {
+            return mWebChromeClient.onJsBeforeUnload(view, url, message, result);
+        }
+
+        return false;
     }
 
     @Override
     public void onExceededDatabaseQuota(String url, String databaseIdentifier, long quota, long estimatedDatabaseSize, long totalQuota, WebStorage.QuotaUpdater quotaUpdater) {
-        mWebChromeClient.onExceededDatabaseQuota(url, databaseIdentifier, quota, estimatedDatabaseSize, totalQuota, quotaUpdater);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onExceededDatabaseQuota(url, databaseIdentifier, quota, estimatedDatabaseSize, totalQuota, quotaUpdater);
+        }
     }
 
     @Override
     public void onReachedMaxAppCacheSize(long requiredStorage, long quota, WebStorage.QuotaUpdater quotaUpdater) {
-        mWebChromeClient.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
+        }
     }
 
     @Override
     public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
-        mWebChromeClient.onGeolocationPermissionsShowPrompt(origin, callback);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onGeolocationPermissionsShowPrompt(origin, callback);
+        }
     }
 
     @Override
     public void onGeolocationPermissionsHidePrompt() {
-        mWebChromeClient.onGeolocationPermissionsHidePrompt();
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onGeolocationPermissionsHidePrompt();
+        }
     }
 
     @Override
     public boolean onJsTimeout() {
-        return mWebChromeClient.onJsTimeout();
+        if (mWebChromeClient != null) {
+            return mWebChromeClient.onJsTimeout();
+        }
+
+        return false;
     }
 
     @Override
     public void onConsoleMessage(String message, int lineNumber, String sourceID) {
-        mWebChromeClient.onConsoleMessage(message, lineNumber, sourceID);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.onConsoleMessage(message, lineNumber, sourceID);
+        }
     }
 
     @Override
     public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-        return mWebChromeClient.onConsoleMessage(consoleMessage);
+        if (mWebChromeClient != null) {
+            return mWebChromeClient.onConsoleMessage(consoleMessage);
+        }
+
+        return false;
     }
 
     @Override
     public Bitmap getDefaultVideoPoster() {
-        return mWebChromeClient.getDefaultVideoPoster();
+        if (mWebChromeClient != null) {
+            return mWebChromeClient.getDefaultVideoPoster();
+        }
+
+        return null;
     }
 
     @Override
     public View getVideoLoadingProgressView() {
-        return mWebChromeClient.getVideoLoadingProgressView();
+        if (mWebChromeClient != null) {
+            return mWebChromeClient.getVideoLoadingProgressView();
+        }
+
+        return null;
     }
 
     @Override
     public void getVisitedHistory(ValueCallback<String[]> callback) {
-        mWebChromeClient.getVisitedHistory(callback);
+        if (mWebChromeClient != null) {
+            mWebChromeClient.getVisitedHistory(callback);
+        }
     }
 
     @SuppressWarnings("rawtypes")
