@@ -1,15 +1,12 @@
 package sh.calaba.instrumentationbackend.actions.text;
 
-import android.app.Activity;
-import android.content.Context;
+import android.text.InputType;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import java.lang.Integer;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -41,7 +38,7 @@ public class PressUserActionButton implements Action {
 
         final View view = InfoMethodUtil.getServedView();
         final InputConnection inputConnection = InfoMethodUtil.tryGetInputConnection();
-        final int imeActionCode;
+        final Integer imeActionCode;
 
         if (inputConnection == null) {
             return Result.failedResult("Could not press user action button. No element has focus.");
@@ -57,14 +54,19 @@ public class PressUserActionButton implements Action {
             imeActionCode = findActionCode(view);
         }
 
-        InstrumentationBackend.solo.runOnMainSync(new Runnable() {
-            @Override
-            public void run() {
-                inputConnection.performEditorAction(imeActionCode);
-            }
-        });
 
-        return Result.successResult();
+        if (imeActionCode == null) {
+            return (new KeyboardEnterText()).execute("\n");
+        } else {
+            InstrumentationBackend.solo.runOnMainSync(new Runnable() {
+                @Override
+                public void run() {
+                    inputConnection.performEditorAction(imeActionCode);
+                }
+            });
+
+            return Result.successResult();
+        }
     }
 
     @Override
@@ -72,14 +74,22 @@ public class PressUserActionButton implements Action {
         return "press_user_action_button";
     }
 
-
-
-    private int findActionCode(View view) {
+    private Integer findActionCode(View view) {
         EditorInfo editorInfo = new EditorInfo();
         view.onCreateInputConnection(editorInfo);
 
         int actionId = editorInfo.actionId;
         int imeOptions = editorInfo.imeOptions & EditorInfo.IME_MASK_ACTION;
+
+        if (view instanceof TextView) {
+            TextView textView = (TextView) view;
+            int inputType = textView.getInputType();
+            int inputTypeFlags = inputType & InputType.TYPE_MASK_FLAGS;
+
+            if ((inputTypeFlags & InputType.TYPE_TEXT_FLAG_MULTI_LINE) == InputType.TYPE_TEXT_FLAG_MULTI_LINE) {
+                return null;
+            }
+        }
 
         if (actionId > 0) {
             return actionId;
