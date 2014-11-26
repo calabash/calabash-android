@@ -158,13 +158,15 @@ public class Query {
 
     public List<View> rootViews() {
         Set<View> parents = new HashSet<View>();
-        for (View v : viewFetcher.getAllViews(false))
-        {
-            View parent = viewFetcher.getTopParent(v);            
-            parents.add(parent);
+
+        if (viewFetcher != null) {
+            for (View v : viewFetcher.getAllViews(false)) {
+                View parent = viewFetcher.getTopParent(v);
+                parents.add(parent);
+            }
         }
-        List<View> results = new ArrayList<View>();
-        results.addAll(parents);
+
+        List<View> results = new ArrayList<View>(parents);
         return results;
     }
 
