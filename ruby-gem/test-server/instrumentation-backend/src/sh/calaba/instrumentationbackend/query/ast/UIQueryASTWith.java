@@ -62,7 +62,19 @@ public class UIQueryASTWith implements UIQueryAST {
                 } else if (o instanceof Map) {
                     Map m = (Map) o;
                     if (m.containsKey("result")) {
-                        processedResult.addAll(UIQueryUtils.mapWebViewJsonResponseOnViewThread((String) m.get("result"),(WebView) m.get("webView")).get(10, TimeUnit.SECONDS));
+                        List<Map<String, Object>> results = UIQueryUtils.mapWebViewJsonResponseOnViewThread((String) m.get("result"), (WebView) m.get("webView")).get(10, TimeUnit.SECONDS);
+
+                        for (Map<String, Object> result : results) {
+                            if (result.containsKey("error")) {
+                                if (result.containsKey("details")) {
+                                    throw new InvalidUIQueryException(result.get("error") + ". " + result.get("details"));
+                                } else {
+                                    throw new InvalidUIQueryException(result.get("error").toString());
+                                }
+                            }
+                        }
+
+                        processedResult.addAll(results);
                     }
                     else {
                         processedResult.add(m);
