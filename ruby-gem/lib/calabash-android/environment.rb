@@ -2,7 +2,7 @@ require_relative 'helpers'
 
 module Calabash
   module Android
-    class Environment
+    class Environment < Calabash::Environment
       require 'win32/registry' if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
 
       def self.exit_if_env_not_set_up
