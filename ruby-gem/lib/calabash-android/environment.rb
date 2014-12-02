@@ -1,5 +1,3 @@
-require_relative 'helpers'
-
 module Calabash
   module Android
     class Environment < Calabash::Environment
@@ -12,7 +10,7 @@ module Calabash
 
       def self.exit_unless_android_sdk_is_available
         if android_home_path
-          log "Android SDK found at: #{android_home_path}"
+          Logger::log "Android SDK found at: #{android_home_path}"
           return
         end
         puts "Could not find an Android SDK please make sure it is installed."
@@ -23,14 +21,14 @@ module Calabash
 
       def self.keytool_path
         find_executable_on_path(keytool_executable) ||
-        "\"#{jdk_path}/bin/#{keytool_executable}\""
+            "\"#{jdk_path}/bin/#{keytool_executable}\""
       end
 
       def self.exit_unless_jdk_is_available
         jdk = jdk_path
         if find_executable_on_path(keytool_executable) || jdk
-          log "JDK found on PATH." if find_executable_on_path(keytool_executable)
-          log "JDK found at: #{jdk}" if jdk
+          Logger::log "JDK found on PATH." if find_executable_on_path(keytool_executable)
+          Logger::log "JDK found at: #{jdk}" if jdk
           return
         end
         puts "Could not find Java Development Kit please make sure it is installed."
@@ -41,32 +39,32 @@ module Calabash
 
       def self.jarsigner_path
         find_executable_on_path(jarsigner_executable) ||
-        "\"#{jdk_path}/bin/#{jarsigner_executable}\""
+            "\"#{jdk_path}/bin/#{jarsigner_executable}\""
       end
 
       def self.java_path
         find_executable_on_path(java_executable) ||
-        "\"#{jdk_path}/bin/#{java_executable}\""
+            "\"#{jdk_path}/bin/#{java_executable}\""
       end
 
       def self.jdk_path
         path_if_jdk(ENV['JAVA_HOME']) ||
-        if is_windows?
-          path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.7', 'JavaHome')) ||
-          path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.6', 'JavaHome'))
-        else
-          path_if_jdk(read_attribute_from_monodroid_config('java-sdk', 'path'))
-        end
+            if is_windows?
+              path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.7', 'JavaHome')) ||
+                  path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.6', 'JavaHome'))
+            else
+              path_if_jdk(read_attribute_from_monodroid_config('java-sdk', 'path'))
+            end
       end
 
       def self.android_home_path
         path_if_android_home(ENV["ANDROID_HOME"]) ||
-        if is_windows?
-          path_if_android_home(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\Android SDK Tools', 'Path')) ||
-          path_if_android_home("C:\\Android\\android-sdk")
-        else
-          path_if_android_home(read_attribute_from_monodroid_config('android-sdk', 'path'))
-        end
+            if is_windows?
+              path_if_android_home(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\Android SDK Tools', 'Path')) ||
+                  path_if_android_home("C:\\Android\\android-sdk")
+            else
+              path_if_android_home(read_attribute_from_monodroid_config('android-sdk', 'path'))
+            end
       end
 
       def self.find_executable_on_path(executable)
@@ -85,7 +83,7 @@ module Calabash
         zipalign_path = File.join(android_home_path, 'tools', zipalign_executable)
 
         unless File.exists?(zipalign_path)
-          log "Did not find zipalign at '#{zipalign_path}'. Trying to find zipalign in tools directories."
+          Logger::log "Did not find zipalign at '#{zipalign_path}'. Trying to find zipalign in tools directories."
 
           tools_directories.each do |dir|
             zipalign_path = File.join(dir, zipalign_executable)
@@ -94,10 +92,10 @@ module Calabash
         end
 
         if File.exists?(zipalign_path)
-          log "Found zipalign at '#{zipalign_path}'"
+          Logger::log "Found zipalign at '#{zipalign_path}'"
           zipalign_path
         else
-          log("Did not find zipalign in any of '#{tools_directories.join("','")}'.", true)
+          Logger::log("Did not find zipalign in any of '#{tools_directories.join("','")}'.", true)
           raise 'Could not find zipalign'
         end
       end
@@ -132,7 +130,7 @@ module Calabash
 
       def self.tools_dir
         tools_dir = tools_directories.first
-        log "Found tools directory at '#{tools_dir}'"
+        Logger::log "Found tools directory at '#{tools_dir}'"
         tools_dir
       end
 
