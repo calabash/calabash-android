@@ -48,7 +48,7 @@ module Calabash
       end
 
       def self.jdk_path
-        path_if_jdk(ENV['JAVA_HOME']) ||
+        path_if_jdk(Environment.variable('JAVA_HOME')) ||
             if is_windows?
               path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.7', 'JavaHome')) ||
                   path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.6', 'JavaHome'))
@@ -58,7 +58,7 @@ module Calabash
       end
 
       def self.android_home_path
-        path_if_android_home(ENV["ANDROID_HOME"]) ||
+        path_if_android_home(Environment.variable("ANDROID_HOME")) ||
             if is_windows?
               path_if_android_home(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\Android SDK Tools', 'Path')) ||
                   path_if_android_home("C:\\Android\\android-sdk")
@@ -151,8 +151,8 @@ module Calabash
       end
 
       def self.path_elements
-        return [] unless ENV['PATH']
-        ENV['PATH'].split (/[:;]/)
+        return [] unless Environment.variable('PATH')
+        Environment.variable('PATH').split (/[:;]/)
       end
 
       def self.read_attribute_from_monodroid_config(element, attribute)
