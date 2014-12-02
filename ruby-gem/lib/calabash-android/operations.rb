@@ -507,7 +507,7 @@ module Calabash module Android
       end
 
       def adb_command
-        "#{Env.adb_path} -s #{serial}"
+        "#{Environment.adb_path} -s #{serial}"
       end
 
       def default_serial
@@ -544,7 +544,7 @@ module Calabash module Android
       end
 
       def connected_devices
-        lines = `#{Env.adb_path} devices`.split("\n")
+        lines = `#{Environment.adb_path} devices`.split("\n")
         start_index = lines.index{ |x| x =~ /List of devices attached/ } + 1
         lines[start_index..-1].collect { |l| l.split("\t").first }
       end

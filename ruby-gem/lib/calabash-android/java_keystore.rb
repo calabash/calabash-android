@@ -5,13 +5,13 @@ class JavaKeystore
     raise "No such keystore file '#{location}'" unless File.exists?(File.expand_path(location))
     log "Reading keystore data from keystore file '#{File.expand_path(location)}'"
 
-    keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"')
+    keystore_data = system_with_stdout_on_success(Environment.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"')
 
     if keystore_data.nil?
       if keystore_alias.empty?
         log "Could not obtain keystore data. Will try to extract alias automatically"
 
-        keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"')
+        keystore_data = system_with_stdout_on_success(Environment.keytool_path, '-list', '-v', '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"')
         aliases = keystore_data.scan(/Alias name\:\s*(.*)/).flatten
 
         if aliases.length == 0
@@ -44,7 +44,7 @@ class JavaKeystore
     raise "Cannot sign with a miss configured keystore" if errors
     raise "No such file: #{apk_path}" unless File.exists?(apk_path)
 
-    unless system_with_stdout_on_success(Env.jarsigner_path, '-sigalg', 'MD5withRSA', '-digestalg', 'SHA1', '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
+    unless system_with_stdout_on_success(Environment.jarsigner_path, '-sigalg', 'MD5withRSA', '-digestalg', 'SHA1', '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
       raise "Could not sign app: #{apk_path}"
     end
   end
