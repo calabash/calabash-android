@@ -1,5 +1,3 @@
-require "calabash-android/version"
-
 def calabash_setup
   @settings = {}
 
