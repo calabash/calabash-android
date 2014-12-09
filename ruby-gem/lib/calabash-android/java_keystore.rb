@@ -4,15 +4,17 @@ module Calabash
       class JavaKeystore
         attr_reader :errors, :location, :keystore_alias, :password, :fingerprint
 
-        def initialize(location, keystore_alias, password)
+        def initialize(location, keystore_alias, password, options={})
+          @logger = options[:logger] || Calabash::Logger.new
+
           raise "No such keystore file '#{location}'" unless File.exists?(File.expand_path(location))
-          log "Reading keystore data from keystore file '#{File.expand_path(location)}'"
+          @logger.log "Reading keystore data from keystore file '#{File.expand_path(location)}'", :debug
 
           keystore_data = system_with_stdout_on_success(Environment.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"')
 
           if keystore_data.nil?
             if keystore_alias.empty?
-              log "Could not obtain keystore data. Will try to extract alias automatically"
+              @logger.log "Could not obtain keystore data. Will try to extract alias automatically", :debug
 
               keystore_data = system_with_stdout_on_success(Environment.keytool_path, '-list', '-v', '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"')
               aliases = keystore_data.scan(/Alias name\:\s*(.*)/).flatten
@@ -23,14 +25,14 @@ module Calabash
                 raise 'Multiple aliases found in keystore. Please specify alias using calabash-android setup'
               else
                 keystore_alias = aliases.first
-                log "Extracted keystore alias '#{keystore_alias}'. Continuing"
+                @logger.log "Extracted keystore alias '#{keystore_alias}'. Continuing", :debug
 
                 return initialize(location, keystore_alias, password)
               end
             else
               error = "Could not list certificates in keystore. Probably because the password was incorrect."
               @errors = [{:message => error}]
-              log error
+              @logger.log error, :error
               raise error
             end
           end
@@ -38,8 +40,8 @@ module Calabash
           @location = location
           @keystore_alias = keystore_alias
           @password = password
-          log "Key store data:"
-          log keystore_data
+          @logger.log "Key store data:", :debug
+          @logger.log keystore_data, :debug
           @fingerprint = extract_md5_fingerprint(keystore_data)
         end
 
@@ -55,7 +57,7 @@ module Calabash
         def system_with_stdout_on_success(cmd, *args)
           a = Escape.shell_command(args)
           cmd = "#{cmd} #{a.gsub("'", '"')}"
-          log cmd
+          @logger.log cmd, :debug
           out = `#{cmd}`
           if $?.exitstatus == 0
             out
@@ -70,14 +72,14 @@ module Calabash
           if File.exists? path
             keystore = JavaKeystore.new(path, 'androiddebugkey', 'android')
             if keystore.errors
-              log "Trying to "
+              Logger.debug "Got errors #{keystore.errors}"
               nil
             else
-              log "Unlocked keystore at #{path} - fingerprint: #{keystore.fingerprint}"
+              Logger.debug "Unlocked keystore at #{path} - fingerprint: #{keystore.fingerprint}"
               keystore
             end
           else
-            log "Trying to read keystore from: #{path} - no such file"
+            Logger.debug "Trying to read keystore from: #{path} - no such file"
             nil
           end
         end
@@ -103,7 +105,7 @@ module Calabash
           fail_if_key_missing(keystore, "keystore_password")
           fail_if_key_missing(keystore, "keystore_alias")
           keystore["keystore_location"] = File.expand_path(keystore["keystore_location"])
-          log("Keystore location specified in #{File.exist?(".calabash_settings") ? ".calabash_settings" : "calabash_settings"}.")
+          Logger.debug "Keystore location specified in #{File.exist?(".calabash_settings") ? ".calabash_settings" : "calabash_settings"}."
           JavaKeystore.new(keystore["keystore_location"], keystore["keystore_alias"], keystore["keystore_password"])
         end
 
