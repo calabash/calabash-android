@@ -3,7 +3,6 @@ require 'zip'
 require 'tempfile'
 require 'escape'
 require 'rbconfig'
-require 'calabash-android/java_keystore'
 
 def package_name(app)
   package_line = aapt_dump(app, "package").first
