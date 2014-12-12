@@ -50,7 +50,7 @@ class Env
   def self.jdk_path
     path_if_jdk(ENV['JAVA_HOME']) ||
     if is_windows?
-      path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.8', 'JavaHome')) ||      
+      path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.8', 'JavaHome')) ||
       path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.7', 'JavaHome')) ||
       path_if_jdk(read_registry(::Win32::Registry::HKEY_LOCAL_MACHINE, 'SOFTWARE\\JavaSoft\\Java Development Kit\\1.6', 'JavaHome'))
     else
@@ -184,3 +184,4 @@ class Env
   end
 
 end
+
