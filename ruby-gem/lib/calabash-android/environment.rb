@@ -10,12 +10,12 @@ module Calabash
 
       def self.exit_unless_android_sdk_is_available
         if android_home_path
-          Logger::log "Android SDK found at: #{android_home_path}"
+          Logger.debug "Android SDK found at: #{android_home_path}"
           return
         end
-        puts "Could not find an Android SDK please make sure it is installed."
-        puts "You can read about how Calabash-Android is searching for an Android SDK and how you can help here:"
-        puts "https://github.com/calabash/calabash-android/blob/master/documentation/installation.md#prerequisites"
+        Logger.info "Could not find an Android SDK please make sure it is installed."
+        Logger.info "You can read about how Calabash-Android is searching for an Android SDK and how you can help here:"
+        Logger.info "https://github.com/calabash/calabash-android/blob/master/documentation/installation.md#prerequisites"
         exit 1
       end
 
@@ -27,13 +27,13 @@ module Calabash
       def self.exit_unless_jdk_is_available
         jdk = jdk_path
         if find_executable_on_path(keytool_executable) || jdk
-          Logger::log "JDK found on PATH." if find_executable_on_path(keytool_executable)
-          Logger::log "JDK found at: #{jdk}" if jdk
+          Logger.debug "JDK found on PATH." if find_executable_on_path(keytool_executable)
+          Logger.debug "JDK found at: #{jdk}" if jdk
           return
         end
-        puts "Could not find Java Development Kit please make sure it is installed."
-        puts "You can read about how Calabash-Android is searching for a JDK and how you can help here:"
-        puts "https://github.com/calabash/calabash-android/blob/master/documentation/installation.md#prerequisites"
+        Logger.info "Could not find Java Development Kit please make sure it is installed."
+        Logger.info "You can read about how Calabash-Android is searching for a JDK and how you can help here:"
+        Logger.info "https://github.com/calabash/calabash-android/blob/master/documentation/installation.md#prerequisites"
         exit 1
       end
 
@@ -83,7 +83,7 @@ module Calabash
         zipalign_path = File.join(android_home_path, 'tools', zipalign_executable)
 
         unless File.exists?(zipalign_path)
-          Logger::log "Did not find zipalign at '#{zipalign_path}'. Trying to find zipalign in tools directories."
+          Logger.debug "Did not find zipalign at '#{zipalign_path}'. Trying to find zipalign in tools directories."
 
           tools_directories.each do |dir|
             zipalign_path = File.join(dir, zipalign_executable)
@@ -92,10 +92,10 @@ module Calabash
         end
 
         if File.exists?(zipalign_path)
-          Logger::log "Found zipalign at '#{zipalign_path}'"
+          Logger.debug "Found zipalign at '#{zipalign_path}'"
           zipalign_path
         else
-          Logger::log("Did not find zipalign in any of '#{tools_directories.join("','")}'.", true)
+          Logger.debug("Did not find zipalign in any of '#{tools_directories.join("','")}'.", true)
           raise 'Could not find zipalign'
         end
       end
@@ -130,7 +130,7 @@ module Calabash
 
       def self.tools_dir
         tools_dir = tools_directories.first
-        Logger::log "Found tools directory at '#{tools_dir}'"
+        Logger.debug "Found tools directory at '#{tools_dir}'"
         tools_dir
       end
 
