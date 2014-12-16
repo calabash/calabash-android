@@ -177,6 +177,11 @@ public class HttpServer extends NanoHTTPD {
                 invocationResult = operation.apply(application);
 
                 if (invocationResult instanceof Map && ((Map) invocationResult).containsKey("error")) {
+                    Context context = InstrumentationBackend.solo.getCurrentActivity();
+                    invocationResult = operation.apply(context);
+                }
+
+                if (invocationResult instanceof Map && ((Map) invocationResult).containsKey("error")) {
                     Context context = getRootView().getContext();
                     invocationResult = operation.apply(context);
                 }
