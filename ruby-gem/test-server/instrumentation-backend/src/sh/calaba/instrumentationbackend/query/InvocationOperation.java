@@ -136,7 +136,15 @@ public class InvocationOperation implements Operation {
                         stringBuilder.append(", ");
                     }
 
-                    stringBuilder.append("[").append(argument.getClass().getSimpleName()).append("]");
+                    String simpleName;
+
+                    if (argument == null) {
+                        simpleName = "null";
+                    } else {
+                        simpleName = argument.getClass().getSimpleName();
+                    }
+
+                    stringBuilder.append("[").append(simpleName).append("]");
                 }
 
                 stringBuilder.append(")");
