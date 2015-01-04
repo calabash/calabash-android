@@ -262,7 +262,7 @@ module Calabash module Android
       puts "(Hooks are stored in features/support)"
     end
 
-    class Device
+    class Device < ::Calabash::Device
       attr_reader :app_path, :test_server_path, :serial, :server_port, :test_server_port
 
       def initialize(cucumber_world, serial, server_port, app_path, test_server_path, test_server_port = 7102)
