@@ -378,7 +378,7 @@ module Calabash module Android
       end
 
       def url_for(method)
-        url = URI.parse(ENV['DEVICE_ENDPOINT']|| "http://127.0.0.1:#{@server_port}")
+        url = server.endpoint
         path = url.path
         if path.end_with? "/"
           path = "#{path}#{method}"
