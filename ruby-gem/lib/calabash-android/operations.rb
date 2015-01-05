@@ -268,8 +268,8 @@ module Calabash module Android
       def initialize(identifier, server, options={})
         super
         forward_cmd = "#{adb_command} forward tcp:#{server.endpoint.port} tcp:#{server.test_server_port}"
-        log forward_cmd
-        log `#{forward_cmd}`
+        @logger.log forward_cmd
+        @logger.log `#{forward_cmd}`
       end
 
       def reinstall_apps
@@ -286,9 +286,9 @@ module Calabash module Android
 
       def install_app(app_path)
         cmd = "#{adb_command} install \"#{app_path}\""
-        log "Installing: #{app_path}"
+        @logger.log "Installing: #{app_path}"
         result = `#{cmd}`
-        log result
+        @logger.log result
         pn = package_name(app_path)
         succeeded = `#{adb_command} shell pm list packages`.lines.map{|line| line.chomp.sub("package:", "")}.include?(pn)
 
@@ -300,9 +300,9 @@ module Calabash module Android
 
       def update_app(app_path)
         cmd = "#{adb_command} install -r \"#{app_path}\""
-        log "Updating: #{app_path}"
+        @logger.log "Updating: #{app_path}"
         result = `#{cmd}`
-        log "result: #{result}"
+        @logger.log "result: #{result}"
         succeeded = result.include?("Success")
 
         unless succeeded
@@ -312,8 +312,8 @@ module Calabash module Android
       end
 
       def uninstall_app(package_name)
-        log "Uninstalling: #{package_name}"
-        log `#{adb_command} uninstall #{package_name}`
+        @logger.log "Uninstalling: #{package_name}"
+        @logger.log `#{adb_command} uninstall #{package_name}`
 
         succeeded = !(`#{adb_command} shell pm list packages`.lines.map{|line| line.chomp.sub("package:", "")}.include?(package_name))
 
@@ -338,7 +338,7 @@ module Calabash module Android
       end
 
       def perform_action(action, *arguments)
-        log "Action: #{action} - Params: #{arguments.join(', ')}"
+        @logger.log "Action: #{action} - Params: #{arguments.join(', ')}"
 
         params = {"command" => action, "arguments" => arguments}
 
@@ -346,10 +346,10 @@ module Calabash module Android
           begin
             result = http("/", params, {:read_timeout => 350})
           rescue Exception => e
-            log "Error communicating with test server: #{e}"
+            @logger.log "Error communicating with test server: #{e}"
             raise e
           end
-          log "Result:'" + result.strip + "'"
+          @logger.log "Result:'" + result.strip + "'"
           raise "Empty result from TestServer" if result.chomp.empty?
           result = JSON.parse(result)
           if not result["success"] then
@@ -375,7 +375,7 @@ module Calabash module Android
             HTTPClient::KeepAliveDisconnected,
             Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ECONNABORTED,
             Errno::ETIMEDOUT => e
-          log "It looks like your app is no longer running. \nIt could be because of a crash or because your test script shut it down."
+          @logger.log "It looks like your app is no longer running. \nIt could be because of a crash or because your test script shut it down."
           raise e
         end
       end
@@ -472,7 +472,7 @@ module Calabash module Android
           end
         else
           screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenshotTaker.jar')} #{serial} \"#{path}\""
-          log screenshot_cmd
+          @logger.log screenshot_cmd
           raise "Could not take screenshot" unless system(screenshot_cmd)
         end
 
@@ -489,8 +489,8 @@ module Calabash module Android
           response = perform_action('version')
           raise 'Invalid response' unless response['success']
         rescue => e
-          log("Could not contact server")
-          log(e && e.backtrace && e.backtrace.join("\n"))
+          @logger.log("Could not contact server")
+          @logger.log(e && e.backtrace && e.backtrace.join("\n"))
           raise "The server did not respond. Make sure the server is running."
         end
 
@@ -503,7 +503,7 @@ module Calabash module Android
 
       def default_serial
         devices = connected_devices
-        log "connected_devices: #{devices}"
+        @logger.log "connected_devices: #{devices}"
         raise "No connected devices" if devices.empty?
         raise "More than one device connected. Specify device serial using ADB_DEVICE_ARG" if devices.length > 1
         devices.first
@@ -525,7 +525,7 @@ module Calabash module Android
           f.write(YAML::dump(state))
           f.truncate(f.pos)
 
-          log "Persistently allocated port #{port} to #{serial}"
+          @logger.log "Persistently allocated port #{port} to #{serial}"
           return port
         end
       end
@@ -542,8 +542,8 @@ module Calabash module Android
 
       def wake_up
         wake_up_cmd = "#{adb_command} shell am start -a android.intent.action.MAIN -n #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.WakeUp"
-        log "Waking up device using:"
-        log wake_up_cmd
+        @logger.log "Waking up device using:"
+        @logger.log wake_up_cmd
         raise "Could not wake up the device" unless system(wake_up_cmd)
 
         retriable :tries => 10, :interval => 1 do
@@ -592,8 +592,8 @@ module Calabash module Android
 
         cmd = cmd_arr.join(" ")
 
-        log "Starting test server using:"
-        log cmd
+        @logger.log "Starting test server using:"
+        @logger.log cmd
         raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
 
         retriable :tries => 10, :interval => 1 do
@@ -602,15 +602,15 @@ module Calabash module Android
 
         begin
           retriable :tries => 10, :interval => 3 do
-            log "Checking if instrumentation backend is ready"
+            @logger.log "Checking if instrumentation backend is ready"
 
-            log "Is app running? #{app_running?}"
+            @logger.log "Is app running? #{app_running?}"
             ready = http("/ready", {}, {:read_timeout => 1})
             if ready != "true"
-              log "Instrumentation backend not yet ready"
+              @logger.log "Instrumentation backend not yet ready"
               raise "Not ready"
             else
-              log "Instrumentation backend is ready!"
+              @logger.log "Instrumentation backend is ready!"
             end
           end
         rescue Exception => e
@@ -620,7 +620,7 @@ module Calabash module Android
           raise msg
         end
 
-        log "Checking client-server version match..."
+        @logger.log "Checking client-server version match..."
 
         begin
           server_version = server_version()
@@ -628,7 +628,7 @@ module Calabash module Android
           msg = ["Unable to obtain Test Server version. "]
           msg << "Please run 'reinstall_test_server' to make sure you have the correct version"
           msg_s = msg.join("\n")
-          log(msg_s)
+          @logger.log(msg_s)
           raise msg_s
         end
 
@@ -642,11 +642,11 @@ module Calabash module Android
           msg << "\n\nSolution:\n\n"
           msg << "Run 'reinstall_test_server' to make sure you have the correct version"
           msg_s = msg.join("\n")
-          log(msg_s)
+          @logger.log(msg_s)
           raise msg_s
         end
 
-        log("Client and server versions match (client: #{client_version}, server: #{server_version}). Proceeding...")
+        @logger.log("Client and server versions match (client: #{client_version}, server: #{server_version}). Proceeding...")
       end
 
       def shutdown_test_server
@@ -656,11 +656,11 @@ module Calabash module Android
             sleep 0.3 while app_running?
           end
         rescue HTTPClient::KeepAliveDisconnected
-          log ("Server not responding. Moving on.")
+          @logger.log ("Server not responding. Moving on.")
         rescue Timeout::Error
-          log ("Could not kill app. Waited to 3 seconds.")
+          @logger.log ("Could not kill app. Waited to 3 seconds.")
         rescue EOFError
-          log ("Could not kill app. App is most likely not running anymore.")
+          @logger.log ("Could not kill app. App is most likely not running anymore.")
         end
       end
 
@@ -680,7 +680,7 @@ module Calabash module Android
 
       def get_preferences(name)
 
-        log "Get preferences: #{name}, app running? #{app_running?}"
+        @logger.log "Get preferences: #{name}, app running? #{app_running?}"
         preferences = {}
 
         if app_running?
@@ -714,7 +714,7 @@ module Calabash module Android
 
       def set_preferences(name, hash)
 
-        log "Set preferences: #{name}, #{hash}, app running? #{app_running?}"
+        @logger.log "Set preferences: #{name}, #{hash}, app running? #{app_running?}"
 
         if app_running?
           perform_action('set_preferences', name, hash);
@@ -738,7 +738,7 @@ module Calabash module Android
 
       def clear_preferences(name)
 
-        log "Clear preferences: #{name}, app running? #{app_running?}"
+        @logger.log "Clear preferences: #{name}, app running? #{app_running?}"
 
         if app_running?
           perform_action('clear_preferences', name);
