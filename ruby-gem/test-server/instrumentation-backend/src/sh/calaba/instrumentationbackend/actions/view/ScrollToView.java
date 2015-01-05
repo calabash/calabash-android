@@ -76,7 +76,7 @@ public class ScrollToView implements Action {
                     View rootView = view.getRootView();
                     Rect rect = new Rect();
 
-                    if (view.getWidth() < rootView.getWidth()) { // less that parent
+                    if (view.getWidth() < rootView.getWidth()) { // smaller than parent
                         rect.left = 0;
                         rect.right = view.getWidth();
                     } else {
@@ -85,7 +85,7 @@ public class ScrollToView implements Action {
                         rect.right = rect.left + rootView.getWidth();
                     }
 
-                    if (view.getHeight() < rootView.getHeight()) { // less that parent
+                    if (view.getHeight() < rootView.getHeight()) { // smaller than parent
                         rect.top = 0;
                         rect.bottom = view.getHeight();
                     } else {
