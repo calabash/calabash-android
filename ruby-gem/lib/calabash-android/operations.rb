@@ -498,7 +498,7 @@ module Calabash module Android
       end
 
       def adb_command
-        "#{Environment.adb_path} -s #{serial}"
+        "#{Environment.adb_path} -s #{@identifier}"
       end
 
       def default_serial
