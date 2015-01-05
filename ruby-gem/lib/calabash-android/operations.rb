@@ -559,7 +559,7 @@ module Calabash module Android
         raise "Could not push #{local} to #{remote}" unless system(cmd)
       end
 
-      def start_test_server_in_background(options={})
+      def start_test_server(application, test_server, options={})
         raise "Will not start test server because of previous failures." if ::Cucumber.wants_to_quit
 
         if keyguard_enabled?
