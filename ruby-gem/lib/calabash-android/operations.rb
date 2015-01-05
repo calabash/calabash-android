@@ -566,12 +566,12 @@ module Calabash module Android
           wake_up
         end
 
-        env_options = options
+        env_options = options.dup
 
-        env_options[:target_package] ||= package_name(@app_path)
-        env_options[:main_activity] ||= main_activity(@app_path)
-        env_options[:test_server_port] ||= @test_server_port
-        env_options[:class] ||= "sh.calaba.instrumentationbackend.InstrumentationBackend"
+        env_options[:test_server_port] ||= server.test_server_port
+        env_options[:class] ||= 'sh.calaba.instrumentationbackend.InstrumentationBackend'
+        env_options[:target_package] ||= application.package_name
+        env_options[:main_activity] ||= application.main_activity
 
         cmd_arr = [adb_command, "shell am instrument"]
 
@@ -581,12 +581,13 @@ module Calabash module Android
           cmd_arr << val.to_s
         end
 
-        cmd_arr << "#{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
+        cmd_arr << "#{test_server.package_name}/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
 
         cmd = cmd_arr.join(" ")
 
         @logger.log "Starting test server using:"
         @logger.log cmd
+
         raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
 
         retriable :tries => 10, :interval => 1 do
