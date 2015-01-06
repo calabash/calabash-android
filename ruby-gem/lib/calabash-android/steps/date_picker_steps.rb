@@ -1,5 +1,5 @@
 
-Given /^I set the date to "(\d\d-\d\d-\d\d\d\d)" on DatePicker with index ([^\"]*)$/ do |date, index|
+Given /^I set the date to "(\d\d-\d\d-\d\d\d\d)" on DatePicker with index "([^\"]*)"$/ do |date, index|
   set_date("android.widget.DatePicker index:#{index.to_i-1}", date)
 end
 
