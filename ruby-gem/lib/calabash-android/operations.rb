@@ -116,8 +116,8 @@ module Calabash module Android
       default_device.push(local, remote)
     end
 
-    def shutdown_test_server
-      default_device.shutdown_test_server
+    def calabash_stop_app
+      default_device.calabash_stop_app
     end
 
     def screenshot_embed(options={:prefix => nil, :name => nil, :label => nil})
@@ -559,7 +559,7 @@ module Calabash module Android
         raise "Could not push #{local} to #{remote}" unless system(cmd)
       end
 
-      def start_test_server(application, options={})
+      def calabash_start_app(application, options={})
         raise "Will not start test server because of previous failures." if ::Cucumber.wants_to_quit
 
         if keyguard_enabled?
@@ -643,7 +643,7 @@ module Calabash module Android
         @logger.log("Client and server versions match (client: #{client_version}, server: #{server_version}). Proceeding...")
       end
 
-      def shutdown_test_server
+      def calabash_stop_app
         begin
           http("/kill")
           Timeout::timeout(3) do

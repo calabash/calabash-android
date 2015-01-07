@@ -2,12 +2,12 @@ require 'calabash-android/management/adb'
 require 'calabash-android/operations'
 
 Before do |scenario|
-  start_test_server_in_background
+  calabash_start_app
 end
 
 After do |scenario|
   if scenario.failed?
     screenshot_embed
   end
-  shutdown_test_server
+  calabash_stop_app
 end
