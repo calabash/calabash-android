@@ -1,7 +1,6 @@
 package sh.calaba.instrumentationbackend;
 
 import java.lang.reflect.Method;
-import java.util.NoSuchElementException;
 
 import android.app.Activity;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
