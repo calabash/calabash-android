@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import android.app.Activity;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.test.InstrumentationTestRunner;
 
@@ -14,8 +15,15 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
 		try {
 			Context context = getTargetContext();
 			Class<?> c = Class.forName("mono.MonoPackageManager");
-			Method  method = c.getDeclaredMethod ("LoadApplication", Context.class, String.class, String[].class);
-			method.invoke (null, context, null, new String[]{context.getApplicationInfo ().sourceDir});
+            String[] strings = {context.getApplicationInfo().sourceDir};
+            try {
+               // 64bit support
+               Method loadApplication = c.getDeclaredMethod("LoadApplication", Context.class, ApplicationInfo.class, String[].class);
+               loadApplication.invoke(null, context, context.getApplicationInfo(), strings);
+            } catch (NoSuchMethodException e) {
+                Method  loadApplication = c.getDeclaredMethod ("LoadApplication", Context.class, String.class, String[].class);
+                loadApplication.invoke (null, context, null, strings);
+            }
 			System.out.println("Calabash loaded Mono");
             InstrumentationBackend.mainActivity = Class.forName(arguments.getString("main_activity")).asSubclass(Activity.class);
 		} catch (Exception e) {
