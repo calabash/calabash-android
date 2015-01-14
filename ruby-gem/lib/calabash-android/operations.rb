@@ -570,7 +570,7 @@ module Calabash module Android
 
         env_options[:test_server_port] ||= server.test_server_port
         env_options[:class] ||= 'sh.calaba.instrumentationbackend.InstrumentationBackend'
-        env_options[:target_package] ||= application.package_name
+        env_options[:target_package] ||= application.identifier
         env_options[:main_activity] ||= application.main_activity
 
         cmd_arr = [adb_command, "shell am instrument"]
@@ -581,7 +581,7 @@ module Calabash module Android
           cmd_arr << val.to_s
         end
 
-        cmd_arr << "#{application.test_server.package_name}/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
+        cmd_arr << "#{application.test_server.identifier}/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
 
         cmd = cmd_arr.join(" ")
 
