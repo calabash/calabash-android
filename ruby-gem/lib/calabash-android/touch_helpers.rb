@@ -61,50 +61,6 @@ module Calabash
         end
       end
 
-      def drag(*args)
-        pan(*args)
-      end
-
-      def pan_left(options={})
-        pan("DecorView", :left, options)
-      end
-
-      def pan_right(options={})
-        pan("DecorView", :right, options)
-      end
-
-      def pan_up(options={})
-        pan("* id:'content'", :up, options)
-      end
-
-      def pan_down(options={})
-        pan("* id:'content'", :down, options)
-      end
-
-      def pan(query_string, direction, options={})
-        execute_gesture(Gesture.with_parameters(Gesture.swipe(direction, options), {query_string: query_string}.merge(options)))
-      end
-
-      def flick_left(options={})
-        flick("DecorView", :left, options)
-      end
-
-      def flick_right(options={})
-        flick("DecorView", :right, options)
-      end
-
-      def flick_up(options={})
-        flick("* id:'content'", :up, options)
-      end
-
-      def flick_down(options={})
-        flick("* id:'content'", :down, options)
-      end
-
-      def flick(query_string, direction, options={})
-        execute_gesture(Gesture.with_parameters(Gesture.swipe(direction, {flick: true}.merge(options)), {query_string: query_string}.merge(options)))
-      end
-
       def pinch_out(options={})
         pinch("* id:'content'", :out, options)
       end
