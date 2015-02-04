@@ -85,7 +85,7 @@ public class CalabashChromeClient extends WebChromeClient {
             @Override
             public void run() {
                 Class<?> webViewClass = webView.getClass();
-                boolean isCordovaWebView = (webViewClass.getName().equals("org.apache.cordova.CordovaWebView"));
+                boolean isCordovaWebView = superClassEquals(webViewClass, "org.apache.cordova.CordovaWebView");
 
                 // Cordova web view changed its implementation of setWebChromeClient.
                 //   it will now try to cast the given WebChromeClient to a CordovaChromeClient,
@@ -104,6 +104,16 @@ public class CalabashChromeClient extends WebChromeClient {
 
         UIQueryUtils.runOnViewThread(webView, setWebChromeClientRunnable);
 	}
+
+    private boolean superClassEquals(Class clazz, String className) {
+        do {
+            if (clazz.getCanonicalName().equals(className)) {
+                return true;
+            }
+        } while((clazz = clazz.getSuperclass()) != Object.class);
+
+        return false;
+    }
 
     private void webViewSetWebChromeClient(WebChromeClient webChromeClient) throws NoSuchFieldException, IllegalAccessException,
             NoSuchMethodException, InvocationTargetException {
