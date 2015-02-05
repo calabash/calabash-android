@@ -22,15 +22,15 @@ public class SendTcp implements Action {
     @java.lang.Override
     public Result execute(String... args) {
         if(args.length < 2 || args.length > 3) {
-            return Result.failedResult("Wrong number of arguments");
+            return Result.failedResult("Wrong number of arguments. Expected: port, command, [keepConnectionAlive]");
         }
+
         int port = Integer.parseInt(args[0]);
         String command = args[1];
+        boolean keepConnectionAlive = args.length == 3 && Boolean.parseBoolean(args[2]);
 
-        boolean keepConnectionAlive = false;
-        if(args.length == 3) {
-            keepConnectionAlive = Boolean.parseBoolean(args[2]);
-        }
+        PrintWriter out = null;
+        BufferedReader in = null;
 
         try {
             boolean hasExistingConnection = connections.containsKey(port);
@@ -46,20 +46,27 @@ public class SendTcp implements Action {
                 socket = connections.get(port);
             }
 
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out.println(command);
-
-            if(!keepConnectionAlive) {
-                in.close();
-                out.close();
-                socket.close();
-                connections.remove(port);
-            }
-
             return Result.successResult(in.readLine());
         } catch (IOException e) {
             return Result.fromThrowable(e);
+        } finally {
+            if(!keepConnectionAlive) {
+                try {
+                    if (in != null) {
+                        in.close();
+                    }
+                } catch (IOException e) {
+                    // Ignore
+                } finally {
+                    if (out != null) {
+                        out.close();
+                    }
+                    connections.remove(port);
+                }
+            }
         }
     }
 
