@@ -98,10 +98,10 @@ public class ViewDump {
 				put("action", false);
 				put("enabled", false);
 				put("visible", true);
-				put("value", e.getMessage());
+				put("value", "Unable to dump subtree: " + e.getMessage());
 				put("path", new ArrayList<Integer>());
 				put("type", "[object Exception]");
-				put("name", "Unable to dump subtree");
+				put("name", null);
 				put("label", null);
 				put("children", Collections.EMPTY_LIST);
 
