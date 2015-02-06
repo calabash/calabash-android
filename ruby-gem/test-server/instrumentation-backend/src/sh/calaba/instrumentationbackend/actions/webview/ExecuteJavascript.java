@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient.WebFuture;
+import sh.calaba.instrumentationbackend.query.WebContainer;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 
 import android.os.Build;
@@ -71,36 +72,17 @@ public class ExecuteJavascript implements Action {
 		}
 	}
 
-    public static String evaluateJavascript(final WebView webView, final String javascript) {
+    public static String evaluateJavascript(final WebContainer webContainer, final String javascript) {
         Map result = (HashMap)UIQueryUtils.evaluateSyncInMainThread(new Callable<WebFuture>() {
 
             public WebFuture call() throws Exception {
-                CalabashChromeClient ccc = CalabashChromeClient.prepareWebView(webView);
+                webContainer.evaluateAsyncJavaScript(javascript);
 
-                final String script = "javascript:(function() {"
-                        + " var r;"
-                        + " try {"
-                        + "  r = (function() {"
-                        + javascript + ";"
-                        + "  }());"
-                        + " } catch (e) {"
-                        + "  r = 'Exception: ' + e;"
-                        + " }"
-                        + " prompt('calabash:'+r);"
-                        + "}())";
+                System.out.println("execute javascript: " + javascript);
 
-                System.out.println("execute javascript: " + script);
+                WebFuture webFuture = webContainer.evaluateAsyncJavaScript(javascript);
 
-                if (Build.VERSION.SDK_INT < 19) { // Android 4.4
-                    JavaScriptExecuter javaScriptExecuter = new JavaScriptExecuter(webView);
-                    javaScriptExecuter.executeJavaScript(script);
-                } else {
-                    webView.evaluateJavascript(script, null);
-                }
-
-                Object o = ccc.getResult();
-
-                return (WebFuture)o;
+                return webFuture;
             }
         });
 
