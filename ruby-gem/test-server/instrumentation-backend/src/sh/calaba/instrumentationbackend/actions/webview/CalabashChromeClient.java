@@ -209,6 +209,7 @@ public class CalabashChromeClient extends WebChromeClient {
                             rawResponseJSON, new TypeReference<String>() {
                     });
                 } catch (IOException e) {
+                    scriptFuture.completeExceptionally(e);
                     throw new RuntimeException("Incorrect JSON format returned from javascript: " + rawResponseJSON, e);
                 }
 
