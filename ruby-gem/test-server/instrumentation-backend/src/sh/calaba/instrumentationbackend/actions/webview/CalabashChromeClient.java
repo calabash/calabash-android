@@ -209,6 +209,7 @@ public class CalabashChromeClient extends WebChromeClient {
                             rawResponseJSON, new TypeReference<String>() {
                     });
                 } catch (IOException e) {
+                    scriptFuture.completeExceptionally(e);
                     throw new RuntimeException("Incorrect JSON format returned from javascript: " + rawResponseJSON, e);
                 }
 
@@ -402,8 +403,9 @@ public class CalabashChromeClient extends WebChromeClient {
 		private volatile boolean complete;
 		private String result;
 		private final WebView webView;
+        private Throwable throwable;
 
-		public WebView getWebView() {
+        public WebView getWebView() {
 			return webView;
 		}
 
@@ -411,6 +413,11 @@ public class CalabashChromeClient extends WebChromeClient {
 			this.complete = true;
 			this.eventHandled.open();
 		}
+
+        public synchronized void completeExceptionally(Throwable ex) {
+            throwable = ex;
+            complete();
+        }
 
 		public WebFuture(WebView webView) {
 			this.webView = webView;
@@ -434,6 +441,9 @@ public class CalabashChromeClient extends WebChromeClient {
 		@Override
 		public Object get() throws InterruptedException, ExecutionException {
 			eventHandled.block();
+            if(throwable != null) {
+                throw new ExecutionException(throwable);
+            }
 			return asMap();
 		}
 
@@ -441,7 +451,13 @@ public class CalabashChromeClient extends WebChromeClient {
 		public Object get(long timeout, TimeUnit unit)
 				throws InterruptedException, ExecutionException,
 				TimeoutException {
-			eventHandled.block(unit.convert(timeout, TimeUnit.MILLISECONDS));
+			eventHandled.block(unit.toMillis(timeout));
+            if(throwable != null) {
+                throw new ExecutionException(throwable);
+            }
+            if(!complete) {
+                throw new TimeoutException("Timeout while waiting for value");
+            }
 			return asMap();
 		}
 

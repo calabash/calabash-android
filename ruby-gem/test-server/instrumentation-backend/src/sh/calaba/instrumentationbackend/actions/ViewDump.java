@@ -1,10 +1,7 @@
 package sh.calaba.instrumentationbackend.actions;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -56,22 +53,22 @@ public class ViewDump {
 				Future webResults = (Future) child;
 				
 				try {
-					Map webResultsMap = (Map) webResults.get(10,TimeUnit.SECONDS);
+					Map webResultsMap = (Map) webResults.get(5,TimeUnit.SECONDS);
 					String json = (String) webResultsMap.get("result");
 					ObjectMapper mapper = new ObjectMapper();
 					List jsonResults = mapper.readValue(json, List.class);
 					for(Object m : jsonResults) {						
 						Map domElement = UIQueryUtils.mapWithElAsNull(UIQueryUtils.serializeViewToDump(m));
-						childrenNoEl.add(domElement);	
+						childrenNoEl.add(domElement);
 					}
 					
 							
 				} catch (InterruptedException e) {
-					
+					addErrorElement(childrenNoEl, e);
 				} catch (ExecutionException e) {
-					
+					addErrorElement(childrenNoEl, e);
 				} catch (TimeoutException e) {
-					
+					addErrorElement(childrenNoEl, e);
 				} catch (JsonParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -91,5 +88,27 @@ public class ViewDump {
 	
 	}
 
-	
+	private void addErrorElement(List<Map> children, final Exception e) {
+		Map map = new HashMap() {
+			{
+				put("id", null);
+				put("el", null);
+				put("rect", null);
+				put("hit-point", null);
+				put("action", false);
+				put("enabled", false);
+				put("visible", true);
+				put("value", "Unable to dump subtree: " + e.getMessage());
+				put("path", new ArrayList<Integer>());
+				put("type", "[object Exception]");
+				put("name", null);
+				put("label", null);
+				put("children", Collections.EMPTY_LIST);
+
+			}
+		};
+		children.add(map);
+	}
+
+
 }
