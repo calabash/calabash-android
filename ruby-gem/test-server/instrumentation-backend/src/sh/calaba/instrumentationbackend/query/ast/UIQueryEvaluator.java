@@ -16,7 +16,20 @@ public class UIQueryEvaluator {
 	public static QueryResult evaluateQueryWithOptions(List<UIQueryAST> query, List<View> inputViews, List<Operation> operations) {
         List views = evaluateQueryForPath(query, inputViews);
         List result = applyOperations(views, operations);
-        return new QueryResult(result);
+
+        // This is a bit of a hack because of the way we pass around values in
+        // the result hashmap itself. We will improve if we add a query result type that has
+        // metadata in it.
+        List modifiedResults = new ArrayList(result);
+
+        for (Object object : modifiedResults) {
+            if (object instanceof Map) {
+                Map map = (Map) object;
+                map.remove("calabashWebContainer");
+            }
+        }
+
+        return new QueryResult(modifiedResults);
 	}
 
 
