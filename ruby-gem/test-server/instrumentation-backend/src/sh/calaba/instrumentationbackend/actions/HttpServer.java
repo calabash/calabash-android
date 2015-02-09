@@ -26,8 +26,6 @@ import sh.calaba.instrumentationbackend.FranklyResult;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient;
-import sh.calaba.instrumentationbackend.actions.webview.ExecuteAsyncJavascript;
-import sh.calaba.instrumentationbackend.actions.webview.ExecuteJavascript;
 import sh.calaba.instrumentationbackend.json.JSONUtils;
 import sh.calaba.instrumentationbackend.query.InvocationOperation;
 import sh.calaba.instrumentationbackend.query.Operation;
@@ -45,7 +43,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AlphaAnimation;
-import android.webkit.WebView;
 
 public class HttpServer extends NanoHTTPD {
 	private static final String TAG = "InstrumentationBackend";
