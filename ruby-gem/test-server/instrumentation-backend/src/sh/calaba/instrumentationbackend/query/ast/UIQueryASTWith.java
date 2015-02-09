@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import sh.calaba.instrumentationbackend.query.CompletedFuture;
+import sh.calaba.instrumentationbackend.query.WebContainer;
 
 public class UIQueryASTWith implements UIQueryAST {
 	public final String propertyName;
@@ -62,7 +63,9 @@ public class UIQueryASTWith implements UIQueryAST {
                 } else if (o instanceof Map) {
                     Map m = (Map) o;
                     if (m.containsKey("result")) {
-                        List<Map<String, Object>> results = UIQueryUtils.mapWebViewJsonResponseOnViewThread((String) m.get("result"), (WebView) m.get("webView")).get(10, TimeUnit.SECONDS);
+                        List<Map<String, Object>> results =
+                                UIQueryUtils.mapWebContainerJsonResponseOnViewThread((String) m.get("result"),
+                                        (WebContainer) m.get("calabashWebContainer")).get(10, TimeUnit.SECONDS);
 
                         for (Map<String, Object> result : results) {
                             if (result.containsKey("error")) {
@@ -104,8 +107,11 @@ public class UIQueryASTWith implements UIQueryAST {
         }
 
         public Future call() throws Exception {
-            if (o instanceof WebView && isDomQuery()) {
-                Future webResult = evaluateForWebView((WebView) o);
+            if (o instanceof View && isDomQuery()) {
+                View view = (View) o;
+
+                Future webResult = evaluateForWebContainer(new WebContainer(view));
+
                 if (webResult != null) {
                     return webResult;
                 }
@@ -172,12 +178,12 @@ public class UIQueryASTWith implements UIQueryAST {
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	private Future evaluateForWebView(WebView o) {
+	private Future evaluateForWebContainer(WebContainer webContainer) {
 		if (!(this.value instanceof String)) {
 			return null;
 		}
 		try {
-			return QueryHelper.executeAsyncJavascriptInWebviews(o,
+			return QueryHelper.executeAsyncJavascriptInWebContainer(webContainer,
 					"calabash.js", (String) this.value,this.propertyName);
 				
 		} catch (UnableToFindChromeClientException e) {
