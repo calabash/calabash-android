@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -32,6 +33,7 @@ import sh.calaba.instrumentationbackend.query.InvocationOperation;
 import sh.calaba.instrumentationbackend.query.Operation;
 import sh.calaba.instrumentationbackend.query.Query;
 import sh.calaba.instrumentationbackend.query.QueryResult;
+import sh.calaba.instrumentationbackend.query.WebContainer;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 
 import android.app.Activity;
@@ -265,20 +267,32 @@ public class HttpServer extends NanoHTTPD {
                     List<CalabashChromeClient.WebFuture> webFutures = new ArrayList<CalabashChromeClient.WebFuture>();
 
                     List<String> webFutureResults = new ArrayList<String>(webFutures.size());
+                    boolean catchAllJavaScriptExceptions = true;
                     boolean success = true;
 
                     for (Object object : queryResult) {
                         String result;
-                        if(object instanceof WebView) {
-                            result = ExecuteJavascript.evaluateJavascript((WebView) object, javascript);
 
-                            if (result.startsWith("Exception:")) {
+                        if (object instanceof View) {
+                            if (WebContainer.isValidWebContainer((View) object)) {
+                                WebContainer webContainer = new WebContainer((View) object);
+
+                                try {
+                                    result = webContainer.evaluateSyncJavaScript(javascript, catchAllJavaScriptExceptions);
+                                    success = true;
+                                } catch (ExecutionException e) {
+                                    result = e.getMessage();
+                                    success = false;
+                                }
+                            } else {
+                                result = "Error: " + object.getClass().getCanonicalName() + " is not recognized a valid web view.";
                                 success = false;
                             }
                         } else {
-                            result = "Error: will only call javascript on WebView, not " + object.getClass().getSimpleName();
+                            result = "Error: will only call javascript on views, not " + object.getClass().getSimpleName();
                             success = false;
                         }
+
                         webFutureResults.add(result);
                     }
 
