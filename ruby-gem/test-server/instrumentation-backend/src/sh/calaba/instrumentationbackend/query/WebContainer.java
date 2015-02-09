@@ -83,7 +83,7 @@ public class WebContainer {
                             Object value = mapper.readValue(response, Object.class);
                             webFuture.setResult("" + value);
                         } catch (IOException e) {
-                            webFuture.setResult(e.getMessage(), false);
+                            webFuture.completeExceptionally(e);
                         }
                     }
                 });
@@ -131,7 +131,7 @@ public class WebContainer {
                             Object value = mapper.readValue(response, Object.class);
                             webFuture.setResult("" + value);
                         } catch (IOException e) {
-                            webFuture.setResult(e.getMessage(), false);
+                            webFuture.completeExceptionally(e);
                         }
                     }
                 });

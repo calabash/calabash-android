@@ -86,7 +86,7 @@ public class CalabashChromeClient extends WebChromeClient {
             @Override
             public void run() {
                 Class<?> webViewClass = webView.getClass();
-                boolean isCordovaWebView = (webViewClass.getName().equals("org.apache.cordova.CordovaWebView"));
+                boolean isCordovaWebView = superClassEquals(webViewClass, "org.apache.cordova.CordovaWebView");
 
                 // Cordova web view changed its implementation of setWebChromeClient.
                 //   it will now try to cast the given WebChromeClient to a CordovaChromeClient,
@@ -105,6 +105,16 @@ public class CalabashChromeClient extends WebChromeClient {
 
         UIQueryUtils.runOnViewThread(webView, setWebChromeClientRunnable);
 	}
+
+    private boolean superClassEquals(Class clazz, String className) {
+        do {
+            if (clazz.getCanonicalName().equals(className)) {
+                return true;
+            }
+        } while((clazz = clazz.getSuperclass()) != Object.class);
+
+        return false;
+    }
 
     private void webViewSetWebChromeClient(WebChromeClient webChromeClient) throws NoSuchFieldException, IllegalAccessException,
             NoSuchMethodException, InvocationTargetException {
@@ -374,13 +384,13 @@ public class CalabashChromeClient extends WebChromeClient {
         public static final String JS_ERROR_IDENTIFIER = "CalabashJSError:";
 		private final ConditionVariable eventHandled;
 		private volatile boolean complete;
-        private Boolean success;
+        private Throwable throwable;
 		private String result;
 		private final WebContainer webContainer;
 
 		public WebContainer getWebContainer() {
-			return webContainer;
-		}
+            return webContainer;
+        }
 
 		public void complete() {
 			this.complete = true;
@@ -388,26 +398,27 @@ public class CalabashChromeClient extends WebChromeClient {
 		}
 
 		public WebFuture(WebContainer webContainer) {
-			this.webContainer = webContainer;
-			eventHandled = new ConditionVariable();
-			result = null;
-            success = null;
-		}
+            this.webContainer = webContainer;
+            eventHandled = new ConditionVariable();
+            result = null;
+            throwable = null;
+        }
+
+        public synchronized void completeExceptionally(Throwable ex) {
+            throwable = ex;
+            complete();
+        }
 
 		public synchronized void setResult(String result) {
             if (result != null && result.startsWith(JS_ERROR_IDENTIFIER)) {
-                setResult(result.substring(JS_ERROR_IDENTIFIER.length()), false);
+                String text = result.substring(JS_ERROR_IDENTIFIER.length());
+                this.result = text;
+                completeExceptionally(new ExecutionException(text, null));
             } else {
-                setResult(result, true);
+                this.result = result;
+                complete();
             }
 		}
-
-        public synchronized void setResult(String result, boolean success) {
-            this.result = result;
-            this.success = success;
-
-            this.complete();
-        }
 
 		public synchronized String getResult() {
 			return this.result;
@@ -421,8 +432,8 @@ public class CalabashChromeClient extends WebChromeClient {
 		public Map get() throws InterruptedException, ExecutionException {
 			eventHandled.block();
 
-            if (!success) {
-                throw new ExecutionException(result, null);
+            if(throwable != null) {
+                throw new ExecutionException(throwable);
             }
 
 			return asMap();
@@ -432,10 +443,14 @@ public class CalabashChromeClient extends WebChromeClient {
 		public Map get(long timeout, TimeUnit unit)
 				throws InterruptedException, ExecutionException,
 				TimeoutException {
-			eventHandled.block(unit.convert(timeout, TimeUnit.MILLISECONDS));
+			eventHandled.block(unit.toMillis(timeout));
 
-            if (!success) {
-                throw new ExecutionException(result, null);
+            if(throwable != null) {
+                throw new ExecutionException(throwable);
+            }
+
+            if(!complete) {
+                throw new TimeoutException("Timeout while waiting for value");
             }
 
 			return asMap();
