@@ -64,7 +64,7 @@ public class UIQueryASTWith implements UIQueryAST {
                     Map m = (Map) o;
                     if (m.containsKey("result")) {
                         List<Map<String, Object>> results =
-                                UIQueryUtils.mapWebContainerResponseOnViewThread((String) m.get("result"),
+                                UIQueryUtils.mapWebContainerJsonResponseOnViewThread((String) m.get("result"),
                                         (WebContainer) m.get("calabashWebContainer")).get(10, TimeUnit.SECONDS);
 
                         for (Map<String, Object> result : results) {
@@ -107,7 +107,7 @@ public class UIQueryASTWith implements UIQueryAST {
         }
 
         public Future call() throws Exception {
-            if (isDomQuery()) {
+            if (o instanceof View && isDomQuery()) {
                 View view = (View) o;
 
                 Future webResult = evaluateForWebContainer(new WebContainer(view));

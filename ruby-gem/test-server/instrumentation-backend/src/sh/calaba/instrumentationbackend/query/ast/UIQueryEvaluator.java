@@ -18,7 +18,8 @@ public class UIQueryEvaluator {
         List result = applyOperations(views, operations);
 
         // This is a bit of a hack because of the way we pass around values in
-        // the result hashmap itself.
+        // the result hashmap itself. We will improve if we add a query result type that has
+        // metadata in it.
         List modifiedResults = new ArrayList(result);
 
         for (Object object : modifiedResults) {

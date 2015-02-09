@@ -267,6 +267,7 @@ public class HttpServer extends NanoHTTPD {
                     List<CalabashChromeClient.WebFuture> webFutures = new ArrayList<CalabashChromeClient.WebFuture>();
 
                     List<String> webFutureResults = new ArrayList<String>(webFutures.size());
+                    boolean catchAllJavaScriptExceptions = true;
                     boolean success = true;
 
                     for (Object object : queryResult) {
@@ -277,7 +278,7 @@ public class HttpServer extends NanoHTTPD {
                                 WebContainer webContainer = new WebContainer((View) object);
 
                                 try {
-                                    result = webContainer.evaluateSyncJavaScript(javascript);
+                                    result = webContainer.evaluateSyncJavaScript(javascript, catchAllJavaScriptExceptions);
                                     success = true;
                                 } catch (ExecutionException e) {
                                     result = e.getMessage();

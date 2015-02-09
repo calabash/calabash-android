@@ -273,16 +273,6 @@ public class UIQueryUtils {
         }
     }
 
-    public static Future<List<Map<String, Object>>> mapWebContainerResponseOnViewThread(
-            final String response, final WebContainer webContainer) throws IOException {
-
-        String jsonResponse = new ObjectMapper().readValue(
-                response, new TypeReference<String>() {
-                });
-
-            return mapWebContainerJsonResponseOnViewThread(jsonResponse, webContainer);
-    }
-
     public static Future<List<Map<String, Object>>> mapWebContainerJsonResponseOnViewThread(
             final String jsonResponse, final WebContainer webContainer) {
         FutureTask<List<Map<String, Object>>>  future =

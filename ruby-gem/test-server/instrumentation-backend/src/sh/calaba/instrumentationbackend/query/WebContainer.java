@@ -2,6 +2,7 @@ package sh.calaba.instrumentationbackend.query;
 
 import android.os.Build;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient;
 import sh.calaba.instrumentationbackend.actions.webview.JavaScriptExecuter;
+import sh.calaba.instrumentationbackend.json.JSONUtils;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import sh.calaba.org.codehaus.jackson.type.TypeReference;
@@ -43,8 +45,8 @@ public class WebContainer {
         return evaluateAsyncJavaScript(javaScript, false);
     }
 
-    public CalabashChromeClient.WebFuture evaluateAsyncJavaScript(String javaScript, boolean catchJavascriptExceptions) {
-        if (catchJavascriptExceptions) {
+    public CalabashChromeClient.WebFuture evaluateAsyncJavaScript(String javaScript, boolean catchJavaScriptExceptions) {
+        if (catchJavaScriptExceptions) {
             // Catch all JS exceptions
             javaScript =
                     "(function() {"
@@ -70,12 +72,21 @@ public class WebContainer {
 
                 return chromeClient.getResult() ;
             } else {
+                webView.getSettings().setJavaScriptEnabled(true);
+
                 final CalabashChromeClient.WebFuture webFuture =
                         new CalabashChromeClient.WebFuture(this);
 
                 webView.evaluateJavascript(javaScript, new ValueCallback<String>() {
                     public void onReceiveValue(String response) {
-                        webFuture.setResult(response);
+                        ObjectMapper mapper = new ObjectMapper();
+
+                        try {
+                            Object value = mapper.readValue(response, Object.class);
+                            webFuture.setResult("" + value);
+                        } catch (IOException e) {
+                            webFuture.setResult(e.getMessage(), false);
+                        }
                     }
                 });
 
@@ -86,6 +97,25 @@ public class WebContainer {
             final CalabashChromeClient.WebFuture webFuture =
                     new CalabashChromeClient.WebFuture(this);
 
+            View xWalkContent = getView();
+
+            while (!superClassEquals(xWalkContent.getClass(), "org.xwalk.core.internal.XWalkContent")) {
+                xWalkContent = getChildOf(xWalkContent);
+            }
+
+            // Enable javascript
+            try {
+                Method methodGetSettings = xWalkContent.getClass().getMethod("getSettings");
+                Object xWalkSettings = methodGetSettings.invoke(xWalkContent);
+
+                Method methodSetJavaScriptEnabled = xWalkSettings.getClass().
+                        getMethod("setJavaScriptEnabled", boolean.class);
+
+                methodSetJavaScriptEnabled.invoke(xWalkSettings, true);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+
             try {
                 Method methodEvaluateJavascript =
                         webContainerClass.getMethod("evaluateJavascript",
@@ -93,17 +123,20 @@ public class WebContainer {
 
                 methodEvaluateJavascript.invoke(getView(), javaScript, new ValueCallback<String>() {
                     public void onReceiveValue(String response) {
-                        webFuture.setResult(response);
+                        ObjectMapper mapper = new ObjectMapper();
+
+                        try {
+                            Object value = mapper.readValue(response, Object.class);
+                            webFuture.setResult("" + value);
+                        } catch (IOException e) {
+                            webFuture.setResult(e.getMessage(), false);
+                        }
                     }
                 });
 
                 return webFuture;
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e.getMessage());
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(e.getMessage());
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e.getMessage());
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
             }
         } else {
             throw new RuntimeException(getView().getClass().getCanonicalName() + " is not recognized a valid web view.");
@@ -111,10 +144,15 @@ public class WebContainer {
     }
 
     public String evaluateSyncJavaScript(final String javaScript) throws ExecutionException {
+        return evaluateSyncJavaScript(javaScript, false);
+    }
+
+    public String evaluateSyncJavaScript(final String javaScript,
+                                         final boolean catchJavaScriptExceptions) throws ExecutionException {
         Callable<CalabashChromeClient.WebFuture> callable =
                 new Callable<CalabashChromeClient.WebFuture>() {
             public CalabashChromeClient.WebFuture call() throws Exception {
-                return evaluateAsyncJavaScript(javaScript);
+                return evaluateAsyncJavaScript(javaScript, catchJavaScriptExceptions);
             }
         };
 
@@ -199,6 +237,16 @@ public class WebContainer {
         } while((clazz = clazz.getSuperclass()) != Object.class);
 
         return false;
+    }
+
+    private View getChildOf(View view) {
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+
+            return viewGroup.getChildAt(0);
+        } else {
+            return null;
+        }
     }
 
     private float translateCoordToScreen(int offset, float scale, Object point) {

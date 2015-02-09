@@ -396,15 +396,18 @@ public class CalabashChromeClient extends WebChromeClient {
 
 		public synchronized void setResult(String result) {
             if (result != null && result.startsWith(JS_ERROR_IDENTIFIER)) {
-                this.success = false;
-                this.result = result.substring(JS_ERROR_IDENTIFIER.length());
+                setResult(result.substring(JS_ERROR_IDENTIFIER.length()), false);
             } else {
-                this.success = true;
-                this.result = result;
+                setResult(result, true);
             }
+		}
+
+        public synchronized void setResult(String result, boolean success) {
+            this.result = result;
+            this.success = success;
 
             this.complete();
-		}
+        }
 
 		public synchronized String getResult() {
 			return this.result;
@@ -418,7 +421,7 @@ public class CalabashChromeClient extends WebChromeClient {
 		public Map get() throws InterruptedException, ExecutionException {
 			eventHandled.block();
 
-            if (success == false) {
+            if (!success) {
                 throw new ExecutionException(result, null);
             }
 
@@ -431,7 +434,7 @@ public class CalabashChromeClient extends WebChromeClient {
 				TimeoutException {
 			eventHandled.block(unit.convert(timeout, TimeUnit.MILLISECONDS));
 
-            if (success == false) {
+            if (!success) {
                 throw new ExecutionException(result, null);
             }
 
