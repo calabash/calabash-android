@@ -17,6 +17,7 @@ import java.util.concurrent.TimeoutException;
 import android.graphics.Bitmap;
 import android.os.Looper;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import sh.calaba.instrumentationbackend.query.WebContainer;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import sh.calaba.org.codehaus.jackson.type.TypeReference;
@@ -41,7 +42,7 @@ public class CalabashChromeClient extends WebChromeClient {
 
 	public CalabashChromeClient(final WebView webView) {
 		this.webView = webView;
-		this.scriptFuture = new WebFuture(webView);
+		this.scriptFuture = new WebFuture(new WebContainer(webView));
 		if (Build.VERSION.SDK_INT < 16) { // jelly bean
 			try {
 				Method methodGetConfiguration = webView.getClass().getMethod(
@@ -188,24 +189,6 @@ public class CalabashChromeClient extends WebChromeClient {
 	public WebFuture getResult() {
 		return scriptFuture;
 	}
-
-    public void evaluateCalabashScript(String script) {
-        webView.evaluateJavascript(script, new ValueCallback<String>() {
-            public void onReceiveValue(String rawResponseJSON) {
-                String jsonResponse = null;
-
-                try {
-                    jsonResponse = new ObjectMapper().readValue(
-                            rawResponseJSON, new TypeReference<String>() {
-                    });
-                } catch (IOException e) {
-                    throw new RuntimeException("Incorrect JSON format returned from javascript: " + rawResponseJSON, e);
-                }
-
-                scriptFuture.setResult(jsonResponse);
-            }
-        });
-    }
 
     /* Overwrite all methods to delegate to previous webChromeClient */
 
@@ -387,14 +370,16 @@ public class CalabashChromeClient extends WebChromeClient {
     }
 
     @SuppressWarnings("rawtypes")
-	public static class WebFuture implements Future {
+	public static class WebFuture implements Future<Map> {
+        public static final String JS_ERROR_IDENTIFIER = "CalabashJSError:";
 		private final ConditionVariable eventHandled;
 		private volatile boolean complete;
+        private Boolean success;
 		private String result;
-		private final WebView webView;
+		private final WebContainer webContainer;
 
-		public WebView getWebView() {
-			return webView;
+		public WebContainer getWebContainer() {
+			return webContainer;
 		}
 
 		public void complete() {
@@ -402,16 +387,27 @@ public class CalabashChromeClient extends WebChromeClient {
 			this.eventHandled.open();
 		}
 
-		public WebFuture(WebView webView) {
-			this.webView = webView;
+		public WebFuture(WebContainer webContainer) {
+			this.webContainer = webContainer;
 			eventHandled = new ConditionVariable();
 			result = null;
+            success = null;
 		}
 
 		public synchronized void setResult(String result) {
-			this.result = result;
-			this.complete();
+            if (result != null && result.startsWith(JS_ERROR_IDENTIFIER)) {
+                setResult(result.substring(JS_ERROR_IDENTIFIER.length()), false);
+            } else {
+                setResult(result, true);
+            }
 		}
+
+        public synchronized void setResult(String result, boolean success) {
+            this.result = result;
+            this.success = success;
+
+            this.complete();
+        }
 
 		public synchronized String getResult() {
 			return this.result;
@@ -422,16 +418,26 @@ public class CalabashChromeClient extends WebChromeClient {
 		}
 
 		@Override
-		public Object get() throws InterruptedException, ExecutionException {
+		public Map get() throws InterruptedException, ExecutionException {
 			eventHandled.block();
+
+            if (!success) {
+                throw new ExecutionException(result, null);
+            }
+
 			return asMap();
 		}
 
 		@Override
-		public Object get(long timeout, TimeUnit unit)
+		public Map get(long timeout, TimeUnit unit)
 				throws InterruptedException, ExecutionException,
 				TimeoutException {
 			eventHandled.block(unit.convert(timeout, TimeUnit.MILLISECONDS));
+
+            if (!success) {
+                throw new ExecutionException(result, null);
+            }
+
 			return asMap();
 		}
 
@@ -458,7 +464,7 @@ public class CalabashChromeClient extends WebChromeClient {
 		@SuppressWarnings("unchecked")
 		public Map asMap() {			
 			HashMap m = new HashMap();
-			m.put("webView", webView);
+			m.put("calabashWebContainer", webContainer);
 			m.put("result",getResult());			
 			return m;
 		}
