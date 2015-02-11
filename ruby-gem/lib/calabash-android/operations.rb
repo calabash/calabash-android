@@ -555,7 +555,7 @@ module Calabash module Android
         log wake_up_cmd
         raise "Could not wake up the device" unless system(wake_up_cmd)
 
-        retriable :tries => 10, :interval => 1 do
+        Retriable.retriable :tries => 10, :interval => 1 do
           raise "Could not remove the keyguard" if keyguard_enabled?
         end
       end
@@ -605,12 +605,12 @@ module Calabash module Android
         log cmd
         raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
 
-        retriable :tries => 10, :interval => 1 do
+        Retriable.retriable :tries => 10, :interval => 1 do
           raise "App did not start" unless app_running?
         end
 
         begin
-          retriable :tries => 10, :interval => 3 do
+          Retriable.retriable :tries => 10, :interval => 3 do
             log "Checking if instrumentation backend is ready"
 
             log "Is app running? #{app_running?}"
