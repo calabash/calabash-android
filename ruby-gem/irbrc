@@ -35,23 +35,22 @@ IRB.conf[:HISTORY_FILE] = ".irb-history"
 
 require 'calabash-android/defaults'
 require 'calabash-android/operations'
-extend Calabash::Android::Operations
 
-def embed(*args)
-  puts "Embed is a Cucumber method and is not available in this console."
-end
-
-
-
-#Virker det her?
 module Calabash
   module Android
     module Operations
-      class Cucumber
-        def self.wants_to_quit
-          false
-        end
+      def embed(*args)
+        puts "Embed is a Cucumber method and is not available in this console."
       end
     end
   end
 end
+
+module Cucumber
+  class << self
+    wants_to_quit = false
+  end
+end
+
+extend Calabash::Android::Operations
+

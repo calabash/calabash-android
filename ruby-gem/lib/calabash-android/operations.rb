@@ -28,6 +28,17 @@ module Calabash module Android
     include Calabash::Android::TouchHelpers
     include Calabash::Android::WaitHelpers
 
+    def self.extended(base)
+      if (class << base; included_modules.map(&:to_s).include?('Cucumber::RbSupport::RbWorld'); end)
+        unless instance_methods.include?(:embed)
+          original_embed = base.method(:embed)
+          define_method(:embed) do |*args|
+            original_embed.call(*args)
+          end
+        end
+      end
+    end
+
     def current_activity
       `#{default_device.adb_command} shell dumpsys window windows`.each_line.grep(/mFocusedApp.+[\.\/]([^.\s\/\}]+)/){$1}.first
     end
