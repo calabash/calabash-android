@@ -15,7 +15,7 @@ def build
       "package",
       "-debug",
       "-Dtools.dir=\"#{Env.tools_dir}\"",
-      "-Dandroid.api.level=19",
+      "-Dandroid.api.level=21",
       "-Dversion=#{Calabash::Android::VERSION}",
     ]
     Dir.chdir(@test_server_dir) do
