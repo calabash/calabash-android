@@ -26,6 +26,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
     public static String testPackage;
     public static String mainActivityName;
     public static Class<? extends Activity> mainActivity;
+    public static Intent activityIntent;
     public static Bundle extras;
     
     private static final String TAG = "InstrumentationBackend";
@@ -66,16 +67,22 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        Intent i = new Intent(Intent.ACTION_MAIN);
-        i.setClassName(testPackage, mainActivityName);
-        i.addCategory("android.intent.category.LAUNCHER");
-        i.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-        if (extras != null) {
-            i.putExtras(extras);
+        if (activityIntent != null) {
+            // Extras are not passed if intent is given
+            setActivityIntent(activityIntent);
+        } else {
+            Intent i = new Intent(Intent.ACTION_MAIN);
+            i.setClassName(testPackage, mainActivityName);
+            i.addCategory("android.intent.category.LAUNCHER");
+            i.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+            if (extras != null) {
+                i.putExtras(extras);
+            }
+
+            setActivityIntent(i);
         }
-
-        setActivityIntent(i);
 
         actions = new Actions(getInstrumentation(), this);
         instrumentation = getInstrumentation();
