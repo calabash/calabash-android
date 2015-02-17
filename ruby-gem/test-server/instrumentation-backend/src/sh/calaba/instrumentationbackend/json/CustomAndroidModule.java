@@ -15,5 +15,6 @@ public class CustomAndroidModule extends SimpleModule {
         addDeserializer(Intent.class, new IntentDeserializer());
         addSerializer(ComponentName.class, new ComponentNameSerializer());
         addDeserializer(ComponentName.class, new ComponentNameDeserializer());
+        addDeserializer(IntentHookRequest.class, new IntentHookRequestDeserializer());
     }
 }
