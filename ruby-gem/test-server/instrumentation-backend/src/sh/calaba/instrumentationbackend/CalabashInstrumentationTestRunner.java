@@ -9,7 +9,7 @@ import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.test.InstrumentationTestRunner;
 
-public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner {
+public class CalabashInstrumentationTestRunner extends InstrumentationTestRunnerExecStartActivityExposed {
 	@Override
     public void onCreate(Bundle arguments) {
 		try {
