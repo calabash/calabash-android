@@ -32,7 +32,8 @@
             android:noHistory="true"
             android:excludeFromRecents="true"/>
     </application>
-    <uses-sdk android:minSdkVersion="4" />
+    <uses-sdk android:minSdkVersion="4"
+        android:targetSdkVersion="21"/>
     <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner" />
     <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.ClearAppData" />
     <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.ClearAppData2" />
