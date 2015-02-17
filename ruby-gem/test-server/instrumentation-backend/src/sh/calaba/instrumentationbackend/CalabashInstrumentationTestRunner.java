@@ -35,11 +35,16 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
 
         InstrumentationBackend.testPackage = arguments.getString("target_package");
 
+        if (arguments.containsKey("intent_parcel")) {
+            InstrumentationBackend.activityIntent = arguments.getParcelable("intent_parcel");
+        }
+
         Bundle extras = (Bundle)arguments.clone();
         extras.remove("target_package");
         extras.remove("main_activity");
         extras.remove("test_server_port");
         extras.remove("class");
+        extras.remove("intent_parcel");
 
         if (extras.isEmpty()) {
             extras = null;
