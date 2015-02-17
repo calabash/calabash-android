@@ -30,7 +30,12 @@ import sh.calaba.instrumentationbackend.FranklyResult;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient;
+import sh.calaba.instrumentationbackend.actions.webview.ExecuteJavascript;
+import sh.calaba.instrumentationbackend.intenthook.ActivityIntentFilter;
+import sh.calaba.instrumentationbackend.intenthook.InstrumentationHook;
+import sh.calaba.instrumentationbackend.intenthook.IntentHook;
 import sh.calaba.instrumentationbackend.json.JSONUtils;
+import sh.calaba.instrumentationbackend.json.requests.IntentHookRequest;
 import sh.calaba.instrumentationbackend.query.InvocationOperation;
 import sh.calaba.instrumentationbackend.query.Operation;
 import sh.calaba.instrumentationbackend.query.Query;
@@ -40,6 +45,7 @@ import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -163,6 +169,42 @@ public class HttpServer extends NanoHTTPD {
                 Exception ex = new Exception("Could not invoke method", e);
 
                 return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", FranklyResult.fromThrowable(ex).asJson());
+            }
+        }
+        else if (uri.endsWith("/intent-hook")) {
+            String json = params.getProperty("json");
+            ObjectMapper mapper = JSONUtils.calabashObjectMapper();
+
+            try {
+                IntentHookRequest request = mapper.readValue(json, IntentHookRequest.class);
+                IntentHook intentHook;
+
+                if (request.getType().equals("instrumentation")) {
+                    Map data = request.getData();
+
+                    // TODO: Make a class for this
+                    int testServerPort = Integer.parseInt((String) data.get("testServerPort"));
+                    String targetPackage = (String) data.get("targetPackage");
+                    String clazz = (String) data.get("class");
+
+                    String mainActivity = (String) data.get("mainActivity");
+                    Map componentMap = (Map) data.get("component");
+
+                    ComponentName componentName = new ComponentName((String)componentMap.get("packageName"),
+                            (String) componentMap.get("className"));
+
+                    intentHook = new InstrumentationHook(componentName,
+                            testServerPort, targetPackage, clazz, mainActivity);
+                } else {
+                    throw new Exception("Invalid type '" + request.getType() + "'");
+                }
+
+                InstrumentationBackend.putIntentHook(request.getIntentFilterData(), intentHook);
+
+                return new Response(HTTP_OK, "application/json;charset=utf-8", "");
+            } catch (Exception e) {
+                return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
+                        FranklyResult.fromThrowable(e).asJson());
             }
         }
         else if (uri.endsWith("/last-broadcast-intent")) {
