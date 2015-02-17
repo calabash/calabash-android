@@ -277,15 +277,17 @@ module Calabash module Android
     class Device
       attr_reader :app_path, :test_server_path, :serial, :server_port, :test_server_port
 
-      def initialize(cucumber_world, serial, server_port, app_path, test_server_path, test_server_port = 7102)
-
+      def initialize(cucumber_world, serial, server_port, app_path,
+                     test_server_path, test_server_port = 7102)
         @cucumber_world = cucumber_world
         @serial = serial || default_serial
         @server_port = server_port || default_server_port
         @app_path = app_path
         @test_server_path = test_server_path
         @test_server_port = test_server_port
+      end
 
+      def forward_port
         forward_cmd = "#{adb_command} forward tcp:#{@server_port} tcp:#{@test_server_port}"
         log forward_cmd
         log `#{forward_cmd}`
@@ -612,6 +614,8 @@ module Calabash module Android
         if keyguard_enabled?
           wake_up
         end
+
+        forward_port
 
         env_options = options
 
