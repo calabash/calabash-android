@@ -17,6 +17,7 @@ require 'calabash-android/version'
 require 'calabash-android/env'
 require 'calabash-android/android_intent'
 require 'calabash-android/android_component'
+require 'calabash-android/intent_hook'
 require 'retriable'
 require 'cucumber'
 require 'date'
@@ -1239,6 +1240,14 @@ module Calabash module Android
         nil
       else
         AndroidIntent.from_json(json)
+      end
+    end
+
+    def add_intent_hook(intent_hook)
+      result = JSON.parse(http('/intent-hook', intent_hook))
+
+      if result['outcome'] && result['outcome'] != 'SUCCESS'
+        raise "/intent-hook failed because: #{result['reason']}\n#{result['details']}"
       end
     end
 
