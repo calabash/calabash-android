@@ -17,4 +17,11 @@ public class JSONUtils {
 			throw new RuntimeException("Could not convert result to json: "+map, e);
 		}
 	}
+
+    public static ObjectMapper calabashObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new CustomAndroidModule());
+
+        return objectMapper;
+    }
 }
