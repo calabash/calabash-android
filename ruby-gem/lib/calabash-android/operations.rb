@@ -14,6 +14,8 @@ require 'calabash-android/touch_helpers'
 require 'calabash-android/wait_helpers'
 require 'calabash-android/version'
 require 'calabash-android/env'
+require 'calabash-android/android_intent'
+require 'calabash-android/android_component'
 require 'retriable'
 require 'cucumber'
 require 'date'
@@ -1173,6 +1175,22 @@ module Calabash module Android
       end
 
       result['result']
+    end
+
+    def last_broadcast_intent
+      result = JSON.parse(http("/last-broadcast-intent"))
+
+      if result['outcome'] && result['outcome'] != 'SUCCESS'
+        raise "/last-broadcast-intent failed because: #{result['reason']}\n#{result['details']}"
+      end
+
+      json = JSON.parse(result)
+
+      if json.nil?
+        nil
+      else
+        AndroidIntent.from_json(json)
+      end
     end
 
     def map(query, method_name, *method_args)
