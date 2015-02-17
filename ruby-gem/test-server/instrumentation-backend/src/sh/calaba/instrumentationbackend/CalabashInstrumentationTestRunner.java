@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 import android.Manifest;
 import android.app.Activity;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
+import sh.calaba.instrumentationbackend.intenthook.IIntentHook;
+import sh.calaba.instrumentationbackend.intenthook.IntentHookResult;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -131,6 +134,14 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
             Intent intent, int requestCode, Bundle options) {
         InstrumentationBackend.intents.add(intent);
 
+        if (InstrumentationBackend.shouldFilter(intent, target)) {
+            IIntentHook intentHook = InstrumentationBackend.getIntentHookFor(intent, target);
+            IntentHookResult intentHookResult = intentHook.execStartActivity(who, contextThread,
+                    token, target, intent, requestCode, options);
+
+            if (intentHookResult.isHandled()) {
+                return intentHookResult.getActivityResult();
+            }
         }
 
         return super.execStartActivity(who, contextThread, token, target, intent, requestCode, options);
