@@ -4,6 +4,9 @@ import android.os.Looper;
 import android.os.MessageQueue;
 import sh.calaba.instrumentationbackend.actions.Actions;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
+import sh.calaba.instrumentationbackend.intenthook.ActivityIntentFilter;
+import sh.calaba.instrumentationbackend.intenthook.IIntentHook;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -13,13 +16,16 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.ArrayMap;
 import android.util.Log;
 
 import com.jayway.android.robotium.solo.PublicViewFetcher;
 import com.jayway.android.robotium.solo.SoloEnhanced;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Activity> {
@@ -36,6 +42,8 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
     public static PublicViewFetcher viewFetcher;
     public static Actions actions;
     public static List<Intent> intents = new ArrayList<Intent>();
+    private static Map<ActivityIntentFilter, IIntentHook> intentHooks =
+            new ArrayMap<ActivityIntentFilter, IIntentHook>();
 
     public InstrumentationBackend() {
         super((Class<Activity>)mainActivity);
@@ -175,6 +183,41 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
         this.getActivity().finish();
         super.tearDown();
 
+    }
+
+    public static void putIntentHook(ActivityIntentFilter activityIntentFilter, IIntentHook intentHook) {
+        Logger.debug("Adding intent hook '" + intentHook + "' for '" + activityIntentFilter + "'");
+        intentHooks.put(activityIntentFilter, intentHook);
+    }
+
+    public static void removeIntentHook(ActivityIntentFilter activityIntentFilter) {
+        intentHooks.remove(activityIntentFilter);
+    }
+
+    public static ActivityIntentFilter getFilterFor(Intent intent, Activity targetActivity) {
+        for (ActivityIntentFilter activityIntentFilter : intentHooks.keySet()) {
+            if (activityIntentFilter.match(intent, targetActivity)) {
+                return activityIntentFilter;
+            }
+        }
+
+        return null;
+    }
+
+    public static IIntentHook getIntentHookFor(Intent intent, Activity targetActivity) {
+        ActivityIntentFilter activityIntentFilter = getFilterFor(intent, targetActivity);
+
+        if (activityIntentFilter == null) {
+            return null;
+        } else {
+            return intentHooks.get(activityIntentFilter);
+        }
+    }
+
+    public static boolean shouldFilter(Intent intent, Activity targetActivity) {
+        ActivityIntentFilter activityIntentFilter = getFilterFor(intent, targetActivity);
+
+        return (activityIntentFilter != null);
     }
 
     public static void log(String message) {
