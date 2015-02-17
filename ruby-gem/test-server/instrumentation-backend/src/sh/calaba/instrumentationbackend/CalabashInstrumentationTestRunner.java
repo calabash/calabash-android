@@ -5,9 +5,10 @@ import java.lang.reflect.Method;
 import android.app.Activity;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
-import android.test.InstrumentationTestRunner;
+import android.os.IBinder;
 
 public class CalabashInstrumentationTestRunner extends InstrumentationTestRunnerExecStartActivityExposed {
 	@Override
@@ -59,6 +60,16 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
         }
 
         super.onCreate(arguments);
+	}
 
-	}	
+    @Override
+    public ActivityResult execStartActivity(
+            Context who, IBinder contextThread, IBinder token, Activity target,
+            Intent intent, int requestCode, Bundle options) {
+        InstrumentationBackend.intents.add(intent);
+
+        }
+
+        return super.execStartActivity(who, contextThread, token, target, intent, requestCode, options);
+    }
 }

@@ -35,6 +35,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
     public static SoloEnhanced solo;
     public static PublicViewFetcher viewFetcher;
     public static Actions actions;
+    public static List<Intent> intents = new ArrayList<Intent>();
 
     public InstrumentationBackend() {
         super((Class<Activity>)mainActivity);
