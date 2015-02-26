@@ -19,29 +19,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Bring views identified by query
+ * Bring views identified by query onto screen
  */
 
-public class ScrollToView implements Action {
+public class ScrollToView implements Action, IOnViewAction {
     @Override
     public Result execute(String... args) {
-        if (args.length != 1) {
-            return Result.failedResult("Query for identifying view must be provided.");
-        }
-
-        RememberFirst rememberFirst = new RememberFirst();
-        try {
-            Query query = new Query(args[0], Arrays.asList(rememberFirst));
-            QueryResult queryResult = query.executeQuery();
-
-            if (queryResult.isEmpty()) {
-                return Result.failedResult("Query found no view(s).");
-            }
-            scrollTo(rememberFirst.first);
-        } catch (InvalidUIQueryException e) {
-            return Result.fromThrowable(e);
-        }
-        return new Result(true);
+        ExecuteOnView executeOnView = new ExecuteOnView();
+        return executeOnView.execute(this, args);
     }
 
     @Override
@@ -49,27 +34,19 @@ public class ScrollToView implements Action {
         return "scroll_to_view";
     }
 
-
-    private class RememberFirst implements Operation {
-        Object first = null;
-
-        @Override
-        public Object apply(Object o) throws Exception {
-            if (first == null) {
-                first = o;
-            }
-            return o;
-        }
-
-        @Override
-        public String getName() {
-            return "First";
-        }
+    @Override
+    public String doOnView(View view) {
+        scrollTo(view);
+        return "success";
     }
 
-    private void scrollTo(Object o) {
-        if (o instanceof View) {
-            final View view = (View) o;
+    @Override
+    public String doOnView(Map viewMap) {
+        scrollTo(viewMap);
+        return "success";
+    }
+
+    private void scrollTo(final View view) {
             UIQueryUtils.runOnViewThread(view, new Runnable() {
                 @Override
                 public void run() {
@@ -97,11 +74,12 @@ public class ScrollToView implements Action {
 
                 }
             });
-        } else if (o instanceof Map) {
-            Map m = (Map) o;
-            final WebView webView = (WebView) m.get("webView");
+        }
+
+    private void scrollTo(Map viewMap) {
+            final WebView webView = (WebView) viewMap.get("webView");
             if (webView != null) {
-                Map rectMap = (Map) m.get("rect");
+                Map rectMap = (Map) viewMap.get("rect");
                 final int x = (Integer)rectMap.get("x");
                 final int y = (Integer)rectMap.get("y");
                 final int height = (Integer)rectMap.get("height");
@@ -154,5 +132,4 @@ public class ScrollToView implements Action {
                 });
             }
         }
-    }
 }
