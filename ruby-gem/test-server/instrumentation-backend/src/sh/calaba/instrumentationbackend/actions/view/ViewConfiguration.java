@@ -8,6 +8,7 @@ import java.util.Map;
 
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
+import sh.calaba.instrumentationbackend.query.WebContainer;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 
 public class ViewConfiguration implements Action, IOnViewAction {
@@ -31,8 +32,8 @@ public class ViewConfiguration implements Action, IOnViewAction {
 
     @Override
     public String doOnView(Map viewMap) {
-        final WebView webView = (WebView) viewMap.get("webView");
-        return doOnView(webView);
+        final WebContainer webContainer = (WebContainer) viewMap.get("calabashWebContainer");
+        return doOnView(webContainer.getView());
     }
 
     @Override

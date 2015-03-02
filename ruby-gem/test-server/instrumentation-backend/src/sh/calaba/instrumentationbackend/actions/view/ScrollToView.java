@@ -10,6 +10,7 @@ import sh.calaba.instrumentationbackend.actions.webview.QueryHelper;
 import sh.calaba.instrumentationbackend.query.Operation;
 import sh.calaba.instrumentationbackend.query.Query;
 import sh.calaba.instrumentationbackend.query.QueryResult;
+import sh.calaba.instrumentationbackend.query.WebContainer;
 import sh.calaba.instrumentationbackend.query.ast.InvalidUIQueryException;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 
@@ -77,22 +78,23 @@ public class ScrollToView implements Action, IOnViewAction {
         }
 
     private void scrollTo(Map viewMap) {
-            final WebView webView = (WebView) viewMap.get("webView");
-            if (webView != null) {
+            final WebContainer webContainer = (WebContainer) viewMap.get("calabashWebContainer");
+            if (webContainer != null) {
+                final View view = webContainer.getView();
                 Map rectMap = (Map) viewMap.get("rect");
                 final int x = (Integer)rectMap.get("x");
                 final int y = (Integer)rectMap.get("y");
                 final int height = (Integer)rectMap.get("height");
                 final int width = (Integer) rectMap.get("width");
 
-                UIQueryUtils.runOnViewThread(webView, new Runnable() {
+                UIQueryUtils.runOnViewThread(view, new Runnable() {
                     @Override
                     public void run() {
                         int[] webViewLocation = new int[2];
-                        webView.getLocationOnScreen(webViewLocation);
+                        view.getLocationOnScreen(webViewLocation);
 
-                        int webViewHeight = webView.getHeight();
-                        int webViewWidth = webView.getWidth();
+                        int webViewHeight = view.getHeight();
+                        int webViewWidth = view.getWidth();
                         int webviewY = webViewLocation[1];
                         int webviewX = webViewLocation[0];
 
@@ -127,7 +129,7 @@ public class ScrollToView implements Action, IOnViewAction {
                             int delta = width - webViewWidth;
                             offsetX = x-webviewX + delta/2;
                         }
-                        webView.scrollBy(offsetX, offsetY);
+                        view.scrollBy(offsetX, offsetY);
                     }
                 });
             }
