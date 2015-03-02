@@ -1,3 +1,26 @@
+0.5.7
+      Replaced calls to retriable with Retriable.retriable.
+
+0.5.6
+      Support for Crosswalk.
+
+      Support cordova Web Views of custom class name.
+
+      Don't fail JSON parsing on empty beans.
+
+      Rescue 'awesome print' LoadError in irbrc; don't fail silently.
+
+      Backdoor not finding any method to invoke in activities.
+
+0.5.5
+      Support for the newest versions of Cordova.
+
+      Change press_user_action_button now defaults to enter key (newline) in input fields with multiple lines.
+
+      Properly delegate all callbacks to the origin Web Chrome Client of the WebView being tested.
+
+      Run queries on the UI thread of the views. The query command could hang indefinitely in certain situations before this fix.
+
 0.5.4:
       This version is only a fix of changes introduced in 0.5.3.
 

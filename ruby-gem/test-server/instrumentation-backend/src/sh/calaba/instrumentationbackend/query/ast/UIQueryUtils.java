@@ -1,5 +1,6 @@
 package sh.calaba.instrumentationbackend.query.ast;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -20,9 +21,13 @@ import sh.calaba.instrumentationbackend.actions.webview.QueryHelper;
 import sh.calaba.instrumentationbackend.query.CompletedFuture;
 import sh.calaba.instrumentationbackend.query.Query;
 import sh.calaba.instrumentationbackend.query.ViewMapper;
+import sh.calaba.instrumentationbackend.query.WebContainer;
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
+import sh.calaba.org.codehaus.jackson.JsonParseException;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import sh.calaba.org.codehaus.jackson.type.TypeReference;
+
+import android.content.res.Resources;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -70,12 +75,12 @@ public class UIQueryUtils {
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	public static Future webViewSubViews(WebView o) {
+	public static Future webContainerSubViews(WebContainer webContainer) {
 
 		Log.i("Calabash", "About to webViewSubViews");
 
 
-		WebFuture controls = QueryHelper.executeAsyncJavascriptInWebviews(o,
+		WebFuture controls = QueryHelper.executeAsyncJavascriptInWebContainer(webContainer,
 				"calabash.js", "input,button","css");
 
 		return controls;
@@ -168,7 +173,8 @@ public class UIQueryUtils {
         if (v instanceof Map) {
             Map map = (Map)v;
             Map<String,Integer> viewRect = (Map<String,Integer>)map.get("rect");
-            Map<String,Integer> parentViewRec = ViewMapper.getRectForView((WebView)map.get("webView"));
+            WebContainer webContainer = (WebContainer)map.get("calabashWebContainer");
+            Map<String,Integer> parentViewRec = ViewMapper.getRectForView(webContainer.getView());
 
             return isViewSufficientlyShown(viewRect, parentViewRec);
         } else if (v instanceof View) {
@@ -220,7 +226,6 @@ public class UIQueryUtils {
 		return ViewMapper.getTagForView(view);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Future evaluateAsyncInMainThread(final Callable callable) throws Exception {
 
 		final AtomicReference<Future> result = new AtomicReference<Future>();
@@ -268,21 +273,22 @@ public class UIQueryUtils {
         }
     }
 
-    public static Future<List<Map<String, Object>>> mapWebViewJsonResponseOnViewThread(
-            final String jsonResponse, final WebView webView) {
-        FutureTask<List<Map<String, Object>>>  future = new FutureTask<List<Map<String, Object>>>(new MapWebView(jsonResponse, webView));
-        runOnViewThread(webView, future);
+    public static Future<List<Map<String, Object>>> mapWebContainerJsonResponseOnViewThread(
+            final String jsonResponse, final WebContainer webContainer) {
+        FutureTask<List<Map<String, Object>>>  future =
+                new FutureTask<List<Map<String, Object>>>(new MapWebContainer(jsonResponse, webContainer));
+        runOnViewThread(webContainer.getView(), future);
         return future;
     }
 
-    private static class MapWebView implements Callable<List<Map<String, Object>>> {
+    private static class MapWebContainer implements Callable<List<Map<String, Object>>> {
 
         private final String jsonResponse;
-        private final WebView webView;
+        private final WebContainer webContainer;
 
-        MapWebView(String jsonResponse, WebView webView) {
+        MapWebContainer(String jsonResponse, WebContainer webContainer) {
             this.jsonResponse = jsonResponse;
-            this.webView = webView;
+            this.webContainer = webContainer;
         }
 
         @Override
@@ -294,12 +300,22 @@ public class UIQueryUtils {
                         });
                 for (Map<String, Object> data : parsedResult) {
                     Map<String, Integer> rect = (Map<String, Integer>) data.get("rect");
-                    Map<String, Integer> updatedRect = QueryHelper.translateRectToScreenCoordinates(webView, rect);
+                    Map<String, Integer> updatedRect = webContainer.translateRectToScreenCoordinates(rect);
                     data.put("rect", updatedRect);
-                    data.put("webView", webView);
+
+                    View view = webContainer.getView();
+                    String id = ViewMapper.getIdForView(view);
+
+                    data.put("webView", id);
+                    data.put("calabashWebContainer", webContainer);
                 }
+
                 return parsedResult;
             } catch (Exception ignored) {
+                System.out.println("Exception in call");
+
+                System.out.println("json response: " + jsonResponse);
+
                 try {
                     Map<String, Object> resultAsMap = new ObjectMapper().readValue(
                             jsonResponse, new TypeReference<HashMap>() {
@@ -318,7 +334,6 @@ public class UIQueryUtils {
             }
         }
     }
-
 
 	public static Object parseValue(CommonTree val) {
 		switch (val.getType()) {
@@ -416,8 +431,8 @@ public class UIQueryUtils {
         private Map<?,?> doDump(View view, List<Integer> parentPath, int index) {
             Map viewMap = createViewMap(view, parentPath, index);
 
-            if (view instanceof WebView) {
-                Future webViewSubViews = webViewSubViews((WebView) view);
+            if (WebContainer.isValidWebContainer(view)) {
+                Future webViewSubViews = webContainerSubViews(new WebContainer(view));
                 viewMap.put("children", Collections.singletonList(webViewSubViews));
             }
             else {

@@ -25,6 +25,7 @@ public class ViewMapper {
 
 		data.put("id", getIdForView(v));
 		data.put("tag", getTagForView(v));
+		data.put("visible", UIQueryUtils.isVisible(v));
 
 		Map<String,Integer> rect = getRectForView(v);
 

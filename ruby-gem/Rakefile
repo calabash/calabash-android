@@ -1,15 +1,6 @@
 require 'bundler'
 load 'lib/calabash-android/env.rb'
 
-begin
-  require 'yard'
-  YARD::Rake::YardocTask.new do |t|
-    # see .yardopts for options
-  end
-rescue Exception => _
-  warn 'skipping yard requirement because it is a development dependency'
-end
-
 def build
   test_server_template_dir = File.join(File.dirname(__FILE__), 'test-server')
 
