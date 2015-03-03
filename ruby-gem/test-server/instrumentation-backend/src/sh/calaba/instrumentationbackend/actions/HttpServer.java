@@ -209,22 +209,22 @@ public class HttpServer extends NanoHTTPD {
         }
         else if (uri.endsWith("/last-broadcast-intent")) {
             List<Intent> intents = InstrumentationBackend.intents;
+            Map franklyResult = new HashMap<String, String>();
+            ObjectMapper mapper = JSONUtils.calabashObjectMapper();
 
             if (intents.isEmpty()) {
-                ObjectMapper mapper = new ObjectMapper();
                 Map<String, Object> result = new HashMap<String, Object>();
 
                 result.put("index", -1);
                 result.put("intent", null);
 
                 try {
-                    return new Response(HTTP_OK, "application/json;charset=utf-8", mapper.writeValueAsString(result));
+                    franklyResult.put("outcome", "SUCCESS");
+                    franklyResult.put("result", mapper.writeValueAsString(result));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             } else {
-                ObjectMapper mapper = JSONUtils.calabashObjectMapper();
-
                 try {
                     int index = intents.size()-1;
                     Map<String, Object> result = new HashMap<String, Object>();
@@ -233,10 +233,18 @@ public class HttpServer extends NanoHTTPD {
                     result.put("index", index);
                     result.put("intent", intent);
 
-                    return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", mapper.writeValueAsString(result));
+                    franklyResult.put("outcome", "SUCCESS");
+                    franklyResult.put("result", mapper.writeValueAsString(result));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+            }
+
+            try {
+                return new Response(HTTP_OK, "application/json;charset=utf-8",
+                        mapper.writeValueAsString(franklyResult));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
         else if (uri.endsWith("/backdoor")) {

@@ -1230,11 +1230,11 @@ module Calabash module Android
     def last_broadcast_intent
       result = JSON.parse(http("/last-broadcast-intent"))
 
-      if result['outcome'] && result['outcome'] != 'SUCCESS'
+      unless result['outcome'] == 'SUCCESS'
         raise "/last-broadcast-intent failed because: #{result['reason']}\n#{result['details']}"
       end
 
-      json = JSON.parse(result)
+      json = JSON.parse(result['result'])
 
       if json.nil?
         nil
