@@ -9,7 +9,7 @@ module Calabash
       end
 
       def self.from_json(json)
-        Component.new(json['packageName'], json['className'])
+        self.new(json['packageName'], json['className'])
       end
 
       def to_json(*a)

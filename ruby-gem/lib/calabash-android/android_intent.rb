@@ -28,7 +28,7 @@ module Calabash
             @package = intent_json['package']
             @type = intent_json['type']
             @component =
-                intent_json['component'] && Component.from_json(intent_json['component'])
+                intent_json['component'] && AndroidComponent.from_json(intent_json['component'])
             @clip_data = intent_json['clipData']
 
             @extras = intent_json['extras']
