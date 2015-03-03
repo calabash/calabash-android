@@ -237,7 +237,7 @@ public class WebContainer {
 
     private boolean superClassEquals(Class clazz, String className) {
         do {
-            if (clazz.getCanonicalName().equals(className)) {
+            if (className.equals(clazz.getCanonicalName())) {
                 return true;
             }
         } while((clazz = clazz.getSuperclass()) != Object.class);
