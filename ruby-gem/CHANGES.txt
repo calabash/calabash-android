@@ -1,3 +1,11 @@
+0.5.8
+      Handle `embed` if Calabash Android was 'included' instead of added
+      to the Cucumber World
+
+      Do depend on ANY retriable version >= 2
+
+      Fixed possible NPE in WebView queries
+
 0.5.7
       Replaced calls to retriable with Retriable.retriable.
 
