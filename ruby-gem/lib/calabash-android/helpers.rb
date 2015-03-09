@@ -6,6 +6,10 @@ require 'rbconfig'
 require 'calabash-android/java_keystore'
 
 def package_name(app)
+  unless File.exist?(app)
+    raise "Application '#{app}' does not exist"
+  end
+
   package_line = aapt_dump(app, "package").first
   raise "'package' not found in aapt output" unless package_line
   m = package_line.match(/name='([^']+)'/)
@@ -14,6 +18,10 @@ def package_name(app)
 end
 
 def main_activity(app)
+  unless File.exist?(app)
+    raise "Application '#{app}' does not exist"
+  end
+
   begin
     log("Trying to find launchable activity")
     launchable_activity_line = aapt_dump(app, "launchable-activity").first
