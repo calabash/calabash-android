@@ -13,6 +13,12 @@ public class SoloEnhanced extends Solo {
 		super(instrumentation, activity);
 		this.mapViewUtils = new MapViewUtils(instrumentation, viewFetcher, sleeper, waiter);
 	}
+
+	public SoloEnhanced(Instrumentation instrumentation) {
+		super(instrumentation);
+		this.mapViewUtils = new MapViewUtils(instrumentation, viewFetcher, sleeper, waiter);
+	}
+
     public ActivityUtils getActivityUtils() {
         return activityUtils;
     }

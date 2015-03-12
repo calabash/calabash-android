@@ -135,7 +135,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
             }
         }
         if (activity != null) {
-            solo = new SoloEnhanced(getInstrumentation(), activity);
+            solo = new SoloEnhanced(getInstrumentation());
             setActivity(activity);
 
             viewFetcher = new PublicViewFetcher(solo.getActivityUtils());
