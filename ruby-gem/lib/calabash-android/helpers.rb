@@ -150,6 +150,12 @@ def fingerprint_from_apk(app_path)
       end
       signature_files = Dir["#{tmp_dir}/META-INF/*"]
 
+      log 'Signature files:'
+
+      signature_files.each do |signature_file|
+        log signature_file
+      end
+
       raise "No signature files found in META-INF. Cannot proceed." if signature_files.empty?
       raise "More than one signature file (DSA or RSA) found in META-INF. Cannot proceed." if signature_files.length > 1
 
