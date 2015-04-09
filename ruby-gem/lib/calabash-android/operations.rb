@@ -120,15 +120,6 @@ module Calabash module Android
       default_device.calabash_stop_app
     end
 
-    def screenshot_embed(options={:prefix => nil, :name => nil, :label => nil})
-      path = default_device.screenshot(options)
-      embed(path, "image/png", options[:label] || File.basename(path))
-    end
-
-    def screenshot(options={:prefix => nil, :name => nil})
-      default_device.screenshot(options)
-    end
-
     def client_version
       default_device.client_version
     end
@@ -437,40 +428,6 @@ module Calabash module Android
           end
         end
         http
-      end
-
-      def screenshot(options={:prefix => nil, :name => nil})
-        prefix = options[:prefix] || ENV['SCREENSHOT_PATH'] || ""
-        name = options[:name]
-
-        if name.nil?
-          name = "screenshot"
-        else
-          if File.extname(name).downcase == ".png"
-            name = name.split(".png")[0]
-          end
-        end
-
-        @@screenshot_count ||= 0
-        path = "#{prefix}#{name}_#{@@screenshot_count}.png"
-
-        if ENV["SCREENSHOT_VIA_USB"] == "false"
-          begin
-            res = http("/screenshot")
-          rescue EOFError
-            raise "Could not take screenshot. App is most likely not running anymore."
-          end
-          File.open(path, 'wb') do |f|
-            f.write res
-          end
-        else
-          screenshot_cmd = "java -jar #{File.join(File.dirname(__FILE__), 'lib', 'screenshotTaker.jar')} #{serial} \"#{path}\""
-          @logger.log screenshot_cmd
-          raise "Could not take screenshot" unless system(screenshot_cmd)
-        end
-
-        @@screenshot_count += 1
-        path
       end
 
       def client_version
