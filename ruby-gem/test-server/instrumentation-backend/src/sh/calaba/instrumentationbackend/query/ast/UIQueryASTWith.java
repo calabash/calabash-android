@@ -3,6 +3,7 @@ package sh.calaba.instrumentationbackend.query.ast;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -39,7 +40,7 @@ public class UIQueryASTWith implements UIQueryAST {
         try {
             List<Future<Future>> futureResults = new ArrayList();
             int index = 0;
-            for (Object o : inputViews) {
+            for (Object o : UIQueryUtils.uniq(inputViews)) {
                 if (o instanceof View) {
                     View view = (View) o;
                     FutureTask<Future> march = new FutureTask<Future>(new MatchForViews(view, index));

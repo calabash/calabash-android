@@ -20,7 +20,7 @@ public enum UIQueryVisibility implements UIQueryAST {
 		public List evaluateWithViews(List inputViews,
 				UIQueryDirection direction, UIQueryVisibility self) {
 			List filtered = new ArrayList(inputViews.size());
-			for (Object o : inputViews) {
+			for (Object o : UIQueryUtils.uniq(inputViews)) {
 				if (UIQueryUtils.isVisible(o)) {
 				    filtered.add(o);					
 				}				
