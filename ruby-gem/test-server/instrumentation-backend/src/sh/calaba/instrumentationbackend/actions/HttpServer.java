@@ -32,6 +32,7 @@ import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient;
 import sh.calaba.instrumentationbackend.actions.webview.ExecuteJavascript;
 import sh.calaba.instrumentationbackend.intenthook.ActivityIntentFilter;
+import sh.calaba.instrumentationbackend.intenthook.DoNothingHook;
 import sh.calaba.instrumentationbackend.intenthook.InstrumentationHook;
 import sh.calaba.instrumentationbackend.intenthook.IntentHook;
 import sh.calaba.instrumentationbackend.json.JSONUtils;
@@ -190,11 +191,13 @@ public class HttpServer extends NanoHTTPD {
                     String mainActivity = (String) data.get("mainActivity");
                     Map componentMap = (Map) data.get("component");
 
-                    ComponentName componentName = new ComponentName((String)componentMap.get("packageName"),
+                    ComponentName componentName = new ComponentName((String) componentMap.get("packageName"),
                             (String) componentMap.get("className"));
 
                     intentHook = new InstrumentationHook(componentName,
                             testServerPort, targetPackage, clazz, mainActivity);
+                } else if (request.getType().equals("do-nothing")) {
+                    intentHook = new DoNothingHook();
                 } else {
                     throw new Exception("Invalid type '" + request.getType() + "'");
                 }
