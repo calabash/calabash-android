@@ -37,7 +37,8 @@ public class IntentSerializer extends JsonSerializer<Intent> {
             Set<String> keySet = extras.keySet();
 
             for (String key : keySet) {
-                jgen.writeObjectField(key, extras.get(key));
+                Object value = extras.get(key);
+                jgen.writeObjectField(key, value);
             }
 
             jgen.writeEndObject();

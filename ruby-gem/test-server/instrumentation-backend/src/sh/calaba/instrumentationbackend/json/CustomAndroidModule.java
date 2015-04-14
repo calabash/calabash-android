@@ -2,6 +2,7 @@ package sh.calaba.instrumentationbackend.json;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.net.Uri;
 
 import sh.calaba.instrumentationbackend.intenthook.IntentHook;
 import sh.calaba.instrumentationbackend.json.requests.IntentHookRequest;
@@ -16,5 +17,6 @@ public class CustomAndroidModule extends SimpleModule {
         addSerializer(ComponentName.class, new ComponentNameSerializer());
         addDeserializer(ComponentName.class, new ComponentNameDeserializer());
         addDeserializer(IntentHookRequest.class, new IntentHookRequestDeserializer());
+        addSerializer(Uri.class, new UriSerializer());
     }
 }
