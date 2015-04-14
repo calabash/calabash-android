@@ -43,6 +43,16 @@ module Calabash
           end
         end
 
+        def self.do_nothing
+          intent_hook = Reaction.new
+
+          intent_hook.instance_eval do
+            @type = :'do-nothing'
+          end
+
+          intent_hook
+        end
+
         def self.instrumentation(data)
           param_data = data.dup
 
