@@ -1,15 +1,19 @@
 module Calabash
   module Android
     class IntentHook
-      attr_reader :reaction, :filter
+      USAGE_COUNT_INFINITE = -1
 
-      def initialize(reaction, filter)
+      attr_reader :reaction, :filter, :usage_count
+
+      def initialize(reaction, filter, usage_count=USAGE_COUNT_INFINITE)
         @reaction = reaction
         @filter = filter
+        @usage_count = usage_count.to_i
       end
 
       def to_json(*a)
         {
+            'usageCount' => usage_count,
             'type' => reaction.type.to_s,
             'data' => reaction.data,
             'intentFilterData' => filter
@@ -38,7 +42,11 @@ module Calabash
         def initialize
           class << data
             define_method(:to_json) do |*a|
-              @data_json_method.call
+              if @data_json_method.nil?
+                {}
+              else
+                @data_json_method.call
+              end
             end
           end
         end
