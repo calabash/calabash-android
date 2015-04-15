@@ -27,8 +27,12 @@ public class IntentHookRequestDeserializer extends JsonDeserializer<IntentHookRe
 
         Map intentFilterData = (Map) json.get("intentFilterData");
         Map componentMap = (Map) intentFilterData.get("component");
-        ComponentName componentName = new ComponentName((String)componentMap.get("packageName"),
-                (String) componentMap.get("className"));
+        ComponentName componentName = null;
+
+        if (componentMap != null) {
+            componentName = new ComponentName((String) componentMap.get("packageName"),
+                    (String) componentMap.get("className"));
+        }
 
         ActivityIntentFilter activityIntentFilter =
                 new ActivityIntentFilter((String)intentFilterData.get("action"), componentName);
