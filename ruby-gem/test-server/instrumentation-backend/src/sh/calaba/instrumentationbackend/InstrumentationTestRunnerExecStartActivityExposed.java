@@ -64,12 +64,13 @@ public class InstrumentationTestRunnerExecStartActivityExposed extends Instrumen
     public ActivityResult execStartActivity(
             Context who, IBinder contextThread, IBinder token, Fragment target,
             Intent intent, int requestCode, Bundle options) {
+        Logger.info("3");
         InstrumentationTestRunner instrumentationTestRunner = cloneAsInstrumentationTestRunner();
 
         try {
             Method methodExecStartActivity = instrumentationTestRunner.getClass().getMethod("execStartActivity",
                     Context.class, IBinder.class, IBinder.class, Fragment.class, Intent.class,
-                    int.class, Bundle.class, UserHandle.class);
+                    int.class, Bundle.class);
 
             return (ActivityResult) methodExecStartActivity.invoke(instrumentationTestRunner, who,
                     contextThread, token, target, intent, requestCode, options);
