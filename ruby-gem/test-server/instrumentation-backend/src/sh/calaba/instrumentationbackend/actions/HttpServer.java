@@ -202,9 +202,10 @@ public class HttpServer extends NanoHTTPD {
                     throw new Exception("Invalid type '" + request.getType() + "'");
                 }
 
-                InstrumentationBackend.putIntentHook(request.getIntentFilterData(), intentHook);
+                InstrumentationBackend.putIntentHook(request.getIntentFilterData(), intentHook,
+                        request.getUsageCount());
 
-                return new Response(HTTP_OK, "application/json;charset=utf-8", "");
+                return new Response(HTTP_OK, "application/json;charset=utf-8", FranklyResult.emptyResult().asJson());
             } catch (Exception e) {
                 return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
                         FranklyResult.fromThrowable(e).asJson());

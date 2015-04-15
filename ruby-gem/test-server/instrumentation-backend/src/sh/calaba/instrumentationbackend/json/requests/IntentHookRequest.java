@@ -5,14 +5,20 @@ import java.util.Map;
 import sh.calaba.instrumentationbackend.intenthook.ActivityIntentFilter;
 
 public class IntentHookRequest {
+    private int usageCount;
     private String type;
     private Map<String, ?> data;
     private ActivityIntentFilter intentFilterData;
 
-    public IntentHookRequest(String type, Map<String, ?> data, ActivityIntentFilter intentFilterData) {
+    public IntentHookRequest(int usageCount, String type, Map<String, ?> data, ActivityIntentFilter intentFilterData) {
+        this.usageCount = usageCount;
         this.type = type;
         this.data = data;
         this.intentFilterData = intentFilterData;
+    }
+
+    public int getUsageCount() {
+        return usageCount;
     }
 
     public String getType() {

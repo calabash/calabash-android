@@ -135,7 +135,7 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
         InstrumentationBackend.intents.add(intent);
 
         if (InstrumentationBackend.shouldFilter(intent, target)) {
-            IIntentHook intentHook = InstrumentationBackend.getIntentHookFor(intent, target);
+            IIntentHook intentHook = InstrumentationBackend.useIntentHookFor(intent, target);
             IntentHookResult intentHookResult = intentHook.execStartActivity(who, contextThread,
                     token, target, intent, requestCode, options);
 

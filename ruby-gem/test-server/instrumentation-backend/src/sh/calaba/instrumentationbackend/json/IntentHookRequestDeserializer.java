@@ -22,6 +22,7 @@ public class IntentHookRequestDeserializer extends JsonDeserializer<IntentHookRe
             throws IOException, JsonProcessingException {
         Map json = jp.readValueAs(HashMap.class);
         String type = (String) json.get("type");
+        int usageCount = (Integer) json.get("usageCount");
         Map data = (Map) json.get("data");
 
         Map intentFilterData = (Map) json.get("intentFilterData");
@@ -32,6 +33,6 @@ public class IntentHookRequestDeserializer extends JsonDeserializer<IntentHookRe
         ActivityIntentFilter activityIntentFilter =
                 new ActivityIntentFilter((String)intentFilterData.get("action"), componentName);
 
-        return new IntentHookRequest(type, data, activityIntentFilter);
+        return new IntentHookRequest(usageCount, type, data, activityIntentFilter);
     }
 }
