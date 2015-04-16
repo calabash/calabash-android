@@ -23,4 +23,8 @@ public abstract class IntentHook implements IIntentHook {
             throw new RuntimeException(e);
         }
     }
+
+    public void onRemoved() {
+        // Empty
+    }
 }
