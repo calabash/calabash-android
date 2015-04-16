@@ -193,6 +193,13 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
 
     public static void removeIntentHook(ActivityIntentFilter activityIntentFilter) {
         Logger.debug("Removing intent hook for '" + activityIntentFilter + "'");
+
+        IntentHookWithCount intentHookWithCount = intentHooks.get(activityIntentFilter);
+
+        if (intentHookWithCount != null) {
+            intentHookWithCount.getIntentHook().onRemoved();
+        }
+
         intentHooks.remove(activityIntentFilter);
     }
 
