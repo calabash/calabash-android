@@ -2,6 +2,7 @@ package sh.calaba.instrumentationbackend.intenthook;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +24,11 @@ public class MethodHook extends IntentHook {
     @Override
     public IntentHookResult execStartActivity(Context who, IBinder contextThread, IBinder token,
                                               Activity target, Intent intent, int requestCode, Bundle options) {
+        return null;
+    }
+
+    @Override
+    public IntentHookResult execStartActivity(Context who, IBinder contextThread, IBinder token, Fragment target, Intent intent, int requestCode, Bundle options) {
         return null;
     }
 }
