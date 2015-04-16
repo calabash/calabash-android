@@ -1,6 +1,7 @@
 package sh.calaba.instrumentationbackend.intenthook;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -82,5 +83,10 @@ public class InstrumentationHook extends IntentHook {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public IntentHookResult execStartActivity(Context who, IBinder contextThread, IBinder token, Fragment target, Intent intent, int requestCode, Bundle options) {
+        return null;
     }
 }
