@@ -15,7 +15,7 @@ module Calabash
         {
             'usageCount' => usage_count,
             'type' => reaction.type.to_s,
-            'data' => reaction.data,
+            'data' => reaction.data_as_hash,
             'intentFilterData' => filter
         }.to_json
       end
@@ -39,16 +39,8 @@ module Calabash
       class Reaction
         attr_reader :type, :data
 
-        def initialize
-          class << data
-            define_method(:to_json) do |*a|
-              if @data_json_method.nil?
-                {}
-              else
-                @data_json_method.call
-              end
-            end
-          end
+        def data_as_hash
+          @data_hash_method.call
         end
 
         def self.do_nothing
@@ -80,13 +72,13 @@ module Calabash
           intent_hook.instance_eval do
             @type = :instrumentation
             @data = param_data
-            @data_json_method = lambda do
+            @data_hash_method = lambda do
               {
-                  'testServerPort' => [:test_server_port],
-                  'targetPackage' => [:target_package],
-                  'class' => [:class],
-                  'mainActivity' => [:main_activity],
-              }.to_json
+                  'testServerPort' => @data[:test_server_port],
+                  'targetPackage' => @data[:target_package],
+                  'class' => @data[:class],
+                  'mainActivity' => @data[:main_activity],
+              }
             end
           end
 
