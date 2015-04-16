@@ -112,6 +112,10 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
 
             if (intentHookResult.isHandled()) {
                 return intentHookResult.getActivityResult();
+            } else {
+                if (intentHookResult.getModifiedIntent() != null) {
+                    intent = intentHookResult.getModifiedIntent();
+                }
             }
         }
 
