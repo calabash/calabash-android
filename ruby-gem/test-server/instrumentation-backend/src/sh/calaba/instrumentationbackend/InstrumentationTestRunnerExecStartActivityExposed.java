@@ -170,7 +170,10 @@ public class InstrumentationTestRunnerExecStartActivityExposed extends Instrumen
             }
         }
 
-        if (instanceClass != Object.class) {
+        // Lollipop (ART) introduces private transient int java.lang.Object.shadow$_monitor_
+        // and private transient java.lang.Class java.lang.Object.shadow$_klass_.
+        // Avoid cloning these.
+        if (instanceClass.getSuperclass() != Object.class) {
             setFields(instance, instanceClass.getSuperclass());
         }
     }
