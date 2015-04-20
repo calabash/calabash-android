@@ -1,5 +1,6 @@
 package sh.calaba.instrumentationbackend;
 
+import android.app.ActivityManager;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -66,24 +67,34 @@ public class FakeCameraActivity extends Activity {
             return;
         }
 
+        System.out.println("CAMERA: MAX WIDTH: " + ImageUtils.getCameraMaxPictureSize().getWidth());
+        System.out.println("CAMERA: MAX HEIGHT: " + ImageUtils.getCameraMaxPictureSize().getHeight());
+
         cameraOrientation = ImageUtils.CameraOrientation.PORTRAIT;
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), options);
+        Bitmap startImage = BitmapFactory.decodeFile(image.getAbsolutePath(), options);
 
-        Bitmap croppedAndScaledImage = ImageUtils.generateCroppedAndScaled(bitmap, ImageUtils.getCameraMaxPictureSize(), cameraOrientation);
+        final Bitmap croppedAndScaled = ImageUtils.cropAndScale(startImage, ImageUtils.getCameraMaxPictureSize(), cameraOrientation);
+        startImage.recycle();
 
         setContentView(generateLayout());
-        useImage(croppedAndScaledImage);
 
-        final Bitmap postProcessedImage = ImageUtils.postProcessImage(croppedAndScaledImage);
+        int width = croppedAndScaled.getWidth() / 8;
+        int height = croppedAndScaled.getHeight() / 8;
+        Bitmap useImage = Bitmap.createScaledBitmap(croppedAndScaled, width, height, false);
+        
+        useImage(useImage);
+        useImage.recycle();
+
+        ImageUtils.postProcessImage(croppedAndScaled);
 
         Runnable callback = new Runnable() {
             @Override
             public void run() {
                 if (outputPath == null) {
-                    Bitmap bitmap = ImageUtils.generateThumbnail(postProcessedImage);
+                    Bitmap bitmap = ImageUtils.generateThumbnail(croppedAndScaled);
 
                     Intent result = new Intent("inline-data");
                     result.putExtra("data", bitmap);
@@ -95,13 +106,18 @@ public class FakeCameraActivity extends Activity {
                         outputPath.createNewFile();
 
                         OutputStream outputStream = new FileOutputStream(outputPath);
-                        postProcessedImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                        croppedAndScaled.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                         outputStream.close();
                     } catch (Exception e) {
                         e.printStackTrace();
                         setResult(Activity.RESULT_CANCELED);
                         finish();
                     }
+
+                    double usedMegs = Runtime.getRuntime().freeMemory() / 1048576.0d;
+
+                    System.out.println("CALABASH USED MEGS: " + usedMegs);
+
 
                     setResult(Activity.RESULT_OK, null);
                     finish();

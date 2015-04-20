@@ -43,7 +43,7 @@ public class ImageUtils {
         return sizes.get(sizes.size() - 1);
     }
 
-    public static Bitmap generateCroppedAndScaled(Bitmap image, Size maxResolution, CameraOrientation cameraOrientation) {
+    public static Bitmap cropAndScale(Bitmap image, Size maxResolution, CameraOrientation cameraOrientation) {
         ImageUtils.Size imageSize = new ImageUtils.Size(image.getWidth(), image.getHeight());
 
         int desiredWidth, desiredHeight;
@@ -71,34 +71,42 @@ public class ImageUtils {
             desiredHeight = imageSize.getHeight();
         }
 
-        Bitmap croppedImage = Bitmap.createBitmap(image, 0, 0, desiredWidth, desiredHeight);
+        System.out.println("CAMERA ARC: " + aspectRatioCamera);
+        System.out.println("CAMERA ARI: " + aspectRatioImage);
+        System.out.println("CAMERA DW: " + desiredWidth);
+        System.out.println("CAMERA DH: " + desiredHeight);
 
-        return Bitmap.createScaledBitmap(croppedImage, cameraWidth, cameraHeight, false);
+        Bitmap croppedImage = Bitmap.createBitmap(image, 0, 0, desiredWidth, desiredHeight);
+        Canvas canvas = new Canvas(croppedImage);
+        canvas.scale(cameraWidth, cameraHeight);
+
+        return croppedImage;
+
+        //Bitmap croppedImage = Bitmap.createBitmap(image, 0, 0, desiredWidth, desiredHeight);
+        //image = Bitmap.createScaledBitmap(croppedImage, cameraWidth, cameraHeight, false);
+        //croppedImage.recycle();
     }
 
-    public static Bitmap generateThumbnail(Bitmap bitmap) {
+    public static Bitmap generateThumbnail(Bitmap image) {
         BitmapFactory.Options opts = new BitmapFactory.Options();
-        opts.outWidth = bitmap.getWidth();
-        opts.outHeight = bitmap.getHeight();
+        opts.outWidth = image.getWidth();
+        opts.outHeight = image.getHeight();
         int sampleSize = computeSampleSize(opts, -1, 5 * 1024);
 
-        int thumbWidth = bitmap.getWidth() * 4 / sampleSize;
-        int thumbHeight = bitmap.getHeight() * 4 / sampleSize;
+        int thumbWidth = image.getWidth() * 4 / sampleSize;
+        int thumbHeight = image.getHeight() * 4 / sampleSize;
 
-        return Bitmap.createScaledBitmap(bitmap, thumbWidth, thumbHeight, false);
+        return Bitmap.createScaledBitmap(image, thumbWidth, thumbHeight, false);
     }
 
-    public static Bitmap postProcessImage(Bitmap image) {
-        Bitmap modifiedImage = image.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(modifiedImage);
+    public static void postProcessImage(Bitmap image) {
+        Canvas canvas = new Canvas(image);
         Paint paint = new Paint();
 
         paint.setColor(Color.RED);
-        paint.setStrokeWidth(modifiedImage.getWidth()*modifiedImage.getHeight()*0.00001f);
+        paint.setStrokeWidth(image.getWidth() * image.getHeight() * 0.00001f);
         paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(0, 0, modifiedImage.getWidth(), modifiedImage.getHeight(), paint);
-
-        return modifiedImage;
+        canvas.drawRect(0, 0, image.getWidth(), image.getHeight(), paint);
     }
 
     public static boolean isCameraValid() {
