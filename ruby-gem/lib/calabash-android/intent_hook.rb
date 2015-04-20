@@ -21,17 +21,16 @@ module Calabash
       end
 
       class Filter
-        attr_reader :intent, :component
+        attr_reader :intent
 
-        def initialize(intent, component)
+        def initialize(intent)
           @intent = intent
-          @component = component
         end
 
         def to_json(*a)
           {
               'action' => intent.action,
-              'component' => component
+              'component' => intent.component
           }.to_json
         end
       end
