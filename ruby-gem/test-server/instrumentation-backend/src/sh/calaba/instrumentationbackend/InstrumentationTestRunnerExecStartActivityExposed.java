@@ -25,7 +25,7 @@ public class InstrumentationTestRunnerExecStartActivityExposed extends Instrumen
         InstrumentationTestRunner instrumentationTestRunner = cloneAsInstrumentationTestRunner();
 
         try {
-            Method methodExecStartActivity = instrumentationTestRunner.getClass().getMethod("execStartActivity",
+            Method methodExecStartActivity = instrumentationTestRunner.getClass().getMethod("execStartActivities",
                     Context.class, IBinder.class, IBinder.class, Activity.class, Intent[].class,
                     Bundle.class);
 
@@ -46,7 +46,7 @@ public class InstrumentationTestRunnerExecStartActivityExposed extends Instrumen
         InstrumentationTestRunner instrumentationTestRunner = cloneAsInstrumentationTestRunner();
 
         try {
-            Method methodExecStartActivity = instrumentationTestRunner.getClass().getMethod("execStartActivity",
+            Method methodExecStartActivity = instrumentationTestRunner.getClass().getMethod("execStartActivitiesAsUser",
                     Context.class, IBinder.class, IBinder.class, Activity.class, Intent[].class,
                     Bundle.class, int.class);
 
@@ -64,7 +64,6 @@ public class InstrumentationTestRunnerExecStartActivityExposed extends Instrumen
     public ActivityResult execStartActivity(
             Context who, IBinder contextThread, IBinder token, Fragment target,
             Intent intent, int requestCode, Bundle options) {
-        Logger.info("3");
         InstrumentationTestRunner instrumentationTestRunner = cloneAsInstrumentationTestRunner();
 
         try {
@@ -84,11 +83,33 @@ public class InstrumentationTestRunnerExecStartActivityExposed extends Instrumen
     }
 
     /*
-    TODO
+        Lollipop added.  We cannot overwrite this as we cannot access IAppTask. However, the
+        return type is void anyway.
       public void execStartActivityFromAppTask(
             Context who, IBinder contextThread, IAppTask appTask,
             Intent intent, Bundle options) {
      */
+
+    public ActivityResult execStartActivity(
+            Context who, IBinder contextThread, IBinder token, Activity target,
+            Intent intent, int requestCode, Bundle options) {
+        InstrumentationTestRunner instrumentationTestRunner = cloneAsInstrumentationTestRunner();
+
+        try {
+            Method methodExecStartActivity = instrumentationTestRunner.getClass().getMethod("execStartActivity",
+                    Context.class, IBinder.class, IBinder.class, Activity.class, Intent.class, int.class, Bundle.class);
+
+            return (ActivityResult) methodExecStartActivity.invoke(instrumentationTestRunner, who, contextThread, token, target,
+                    intent, requestCode, options);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public ActivityResult execStartActivity(
             Context who, IBinder contextThread, IBinder token, Activity target,
@@ -111,20 +132,17 @@ public class InstrumentationTestRunnerExecStartActivityExposed extends Instrumen
         }
     }
 
-
-
-
-    public ActivityResult execStartActivity(
-            Context who, IBinder contextThread, IBinder token, Activity target,
-            Intent intent, int requestCode, Bundle options) {
+    public ActivityResult execStartActivityAsCaller(Context who, IBinder contextThread, IBinder token, Activity target,
+                                                    Intent intent, int requestCode, Bundle options, int userId) {
         InstrumentationTestRunner instrumentationTestRunner = cloneAsInstrumentationTestRunner();
 
         try {
-            Method methodExecStartActivity = instrumentationTestRunner.getClass().getMethod("execStartActivity",
-                    Context.class, IBinder.class, IBinder.class, Activity.class, Intent.class, int.class, Bundle.class);
+            Method methodExecStartActivity = instrumentationTestRunner.getClass().getMethod("execStartActivityAsCaller",
+                    Context.class, IBinder.class, IBinder.class, Activity.class, Intent.class,
+                    int.class, Bundle.class, int.class);
 
-            return (ActivityResult) methodExecStartActivity.invoke(instrumentationTestRunner, who, contextThread, token, target,
-                    intent, requestCode, options);
+            return (ActivityResult) methodExecStartActivity.invoke(instrumentationTestRunner, who,
+                    contextThread, token, target, intent, requestCode, options, userId);
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         } catch (NoSuchMethodException e) {
