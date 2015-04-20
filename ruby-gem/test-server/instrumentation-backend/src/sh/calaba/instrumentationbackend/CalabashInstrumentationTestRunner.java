@@ -3,18 +3,21 @@ package sh.calaba.instrumentationbackend;
 import java.lang.reflect.Method;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
 import sh.calaba.instrumentationbackend.actions.version.Version;
 import sh.calaba.instrumentationbackend.intenthook.IIntentHook;
 import sh.calaba.instrumentationbackend.intenthook.IntentHookResult;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.UserHandle;
@@ -134,26 +137,105 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
 	}
 
     @Override
-    public ActivityResult execStartActivity(
-            Context who, IBinder contextThread, IBinder token, Activity target,
-            Intent intent, int requestCode, Bundle options) {
+    public void execStartActivities(Context who, IBinder contextThread, IBinder token, Activity target, Intent[] intents, Bundle options) {
+        Logger.info("execStartActivity 1");
+        // We have no hooks for this
+        super.execStartActivities(who, contextThread, token, target, intents, options);
+    }
+
+    @Override
+    public void execStartActivitiesAsUser(Context who, IBinder contextThread, IBinder token, Activity target, Intent[] intents, Bundle options, int userId) {
+        Logger.info("execStartActivity 2");
+        // We have no hooks for this
+        super.execStartActivitiesAsUser(who, contextThread, token, target, intents, options, userId);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Override
+    public ActivityResult execStartActivity(final Context who, final IBinder contextThread, final IBinder token, final Fragment target, final Intent intent, final int requestCode, final Bundle options) {
+        Logger.info("execStartActivity 3");
+        Activity activity;
+
+        if (target == null) {
+            activity = null;
+        } else {
+            activity = target.getActivity();
+        }
+
+        return handleExecStartActivity(intent, activity, new ExecStartActivityHandler() {
+            @Override
+            public IntentHookResult whenFiltered(IIntentHook intentHook) {
+                return intentHook.execStartActivity(who, contextThread, token, target, intent, requestCode, options);
+            }
+
+            @Override
+            public ActivityResult whenUnhandled(Intent modifiedIntent) {
+                return CalabashInstrumentationTestRunner.super.execStartActivity(who, contextThread, token, target, modifiedIntent, requestCode, options);
+            }
+        });
+    }
+
+    @Override
+    public ActivityResult execStartActivity(final Context who, final IBinder contextThread, final IBinder token, final Activity target, final Intent intent, final int requestCode, final Bundle options) {
+        Logger.info("execStartActivity 4");
+
+        return handleExecStartActivity(intent, target, new ExecStartActivityHandler() {
+            @Override
+            public IntentHookResult whenFiltered(IIntentHook intentHook) {
+                return intentHook.execStartActivity(who, contextThread,
+                        token, target, intent, requestCode, options);
+            }
+
+            @Override
+            public ActivityResult whenUnhandled(Intent modifiedIntent) {
+                return CalabashInstrumentationTestRunner.super.execStartActivity(who, contextThread, token, target, modifiedIntent, requestCode, options);
+            }
+        });
+    }
+
+    @Override
+    public ActivityResult execStartActivity(Context who, IBinder contextThread, IBinder token, Activity target, Intent intent, int requestCode, Bundle options, UserHandle user) {
+        Logger.info("execStartActivity 5");
+        // We have no hooks for this
+        return super.execStartActivity(who, contextThread, token, target, intent, requestCode, options, user);
+    }
+
+    @Override
+    public ActivityResult execStartActivityAsCaller(Context who, IBinder contextThread, IBinder token, Activity target, Intent intent, int requestCode, Bundle options, int userId) {
+        Logger.info("execStartActivity 6");
+        // We have no hooks for this
+        return super.execStartActivityAsCaller(who, contextThread, token, target, intent, requestCode, options, userId);
+    }
+
+    public ActivityResult handleExecStartActivity(final Intent intent, final Activity target, ExecStartActivityHandler handler) {
         InstrumentationBackend.intents.add(intent);
 
         if (InstrumentationBackend.shouldFilter(intent, target)) {
             IIntentHook intentHook = InstrumentationBackend.useIntentHookFor(intent, target);
-            IntentHookResult intentHookResult = intentHook.execStartActivity(who, contextThread,
-                    token, target, intent, requestCode, options);
+            IntentHookResult intentHookResult = handler.whenFiltered(intentHook);
 
             if (intentHookResult.isHandled()) {
                 return intentHookResult.getActivityResult();
             } else {
+                final Intent modifiedIntent;
+
                 if (intentHookResult.getModifiedIntent() != null) {
-                    intent = intentHookResult.getModifiedIntent();
+                    modifiedIntent = intentHookResult.getModifiedIntent();
+                } else {
+                    modifiedIntent = intent;
                 }
+
+                return handler.whenUnhandled(modifiedIntent);
             }
         }
 
-        return super.execStartActivity(who, contextThread, token, target, intent, requestCode, options);
+        return handler.whenUnhandled(intent);
     }
->>>>>>> TS: Add tracking of intents for the most basic execStartAcitivty
+
+
+    private interface ExecStartActivityHandler {
+        public IntentHookResult whenFiltered(IIntentHook intentHook);
+
+        public ActivityResult whenUnhandled(Intent modifiedIntent);
+    }
 }
