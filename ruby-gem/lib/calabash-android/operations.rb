@@ -1231,7 +1231,7 @@ module Calabash module Android
       result = JSON.parse(http("/last-broadcast-intent"))
 
       unless result['outcome'] == 'SUCCESS'
-        raise "/last-broadcast-intent failed because: #{result['reason']}\n#{result['details']}"
+        raise "/last-broadcast-intent failed because: #{result['reason']}\n#{result['detail']}"
       end
 
       json = JSON.parse(result['result'])
@@ -1247,7 +1247,7 @@ module Calabash module Android
       result = JSON.parse(http('/intent-hook', intent_hook))
 
       if result['outcome'] && result['outcome'] != 'SUCCESS'
-        raise "/intent-hook failed because: #{result['reason']}\n#{result['details']}"
+        raise "/intent-hook failed because: #{result['reason']}\n#{result['detail']}"
       end
     end
 
