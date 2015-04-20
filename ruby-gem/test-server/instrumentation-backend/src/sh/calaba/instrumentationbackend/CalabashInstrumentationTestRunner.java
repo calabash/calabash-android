@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 
 import android.app.Activity;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
+import sh.calaba.instrumentationbackend.actions.version.Version;
 import sh.calaba.instrumentationbackend.intenthook.IIntentHook;
 import sh.calaba.instrumentationbackend.intenthook.IntentHookResult;
 
@@ -15,10 +16,13 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.UserHandle;
 
 public class CalabashInstrumentationTestRunner extends InstrumentationTestRunnerExecStartActivityExposed {
 	@Override
     public void onCreate(Bundle arguments) {
+        Logger.info("Server version: " + Version.VERSION);
+
         final String mainActivity;
 
         if (arguments.containsKey("main_activity")) {
