@@ -31,6 +31,8 @@ public class FakeCameraActivity extends Activity {
     ImageView imageView;
     ImageUtils.CameraOrientation cameraOrientation;
 
+    public static final String EXTRA_IMAGE_PATH = "imagePath";
+
     @Override
     public void onCreate(Bundle arguments) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -44,7 +46,7 @@ public class FakeCameraActivity extends Activity {
             Bundle extras = intent.getExtras();
 
             if (extras != null) {
-                image = new File(extras.getString("imagePath"));
+                image = new File(extras.getString(EXTRA_IMAGE_PATH));
                 System.out.println("Image Path: " + image);
 
                 if (extras.containsKey(MediaStore.EXTRA_OUTPUT)) {

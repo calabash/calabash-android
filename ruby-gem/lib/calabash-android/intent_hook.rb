@@ -44,13 +44,31 @@ module Calabash
         end
 
         def self.do_nothing
-          intent_hook = Reaction.new
+          reaction = Reaction.new
 
-          intent_hook.instance_eval do
+          reaction.instance_eval do
             @type = :'do-nothing'
           end
 
-          intent_hook
+          reaction
+        end
+
+        def self.take_picture(image_data)
+          require 'base64'
+          reaction = Reaction.new
+          data = {image_data: Base64.urlsafe_encode64(image_data)}
+
+          reaction.instance_eval do
+            @type = :'take-picture'
+            @data = data
+            @data_hash_method = lambda do
+              {
+                  'imageData' => @data[:image_data],
+              }
+            end
+          end
+
+          reaction
         end
 
         def self.instrumentation(data)
@@ -67,9 +85,9 @@ module Calabash
               AndroidComponent.new("#{param_data[:target_package]}.test",
                                    'sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner')
 
-          intent_hook = Reaction.new
+          reaction = Reaction.new
 
-          intent_hook.instance_eval do
+          reaction.instance_eval do
             @type = :instrumentation
             @data = param_data
             @data_hash_method = lambda do
@@ -82,7 +100,7 @@ module Calabash
             end
           end
 
-          intent_hook
+          reaction
         end
       end
     end

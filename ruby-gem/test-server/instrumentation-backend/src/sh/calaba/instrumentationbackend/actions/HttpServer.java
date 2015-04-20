@@ -35,6 +35,8 @@ import sh.calaba.instrumentationbackend.intenthook.ActivityIntentFilter;
 import sh.calaba.instrumentationbackend.intenthook.DoNothingHook;
 import sh.calaba.instrumentationbackend.intenthook.InstrumentationHook;
 import sh.calaba.instrumentationbackend.intenthook.IntentHook;
+
+import sh.calaba.instrumentationbackend.intenthook.TakePictureHook;
 import sh.calaba.instrumentationbackend.json.JSONUtils;
 import sh.calaba.instrumentationbackend.json.requests.IntentHookRequest;
 import sh.calaba.instrumentationbackend.query.InvocationOperation;
@@ -51,6 +53,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -198,6 +201,12 @@ public class HttpServer extends NanoHTTPD {
                             testServerPort, targetPackage, clazz, mainActivity);
                 } else if (request.getType().equals("do-nothing")) {
                     intentHook = new DoNothingHook();
+                } else if (request.getType().equals("take-picture")) {
+                    Map data = request.getData();
+                    String rawImageData = (String) data.get("imageData");
+                    byte[] imageData = Base64.decode(rawImageData, Base64.URL_SAFE);
+
+                    intentHook = new TakePictureHook(imageData);
                 } else {
                     throw new Exception("Invalid type '" + request.getType() + "'");
                 }
@@ -230,7 +239,7 @@ public class HttpServer extends NanoHTTPD {
                 }
             } else {
                 try {
-                    int index = intents.size()-1;
+                    int index = intents.size() - 1;
                     Map<String, Object> result = new HashMap<String, Object>();
                     Intent intent = intents.get(index);
 
