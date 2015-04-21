@@ -30,6 +30,7 @@ public class TakePictureHook extends IntentHookWithDefault {
         FileOutputStream fileOutputStream = context.openFileOutput(OUTPUT_PATH, Context.MODE_WORLD_READABLE);
         Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
+        bitmap.recycle();
         imageFile = new File(context.getFilesDir(), OUTPUT_PATH);
         fileOutputStream.close();
     }
