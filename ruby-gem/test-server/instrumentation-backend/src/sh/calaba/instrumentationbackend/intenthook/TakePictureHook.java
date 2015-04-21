@@ -37,15 +37,20 @@ public class TakePictureHook extends IntentHookWithDefault {
 
     @Override
     public IntentHookResult defaultHook(Activity target, Intent intent) {
-        Intent modifiedIntent = new Intent(intent);
+        // Do not start our activity if the device would not have opened a camera app
+        if (intent.resolveActivity(InstrumentationBackend.instrumentation.getTargetContext().getPackageManager()) != null) {
+            Intent modifiedIntent = new Intent(intent);
 
-        Context instrumentationContext = InstrumentationBackend.instrumentation.getContext();
-        String pkg = instrumentationContext.getPackageName();
+            Context instrumentationContext = InstrumentationBackend.instrumentation.getContext();
+            String pkg = instrumentationContext.getPackageName();
 
-        modifiedIntent.setComponent(new ComponentName(pkg, FakeCameraActivity.class.getName()));
-        modifiedIntent.putExtra(FakeCameraActivity.EXTRA_IMAGE_PATH, imageFile.getAbsolutePath());
+            modifiedIntent.setComponent(new ComponentName(pkg, FakeCameraActivity.class.getName()));
+            modifiedIntent.putExtra(FakeCameraActivity.EXTRA_IMAGE_PATH, imageFile.getAbsolutePath());
 
-        return new IntentHookResult(null, false, modifiedIntent);
+            return new IntentHookResult(null, false, modifiedIntent);
+        } else {
+            return new IntentHookResult(null, false);
+        }
     }
 
     @Override
