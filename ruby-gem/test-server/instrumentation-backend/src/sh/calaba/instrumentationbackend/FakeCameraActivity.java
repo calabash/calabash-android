@@ -1,9 +1,11 @@
 package sh.calaba.instrumentationbackend;
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.provider.MediaStore;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +24,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,6 +37,7 @@ public class FakeCameraActivity extends Activity {
     private File image;
     private File outputPath;
     ImageView imageView;
+    RelativeLayout relativeLayout;
     ImageUtils.CameraOrientation cameraOrientation;
 
     public static final String EXTRA_IMAGE_PATH = "imagePath";
@@ -43,6 +49,8 @@ public class FakeCameraActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(arguments);
 
+        setContentView(generateLayout());
+
         Intent intent = getIntent();
 
         if (intent != null) {
@@ -53,19 +61,34 @@ public class FakeCameraActivity extends Activity {
                 System.out.println("Image Path: " + image);
 
                 if (extras.containsKey(MediaStore.EXTRA_OUTPUT)) {
-                    Uri uri = (Uri) extras.get(MediaStore.EXTRA_OUTPUT);
+                    Object object = extras.get(MediaStore.EXTRA_OUTPUT);
+
+                    if (object == null) {
+                        showErrorMessage("'" + MediaStore.EXTRA_OUTPUT + "' (MediaStore.EXTRA_OUTPUT) cannot be null");
+                        return;
+                    }
+
+                    if (!(object instanceof Uri)) {
+                        showErrorMessage("'" + MediaStore.EXTRA_OUTPUT + "' (MediaStore.EXTRA_OUTPUT) should be a Uri, not '" + object.getClass() + "'");
+                        return;
+                    }
+
+                    Uri uri = (Uri) object;
                     System.out.println("URI: " + uri);
                     System.out.println("Path: " + uri.getPath());
                     outputPath = new File(uri.getPath());
+
+                    if (!outputPath.exists()) {
+                        showErrorMessage("File '" + uri.getPath() + "' does not exist");
+                        return;
+                    }
                 }
             } else {
-                setResult(Activity.RESULT_CANCELED);
-                finish();
+                showErrorMessage("Calabash: invalid command, not extras given");
                 return;
             }
         } else {
-            setResult(Activity.RESULT_CANCELED);
-            finish();
+            showErrorMessage("Calabash: invalid command, not intent given");
             return;
         }
 
@@ -87,8 +110,6 @@ public class FakeCameraActivity extends Activity {
         canvas.drawBitmap(unchangedImage, from, to, new Paint());
 
         unchangedImage.recycle();
-
-        setContentView(generateLayout());
 
         int width = mutableBitmap.getWidth() / 8;
         int height = mutableBitmap.getHeight() / 8;
@@ -171,7 +192,7 @@ public class FakeCameraActivity extends Activity {
     }
 
     private View generateLayout() {
-        RelativeLayout relativeLayout = new RelativeLayout(this);
+        relativeLayout = new RelativeLayout(this);
         RelativeLayout.LayoutParams relativeLayoutLayoutParams =
                 new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
                         ViewGroup.LayoutParams.FILL_PARENT);
@@ -189,13 +210,36 @@ public class FakeCameraActivity extends Activity {
         imageViewLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         imageViewLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
         imageView.setLayoutParams(imageViewLayoutParams);
-        imageView.setBackgroundColor(Color.BLUE);
+        imageView.setBackgroundColor(Color.BLACK);
         imageView.setAdjustViewBounds(true);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         relativeLayout.addView(imageView);
 
         return relativeLayout;
+    }
+
+    private void showErrorMessage(String message) {
+        FrameLayout frameLayout = new FrameLayout(this);
+        RelativeLayout.LayoutParams frameLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        frameLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+        frameLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        frameLayout.setLayoutParams(frameLayoutParams);
+        frameLayout.setPadding(inPx(5), inPx(5), inPx(5), inPx(5));
+        frameLayout.setBackgroundColor(0xffbb3333);
+
+
+        TextView textView = new TextView(this);
+        ViewGroup.LayoutParams textViewLayoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        textView.setLayoutParams(textViewLayoutParams);
+        textView.setText(message);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 25);
+        textView.setTextColor(0xff000000);
+        textView.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+
+        frameLayout.addView(textView);
+
+        relativeLayout.addView(frameLayout);
     }
 
     private void useImage(Bitmap image) {
@@ -215,5 +259,11 @@ public class FakeCameraActivity extends Activity {
 
         Bitmap scaledImage = Bitmap.createScaledBitmap(image, screenWidth, screenHeight, false);
         imageView.setImageBitmap(scaledImage);
+    }
+
+    private int inPx(int dp) {
+        Resources resources = getResources();
+
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
     }
 }
