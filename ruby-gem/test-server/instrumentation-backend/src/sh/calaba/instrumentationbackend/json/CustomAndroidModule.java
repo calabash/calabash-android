@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 
-import sh.calaba.instrumentationbackend.intenthook.IntentHook;
 import sh.calaba.instrumentationbackend.json.requests.IntentHookRequest;
 import sh.calaba.org.codehaus.jackson.Version;
 import sh.calaba.org.codehaus.jackson.map.module.SimpleModule;
