@@ -1213,6 +1213,22 @@ module Calabash module Android
       end
     end
 
+    def fake_camera_with_image(path_or_file, usage_count=1)
+      file = File.new(path_or_file)
+
+      extension = File.extname(file)
+
+      if extension != '.jpg' && extension != '.jpeg'
+        raise ArgumentError, "Supplied image file must be a .jpg or .jpeg, not '#{extension}'"
+      end
+
+      intent = Calabash::Android::AndroidIntent.with_action('android.media.action.IMAGE_CAPTURE')
+      filter = Calabash::Android::IntentHook::Filter.new(intent)
+      reaction = Calabash::Android::IntentHook::Reaction.take_picture(File.binread(file))
+
+      add_intent_hook(Calabash::Android::IntentHook.new(reaction, filter, usage_count))
+    end
+
     def map(query, method_name, *method_args)
       operation_map = {
           :method_name => method_name,
