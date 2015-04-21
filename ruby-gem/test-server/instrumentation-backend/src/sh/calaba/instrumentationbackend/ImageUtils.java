@@ -43,9 +43,21 @@ public class ImageUtils {
         return sizes.get(sizes.size() - 1);
     }
 
-    public static Bitmap cropAndScale(Bitmap image, Size maxResolution, CameraOrientation cameraOrientation) {
-        ImageUtils.Size imageSize = new ImageUtils.Size(image.getWidth(), image.getHeight());
+    public static class CropAndScale {
+        public int cropWidth;
+        public int cropHeight;
+        public int scaleWidth;
+        public int scaleHeight;
 
+        public CropAndScale(int cropWidth, int cropHeight, int scaleWidth, int scaleHeight) {
+            this.cropWidth = cropWidth;
+            this.cropHeight = cropHeight;
+            this.scaleWidth = scaleWidth;
+            this.scaleHeight = scaleHeight;
+        }
+    }
+
+    public static CropAndScale cropAndScale(Size imageSize, Size maxResolution, CameraOrientation cameraOrientation) {
         int desiredWidth, desiredHeight;
         int cameraWidth, cameraHeight;
 
@@ -76,11 +88,13 @@ public class ImageUtils {
         System.out.println("CAMERA DW: " + desiredWidth);
         System.out.println("CAMERA DH: " + desiredHeight);
 
-        Bitmap croppedImage = Bitmap.createBitmap(image, 0, 0, desiredWidth, desiredHeight);
+        return new CropAndScale(desiredWidth, desiredHeight, cameraWidth, cameraHeight);
+
+        /*Bitmap croppedImage = Bitmap.createBitmap(image, 0, 0, desiredWidth, desiredHeight);
         Canvas canvas = new Canvas(croppedImage);
         canvas.scale(cameraWidth, cameraHeight);
 
-        return croppedImage;
+        return croppedImage;*/
 
         //Bitmap croppedImage = Bitmap.createBitmap(image, 0, 0, desiredWidth, desiredHeight);
         //image = Bitmap.createScaledBitmap(croppedImage, cameraWidth, cameraHeight, false);

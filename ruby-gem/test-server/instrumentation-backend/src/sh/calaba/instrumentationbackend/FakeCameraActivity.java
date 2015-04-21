@@ -1,7 +1,9 @@
 package sh.calaba.instrumentationbackend;
 
-import android.app.ActivityManager;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -74,27 +76,40 @@ public class FakeCameraActivity extends Activity {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap startImage = BitmapFactory.decodeFile(image.getAbsolutePath(), options);
+        Bitmap unchangedImage = BitmapFactory.decodeFile(image.getAbsolutePath(), options);
 
-        final Bitmap croppedAndScaled = ImageUtils.cropAndScale(startImage, ImageUtils.getCameraMaxPictureSize(), cameraOrientation);
-        startImage.recycle();
+        ImageUtils.CropAndScale cropAndScale = ImageUtils.cropAndScale(new ImageUtils.Size(unchangedImage.getWidth(), unchangedImage.getHeight()), ImageUtils.getCameraMaxPictureSize(), cameraOrientation);
+        final Bitmap mutableBitmap = Bitmap.createBitmap(cropAndScale.scaleWidth, cropAndScale.scaleHeight, Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(mutableBitmap);
+
+        Rect from = new Rect(0, 0, cropAndScale.cropWidth, cropAndScale.cropHeight);
+        Rect to = new Rect(0,0, cropAndScale.scaleWidth, cropAndScale.scaleHeight);
+        canvas.drawBitmap(unchangedImage, from, to, new Paint());
+
+        unchangedImage.recycle();
 
         setContentView(generateLayout());
 
-        int width = croppedAndScaled.getWidth() / 8;
-        int height = croppedAndScaled.getHeight() / 8;
-        Bitmap useImage = Bitmap.createScaledBitmap(croppedAndScaled, width, height, false);
+        int width = mutableBitmap.getWidth() / 8;
+        int height = mutableBitmap.getHeight() / 8;
+        Bitmap useImage = Bitmap.createScaledBitmap(mutableBitmap, width, height, false);
         
         useImage(useImage);
+
         useImage.recycle();
 
-        ImageUtils.postProcessImage(croppedAndScaled);
+        Paint paint = new Paint();
+
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(mutableBitmap.getWidth() * mutableBitmap.getHeight() * 0.00001f);
+        paint.setStyle(Paint.Style.STROKE);
+        canvas.drawRect(0, 0, mutableBitmap.getWidth(), mutableBitmap.getHeight(), paint);
 
         Runnable callback = new Runnable() {
             @Override
             public void run() {
                 if (outputPath == null) {
-                    Bitmap bitmap = ImageUtils.generateThumbnail(croppedAndScaled);
+                    Bitmap bitmap = ImageUtils.generateThumbnail(mutableBitmap);
 
                     Intent result = new Intent("inline-data");
                     result.putExtra("data", bitmap);
@@ -106,18 +121,15 @@ public class FakeCameraActivity extends Activity {
                         outputPath.createNewFile();
 
                         OutputStream outputStream = new FileOutputStream(outputPath);
-                        croppedAndScaled.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                        mutableBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                        outputStream.flush();
                         outputStream.close();
+                        mutableBitmap.recycle();
                     } catch (Exception e) {
                         e.printStackTrace();
                         setResult(Activity.RESULT_CANCELED);
                         finish();
                     }
-
-                    double usedMegs = Runtime.getRuntime().freeMemory() / 1048576.0d;
-
-                    System.out.println("CALABASH USED MEGS: " + usedMegs);
-
 
                     setResult(Activity.RESULT_OK, null);
                     finish();
