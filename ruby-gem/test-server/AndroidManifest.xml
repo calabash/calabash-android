@@ -3,7 +3,9 @@
       package="#testPackage#"
       android:versionCode="3"
       android:versionName="0.3.0">
-    <application android:label="instrumentation_backend">
+    <application android:label="instrumentation_backend"
+        android:largeHeap="true">
+
       <uses-library android:name="android.test.runner" />
       <uses-library android:name="com.google.android.maps" android:required="false" />
       <activity
