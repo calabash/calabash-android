@@ -1,5 +1,6 @@
 class JavaKeystore
   attr_reader :errors, :location, :keystore_alias, :password, :fingerprint
+  attr_reader :signature_algorithm_name
 
   def initialize(location, keystore_alias, password)
     raise "No such keystore file '#{location}'" unless File.exists?(File.expand_path(location))
@@ -38,13 +39,16 @@ class JavaKeystore
     log "Key store data:"
     log keystore_data
     @fingerprint = extract_md5_fingerprint(keystore_data)
+    @signature_algorithm_name = extract_signature_algorithm_name(keystore_data)
+    log "Fingerprint: #{fingerprint}"
+    log "Signature algorithm name: #{signature_algorithm_name}"
   end
 
   def sign_apk(apk_path, dest_path)
     raise "Cannot sign with a miss configured keystore" if errors
     raise "No such file: #{apk_path}" unless File.exists?(apk_path)
 
-    unless system_with_stdout_on_success(Env.jarsigner_path, '-sigalg', 'MD5withRSA', '-digestalg', 'SHA1', '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
+    unless system_with_stdout_on_success(Env.jarsigner_path, '-sigalg', signature_algorithm_name, '-digestalg', 'SHA1', '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
       raise "Could not sign app: #{apk_path}"
     end
   end

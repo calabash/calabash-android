@@ -31,7 +31,7 @@ public class UIQueryASTPredicate implements UIQueryAST {
 
         List oldProcessing = new ArrayList();
         List result = new ArrayList();
-        for (Object o : inputViews) {
+        for (Object o : UIQueryUtils.uniq(inputViews)) {
             if (o instanceof View) {
                 View view = (View) o;
                 FutureTask<List> march = new FutureTask<List>(new MatchForViews(Arrays.asList(view), direction, visibility));
