@@ -78,8 +78,8 @@ public class FakeCameraActivity extends Activity {
                     System.out.println("Path: " + uri.getPath());
                     outputPath = new File(uri.getPath());
 
-                    if (!outputPath.exists()) {
-                        showErrorMessage("File '" + uri.getPath() + "' does not exist");
+                    if (!new File(outputPath.getParent()).exists()) {
+                        showErrorMessage("Directory '" + outputPath.getParent() + "' does not exist");
                         return;
                     }
                 }
@@ -138,7 +138,6 @@ public class FakeCameraActivity extends Activity {
                     finish();
                 } else {
                     try {
-                        outputPath.getParentFile().mkdirs();
                         outputPath.createNewFile();
 
                         OutputStream outputStream = new FileOutputStream(outputPath);
