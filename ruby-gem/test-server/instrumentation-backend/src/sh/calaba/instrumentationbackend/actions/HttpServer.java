@@ -7,13 +7,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.InterruptedException;
 import java.lang.Override;
 import java.lang.Runnable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -182,9 +186,28 @@ public class HttpServer extends NanoHTTPD {
                 return new Response(HTTP_BADREQUEST, "test/plain;charset=utf-8", "Only PUT supported for this endpoint, not '" + method + "'");
             }
 
-            String tmpFilePath = files.getProperty("content");
+            try {
+                String tmpFilePath = files.getProperty("content");
+                Context targetContext = InstrumentationBackend.instrumentation.getTargetContext();
 
-            return new Response(HTTP_OK, "application/octet-stream", tmpFilePath);
+                String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                String fileName = timeStamp + ".out";
+
+                OutputStream fileOutputStream = targetContext.openFileOutput(fileName, Context.MODE_PRIVATE);
+                InputStream fileInputStream = new FileInputStream(tmpFilePath);
+
+                Utils.copyContents(fileInputStream, fileOutputStream);
+
+                fileInputStream.close();
+                fileOutputStream.close();
+
+                // context.openFileOutput will place the file in /data/data/<pkg>/files/<file>
+                File outFile = new File(targetContext.getFilesDir(), fileName);
+
+                return new Response(HTTP_OK, "application/octet-stream", outFile.getAbsolutePath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         else if (uri.endsWith("/intent-hook")) {
             String json = params.getProperty("json");

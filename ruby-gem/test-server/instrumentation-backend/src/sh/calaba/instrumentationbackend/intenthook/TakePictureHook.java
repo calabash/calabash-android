@@ -16,6 +16,7 @@ import java.io.OutputStream;
 
 import sh.calaba.instrumentationbackend.FakeCameraActivity;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
+import sh.calaba.instrumentationbackend.actions.Utils;
 
 public class TakePictureHook extends IntentHookWithDefault {
     private static String OUTPUT_PATH = "_cal_take_picture_image.jpg";
@@ -36,14 +37,9 @@ public class TakePictureHook extends IntentHookWithDefault {
         OutputStream fileOutputStream = context.openFileOutput(OUTPUT_PATH, Context.MODE_WORLD_READABLE);
         InputStream fileInputStream = new FileInputStream(imageFile);
 
-        byte[] buffer = new byte[4*1024];
+        Utils.copyContents(fileInputStream, fileOutputStream);
 
-        int read;
-
-        while ((read = fileInputStream.read(buffer)) != -1) {
-            fileOutputStream.write(buffer, 0, read);
-        }
-
+        fileInputStream.close();
         fileOutputStream.close();
 
         // context.openFileOutput will place the file in /data/data/<pkg>/files/<file>
