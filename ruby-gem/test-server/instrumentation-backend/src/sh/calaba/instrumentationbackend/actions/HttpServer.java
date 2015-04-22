@@ -175,6 +175,17 @@ public class HttpServer extends NanoHTTPD {
                 return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", FranklyResult.fromThrowable(ex).asJson());
             }
         }
+        else if (uri.endsWith("/add-file")) {
+            // NOTE: There is a PUT hack in NanoHTTPD that stores PUTs in a tmp file,
+            //       we need that!
+            if (!"PUT".equals(method)) {
+                return new Response(HTTP_BADREQUEST, "test/plain;charset=utf-8", "Only PUT supported for this endpoint, not '" + method + "'");
+            }
+
+            String tmpFilePath = files.getProperty("content");
+
+            return new Response(HTTP_OK, "application/octet-stream", tmpFilePath);
+        }
         else if (uri.endsWith("/intent-hook")) {
             String json = params.getProperty("json");
             ObjectMapper mapper = JSONUtils.calabashObjectMapper();
