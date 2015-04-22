@@ -52,17 +52,16 @@ module Calabash
           reaction
         end
 
-        def self.take_picture(image_data)
-          require 'base64'
+        def self.take_picture(path_on_device)
           reaction = Reaction.new
-          data = {image_data: Base64.urlsafe_encode64(image_data)}
+          data = {image_file: path_on_device}
 
           reaction.instance_eval do
             @type = :'take-picture'
             @data = data
             @data_hash_method = lambda do
               {
-                  'imageData' => @data[:image_data],
+                  'imageFile' => @data[:image_file],
               }
             end
           end

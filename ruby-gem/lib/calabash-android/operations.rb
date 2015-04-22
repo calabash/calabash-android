@@ -448,9 +448,7 @@ module Calabash module Android
             @http = init_request(options)
           end
           header = options[:header] || {}
-          header["Content-Type"] = "application/json;charset=utf-8"
-          options[:header] = header
-
+          header["Content-Type"] ||= "application/json;charset=utf-8"
 
           response = if options[:method] == :post
                        @http.post(options[:uri], options)
@@ -1230,6 +1228,12 @@ module Calabash module Android
       end
     end
 
+    def add_file(path_or_file)
+      file = File.new(path_or_file)
+
+      http_put('/add-file', File.binread(file))
+    end
+
     def add_intent_hook(intent_hook)
       result = JSON.parse(http('/intent-hook', intent_hook))
 
@@ -1241,15 +1245,17 @@ module Calabash module Android
     def fake_camera_with_image(path_or_file, usage_count=1)
       file = File.new(path_or_file)
 
-      extension = File.extname(file)
+      extension = File.extname(path_or_file)
 
       if extension != '.jpg' && extension != '.jpeg'
         raise ArgumentError, "Supplied image file must be a .jpg or .jpeg, not '#{extension}'"
       end
 
+      file_on_device = add_file(file)
+
       intent = Calabash::Android::AndroidIntent.with_action('android.media.action.IMAGE_CAPTURE')
       filter = Calabash::Android::IntentHook::Filter.new(intent)
-      reaction = Calabash::Android::IntentHook::Reaction.take_picture(File.binread(file))
+      reaction = Calabash::Android::IntentHook::Reaction.take_picture(file_on_device)
 
       add_intent_hook(Calabash::Android::IntentHook.new(reaction, filter, usage_count))
     end
