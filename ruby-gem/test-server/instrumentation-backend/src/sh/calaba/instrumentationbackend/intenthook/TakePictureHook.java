@@ -8,8 +8,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import sh.calaba.instrumentationbackend.FakeCameraActivity;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
@@ -18,21 +21,33 @@ public class TakePictureHook extends IntentHookWithDefault {
     private static String OUTPUT_PATH = "_cal_take_picture_image.jpg";
     private File imageFile;
 
-    public TakePictureHook(byte[] imageData) throws IOException {
+    public TakePictureHook(File imageFile) throws IOException {
         super();
 
-        if (imageData == null) {
-            throw new IllegalArgumentException("ImageData cannot be null");
+        if (imageFile == null) {
+            throw new IllegalArgumentException("image file cannot be null");
+        } else if (!imageFile.exists()) {
+            throw new IllegalArgumentException("image file '" + imageFile + "' does not exist");
         }
 
         Context context = InstrumentationBackend.instrumentation.getTargetContext();
 
-        FileOutputStream fileOutputStream = context.openFileOutput(OUTPUT_PATH, Context.MODE_WORLD_READABLE);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
-        bitmap.recycle();
-        imageFile = new File(context.getFilesDir(), OUTPUT_PATH);
+        // Make the image file world readable
+        OutputStream fileOutputStream = context.openFileOutput(OUTPUT_PATH, Context.MODE_WORLD_READABLE);
+        InputStream fileInputStream = new FileInputStream(imageFile);
+
+        byte[] buffer = new byte[4*1024];
+
+        int read;
+
+        while ((read = fileInputStream.read(buffer)) != -1) {
+            fileOutputStream.write(buffer, 0, read);
+        }
+
         fileOutputStream.close();
+
+        // context.openFileOutput will place the file in /data/data/<pkg>/files/<file>
+        this.imageFile = new File(context.getFilesDir(), OUTPUT_PATH);
     }
 
     @Override

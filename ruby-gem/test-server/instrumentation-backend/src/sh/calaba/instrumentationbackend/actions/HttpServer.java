@@ -214,10 +214,9 @@ public class HttpServer extends NanoHTTPD {
                     intentHook = new DoNothingHook();
                 } else if (request.getType().equals("take-picture")) {
                     Map data = request.getData();
-                    String rawImageData = (String) data.get("imageData");
-                    byte[] imageData = Base64.decode(rawImageData, Base64.URL_SAFE);
+                    File imageFile = new File((String) data.get("imageFile"));
 
-                    intentHook = new TakePictureHook(imageData);
+                    intentHook = new TakePictureHook(imageFile);
                 } else {
                     throw new Exception("Invalid type '" + request.getType() + "'");
                 }
