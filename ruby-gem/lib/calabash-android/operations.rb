@@ -397,6 +397,25 @@ module Calabash module Android
         end
       end
 
+      def http_put(path, data = {}, options = {})
+        begin
+
+          configure_http(@http, options)
+          make_http_request(
+              :method => :put,
+              :body => data,
+              :uri => url_for(path),
+              :header => {"Content-Type" => "application/octet-stream"})
+
+        rescue HTTPClient::TimeoutError,
+            HTTPClient::KeepAliveDisconnected,
+            Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ECONNABORTED,
+            Errno::ETIMEDOUT => e
+          log "It looks like your app is no longer running. \nIt could be because of a crash or because your test script shut it down."
+          raise e
+        end
+      end
+
       def set_http(http)
         @http = http
       end
@@ -427,6 +446,8 @@ module Calabash module Android
 
           response = if options[:method] == :post
                        @http.post(options[:uri], options)
+                     elsif options[:method] == :put
+                       @http.put(options[:uri], options)
                      else
                        @http.get(options[:uri], options)
                      end
@@ -843,6 +864,10 @@ module Calabash module Android
 
     def http(path, data = {}, options = {})
       default_device.http(path, data, options)
+    end
+
+    def http_put(path, data = {}, options = {})
+      default_device.http_put(path, data, options)
     end
 
     def html(q)
