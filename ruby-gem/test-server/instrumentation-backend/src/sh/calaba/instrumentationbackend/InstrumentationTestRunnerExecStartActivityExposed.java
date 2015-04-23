@@ -65,6 +65,27 @@ public class InstrumentationTestRunnerExecStartActivityExposed extends Instrumen
 
     public ActivityResult execStartActivity(
             Context who, IBinder contextThread, IBinder token, Fragment target,
+            Intent intent, int requestCode) {
+        InstrumentationTestRunner instrumentationTestRunner = cloneAsInstrumentationTestRunner();
+
+        try {
+            Method methodExecStartActivity = instrumentationTestRunner.getClass().getMethod("execStartActivity",
+                    Context.class, IBinder.class, IBinder.class, Fragment.class, Intent.class,
+                    int.class);
+
+            return (ActivityResult) methodExecStartActivity.invoke(instrumentationTestRunner, who,
+                    contextThread, token, target, intent, requestCode);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ActivityResult execStartActivity(
+            Context who, IBinder contextThread, IBinder token, Fragment target,
             Intent intent, int requestCode, Bundle options) {
         InstrumentationTestRunner instrumentationTestRunner = cloneAsInstrumentationTestRunner();
 
@@ -94,6 +115,26 @@ public class InstrumentationTestRunnerExecStartActivityExposed extends Instrumen
 
     public ActivityResult execStartActivity(
             Context who, IBinder contextThread, IBinder token, Activity target,
+            Intent intent, int requestCode) {
+        InstrumentationTestRunner instrumentationTestRunner = cloneAsInstrumentationTestRunner();
+
+        try {
+            Method methodExecStartActivity = instrumentationTestRunner.getClass().getMethod("execStartActivity",
+                    Context.class, IBinder.class, IBinder.class, Activity.class, Intent.class, int.class);
+
+            return (ActivityResult) methodExecStartActivity.invoke(instrumentationTestRunner, who, contextThread, token, target,
+                    intent, requestCode);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ActivityResult execStartActivity(
+            Context who, IBinder contextThread, IBinder token, Activity target,
             Intent intent, int requestCode, Bundle options) {
         InstrumentationTestRunner instrumentationTestRunner = cloneAsInstrumentationTestRunner();
 
@@ -111,7 +152,6 @@ public class InstrumentationTestRunnerExecStartActivityExposed extends Instrumen
             throw new RuntimeException(e);
         }
     }
-
 
     public ActivityResult execStartActivity(
             Context who, IBinder contextThread, IBinder token, Activity target,

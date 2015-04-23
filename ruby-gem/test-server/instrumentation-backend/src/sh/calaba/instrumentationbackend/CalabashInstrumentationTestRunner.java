@@ -152,6 +152,32 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
+    public ActivityResult execStartActivity(final Context who, final IBinder contextThread, final IBinder token, final Fragment target, final Intent intent, final int requestCode) {
+        Logger.info("execStartActivity 8");
+        Activity activity;
+
+        if (target == null) {
+            activity = null;
+        } else {
+            activity = target.getActivity();
+        }
+
+        return handleExecStartActivity(intent, activity, new ExecStartActivityHandler() {
+            @Override
+            public IntentHookResult whenFiltered(IIntentHook intentHook) {
+                return intentHook.execStartActivity(who, contextThread, token, target, intent, requestCode, null);
+            }
+
+            @Override
+            public ActivityResult whenUnhandled(Intent modifiedIntent) {
+                return CalabashInstrumentationTestRunner.super.execStartActivity(who, contextThread, token, target, modifiedIntent, requestCode);
+            }
+        });
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Override
     public ActivityResult execStartActivity(final Context who, final IBinder contextThread, final IBinder token, final Fragment target, final Intent intent, final int requestCode, final Bundle options) {
         Logger.info("execStartActivity 3");
         Activity activity;
@@ -171,6 +197,25 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
             @Override
             public ActivityResult whenUnhandled(Intent modifiedIntent) {
                 return CalabashInstrumentationTestRunner.super.execStartActivity(who, contextThread, token, target, modifiedIntent, requestCode, options);
+            }
+        });
+    }
+
+    // Instead of creating a new method for this, we simply pass the bundle as null.
+    @Override
+    public ActivityResult execStartActivity(final Context who, final IBinder contextThread, final IBinder token, final Activity target, final Intent intent, final int requestCode) {
+        Logger.info("execStartActivity 7");
+
+        return handleExecStartActivity(intent, target, new ExecStartActivityHandler() {
+            @Override
+            public IntentHookResult whenFiltered(IIntentHook intentHook) {
+                return intentHook.execStartActivity(who, contextThread,
+                        token, target, intent, requestCode, null);
+            }
+
+            @Override
+            public ActivityResult whenUnhandled(Intent modifiedIntent) {
+                return CalabashInstrumentationTestRunner.super.execStartActivity(who, contextThread, token, target, modifiedIntent, requestCode);
             }
         });
     }
