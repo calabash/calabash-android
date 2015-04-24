@@ -37,7 +37,7 @@ public class ImageUtils {
     private static List<Camera.Size> cameraParametersSupportedPictureSizes;
     private static List<Integer> cameraParametersSupportedPictureFormats;
 
-    public static List<Size> getCameraSupportedPictureSizes() {
+    public static List<Size> getCameraSupportedPictureSizes() throws CameraException {
         obtainCameraParameters();
 
         List<Camera.Size> cameraSizes = cameraParametersSupportedPictureSizes;
@@ -50,13 +50,13 @@ public class ImageUtils {
         return sizes;
     }
 
-    public static List<Integer> getCameraSupportedPictureFormats() {
+    public static List<Integer> getCameraSupportedPictureFormats() throws CameraException {
         obtainCameraParameters();
 
         return cameraParametersSupportedPictureFormats;
     }
 
-    public static Size getCameraMaxPictureSize() {
+    public static Size getCameraMaxPictureSize() throws CameraException {
         List<Size> sizes = getCameraSupportedPictureSizes();
         Collections.sort(sizes);
 
@@ -143,7 +143,7 @@ public class ImageUtils {
         canvas.drawRect(0, 0, image.getWidth(), image.getHeight(), paint);
     }
 
-    public static boolean isCameraValid() {
+    public static boolean isCameraValid() throws CameraException {
         return (getCameraSupportedPictureFormats().contains(ImageFormat.JPEG));
     }
 
@@ -186,9 +186,30 @@ public class ImageUtils {
         }
     }
 
-    private static void obtainCameraParameters() {
+    private static void obtainCameraParameters() throws CameraException {
         if (!hasReadCameraParameters) {
-            android.hardware.Camera camera = android.hardware.Camera.open();
+            android.hardware.Camera camera;
+
+            // Find the first back facing camera
+            try {
+                camera = android.hardware.Camera.open();
+            } catch (RuntimeException e) {
+                throw new CameraException(e);
+            }
+
+            if (Build.VERSION.SDK_INT >= 9) {
+                System.out.println("CAMERA: Number of cameras: " + android.hardware.Camera.getNumberOfCameras());
+
+                if (camera == null) {
+                    System.out.println("CAMERA: was null");
+                    camera = android.hardware.Camera.open(0);
+                }
+            }
+
+            if (camera == null) {
+                throw new CameraException("Could not find any camera");
+            }
+
             android.hardware.Camera.Parameters parameters = camera.getParameters();
             cameraParametersSupportedPictureSizes = parameters.getSupportedPictureSizes();
             cameraParametersSupportedPictureFormats = parameters.getSupportedPictureFormats();
@@ -240,6 +261,24 @@ public class ImageUtils {
             } else {
                 return 0;
             }
+        }
+    }
+
+    public static class CameraException extends Exception {
+        public CameraException(Throwable throwable) {
+            super(throwable);
+        }
+
+        public CameraException(String detailMessage, Throwable throwable) {
+            super(detailMessage, throwable);
+        }
+
+        public CameraException(String detailMessage) {
+            super(detailMessage);
+        }
+
+        public CameraException() {
+            super();
         }
     }
 }
