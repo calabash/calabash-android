@@ -27,7 +27,15 @@ import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Paint;
 import android.hardware.Camera;
+import android.os.Build;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -145,6 +153,91 @@ public class ImageUtils {
 
     public static boolean isCameraValid() throws CameraException {
         return (getCameraSupportedPictureFormats().contains(ImageFormat.JPEG));
+    }
+
+    public static void writeBitmapPixelsToFile(Bitmap in, File out, int width, int height) throws IOException {
+        int imageWidth = in.getWidth();
+        int imageHeight = in.getHeight();
+
+        if (width > imageWidth || height > imageHeight) {
+            throw new RuntimeException("Pixel size cannot be larger than the image size.");
+        }
+
+        RandomAccessFile randomAccessFile  = new RandomAccessFile(out, "rw");
+
+        try {
+            final int maxReadHeight = 100;
+            FileChannel fileChannel = randomAccessFile.getChannel();
+            MappedByteBuffer map = fileChannel.map(FileChannel.MapMode.READ_WRITE, 0, width * height * 4);
+            ByteBuffer byteBuffer = ByteBuffer.allocate(maxReadHeight * width * 4);
+            IntBuffer intBuffer = byteBuffer.asIntBuffer();
+
+            for (int y = 0; y < height; y += maxReadHeight) {
+                int h = Math.min(maxReadHeight, height - y);
+                int[] pixels = new int[width * h];
+                in.getPixels(pixels, 0, width, 0, y, width, h);
+
+                if (h == height - y) {
+                    byteBuffer = ByteBuffer.allocate(h * width * 4);
+                    intBuffer = byteBuffer.asIntBuffer();
+                } else {
+                    byteBuffer.rewind();
+                    intBuffer.rewind();
+                }
+
+                /*for (int i = 0; i < pixels.length; i++) {
+                    pixels[i] = pixels[i] << 8;
+                }*/
+
+                intBuffer.put(pixels);
+                map.put(byteBuffer);
+            }
+        } finally {
+            randomAccessFile.close();
+        }
+    }
+
+    public static void loadBitmapFromFile(Bitmap image, File in, int originalWidth, int originalHeight) throws IOException {
+        int outputWidth = image.getWidth();
+        int outputHeight = image.getHeight();
+        int xTimes = (int) Math.ceil((double) outputWidth / (double)originalWidth);
+        int yTimes = (int) Math.ceil((double) outputHeight / (double)originalHeight);
+
+        RandomAccessFile randomAccessFile = new RandomAccessFile(in, "r");
+
+        try {
+            FileChannel fileChannel = randomAccessFile.getChannel();
+            MappedByteBuffer map = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, originalWidth * originalHeight * 4);
+
+            for (int y = 0; y < originalHeight; y++) {
+                byte[] bytes = new byte[originalWidth * 4];
+                map.get(bytes);
+
+                ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+                IntBuffer intBuffer = byteBuffer.asIntBuffer();
+
+                int[] intArray = new int[intBuffer.limit()];
+                intBuffer.get(intArray);
+
+                for (int i = 0; i < xTimes; i++) {
+                    for (int j = 0; j < yTimes; j++) {
+                        int w;
+
+                        if (i < xTimes - 1 || (outputWidth % originalWidth) == 0) {
+                            w = originalWidth;
+                        } else {
+                            w = outputWidth % originalWidth;
+                        }
+
+                        if (j * originalHeight + y < outputHeight) {
+                            image.setPixels(intArray, 0, originalWidth, i * originalWidth, j * originalHeight + y, w, 1);
+                        }
+                    }
+                }
+            }
+        } finally {
+            randomAccessFile.close();
+        }
     }
 
     private static int computeSampleSize(BitmapFactory.Options options,

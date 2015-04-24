@@ -1,11 +1,13 @@
 package sh.calaba.instrumentationbackend;
 
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,6 +33,7 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 public class FakeCameraActivity extends Activity {
@@ -92,72 +95,110 @@ public class FakeCameraActivity extends Activity {
             return;
         }
 
-        System.out.println("CAMERA: MAX WIDTH: " + ImageUtils.getCameraMaxPictureSize().getWidth());
-        System.out.println("CAMERA: MAX HEIGHT: " + ImageUtils.getCameraMaxPictureSize().getHeight());
+        PackageManager packageManager = getPackageManager();
 
-        cameraOrientation = ImageUtils.CameraOrientation.PORTRAIT;
+        boolean hasBackCamera = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA);
+        boolean hasFrontCamera = Build.VERSION.SDK_INT >= 9 && packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT);
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap unchangedImage = BitmapFactory.decodeFile(image.getAbsolutePath(), options);
+        if (!hasBackCamera && !hasFrontCamera) {
+            showErrorMessage("Device does not have a camera");
+            return;
+        }
 
-        ImageUtils.CropAndScale cropAndScale = ImageUtils.cropAndScale(new ImageUtils.Size(unchangedImage.getWidth(), unchangedImage.getHeight()), ImageUtils.getCameraMaxPictureSize(), cameraOrientation);
-        final Bitmap mutableBitmap = Bitmap.createBitmap(cropAndScale.scaleWidth, cropAndScale.scaleHeight, Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(mutableBitmap);
+        try {
+            System.out.println("CAMERA: MAX WIDTH: " + ImageUtils.getCameraMaxPictureSize().getWidth());
+            System.out.println("CAMERA: MAX HEIGHT: " + ImageUtils.getCameraMaxPictureSize().getHeight());
 
-        Rect from = new Rect(0, 0, cropAndScale.cropWidth, cropAndScale.cropHeight);
-        Rect to = new Rect(0,0, cropAndScale.scaleWidth, cropAndScale.scaleHeight);
-        canvas.drawBitmap(unchangedImage, from, to, new Paint());
+            cameraOrientation = ImageUtils.CameraOrientation.PORTRAIT;
 
-        unchangedImage.recycle();
+            File tmpFile = File.createTempFile("pixels", "out");
 
-        int width = mutableBitmap.getWidth() / 8;
-        int height = mutableBitmap.getHeight() / 8;
-        Bitmap useImage = Bitmap.createScaledBitmap(mutableBitmap, width, height, false);
-        
-        useImage(useImage);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            Bitmap originalImage = BitmapFactory.decodeFile(image.getAbsolutePath(), options);
 
-        useImage.recycle();
+            ImageUtils.CropAndScale cropAndScale = ImageUtils.cropAndScale(new ImageUtils.Size(originalImage.getWidth(), originalImage.getHeight()), ImageUtils.getCameraMaxPictureSize(), cameraOrientation);
 
-        Paint paint = new Paint();
+            ImageUtils.writeBitmapPixelsToFile(originalImage, tmpFile, cropAndScale.cropWidth, cropAndScale.cropHeight);
+            originalImage.recycle();
 
-        paint.setColor(Color.RED);
-        paint.setStrokeWidth(mutableBitmap.getWidth() * mutableBitmap.getHeight() * 0.00001f);
-        paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(0, 0, mutableBitmap.getWidth(), mutableBitmap.getHeight(), paint);
+            Bitmap.Config config;
 
-        Runnable callback = new Runnable() {
-            @Override
-            public void run() {
-                if (outputPath == null) {
-                    Bitmap bitmap = ImageUtils.generateThumbnail(mutableBitmap);
 
-                    Intent result = new Intent("inline-data");
-                    result.putExtra("data", bitmap);
-                    setResult(Activity.RESULT_OK, result);
-                    finish();
-                } else {
-                    try {
-                        outputPath.createNewFile();
+            try {
+                Bitmap tmp = Bitmap.createBitmap(cropAndScale.scaleWidth, cropAndScale.scaleHeight, Bitmap.Config.ARGB_8888);
+                config = Bitmap.Config.ARGB_8888;
+                tmp.recycle();
+                System.gc();
+            } catch (OutOfMemoryError e) {
+                config = Bitmap.Config.RGB_565;
+            }
 
-                        OutputStream outputStream = new FileOutputStream(outputPath);
-                        mutableBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-                        outputStream.flush();
-                        outputStream.close();
-                        mutableBitmap.recycle();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        setResult(Activity.RESULT_CANCELED);
+            final Bitmap mutableBitmap = Bitmap.createBitmap(cropAndScale.scaleWidth, cropAndScale.scaleHeight, config);
+            ImageUtils.loadBitmapFromFile(mutableBitmap, tmpFile, cropAndScale.cropWidth, cropAndScale.cropHeight);
+            tmpFile.delete();
+
+            /*final Canvas canvas = new Canvas(mutableBitmap);
+
+            Rect from = new Rect(0, 0, cropAndScale.cropWidth, cropAndScale.cropHeight);
+            Rect to = new Rect(0, 0, cropAndScale.scaleWidth, cropAndScale.scaleHeight);
+            canvas.drawBitmap(unchangedImage, from, to, new Paint());
+
+            unchangedImage.recycle();*/
+
+            int width = mutableBitmap.getWidth() / 8;
+            int height = mutableBitmap.getHeight() / 8;
+            Bitmap useImage = Bitmap.createScaledBitmap(mutableBitmap, width, height, false);
+
+            useImage(useImage);
+
+            useImage.recycle();
+
+            /*Paint paint = new Paint();
+
+            paint.setColor(Color.RED);
+            paint.setStrokeWidth(mutableBitmap.getWidth() * mutableBitmap.getHeight() * 0.00001f);
+            paint.setStyle(Paint.Style.STROKE);
+            canvas.drawRect(0, 0, mutableBitmap.getWidth(), mutableBitmap.getHeight(), paint);*/
+
+            Runnable callback = new Runnable() {
+                @Override
+                public void run() {
+                    if (outputPath == null) {
+                        Bitmap bitmap = ImageUtils.generateThumbnail(mutableBitmap);
+
+                        Intent result = new Intent("inline-data");
+                        result.putExtra("data", bitmap);
+                        setResult(Activity.RESULT_OK, result);
+                        finish();
+                    } else {
+                        try {
+                            outputPath.createNewFile();
+
+                            OutputStream outputStream = new FileOutputStream(outputPath);
+                            mutableBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                            outputStream.close();
+                            mutableBitmap.recycle();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            setResult(Activity.RESULT_CANCELED);
+                            finish();
+                        }
+
+                        setResult(Activity.RESULT_OK, null);
                         finish();
                     }
-
-                    setResult(Activity.RESULT_OK, null);
-                    finish();
                 }
-            }
-        };
+            };
 
-        startAnimation(callback);
+            startAnimation(callback);
+        } catch (ImageUtils.CameraException e) {
+            showErrorMessage("Error: " + e.getMessage());
+            return;
+        } catch (IOException e) {
+            showErrorMessage("Error: " + e.getMessage());
+            return;
+        }
     }
 
     private void startAnimation(final Runnable callback) {
