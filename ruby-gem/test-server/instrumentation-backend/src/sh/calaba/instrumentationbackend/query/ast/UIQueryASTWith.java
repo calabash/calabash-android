@@ -133,7 +133,6 @@ public class UIQueryASTWith implements UIQueryAST {
     }
 
     private boolean isDomQuery() {
-        System.out.println("isDomQuery: " + propertyName);
         return propertyName.equalsIgnoreCase("css") || propertyName.equalsIgnoreCase("xpath");
     }
 
