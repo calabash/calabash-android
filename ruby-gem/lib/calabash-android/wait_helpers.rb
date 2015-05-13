@@ -48,7 +48,7 @@ module Calabash
           else
             raise wait_error(msg)
           end
-        rescue Exception => e
+        rescue => e
           handle_error_with_options(e, nil, screenshot_on_error)
         end
       end
@@ -116,14 +116,13 @@ module Calabash
       end
 
       def handle_error_with_options(ex, timeout_message, screenshot_on_error)
-        msg = (timeout_message || ex)
-        if ex
-          msg = "#{msg} (#{ex.class})"
-        end
+        error_class = (ex && ex.class) || RuntimeError
+        error = error_class.new(timeout_message || ex.message)
+
         if screenshot_on_error
-          screenshot_and_raise msg
+          screenshot_and_raise error
         else
-          raise msg
+          raise error
         end
       end
 

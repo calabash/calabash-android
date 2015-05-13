@@ -365,7 +365,7 @@ module Calabash module Android
         Timeout.timeout(300) do
           begin
             result = http("/", params, {:read_timeout => 350})
-          rescue Exception => e
+          rescue => e
             log "Error communicating with test server: #{e}"
             raise e
           end
@@ -378,7 +378,7 @@ module Calabash module Android
           result
         end
       rescue Timeout::Error
-        raise Exception, "Step timed out"
+        raise "Step timed out"
       end
 
       def http(path, data = {}, options = {})
@@ -435,7 +435,7 @@ module Calabash module Android
                      end
           raise Errno::ECONNREFUSED if response.status_code == 502
           response.body
-        rescue Exception => e
+        rescue => e
           if @http
             @http.reset_all
             @http=nil
@@ -633,7 +633,7 @@ module Calabash module Android
               log "Instrumentation backend is ready!"
             end
           end
-        rescue Exception => e
+        rescue => e
 
           msg = "Unable to make connection to Calabash Test Server at http://127.0.0.1:#{@server_port}/\n"
           msg << "Please check the logcat output for more info about what happened\n"
@@ -688,7 +688,7 @@ module Calabash module Android
       def set_gps_coordinates_from_location(location)
         require 'geocoder'
         results = Geocoder.search(location)
-        raise Exception, "Got no results for #{location}" if results.empty?
+        raise "Got no results for #{location}" if results.empty?
 
         best_result = results.first
         set_gps_coordinates(best_result.latitude, best_result.longitude)
@@ -812,13 +812,13 @@ module Calabash module Android
       ni
     end
 
-    def screenshot_and_raise(msg, options = nil)
+    def screenshot_and_raise(e, options = nil)
       if options
         screenshot_embed options
       else
         screenshot_embed
       end
-      raise(msg)
+      raise e
     end
 
     def hide_soft_keyboard

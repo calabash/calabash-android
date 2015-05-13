@@ -58,7 +58,7 @@ def calabash_build(app)
     keystore.sign_apk("#{workspace_dir}/TestServer.apk", test_server_file_name)
     begin
 
-    rescue Exception => e
+    rescue => e
       log e
       raise "Could not sign test server"
     end
