@@ -183,7 +183,7 @@ public class WebContainer {
 
             return webView.getScale();
         } else if (isCrossWalk()) {
-            return 1;
+            return getView().getContext().getResources().getDisplayMetrics().density;
         } else {
             throw new RuntimeException(getView().getClass().getCanonicalName() + " is not recognized a valid web view.");
         }
