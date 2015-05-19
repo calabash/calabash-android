@@ -56,14 +56,11 @@ module Calabash module Android
     end
 
     def default_device
-      unless @default_device
-        @default_device = Device.new(self, ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"], ENV["APP_PATH"], ENV["TEST_APP_PATH"])
-      end
-      @default_device
+      @@default_device ||= Device.new(self, ENV["ADB_DEVICE_ARG"], ENV["TEST_SERVER_PORT"], ENV["APP_PATH"], ENV["TEST_APP_PATH"])
     end
 
     def set_default_device(device)
-      @default_device = device
+      @@default_device = device
     end
 
     def performAction(action, *arguments)
