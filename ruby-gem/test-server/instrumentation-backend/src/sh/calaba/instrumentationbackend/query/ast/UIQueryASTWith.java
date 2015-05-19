@@ -38,7 +38,7 @@ public class UIQueryASTWith implements UIQueryAST {
                                   final UIQueryDirection direction, final UIQueryVisibility visibility) {
 
         try {
-            List<Future<Future>> futureResults = new ArrayList();
+            List<Future<?>> futureResults = new ArrayList<Future<?>>();
             int index = 0;
             for (Object o : UIQueryUtils.uniq(inputViews)) {
                 if (o instanceof View) {
@@ -47,7 +47,8 @@ public class UIQueryASTWith implements UIQueryAST {
                     UIQueryUtils.runOnViewThread(view, march);
                     futureResults.add(march);
                 } else {
-                    futureResults.add(UIQueryUtils.evaluateAsyncInMainThread(new MatchForViews(o, index)));
+                    Future future = UIQueryUtils.evaluateAsyncInMainThread(new MatchForViews(o, index));
+                    futureResults.add(future);
                 }
                 index++;
             }
@@ -55,9 +56,17 @@ public class UIQueryASTWith implements UIQueryAST {
 
             final List processedResult = new ArrayList(futureResults.size());
 
-            for (Future<Future> f : futureResults) {
-                Future futureResult = f.get(10, TimeUnit.SECONDS);
-                Object o = futureResult.get(10, TimeUnit.SECONDS);
+            for (Future<?> f : futureResults) {
+                Object o;
+                Object rawResult = f.get(10, TimeUnit.SECONDS);
+
+                // The result will either be the actual result or another future
+                if (rawResult instanceof Future) {
+                    Future futureResult = (Future) rawResult;
+                    o = futureResult.get(10, TimeUnit.SECONDS);
+                } else {
+                    o = rawResult;
+                }
 
                 if(o == null) {
                     continue;
@@ -117,7 +126,7 @@ public class UIQueryASTWith implements UIQueryAST {
                     return webResult;
                 }
             } else if (o instanceof Map) {
-                Map result = evaluateForMap((Map) o);
+                Map result = evaluateForMap((Map) o, index);
                 if (result != null) {
                     return new CompletedFuture(result);
                 }
@@ -138,7 +147,11 @@ public class UIQueryASTWith implements UIQueryAST {
 
 
     @SuppressWarnings("rawtypes")
-	private Map evaluateForMap(Map map) {		
+	private Map evaluateForMap(Map map, int index) {
+        if (this.propertyName.equals("index") && this.value.equals(index)) {
+            return map;
+        }
+
 		if (map.containsKey(this.propertyName)) {											
 			Object value = map.get(this.propertyName);
 			if (value == this.value || (value != null && value.equals(this.value))) {
