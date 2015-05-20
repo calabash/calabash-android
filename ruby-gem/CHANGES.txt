@@ -1,3 +1,12 @@
+0.5.9
+      Fix crosswalk queries giving wrong coordinates.
+
+      Fix client rescuing `Exceptions`
+
+      Support signing with DSA certificates
+
+      Support indexes in css/xpath queries.
+
 0.5.8
       Handle `embed` if Calabash Android was 'included' instead of added
       to the Cucumber World
