@@ -121,6 +121,10 @@ module Calabash module Android
       default_device.clear_app_data
     end
 
+    def collect_coverage_data
+      default_device.collect_coverage_data
+    end
+
     def pull(remote, local)
       default_device.pull(remote, local)
     end
@@ -569,6 +573,7 @@ module Calabash module Android
       end
 
       def clear_app_data
+        collect_coverage_data
         cmd = "#{adb_command} shell am instrument #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.ClearAppData"
         raise "Could not clear data" unless system(cmd)
       end
@@ -666,8 +671,30 @@ module Calabash module Android
         log("Client and server versions match (client: #{client_version}, server: #{server_version}). Proceeding...")
       end
 
+      def collect_coverage_data
+        coverage_dir = ENV['COVERAGE_DIR']
+        return unless coverage_dir && !coverage_dir.empty?
+        begin
+          res = http('/coverage')
+          if res && !res.empty?
+            i = 0
+            i += 1 while File.exist?((path = coverage_filename(coverage_dir, i)))
+            File.open(path, 'wb') { |f| f.write res }
+          end
+        rescue StandardError => e
+          # Not sure how important failure is here: some folks collect coverage routinely,
+          # but only check it periodically.
+          log("Failed to retrieve coverage: #{e}")
+        end
+      end
+
+      def coverage_filename(coverage_dir, i)
+        File.join(coverage_dir, "coverage.#{serial}.#{i}.ec".gsub(/[^\w.-]/, '_'))
+      end
+
       def shutdown_test_server
         begin
+          collect_coverage_data
           http("/kill")
           Timeout::timeout(3) do
             sleep 0.3 while app_running?

@@ -9,6 +9,8 @@ import java.io.StringWriter;
 import java.lang.InterruptedException;
 import java.lang.Override;
 import java.lang.Runnable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -354,6 +356,28 @@ public class HttpServer extends NanoHTTPD {
 
 		} else if (uri.endsWith("/ready")) {
 			return new Response(HTTP_OK, MIME_HTML, Boolean.toString(ready));
+
+		} else if (uri.endsWith("/coverage")) {
+			try {
+				// Use reflection like Android InstrumentationTestRunner for now.
+				ClassLoader classLoader = InstrumentationBackend.instrumentation.getTargetContext().getClassLoader();
+				Class<?> RTClass = classLoader.loadClass("org.jacoco.agent.rt.RT");
+				Method getAgentMethod = RTClass.getMethod("getAgent");
+				Object agent = getAgentMethod.invoke(null);
+				Class<?> IAgentClass = classLoader.loadClass("org.jacoco.agent.rt.IAgent");
+				Method dumpCoverageMethod = IAgentClass.getMethod("getExecutionData", boolean.class);
+				byte[] executionData = (byte[])dumpCoverageMethod.invoke(agent, true);
+				return new NanoHTTPD.Response(HTTP_OK, "application/data",
+						new ByteArrayInputStream(executionData));
+			}
+			catch (Exception e) {
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				System.out.println(sw.toString());
+				return new NanoHTTPD.Response(HTTP_INTERNALERROR, null,
+						sw.toString());
+			}
 
 		} else if (uri.endsWith("/screenshot")) {
 			try {

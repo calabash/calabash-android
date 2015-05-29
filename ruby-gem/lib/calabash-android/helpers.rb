@@ -3,7 +3,7 @@ require 'zip'
 require 'tempfile'
 require 'escape'
 require 'rbconfig'
-require 'calabash-android/java_keystore'
+require_relative 'java_keystore'
 
 def package_name(app)
   unless File.exist?(app)
