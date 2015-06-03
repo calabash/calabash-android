@@ -1,6 +1,18 @@
 module Calabash
   module Android
     module TextHelpers
+      def selection_start
+        'SELECTION_START'
+      end
+
+      def selection_end
+        'SELECTION_END'
+      end
+
+      def selection_all
+        'SELECTION_ALL'
+      end
+
       def has_text?(text)
         !query("* {text CONTAINS[c] '#{text}'}").empty?
       end
@@ -22,9 +34,13 @@ module Calabash
       def enter_text(uiquery, text, options = {})
         tap_when_element_exists(uiquery, options)
 
-        options.merge!({action: lambda { keyboard_enter_text(text, options);}})
+        wait_for({timeout: 5, timeout_message: "Timeout waiting for element to gain focus"}) do
+          query(uiquery, :isFocused).first
+        end
 
-        when_element_exists("#{uiquery} isFocused:true", options)
+        perform_action("set_selection", selection_end)
+
+        keyboard_enter_text(text, options)
 
       end
 
