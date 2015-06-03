@@ -21,8 +21,11 @@ module Calabash
 
       def enter_text(uiquery, text, options = {})
         tap_when_element_exists(uiquery, options)
-        sleep 0.5
-        keyboard_enter_text(text, options)
+
+        options.merge!({action: lambda { keyboard_enter_text(text, options);}})
+
+        when_element_exists("#{uiquery} isFocused:true", options)
+
       end
 
       def clear_text_in(query_string, options={})
