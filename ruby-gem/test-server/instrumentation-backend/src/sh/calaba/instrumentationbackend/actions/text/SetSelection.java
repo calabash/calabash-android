@@ -15,7 +15,7 @@ public class SetSelection implements Action {
     private static final String SELECTION_START = "SELECTION_START";
     private static final String SELECTION_END   = "SELECTION_END";
     private static final String SELECTION_ALL   = "SELECTION_ALL";
-    
+
     private static final String USAGE           = "This action takes 1 or 2 arguments:\n"
                                                     + "(\"SELECTION_START\") |  (\"SELECTION_END\") | (\"SELECTION_ALL\") |\n" 
                                                     + " ([int] position) | ([int] position, [int] length)";
@@ -28,12 +28,12 @@ public class SetSelection implements Action {
 
         final BaseInputConnection connection = getConnection();
         if(connection == null) {
-            return Result.failedResult("Unable to clear text, no element has focus");
+            return Result.failedResult("Unable to set selection, no element has focus");
         }
 
         final Editable editable = connection.getEditable();
         if(editable == null) {
-            return Result.failedResult("Unable to clear text, not editable");
+            return Result.failedResult("Unable to set selection, not editable");
         }
 
         final int textLength = editable.length();
