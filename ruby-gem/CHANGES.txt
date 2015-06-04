@@ -1,3 +1,7 @@
+0.5.10
+      Fix building and signing not working if the language of the
+      host computer was not English.
+
 0.5.9
       Fix crosswalk queries giving wrong coordinates.
 
