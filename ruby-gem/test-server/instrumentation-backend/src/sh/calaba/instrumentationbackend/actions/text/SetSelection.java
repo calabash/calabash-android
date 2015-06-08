@@ -51,18 +51,9 @@ public class SetSelection implements Action {
                 } else {
                     setSelection(connection, Integer.parseInt(args[0]), Integer.parseInt(args[1]));
                 }
-                latch.countDown();
             }
         });
-
-        try {
-            latch.await(10, TimeUnit.SECONDS);
-            return Result.successResult();
-        } catch (InterruptedException e) {
-            Result result = Result.fromThrowable(e);
-            result.setMessage("Timeout while trying to set selection");
-            return result;
-        }
+        return Result.successResult();
     }
 
     private void setSelection(BaseInputConnection connection, int position) {
