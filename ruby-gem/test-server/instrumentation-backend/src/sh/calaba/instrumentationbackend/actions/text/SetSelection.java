@@ -12,68 +12,39 @@ import java.util.concurrent.TimeUnit;
 
 public class SetSelection implements Action {
 
-    private static final String SELECTION_START = "SELECTION_START";
     private static final String SELECTION_END   = "SELECTION_END";
-    private static final String SELECTION_ALL   = "SELECTION_ALL";
-
-    private static final String USAGE           = "This action takes 1 or 2 arguments:\n"
-                                                    + "(\"SELECTION_START\") |  (\"SELECTION_END\") | (\"SELECTION_ALL\") |\n" 
-                                                    + " ([int] position) | ([int] position, [int] length)";
+    private static final String USAGE           = "This action takes 2 arguments:\n([int] position, [int] length)";
 
     @Override
     public Result execute(final String... args) {
-        if (args.length == 0 || args.length > 2) {
+        if (args.length != 2) {
             return Result.failedResult(USAGE);
         } 
 
         final BaseInputConnection connection = getConnection();
-        if(connection == null) {
+        if (connection == null) {
             return Result.failedResult("Unable to set selection, no element has focus");
         }
 
         final Editable editable = connection.getEditable();
-        if(editable == null) {
+        if (editable == null) {
             return Result.failedResult("Unable to set selection, not editable");
         }
 
-        final int textLength = editable.length();
-
-        final CountDownLatch latch = new CountDownLatch(1);
         InstrumentationBackend.solo.runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                if (args.length == 1) {
-                    String arg1 = args[0];
-                    if (arg1.equals(SELECTION_START)) { selectStart(connection); }
-                    else if (arg1.equals(SELECTION_END)) { selectEnd(connection, textLength); }
-                    else if (arg1.equals(SELECTION_ALL)) { selectAll(connection, textLength); }
-                    else { setSelection(connection, Integer.parseInt(arg1)); }
-                } else {
-                    setSelection(connection, Integer.parseInt(args[0]), Integer.parseInt(args[1]));
-                }
+                int position, length;
+                if (args[0].equals(SELECTION_END)) { position = editable.length(); }
+                else { position = Integer.parseInt(args[0]); }
+
+                if (args[1].equals(SELECTION_END)) { length = editable.length(); }
+                else { length = Integer.parseInt(args[1]); }
+
+                connection.setSelection(position, length);
             }
         });
         return Result.successResult();
-    }
-
-    private void setSelection(BaseInputConnection connection, int position) {
-        connection.setSelection(position, position);
-    }
-
-    private void setSelection(BaseInputConnection connection, int position, int length) {
-        connection.setSelection(position, length);
-    }
-
-    private void selectAll(BaseInputConnection connection, int textLength) {
-        connection.setSelection(0, textLength);
-    }
-
-    private void selectStart(BaseInputConnection connection) {
-        setSelection(connection, 0);
-    }
-
-    private void selectEnd(BaseInputConnection connection, int textLength) {
-        setSelection(connection, textLength);
     }
 
     private BaseInputConnection getConnection() {
