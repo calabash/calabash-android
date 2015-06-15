@@ -6,3 +6,5 @@ send_key_down,press_down_button
 press_menu,press_menu_button
 go_back,press_back_button
 backdoor,backdoor(method_name, arguments)
+execute_javascript, evaluate_javascript(query, javascript)
+execute_async_javascript, evaluate_javascript(query, javascript)

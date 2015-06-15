@@ -5,6 +5,10 @@ require 'escape'
 require 'rbconfig'
 
 def package_name(app)
+  unless File.exist?(app)
+    raise "Application '#{app}' does not exist"
+  end
+
   package_line = aapt_dump(app, "package").first
   raise "'package' not found in aapt output" unless package_line
   m = package_line.match(/name='([^']+)'/)
@@ -13,6 +17,10 @@ def package_name(app)
 end
 
 def main_activity(app)
+  unless File.exist?(app)
+    raise "Application '#{app}' does not exist"
+  end
+
   begin
     log("Trying to find launchable activity")
     launchable_activity_line = aapt_dump(app, "launchable-activity").first
@@ -137,12 +145,18 @@ def fingerprint_from_apk(app_path)
       FileUtils.cp(app_path, "app.apk")
       FileUtils.mkdir("META-INF")
       Zip::File.foreach("app.apk") do |z|
-        z.extract if /^META-INF\/\w+.(RSA|rsa)/ =~ z.name
+        z.extract if /^META-INF\/\w+.(rsa|dsa)/i =~ z.name
       end
-      rsa_files = Dir["#{tmp_dir}/META-INF/*"]
+      signature_files = Dir["#{tmp_dir}/META-INF/*"]
 
-      raise "No RSA file found in META-INF. Cannot proceed." if rsa_files.empty?
-      raise "More than one RSA file found in META-INF. Cannot proceed." if rsa_files.length > 1
+      log 'Signature files:'
+
+      signature_files.each do |signature_file|
+        log signature_file
+      end
+
+      raise "No signature files found in META-INF. Cannot proceed." if signature_files.empty?
+      raise "More than one signature file (DSA or RSA) found in META-INF. Cannot proceed." if signature_files.length > 1
 
       cmd = "#{Calabash::Android::Environment.keytool_path} -v -printcert -J\"-Dfile.encoding=utf-8\" -file \"#{rsa_files.first}\""
       log cmd
@@ -157,6 +171,12 @@ end
 def extract_md5_fingerprint(fingerprints)
   m = fingerprints.scan(/MD5.*((?:[a-fA-F\d]{2}:){15}[a-fA-F\d]{2})/).flatten
   raise "No MD5 fingerprint found:\n #{fingerprints}" if m.empty?
+  m.first
+end
+
+def extract_signature_algorithm_name(fingerprints)
+  m = fingerprints.scan(/Signature algorithm name: (.*)/).flatten
+  raise "No signature algorithm names found:\n #{fingerprints}" if m.empty?
   m.first
 end
 

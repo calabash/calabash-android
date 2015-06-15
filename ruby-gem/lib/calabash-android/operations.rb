@@ -26,6 +26,17 @@ module Calabash module Android
     include Calabash::Android::TouchHelpers
     include Calabash::Android::WaitHelpers
 
+    def self.extended(base)
+      if (class << base; included_modules.map(&:to_s).include?('Cucumber::RbSupport::RbWorld'); end)
+        unless instance_methods.include?(:embed)
+          original_embed = base.method(:embed)
+          define_method(:embed) do |*args|
+            original_embed.call(*args)
+          end
+        end
+      end
+    end
+
     def current_activity
       `#{default_device.adb_command} shell dumpsys window windows`.each_line.grep(/mFocusedApp.+[\.\/]([^.\s\/\}]+)/){$1}.first
     end
@@ -47,7 +58,7 @@ module Calabash module Android
     end
 
     def set_default_device(device)
-      @default_device = device
+      @@default_device = device
     end
 
     def performAction(action, *arguments)
@@ -329,8 +340,8 @@ module Calabash module Android
         Timeout.timeout(300) do
           begin
             result = http("/", params, {:read_timeout => 350})
-          rescue Exception => e
-            @logger.log "Error communicating with test server: #{e}"
+          rescue => e
+            log "Error communicating with test server: #{e}"
             raise e
           end
           @logger.log "Result:'" + result.strip + "'"
@@ -342,7 +353,7 @@ module Calabash module Android
           result
         end
       rescue Timeout::Error
-        raise Exception, "Step timed out"
+        raise "Step timed out"
       end
 
       def http(path, data = {}, options = {})
@@ -399,7 +410,7 @@ module Calabash module Android
                      end
           raise Errno::ECONNREFUSED if response.status_code == 502
           response.body
-        rescue Exception => e
+        rescue => e
           if @http
             @http.reset_all
             @http=nil
@@ -496,7 +507,7 @@ module Calabash module Android
         @logger.log wake_up_cmd
         raise "Could not wake up the device" unless system(wake_up_cmd)
 
-        retriable :tries => 10, :interval => 1 do
+        Retriable.retriable :tries => 10, :interval => 1 do
           raise "Could not remove the keyguard" if keyguard_enabled?
         end
       end
@@ -547,13 +558,13 @@ module Calabash module Android
 
         raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
 
-        retriable :tries => 10, :interval => 1 do
+        Retriable.retriable :tries => 10, :interval => 1 do
           raise "App did not start" unless app_running?
         end
 
         begin
-          retriable :tries => 10, :interval => 3 do
-            @logger.log "Checking if instrumentation backend is ready"
+          Retriable.retriable :tries => 10, :interval => 3 do
+            log "Checking if instrumentation backend is ready"
 
             @logger.log "Is app running? #{app_running?}"
             ready = http("/ready", {}, {:read_timeout => 1})
@@ -564,7 +575,7 @@ module Calabash module Android
               @logger.log "Instrumentation backend is ready!"
             end
           end
-        rescue Exception => e
+        rescue => e
 
           msg = "Unable to make connection to Calabash Test Server at http://127.0.0.1:#{@server_port}/\n"
           msg << "Please check the logcat output for more info about what happened\n"
@@ -619,7 +630,7 @@ module Calabash module Android
       def set_gps_coordinates_from_location(location)
         require 'geocoder'
         results = Geocoder.search(location)
-        raise Exception, "Got no results for #{location}" if results.empty?
+        raise "Got no results for #{location}" if results.empty?
 
         best_result = results.first
         set_gps_coordinates(best_result.latitude, best_result.longitude)
@@ -743,13 +754,13 @@ module Calabash module Android
       ni
     end
 
-    def screenshot_and_raise(msg, options = nil)
+    def screenshot_and_raise(e, options = nil)
       if options
         screenshot_embed options
       else
         screenshot_embed
       end
-      raise(msg)
+      raise e
     end
 
     def hide_soft_keyboard

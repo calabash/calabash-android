@@ -1,36 +1,28 @@
 require 'calabash-android/management/app_installation'
 
 AfterConfiguration do |config|
-	FeatureNameMemory.feature_name = nil
+  FeatureMemory.feature = nil
 end
 
 Before do |scenario|
-  @scenario_is_outline = (scenario.class == Cucumber::Ast::OutlineTable::ExampleRow)
-  if @scenario_is_outline 
-    scenario = scenario.scenario_outline 
-  end 
+  scenario = scenario.scenario_outline if scenario.respond_to?(:scenario_outline)
 
-  feature_name = scenario.feature.title
-  if FeatureNameMemory.feature_name != feature_name \
-      or ENV["RESET_BETWEEN_SCENARIOS"] == "1"
-    if ENV["RESET_BETWEEN_SCENARIOS"] == "1"
-      log "New scenario - reinstalling apps"
+  feature = scenario.feature
+  if FeatureMemory.feature != feature || ENV['RESET_BETWEEN_SCENARIOS'] == '1'
+    if ENV['RESET_BETWEEN_SCENARIOS'] == '1'
+      log 'New scenario - reinstalling apps'
     else
-      log "First scenario in feature - reinstalling apps"
+      log 'First scenario in feature - reinstalling apps'
     end
-    
+
     uninstall_apps
-    install_app(ENV["TEST_APP_PATH"])
-    install_app(ENV["APP_PATH"])
-    FeatureNameMemory.feature_name = feature_name
-	FeatureNameMemory.invocation = 1
+    install_app(ENV['TEST_APP_PATH'])
+    install_app(ENV['APP_PATH'])
+    FeatureMemory.feature = feature
+    FeatureMemory.invocation = 1
   else
-    FeatureNameMemory.invocation += 1
+    FeatureMemory.invocation += 1
   end
 end
 
-FeatureNameMemory = Class.new
-class << FeatureNameMemory
-  @feature_name = nil
-  attr_accessor :feature_name, :invocation
-end
+FeatureMemory = Struct.new(:feature, :invocation).new

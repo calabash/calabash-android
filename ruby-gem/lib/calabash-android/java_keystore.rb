@@ -1,8 +1,10 @@
+<<<<<<< HEAD
 module Calabash
   module Android
     module Build
       class JavaKeystore
         attr_reader :errors, :location, :keystore_alias, :password, :fingerprint
+        attr_reader :signature_algorithm_name
 
         def initialize(location, keystore_alias, password, options={})
           @logger = options[:logger] || Calabash::Logger.new
@@ -40,16 +42,19 @@ module Calabash
           @location = location
           @keystore_alias = keystore_alias
           @password = password
-          @logger.log "Key store data:", :debug
+          @logger.lg "Key store data:", :debug
           @logger.log keystore_data, :debug
           @fingerprint = extract_md5_fingerprint(keystore_data)
+          @signature_algorithm_name = extract_signature_algorithm_name(keystore_data)
+          @logger.log "Fingerprint: #{fingerprint}", :debug
+          @logger.log "Signature algorithm name: #{signature_algorithm_name}", :debug
         end
 
         def sign_apk(apk_path, dest_path)
           raise "Cannot sign with a miss configured keystore" if errors
           raise "No such file: #{apk_path}" unless File.exists?(apk_path)
 
-          unless system_with_stdout_on_success(Environment.jarsigner_path, '-sigalg', 'MD5withRSA', '-digestalg', 'SHA1', '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
+          unless system_with_stdout_on_success(Environment.jarsigner_path, '-sigalg', signature_algorithm_name, '-digestalg', 'SHA1', '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
             raise "Could not sign app: #{apk_path}"
           end
         end

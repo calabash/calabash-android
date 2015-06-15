@@ -1,7 +1,26 @@
 require 'rubygems'
 require 'irb/completion'
 require 'irb/ext/save-history'
-require 'awesome_print'
+
+begin
+  require 'awesome_print'
+rescue LoadError => e
+  msg = ["Caught a LoadError: could not load 'awesome_print'",
+         "#{e}",
+         '',
+         'Use bundler (recommended) or uninstall awesome_print.',
+         '',
+         '# Use bundler (recommended)',
+         '$ bundle update',
+         '$ bundle exec calabash-android console <path to apk>',
+         '',
+         '# Uninstall',
+         '$ gem update --system',
+         '$ gem uninstall -Vax --force --no-abort-on-dependent awesome_print']
+  puts msg
+  exit(1)
+end
+
 AwesomePrint.irb!
 
 ARGV.concat [ "--readline",
@@ -16,23 +35,22 @@ IRB.conf[:HISTORY_FILE] = ".irb-history"
 
 require 'calabash-android/defaults'
 require 'calabash-android/operations'
-extend Calabash::Android::Operations
 
-def embed(*args)
-  puts "Embed is a Cucumber method and is not available in this console."
-end
-
-
-
-#Virker det her?
 module Calabash
   module Android
     module Operations
-      class Cucumber
-        def self.wants_to_quit
-          false
-        end
+      def embed(*args)
+        puts "Embed is a Cucumber method and is not available in this console."
       end
     end
   end
 end
+
+module Cucumber
+  class << self
+    wants_to_quit = false
+  end
+end
+
+extend Calabash::Android::Operations
+

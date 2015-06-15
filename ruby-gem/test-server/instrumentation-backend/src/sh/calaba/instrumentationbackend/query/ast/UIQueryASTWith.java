@@ -3,6 +3,7 @@ package sh.calaba.instrumentationbackend.query.ast;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import sh.calaba.instrumentationbackend.query.CompletedFuture;
+import sh.calaba.instrumentationbackend.query.WebContainer;
 
 public class UIQueryASTWith implements UIQueryAST {
 	public final String propertyName;
@@ -36,16 +38,17 @@ public class UIQueryASTWith implements UIQueryAST {
                                   final UIQueryDirection direction, final UIQueryVisibility visibility) {
 
         try {
-            List<Future<Future>> futureResults = new ArrayList();
+            List<Future<?>> futureResults = new ArrayList<Future<?>>();
             int index = 0;
-            for (Object o : inputViews) {
+            for (Object o : UIQueryUtils.uniq(inputViews)) {
                 if (o instanceof View) {
                     View view = (View) o;
                     FutureTask<Future> march = new FutureTask<Future>(new MatchForViews(view, index));
                     UIQueryUtils.runOnViewThread(view, march);
                     futureResults.add(march);
                 } else {
-                    futureResults.add(UIQueryUtils.evaluateAsyncInMainThread(new MatchForViews(o, index)));
+                    Future future = UIQueryUtils.evaluateAsyncInMainThread(new MatchForViews(o, index));
+                    futureResults.add(future);
                 }
                 index++;
             }
@@ -53,16 +56,26 @@ public class UIQueryASTWith implements UIQueryAST {
 
             final List processedResult = new ArrayList(futureResults.size());
 
-            for (Future<Future> f : futureResults) {
-                Future futureResult = f.get(10, TimeUnit.SECONDS);
-                Object o = futureResult.get(10, TimeUnit.SECONDS);
+            for (Future<?> f : futureResults) {
+                Object o;
+                Object rawResult = f.get(10, TimeUnit.SECONDS);
+
+                // The result will either be the actual result or another future
+                if (rawResult instanceof Future) {
+                    Future futureResult = (Future) rawResult;
+                    o = futureResult.get(10, TimeUnit.SECONDS);
+                } else {
+                    o = rawResult;
+                }
 
                 if(o == null) {
                     continue;
                 } else if (o instanceof Map) {
                     Map m = (Map) o;
                     if (m.containsKey("result")) {
-                        List<Map<String, Object>> results = UIQueryUtils.mapWebViewJsonResponseOnViewThread((String) m.get("result"), (WebView) m.get("webView")).get(10, TimeUnit.SECONDS);
+                        List<Map<String, Object>> results =
+                                UIQueryUtils.mapWebContainerJsonResponseOnViewThread((String) m.get("result"),
+                                        (WebContainer) m.get("calabashWebContainer")).get(10, TimeUnit.SECONDS);
 
                         for (Map<String, Object> result : results) {
                             if (result.containsKey("error")) {
@@ -104,13 +117,16 @@ public class UIQueryASTWith implements UIQueryAST {
         }
 
         public Future call() throws Exception {
-            if (o instanceof WebView && isDomQuery()) {
-                Future webResult = evaluateForWebView((WebView) o);
+            if (o instanceof View && isDomQuery()) {
+                View view = (View) o;
+
+                Future webResult = evaluateForWebContainer(new WebContainer(view));
+
                 if (webResult != null) {
                     return webResult;
                 }
             } else if (o instanceof Map) {
-                Map result = evaluateForMap((Map) o);
+                Map result = evaluateForMap((Map) o, index);
                 if (result != null) {
                     return new CompletedFuture(result);
                 }
@@ -126,13 +142,16 @@ public class UIQueryASTWith implements UIQueryAST {
     }
 
     private boolean isDomQuery() {
-        System.out.println("isDomQuery: " + propertyName);
         return propertyName.equalsIgnoreCase("css") || propertyName.equalsIgnoreCase("xpath");
     }
 
 
     @SuppressWarnings("rawtypes")
-	private Map evaluateForMap(Map map) {		
+	private Map evaluateForMap(Map map, int index) {
+        if (this.propertyName.equals("index") && this.value.equals(index)) {
+            return map;
+        }
+
 		if (map.containsKey(this.propertyName)) {											
 			Object value = map.get(this.propertyName);
 			if (value == this.value || (value != null && value.equals(this.value))) {
@@ -172,12 +191,12 @@ public class UIQueryASTWith implements UIQueryAST {
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	private Future evaluateForWebView(WebView o) {
+	private Future evaluateForWebContainer(WebContainer webContainer) {
 		if (!(this.value instanceof String)) {
 			return null;
 		}
 		try {
-			return QueryHelper.executeAsyncJavascriptInWebviews(o,
+			return QueryHelper.executeAsyncJavascriptInWebContainer(webContainer,
 					"calabash.js", (String) this.value,this.propertyName);
 				
 		} catch (UnableToFindChromeClientException e) {
