@@ -48,7 +48,15 @@ class JavaKeystore
     raise "Cannot sign with a miss configured keystore" if errors
     raise "No such file: #{apk_path}" unless File.exists?(apk_path)
 
-    unless system_with_stdout_on_success(Env.jarsigner_path, '-sigalg', signature_algorithm_name, '-digestalg', 'SHA1', '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
+    # E.g. MD5withRSA or MD5withRSAandMGF1
+    encryption = signature_algorithm_name.split('with')[1].split('and')[0]
+    signing_algorithm = "SHA1with#{encryption}"
+    digest_algorithm = 'SHA1'
+
+    log "Signing using the signature algorithm: '#{signing_algorithm}'"
+    log "Signing using the digest algorithm: '#{digest_algorithm}'"
+
+    unless system_with_stdout_on_success(Env.jarsigner_path, '-sigfile', 'CERT', '-sigalg', signing_algorithm, '-digestalg', digest_algorithm, '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
       raise "Could not sign app: #{apk_path}"
     end
   end
