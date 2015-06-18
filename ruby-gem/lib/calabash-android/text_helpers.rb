@@ -1,6 +1,10 @@
 module Calabash
   module Android
     module TextHelpers
+
+      #keyword to indicate the end of a string (which may be of unknown length)
+      SELECTION_END = 'SELECTION_END'
+
       def has_text?(text)
         !query("* {text CONTAINS[c] '#{text}'}").empty?
       end
@@ -21,8 +25,16 @@ module Calabash
 
       def enter_text(uiquery, text, options = {})
         tap_when_element_exists(uiquery, options)
-        sleep 0.5
+
+        wait_for({timeout: 5, timeout_message: 'Timeout waiting for element to gain focus'}) do
+          query(uiquery, :isFocused)
+        end
+
+        #set selection to the end of the string
+        perform_action('set_selection', SELECTION_END, SELECTION_END)
+
         keyboard_enter_text(text, options)
+
       end
 
       def clear_text_in(query_string, options={})
