@@ -1,3 +1,0 @@
-[submodule "ruby-gem/test-server/calabash-js"]
-	path = ruby-gem/test-server/calabash-js
-	url = https://github.com/calabash/calabash-js.git
