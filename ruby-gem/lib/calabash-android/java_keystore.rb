@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 module Calabash
   module Android
     module Build
