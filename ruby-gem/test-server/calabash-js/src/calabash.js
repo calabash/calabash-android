@@ -24,9 +24,14 @@
         if (isHostMethod(object,'getBoundingClientRect'))
         {
            boundingBox = object.getBoundingClientRect();
-           res['rect'] = boundingBox;
-           res['rect'].center_x = boundingBox.left + Math.floor(boundingBox.width/2);
-           res['rect'].center_y = boundingBox.top + Math.floor(boundingBox.height/2);
+           var rect = {};
+           rect.width = boundingBox.width;
+           rect.height = boundingBox.height;
+           rect.left = boundingBox.left;
+           rect.top = boundingBox.top;
+           res.rect = rect;
+           res.rect.center_x = rect.left + Math.floor(rect.width/2);
+           res.rect.center_y = rect.top + Math.floor(rect.height/2);
         }
         res.nodeType = NODE_TYPES[object.nodeType] || res.nodeType + ' (Unexpected)';
         res.nodeName = object.nodeName;
