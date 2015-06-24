@@ -1,3 +1,7 @@
+0.5.12
+      Fix Calabash WebView queries not working for new Android
+      System WebViews in Lollipop and M.
+
 0.5.11
       Change the way Calabash (re)signs applications. Use the encryption
       of the supplied keystore, and always use SHA1 as the digest
