@@ -36,7 +36,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
     public static Actions actions;
 
     public InstrumentationBackend() {
-        super((Class<Activity>)mainActivity);
+        super((Class<Activity>) mainActivity);
     }
 
     @Override
@@ -44,6 +44,20 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
         if (mainActivity != null) {
             return super.getActivity();
         }
+
+        final boolean[] go = { false };
+        /*  Ensure class loads */
+        getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                try { Class.forName(mainActivityName); }
+                catch (ClassNotFoundException ignored) {}
+                finally { go[0] = true; }
+            }
+        });
+
+        while (!go[0])
+            ;
 
         try {
             setMainActivity(Class.forName(mainActivityName).asSubclass(Activity.class));
