@@ -36,7 +36,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
     public static Actions actions;
 
     public InstrumentationBackend() {
-        super((Class<Activity>) mainActivity);
+        super((Class<Activity>)mainActivity);
     }
 
     @Override
