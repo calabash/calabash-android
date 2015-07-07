@@ -45,18 +45,19 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
             return super.getActivity();
         }
 
-        final boolean[] go = { false };
         /*  Ensure class loads */
+        final boolean[] loaded = { false };
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 try { Class.forName(mainActivityName); }
                 catch (ClassNotFoundException ignored) {}
-                finally { go[0] = true; }
+                finally { loaded[0] = true; }
             }
         });
 
-        while (!go[0])
+        //Await loading;
+        while (!loaded[0])
             ;
 
         try {
