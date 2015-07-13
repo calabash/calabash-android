@@ -21,17 +21,22 @@ import sh.calaba.instrumentationbackend.query.Query;
 import sh.calaba.instrumentationbackend.query.QueryResult;
 
 public class MultiTouchGesture {
-    Map<String, Object> multiTouchGestureMap;
-    Instrumentation instrumentation;
-    List<Gesture> pressedGestures;
-    List<Gesture> gesturesToPerform;
-    boolean hasPressedFirstGesture;
+    private Map<String, Map<Object,Object>>  evaluatedQueries = new HashMap<String, Map<Object,Object>>();
+    private Map<String, Object> multiTouchGestureMap;
+    private Instrumentation instrumentation;
+    private List<Gesture> pressedGestures;
+    private List<Gesture> gesturesToPerform;
+    private boolean hasPressedFirstGesture;
 
     public MultiTouchGesture(Map<String, Object> multiTouchGesture) {
         this.multiTouchGestureMap = multiTouchGesture;
         instrumentation = InstrumentationBackend.instrumentation;
         gesturesToPerform = new ArrayList<Gesture>();
         hasPressedFirstGesture = false;
+    }
+
+    public Map<String, Map<Object, Object>> getEvaluatedQueries() {
+        return evaluatedQueries;
     }
 
     public void parseGesture() {
@@ -182,12 +187,13 @@ public class MultiTouchGesture {
             }
         }
 
-        Map<String, Map<String, Integer>> evaluatedQueries = new HashMap<String, Map<String, Integer>>();
+        Map<String, Map<String, Integer>> evaluatedQueriesRect = new HashMap<String, Map<String, Integer>>();
 
         long endTime  = SystemClock.uptimeMillis() + timeout;
 
         do {
             evaluatedQueries.clear();
+            evaluatedQueriesRect.clear();
 
             for (String queryString : distinctQueryStrings) {
                 QueryResult queryResult = new Query(queryString, java.util.Collections.emptyList()).executeQuery();
@@ -198,14 +204,15 @@ public class MultiTouchGesture {
                     break;
                 } else {
                     Map<Object,Object> firstItem = (Map<Object, Object>) results.get(0);
+                    evaluatedQueries.put(queryString, firstItem);
                     Map<String,Integer> rect = (Map<String, Integer>) firstItem.get("rect");
-                    evaluatedQueries.put(queryString, rect);
+                    evaluatedQueriesRect.put(queryString, rect);
                 }
             }
 
-            if (evaluatedQueries.size() == distinctQueryStrings.size()) {
+            if (evaluatedQueriesRect.size() == distinctQueryStrings.size()) {
                 // All the queries have been evaluated
-                return evaluatedQueries;
+                return evaluatedQueriesRect;
             }
 
             // Avoid affecting the UI Thread and device performance too much

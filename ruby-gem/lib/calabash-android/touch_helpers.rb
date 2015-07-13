@@ -9,6 +9,8 @@ module Calabash
         if result['outcome'] != 'SUCCESS'
           raise "Failed to perform gesture. #{result['reason']}"
         end
+
+        nil
       end
 
       def tap(mark, *args)

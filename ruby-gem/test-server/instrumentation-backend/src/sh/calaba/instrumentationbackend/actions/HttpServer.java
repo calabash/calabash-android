@@ -321,10 +321,15 @@ public class HttpServer extends NanoHTTPD {
                 ObjectMapper mapper = new ObjectMapper();
                 Map gesture = mapper.readValue(json, Map.class);
 
-                (new MultiTouchGesture(gesture)).perform();
+                MultiTouchGesture multiTouchGesture = new MultiTouchGesture(gesture);
+                multiTouchGesture.perform();
+
+
+                List<Map<String, Map<Object, Object>>> list = new ArrayList<Map<String, Map<Object, Object>>>(1);
+                list.add(multiTouchGesture.getEvaluatedQueries());
 
                 return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
-                        FranklyResult.successResult(new QueryResult(Collections.emptyList())).asJson());
+                        FranklyResult.successResult(new QueryResult(list)).asJson());
 
             } catch (Exception e ) {
                 e.printStackTrace();
