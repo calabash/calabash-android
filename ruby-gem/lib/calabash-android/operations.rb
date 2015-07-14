@@ -11,6 +11,7 @@ require 'calabash-android/helpers'
 require 'calabash-android/environment_helpers'
 require 'calabash-android/text_helpers'
 require 'calabash-android/touch_helpers'
+require 'calabash-android/drag_helpers'
 require 'calabash-android/wait_helpers'
 require 'calabash-android/version'
 require 'calabash-android/env'
@@ -27,6 +28,7 @@ module Calabash module Android
     include Calabash::Android::TextHelpers
     include Calabash::Android::TouchHelpers
     include Calabash::Android::WaitHelpers
+    include Calabash::Android::DragHelpers
 
     def self.extended(base)
       if (class << base; included_modules.map(&:to_s).include?('Cucumber::RbSupport::RbWorld'); end)
