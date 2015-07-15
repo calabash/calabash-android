@@ -9,46 +9,41 @@ module Calabash
 
       def start_monkey
         kill_existing_monkey_processes
-        retries = 0
-        loop do
+        MAX_RETRIES.times do
           port = rand((1025..65535))
           output = ''
-          fork do
-            output = `#{Env.adb_path} shell monkey --port #{port}`
-          end
-          sleep(2.0)
+          timeout(0.5) do
+            output = `#{adb_command} shell monkey --port #{port}`
+          end rescue Timeout::Error #ignore timeout error
+
           unless output.include? 'Error binding to network socket.'
             #The shim will always exit, but on success it will not output the line above
-            pids = existing_monkey_pids
-            if pids.count == 1 then
+            if existing_monkey_pids.count == 1 then
               return port
             end
           end
-          break if (retries += 1) > MAX_RETRIES
         end
+        raise 'Unable to connect to start com.android.commands.monkey'
       end
 
       def existing_monkey_pids
-        procs = `#{Env.adb_path} shell ps`
-        procs.scan(/.+?\s(?<pid>[0-9]+).+?com.android.commands.monkey\r?\n?/)
+        procs = `#{adb_command} shell ps`
+        procs.scan(/.+?\s(?<pid>[0-9]+).+?com.android.commands.monkey\r?\n?/).flatten
       end
 
       def kill_existing_monkey_processes
         existing_monkey_pids.each do |pid|
-          if pid.is_a? Array
-            pid = pid.first
-          end
-          `#{Env.adb_path} shell kill -9 #{pid}`
+          `#{adb_command} shell kill -9 #{pid}`
         end
       end
 
-      def verify_connection
+      def ensure_connected
         #lazy instantiation of monkey, since it takes a while
         @@monkey_port ||= start_monkey
       end
 
       def monkey_touch(touch_type, x, y)
-        verify_connection
+        ensure_connected
         case touch_type
           when :move
             perform_action('send_tcp', @@monkey_port, "touch move #{x} #{y}", true)
@@ -64,24 +59,20 @@ module Calabash
       def drag_coordinates(from_x, from_y, to_x, to_y, options={})
         puts "Dragging from #{from_x},#{from_y} to #{to_x},#{to_y}"
 
-        hold_time = options[:hold_time] || 1
-        hang_time = options[:hang_time] || 1
-        steps     = options[:steps] || 10
-
         monkey_touch(:down, from_x, from_y)
-        sleep(hold_time)
+        sleep(options.fetch(:hold_time, 1))
 
         x_delta = to_x - from_x
         y_delta = to_y - from_y
+        steps = options.fetch(:steps, 5)
 
         (1..steps).each do |i|
-          sleep(0.2)
           move_x = (from_x + (i * (x_delta.to_f / steps))).to_i
           move_y = (from_y + (i * (y_delta.to_f / steps))).to_i
           monkey_touch(:move, move_x, move_y)
         end
 
-        sleep(hang_time)
+        sleep(options.fetch(:hang_time, 1))
         monkey_touch(:up, to_x, to_y)
       end
 
