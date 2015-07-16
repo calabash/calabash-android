@@ -94,10 +94,6 @@ module Calabash module Android
       ]
     end
 
-    def adb_command
-      default_device.adb_command
-    end
-
     def reinstall_apps
       default_device.reinstall_apps
     end

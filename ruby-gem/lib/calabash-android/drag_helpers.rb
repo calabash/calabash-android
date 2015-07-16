@@ -4,6 +4,48 @@ module Calabash
   module Android
     module DragHelpers
 
+      # Public API
+      def drag_coordinates(from_x, from_y, to_x, to_y, options={})
+        puts "Dragging from #{from_x},#{from_y} to #{to_x},#{to_y}"
+
+        monkey_touch(:down, from_x, from_y)
+        sleep(options.fetch(:hold_time, 1))
+
+        x_delta = to_x - from_x
+        y_delta = to_y - from_y
+        steps = options.fetch(:steps, 5)
+
+        (1..steps).each do |i|
+          move_x = (from_x + (i * (x_delta.to_f / steps))).to_i
+          move_y = (from_y + (i * (y_delta.to_f / steps))).to_i
+          monkey_touch(:move, move_x, move_y)
+        end
+
+        sleep(options.fetch(:hang_time, 1))
+        monkey_touch(:up, to_x, to_y)
+      end
+
+      def drag_and_drop(from_query, to_query, options={})
+        wait_for_element_exists(from_query)
+        wait_for_element_exists(to_query)
+
+        from_results = query(from_query)
+        to_results = query(to_query)
+
+        if from_results.any?
+          if to_results.any?
+            from_rect = from_results.first['rect']
+            to_rect = to_results.first['rect']
+            drag_coordinates(from_rect['center_x'], from_rect['center_y'], to_rect['center_x'], to_rect['center_y'], options)
+          else
+            puts "No matching elements for: #{to_query}"
+          end
+        else
+          puts "No matching elements for: #{from_query}"
+        end
+      end
+
+      private
       MAX_RETRIES = 7
       @@monkey_port = nil
 
@@ -56,44 +98,16 @@ module Calabash
         end
       end
 
-      def drag_coordinates(from_x, from_y, to_x, to_y, options={})
-        puts "Dragging from #{from_x},#{from_y} to #{to_x},#{to_y}"
+      #private version of Operations Device.adb_command
+      def adb_command
+        @operations_instance ||= lambda do
+          Class.new do
+            include Calabash::Android::Operations
+          end.new
+        end.call
 
-        monkey_touch(:down, from_x, from_y)
-        sleep(options.fetch(:hold_time, 1))
-
-        x_delta = to_x - from_x
-        y_delta = to_y - from_y
-        steps = options.fetch(:steps, 5)
-
-        (1..steps).each do |i|
-          move_x = (from_x + (i * (x_delta.to_f / steps))).to_i
-          move_y = (from_y + (i * (y_delta.to_f / steps))).to_i
-          monkey_touch(:move, move_x, move_y)
-        end
-
-        sleep(options.fetch(:hang_time, 1))
-        monkey_touch(:up, to_x, to_y)
-      end
-
-      def drag_and_drop(from_query, to_query, options={})
-        wait_for_element_exists(from_query)
-        wait_for_element_exists(to_query)
-
-        from_results = query(from_query)
-        to_results = query(to_query)
-
-        if from_results.any?
-          if to_results.any?
-            from_rect = from_results.first['rect']
-            to_rect = to_results.first['rect']
-            drag_coordinates(from_rect['center_x'], from_rect['center_y'], to_rect['center_x'], to_rect['center_y'], options)
-          else
-            puts "No matching elements for: #{to_query}"
-          end
-        else
-          puts "No matching elements for: #{from_query}"
-        end
+        device = @operations_instance.default_device
+        device.send(:adb_command)
       end
     end
   end
