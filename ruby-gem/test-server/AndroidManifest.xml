@@ -15,6 +15,14 @@
               android:stateNotNeeded="true"
               android:noHistory="false"
               android:excludeFromRecents="true"/>
+        <activity
+            android:name="sh.calaba.instrumentationbackend.FailureReporterActivity"
+            android:label="FailureReporterActivity"
+            android:exported="true"
+            android:finishOnTaskLaunch="true"
+            android:stateNotNeeded="true"
+            android:noHistory="true"
+            android:excludeFromRecents="true"/>
     </application>
     <uses-sdk android:minSdkVersion="4" />
     <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner" />
