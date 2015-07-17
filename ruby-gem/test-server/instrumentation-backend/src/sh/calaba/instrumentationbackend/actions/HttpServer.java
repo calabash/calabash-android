@@ -21,6 +21,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import dalvik.system.DexClassLoader;
 import sh.calaba.instrumentationbackend.Command;
 import sh.calaba.instrumentationbackend.FranklyResult;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
@@ -374,7 +375,40 @@ public class HttpServer extends NanoHTTPD {
 				return new NanoHTTPD.Response(HTTP_INTERNALERROR, null,
 						sw.toString());
 			}
-		}
+		} else if (uri.endsWith("/load-dylib")) {
+            FranklyResult errorResult;
+
+            try {
+                String json = params.getProperty("json");
+                ObjectMapper mapper = new ObjectMapper();
+                Map data = mapper.readValue(json, Map.class);
+                final String path = (String) data.get("path");
+                final List<String>classes = (ArrayList<String>) data.get("classes");
+
+                System.out.println("PATH: " + path);
+                System.out.println("CLASSES: " + classes);
+
+                final File optimizedDirectory = InstrumentationBackend.instrumentation.getTargetContext().getDir("calabash_optimized_dex", 0);
+
+                if (!new File(path).exists()) {
+                    throw new RuntimeException("Path '" + path + "' does not exist");
+                }
+
+                DexClassLoader dexClassLoader = new DexClassLoader(path, optimizedDirectory.getAbsolutePath(), null, InstrumentationBackend.instrumentation.getTargetContext().getClassLoader());
+
+                for (String className : classes) {
+                    dexClassLoader.loadClass(className);
+                    Class.forName(className, true, dexClassLoader);
+                }
+
+                return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", FranklyResult.emptyResult().asJson());
+            } catch (Exception e) {
+                e.printStackTrace();
+                errorResult = FranklyResult.fromThrowable(e);
+            }
+
+            return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", errorResult.asJson());
+        }
 
 		System.out.println("header: " + header);
 		System.out.println("params: " + params);
