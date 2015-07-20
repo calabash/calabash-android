@@ -116,11 +116,7 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
             super.onCreate(arguments);
         } catch (RuntimeException e) {
             if (!failureReporter.hasReportedFailure()) {
-                StringWriter stringWriter = new StringWriter();
-                stringWriter.write("Unknown error:\n");
-                e.printStackTrace(new PrintWriter(stringWriter));
-
-                failureReporter.reportFailure(stringWriter.toString());
+                failureReporter.reportFailure(e);
             }
 
             throw e;
