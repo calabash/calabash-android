@@ -3,6 +3,9 @@ package sh.calaba.instrumentationbackend.actions;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -38,6 +41,7 @@ import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -386,7 +390,52 @@ public class HttpServer extends NanoHTTPD {
 
             String tmpFilePath = files.getProperty("content");
 
-            return new Response(HTTP_OK, "application/octet-stream", tmpFilePath);
+            try {
+                File out = File.createTempFile("calabash", ".upload");
+
+                FileInputStream fileInputStream = new FileInputStream(new File(tmpFilePath));
+                FileOutputStream fileOutputStream = new FileOutputStream(out);
+
+                Utils.copyContents(fileInputStream, fileOutputStream);
+
+                fileInputStream.close();
+                fileOutputStream.close();
+
+                return new Response(HTTP_OK, "application/octet-stream", out.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", FranklyResult.fromThrowable(e).asJson());
+            }
+        }
+        else if (uri.endsWith("/move-cache-file-to-public")) {
+            FranklyResult errorResult;
+
+            try {
+                String json = params.getProperty("json");
+                ObjectMapper mapper = new ObjectMapper();
+                Map data = mapper.readValue(json, Map.class);
+                final String from = (String) data.get("from");
+                final String name = (String) data.get("name");
+
+                ContextWrapper contextWrapper = new ContextWrapper(InstrumentationBackend.instrumentation.getTargetContext());
+
+                FileInputStream fileInputStream = new FileInputStream(new File(from));
+                FileOutputStream fileOutputStream = contextWrapper.openFileOutput(name, Context.MODE_WORLD_READABLE);
+
+                Utils.copyContents(fileInputStream, fileOutputStream);
+
+                fileInputStream.close();
+                fileOutputStream.close();
+
+                new File(from).delete();
+
+                return new Response(HTTP_OK, "application/octet-stream", new File(contextWrapper.getFilesDir(), name).getAbsolutePath());
+            } catch (Exception e) {
+                e.printStackTrace();
+                errorResult = FranklyResult.fromThrowable(e);
+            }
+
+            return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", errorResult.asJson());
         }
         else if (uri.endsWith("/load-dylib")) {
             FranklyResult errorResult;
