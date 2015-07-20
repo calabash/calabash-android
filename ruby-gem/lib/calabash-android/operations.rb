@@ -870,6 +870,13 @@ module Calabash module Android
       default_device.http_put(path, data, options)
     end
 
+    # @return [String] The path of the uploaded file on the device
+    def upload_file(file_path)
+      name = File.basename(file_path)
+      device_tmp_path = http_put('/add-file', File.binread(file_path))
+      http('/move-cache-file-to-public', {from: device_tmp_path, name: name})
+    end
+
     def html(q)
       query(q).map {|e| e['html']}
     end
