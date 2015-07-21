@@ -17,6 +17,8 @@ import android.test.InstrumentationTestRunner;
 public class ClearAppData2 extends InstrumentationTestRunner {
     @Override
     public void onCreate(Bundle arguments) {
+        StatusReporter statusReporter = new StatusReporter(getContext());
+
         try {
             System.out.println("External cache dir: " + externalCacheDir());
 
@@ -57,9 +59,11 @@ public class ClearAppData2 extends InstrumentationTestRunner {
 
             removeOwnAccountTypes();
         } catch (Exception e) {
-            new FailureReporter(getContext()).reportFailure(e);
+            statusReporter.reportFailure(e);
             throw new RuntimeException(e);
         }
+
+        statusReporter.reportFinished(StatusReporter.FinishedState.SUCCESSFUL);
     }
 
     private void removeOwnAccountTypes() {

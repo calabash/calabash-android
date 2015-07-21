@@ -16,8 +16,8 @@
               android:noHistory="false"
               android:excludeFromRecents="true"/>
         <activity
-            android:name="sh.calaba.instrumentationbackend.FailureReporterActivity"
-            android:label="FailureReporterActivity"
+            android:name="sh.calaba.instrumentationbackend.StatusReporterActivity"
+            android:label="StatusReporterActivity"
             android:exported="true"
             android:finishOnTaskLaunch="true"
             android:stateNotNeeded="true"

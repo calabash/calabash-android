@@ -1,7 +1,5 @@
 package sh.calaba.instrumentationbackend;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Method;
 
 import android.Manifest;
@@ -19,7 +17,7 @@ import android.test.InstrumentationTestRunner;
 public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner {
 	@Override
     public void onCreate(Bundle arguments) {
-        FailureReporter failureReporter = new FailureReporter(getContext());
+        StatusReporter statusReporter = new StatusReporter(getContext());
 
         try {
             final String mainActivity;
@@ -32,7 +30,7 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
                         packageManager.getLaunchIntentForPackage(arguments.getString("target_package"));
 
                 if (launchIntent == null) {
-                    failureReporter.reportFailure( "E_NO_LAUNCH_INTENT_FOR_PACKAGE");
+                    statusReporter.reportFailure("E_NO_LAUNCH_INTENT_FOR_PACKAGE");
                     throw new RuntimeException("Not launch intent set for package '" + arguments.getString("target_package") + "'");
                 }
 
@@ -59,7 +57,7 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
                 System.out.println("Main activity name automatically set to: " + mainActivity);
 
                 if (mainActivity == null || mainActivity.isEmpty()) {
-                    failureReporter.reportFailure("E_COULD_NOT_DETECT_MAIN_ACTIVITY");
+                    statusReporter.reportFailure("E_COULD_NOT_DETECT_MAIN_ACTIVITY");
                     throw new RuntimeException("Could not detect main activity");
                 }
             }
@@ -87,7 +85,7 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
                 HttpServer.instantiate(Integer.parseInt(arguments.getString("test_server_port")));
             } catch (RuntimeException e) {
                 if (getTargetContext().checkCallingOrSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-                    failureReporter.reportFailure("E_NO_INTERNET_PERMISSION");
+                    statusReporter.reportFailure("E_NO_INTERNET_PERMISSION");
                 }
 
                 throw e;
@@ -115,8 +113,8 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
 
             super.onCreate(arguments);
         } catch (RuntimeException e) {
-            if (!failureReporter.hasReportedFailure()) {
-                failureReporter.reportFailure(e);
+            if (!statusReporter.hasReportedFailure()) {
+                statusReporter.reportFailure(e);
             }
 
             throw e;
