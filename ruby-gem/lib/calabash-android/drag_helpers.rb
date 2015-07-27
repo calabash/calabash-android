@@ -87,9 +87,8 @@ module Calabash
       end
 
       def _kill_existing_monkey_processes
-          _existing_monkey_pids.each do |pid|
-            `#{_adb_command} shell kill -9 #{pid}`
-          end
+        _existing_monkey_pids.each do |pid|
+          `#{_adb_command} shell kill -9 #{pid}`
         end
       end
 
