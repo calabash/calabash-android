@@ -23,6 +23,14 @@
             android:stateNotNeeded="true"
             android:noHistory="true"
             android:excludeFromRecents="true"/>
+        <activity
+            android:name="sh.calaba.instrumentationbackend.ResumeTaskActivity"
+            android:label="ResumeTaskActivity"
+            android:exported="true"
+            android:finishOnTaskLaunch="true"
+            android:stateNotNeeded="true"
+            android:noHistory="true"
+            android:excludeFromRecents="true"/>
     </application>
     <uses-sdk android:minSdkVersion="4" />
     <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner" />
@@ -37,5 +45,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
 
 </manifest>
