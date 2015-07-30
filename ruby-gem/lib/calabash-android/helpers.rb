@@ -115,7 +115,25 @@ def resign_apk(app_path)
 end
 
 def unsign_apk(path)
-  files_to_remove = `"#{Env.tools_dir}/aapt" list "#{path}"`.lines.collect(&:strip).grep(/^META-INF\//)
+  meta_files = `"#{Env.tools_dir}/aapt" list "#{path}"`.lines.collect(&:strip).grep(/^META-INF\//)
+
+  signing_file_names = ['.mf', '.rsa', '.dsa', '.ec', '.sf']
+
+  files_to_remove = meta_files.select do |file|
+    # other will be:
+    # META-INF/foo/bar
+    #  other #=> bar
+    directory, file_name, other = file.split('/')
+
+    if other != nil || file_name.nil?
+      false
+    else
+      if signing_file_names.include?(File.extname(file_name).downcase)
+        true
+      end
+    end
+  end
+
   if files_to_remove.empty?
     log "App wasn't signed. Will not try to unsign it."
   else
