@@ -456,7 +456,7 @@ public class HttpServer extends NanoHTTPD {
                     throw new RuntimeException("Path '" + path + "' does not exist");
                 }
 
-                DexClassLoader dexClassLoader = new DexClassLoader(path, optimizedDirectory.getAbsolutePath(), null, InstrumentationBackend.instrumentation.getTargetContext().getClassLoader());
+                DexClassLoader dexClassLoader = new DexClassLoader(path, optimizedDirectory.getAbsolutePath(), null, getClass().getClassLoader());
 
                 for (String className : classes) {
                     dexClassLoader.loadClass(className);
