@@ -877,6 +877,13 @@ module Calabash module Android
       http('/move-cache-file-to-public', {from: device_tmp_path, name: name})
     end
 
+    # @param [String] file_path Path of the file to load (.apk or .jar)
+    # @param [Array<String>] classes A list of classes to load from the file
+    def load_dylib(file_path, classes = [])
+      uploaded_file = upload_file(file_path)
+      http('/load-dylib', {path: uploaded_file, classes: classes})
+    end
+
     def html(q)
       query(q).map {|e| e['html']}
     end
