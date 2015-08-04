@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.content.pm.ResolveInfo;
 
 import java.util.List;
 
@@ -26,20 +28,19 @@ public class ResumeTaskActivity extends Activity {
             throw new RuntimeException("Intent must have extras");
         }
 
-
         Bundle extras = getIntent().getExtras();
         String packageName = (String) extras.get(EXTRA_PACKAGE_NAME);
 
-        ActivityManager.RunningTaskInfo task = getRunningTask(packageName);
+        ActivityManager.RecentTaskInfo task = getRecentTask(packageName);
 
         if (task == null) {
             setResult(Activity.RESULT_OK, null);
         } else {
             Intent result = new Intent();
-            result.putExtra(EXTRA_TASK_BASE_COMPONENT, task.baseActivity);
+            result.putExtra(EXTRA_TASK_BASE_COMPONENT, task.origActivity);
             result.putExtra(EXTRA_TASK_ID, task.id);
 
-            resumeTask(task.id);
+            resumeTask(task);
 
             setResult(Activity.RESULT_OK, result);
         }
@@ -47,25 +48,51 @@ public class ResumeTaskActivity extends Activity {
         finish();
     }
 
-    private ActivityManager.RunningTaskInfo getRunningTask(String packageName) {
-        for (ActivityManager.RunningTaskInfo task : getRunningTasks()) {
-            if (packageName.equals(task.baseActivity.getPackageName())) {
-                return task;
+    private ActivityManager.RecentTaskInfo getRecentTask(String packageName) {
+        PackageManager packageManager = getPackageManager();
+
+        for (ActivityManager.RecentTaskInfo task : getRecentTasks()) {
+            Intent baseIntent = task.baseIntent;
+
+            if (task.origActivity != null) {
+                baseIntent.setComponent(task.origActivity);
+            }
+
+            baseIntent.setFlags((baseIntent.getFlags() & ~Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED) | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            ResolveInfo resolveInfo = packageManager.resolveActivity(baseIntent, 0);
+
+            if (resolveInfo != null) {
+                if (packageName.equals(resolveInfo.activityInfo.packageName)) {
+                    return task;
+                }
             }
         }
 
         return null;
     }
 
-    private List<ActivityManager.RunningTaskInfo> getRunningTasks() {
+    private List<ActivityManager.RecentTaskInfo> getRecentTasks() {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
-        return activityManager.getRunningTasks(100);
+        return activityManager.getRecentTasks(100, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
     }
 
-    private void resumeTask(int taskId) {
+    private void resumeTask(ActivityManager.RecentTaskInfo task) {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
-        activityManager.moveTaskToFront(taskId, ActivityManager.MOVE_TASK_WITH_HOME);
+        if (task.id  >= 0) {
+            activityManager.moveTaskToFront(task.id, ActivityManager.MOVE_TASK_WITH_HOME);
+        } else {
+            Intent baseIntent = task.baseIntent;
+
+            if (task.origActivity != null) {
+                baseIntent.setComponent(task.origActivity);
+            }
+
+            baseIntent.setFlags((baseIntent.getFlags()&~Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED) | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            startActivity(baseIntent);
+        }
     }
 }
