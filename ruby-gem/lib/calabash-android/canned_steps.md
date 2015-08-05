@@ -208,16 +208,16 @@ To use a set of concrete GPS cordinates
 Internationalization
 --------------------
 
-	Then /^I press text of translated l10key (\d+)$/ 
+	Then /^I press text of translated l10key "([^\"]*)"$/ 
 Simulates that the user pressed the text of the l10nkey.	
 
-	Then /^I press button of translated l10key (\d+)$/
+	Then /^I press button of translated l10key "([^\"]*)"$/
 Simulates that the user pressed the button with the label text of the l10nkey.
 
-	Then /^I press menu item of translated l10key (\d+)$/
+	Then /^I press menu item of translated l10key "([^\"]*)"$/
 Simulates that the user pressed the menu item with the label text of the l10nkey.
 
-	Then /^I press toggle button of translated l10key (\d+)$/ 
+	Then /^I press toggle button of translated l10key "([^\"]*)"$/ 
 Simulates that the user pressed the toggle button with the label text of the l10nkey.	
 
 	Then /^I wait for the translated "([^\"]*)" l10nkey to appear$/ 
