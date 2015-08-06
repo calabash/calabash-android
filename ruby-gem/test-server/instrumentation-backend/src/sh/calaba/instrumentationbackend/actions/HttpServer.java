@@ -3,6 +3,9 @@ package sh.calaba.instrumentationbackend.actions;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -21,6 +24,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import dalvik.system.DexClassLoader;
 import sh.calaba.instrumentationbackend.Command;
 import sh.calaba.instrumentationbackend.FranklyResult;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
@@ -37,6 +41,7 @@ import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -374,7 +379,98 @@ public class HttpServer extends NanoHTTPD {
 				return new NanoHTTPD.Response(HTTP_INTERNALERROR, null,
 						sw.toString());
 			}
+
 		}
+        else if (uri.endsWith("/add-file")) {
+            // NOTE: There is a PUT hack in NanoHTTPD that stores PUTs in a tmp file,
+            //       we need that!
+            if (!"PUT".equals(method)) {
+                return new Response(HTTP_BADREQUEST, "test/plain;charset=utf-8", "Only PUT supported for this endpoint, not '" + method + "'");
+            }
+
+            String tmpFilePath = files.getProperty("content");
+
+            try {
+                File out = File.createTempFile("calabash", ".upload");
+
+                FileInputStream fileInputStream = new FileInputStream(new File(tmpFilePath));
+                FileOutputStream fileOutputStream = new FileOutputStream(out);
+
+                Utils.copyContents(fileInputStream, fileOutputStream);
+
+                fileInputStream.close();
+                fileOutputStream.close();
+
+                return new Response(HTTP_OK, "application/octet-stream", out.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", FranklyResult.fromThrowable(e).asJson());
+            }
+        }
+        else if (uri.endsWith("/move-cache-file-to-public")) {
+            FranklyResult errorResult;
+
+            try {
+                String json = params.getProperty("json");
+                ObjectMapper mapper = new ObjectMapper();
+                Map data = mapper.readValue(json, Map.class);
+                final String from = (String) data.get("from");
+                final String name = (String) data.get("name");
+
+                ContextWrapper contextWrapper = new ContextWrapper(InstrumentationBackend.instrumentation.getTargetContext());
+
+                FileInputStream fileInputStream = new FileInputStream(new File(from));
+                FileOutputStream fileOutputStream = contextWrapper.openFileOutput(name, Context.MODE_WORLD_READABLE);
+
+                Utils.copyContents(fileInputStream, fileOutputStream);
+
+                fileInputStream.close();
+                fileOutputStream.close();
+
+                new File(from).delete();
+
+                return new Response(HTTP_OK, "application/octet-stream", new File(contextWrapper.getFilesDir(), name).getAbsolutePath());
+            } catch (Exception e) {
+                e.printStackTrace();
+                errorResult = FranklyResult.fromThrowable(e);
+            }
+
+            return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", errorResult.asJson());
+        }
+        else if (uri.endsWith("/load-dylib")) {
+            FranklyResult errorResult;
+
+            try {
+                String json = params.getProperty("json");
+                ObjectMapper mapper = new ObjectMapper();
+                Map data = mapper.readValue(json, Map.class);
+                final String path = (String) data.get("path");
+                final List<String>classes = (ArrayList<String>) data.get("classes");
+
+                System.out.println("PATH: " + path);
+                System.out.println("CLASSES: " + classes);
+
+                final File optimizedDirectory = InstrumentationBackend.instrumentation.getTargetContext().getDir("calabash_optimized_dex", 0);
+
+                if (!new File(path).exists()) {
+                    throw new RuntimeException("Path '" + path + "' does not exist");
+                }
+
+                DexClassLoader dexClassLoader = new DexClassLoader(path, optimizedDirectory.getAbsolutePath(), null, getClass().getClassLoader());
+
+                for (String className : classes) {
+                    dexClassLoader.loadClass(className);
+                    Class.forName(className, true, dexClassLoader);
+                }
+
+                return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", FranklyResult.emptyResult().asJson());
+            } catch (Exception e) {
+                e.printStackTrace();
+                errorResult = FranklyResult.fromThrowable(e);
+            }
+
+            return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", errorResult.asJson());
+        }
 
 		System.out.println("header: " + header);
 		System.out.println("params: " + params);

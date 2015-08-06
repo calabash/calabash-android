@@ -4,11 +4,15 @@ package sh.calaba.instrumentationbackend.actions.location;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
+
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.location.LocationProvider;
+import android.provider.Settings;
 
 import java.lang.reflect.Method;
 
@@ -27,7 +31,20 @@ public class FakeGPSLocation implements Action {
         final double latitude = Double.parseDouble(args[0]);
         final double longitude = Double.parseDouble(args[1]);
 
-        
+        Context context = InstrumentationBackend.instrumentation.getTargetContext();
+
+        try {
+            if (Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION) != 1) {
+                return Result.failedResult("Allow mock location is not enabled.");
+            }
+        } catch (Settings.SettingNotFoundException e) {
+            return Result.failedResult(e.getMessage());
+        }
+
+        if (context.checkCallingOrSelfPermission(Manifest.permission.ACCESS_MOCK_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return Result.failedResult("The application does not have access mock location permission. Add the permission '" + Manifest.permission.ACCESS_MOCK_LOCATION + "' to your manifest");
+        }
+
         if (t != null) {
         	t.finish();
         }

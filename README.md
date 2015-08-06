@@ -16,6 +16,7 @@ If you have any questions on Calabash-Android, please use the Google group [http
 The documention is split into the following sections:
 * [Installation](documentation/installation.md)
 * [Ruby API](documentation/ruby_api.md)
+* [Wiki (which includes information on constructing uiquery strings )](https://github.com/calabash/calabash-android/wiki/05-Query-Syntax)
 
 #### Upgrading to Calabash-android 0.5
 
