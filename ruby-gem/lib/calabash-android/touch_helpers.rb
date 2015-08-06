@@ -1,7 +1,10 @@
+require 'calabash-android/monkey_helpers'
+
 module Calabash
   module Android
     module TouchHelpers
       include ::Calabash::Android::Gestures
+      include ::Calabash::Android::MonkeyHelpers
 
       def execute_gesture(multi_touch_gesture)
         result = JSON.parse(http("/gesture", JSON.parse(multi_touch_gesture.to_json), read_timeout: multi_touch_gesture.timeout+10))
@@ -165,6 +168,47 @@ module Calabash
         end
 
         element.is_a?(Hash) && element.has_key?('rect') && element['rect'].has_key?('center_x') && element['rect'].has_key?('center_y')
+      end
+
+      def fuzz_until_element_is_visible_in_quadrant quadrant
+        device_frame =
+        case quadrant
+          when :top_left
+        end
+      end
+
+      def fuzz_until_element_is_visible(uiquery, bounding_rect, max_retries=100)
+        max_retries.times do
+          if element_does_not_exist uiquery
+            fuzz bounding_rect
+          else
+            break
+          end
+        end
+      end
+
+      def fuzz(bounding_rect, number_of_taps=100)
+        x_min = bounding_rect['x']
+        x_max = bounding_rect['x'] + bounding_rect['width']
+        y_min = bounding_rect['y']
+        y_max = bounding_rect['y'] + bounding_rect['height']
+
+        def rand_x
+          return rand(x_min..x_max)
+        end
+
+        def rand_y
+          return rand(y_min..y_max)
+        end
+
+        def rand_tap(restart=false)
+          monkey_tap rand_x rand_y restart
+        end
+
+        rand_tap true #first one should restart monkey
+        (number_of_taps - 1).times do
+          rand_tap
+        end
       end
     end
   end
