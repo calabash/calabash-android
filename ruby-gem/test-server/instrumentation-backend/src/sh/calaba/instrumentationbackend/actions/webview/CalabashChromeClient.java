@@ -86,10 +86,13 @@ public class CalabashChromeClient extends WebChromeClient {
             @Override
             public void run() {
                 Class<?> webViewClass = webView.getClass();
-                boolean isCordovaWebView = superClassEquals(webViewClass, "org.apache.cordova.CordovaWebView");
+                boolean isCordovaWebView =
+                        superClassEquals(webViewClass, "org.apache.cordova.CordovaWebView") ||
+                        superClassEquals(webViewClass, "org.apache.cordova.engine.SystemWebView");
 
                 // Cordova web view changed its implementation of setWebChromeClient.
-                //   it will now try to cast the given WebChromeClient to a CordovaChromeClient,
+                //   it will now try to cast the given WebChromeClient to a CordovaChromeClient
+                //   or, in a recent version, to aSystemWebChromeClient,
                 //   thus failing
                 if (isCordovaWebView) {
                     try {

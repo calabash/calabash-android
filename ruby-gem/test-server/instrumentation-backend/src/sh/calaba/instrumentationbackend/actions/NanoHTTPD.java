@@ -1,17 +1,6 @@
 package sh.calaba.instrumentationbackend.actions;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URLEncoder;
@@ -72,6 +61,8 @@ public class NanoHTTPD
 	// ==================================================
 	// API parts
 	// ==================================================
+
+    public static final String TMP_FILE_PREFIX = "NanoHTTPD";
 
 	/**
 	 * Override this to customize the server.<p>
@@ -154,6 +145,19 @@ public class NanoHTTPD
 				uee.printStackTrace();
 			}
 		}
+
+        /**
+         * Convenience method that converts a throwable to a stack trace.
+         */
+        public Response( String status, String mimeType, Throwable e )
+        {
+            this(status, mimeType, (InputStream)null);
+
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            PrintWriter pw = new PrintWriter(bytes);
+            e.printStackTrace(pw);
+            this.data = new ByteArrayInputStream(bytes.toByteArray());
+        }
 
 		/**
 		 * Adds given line to the header.
@@ -360,8 +364,20 @@ public class NanoHTTPD
 					catch (NumberFormatException ex) {}
 				}
 
-				// Write the part of body already read to ByteArrayOutputStream f
-				ByteArrayOutputStream f = new ByteArrayOutputStream();
+				// Write the part of body already read to ByteArrayOutputStream f.
+                // HUGE SCARY HACK: To avoid the quadruple mem copy of the ENTIRE body
+                //                  (and OOM on Android) PUTs are streamed directly
+                //                  to a file
+				OutputStream f;
+                File putHackTmpFile = null;
+                if ("PUT".equals(method)) {
+                    putHackTmpFile = File.createTempFile(TMP_FILE_PREFIX, ".put.tmp");
+                    f = new BufferedOutputStream(
+                            new FileOutputStream(putHackTmpFile));
+                } else {
+                    f = new ByteArrayOutputStream();
+                }
+
 				if (splitbyte < rlen)
 					f.write(buf, splitbyte, rlen-splitbyte);
 
@@ -377,31 +393,38 @@ public class NanoHTTPD
 					size = 0;
 
 				// Now read all the body and write it to f
-				buf = new byte[512];
+				buf = new byte[4096];
 				while ( rlen >= 0 && size > 0 )
 				{
-					rlen = is.read(buf, 0, 512);
+					rlen = is.read(buf);
 					size -= rlen;
 					if (rlen > 0)
 						f.write(buf, 0, rlen);
 				}
 
-				// Get the raw body as a byte []
-				byte [] fbuf = f.toByteArray();
-
-				// Create a BufferedReader for easily reading it as string.
-				ByteArrayInputStream bin = new ByteArrayInputStream(fbuf);
-				BufferedReader in = new BufferedReader( new InputStreamReader(bin));
-
 				// If the method is POST, there may be parameters
 				// in data section, too, read it:
-				if ( method.equalsIgnoreCase( "POST" ))
+
+                if ( method.equalsIgnoreCase( "PUT" ))
+                {
+                    files.put("content", putHackTmpFile.getAbsolutePath());
+                }
+                else if ( method.equalsIgnoreCase( "POST" ))
 				{
-					String contentType = "";
+                    // Get the raw body as a byte []
+                    // WARNING: Assumes huge PUT hack above!
+                    byte [] fbuf = ((ByteArrayOutputStream)f).toByteArray();
+
+                    // Create a BufferedReader for easily reading it as string.
+                    ByteArrayInputStream bin = new ByteArrayInputStream(fbuf);
+                    BufferedReader in = new BufferedReader( new InputStreamReader(bin)); // FIXME: BufferedReader on a byte array!... srsly?
+
+
+                    String contentType = "";
 					String contentTypeHeader = header.getProperty("content-type");
 					StringTokenizer st = null;
 					if( contentTypeHeader != null) {
-						st = new StringTokenizer( contentTypeHeader , "; " );
+						st = new StringTokenizer( contentTypeHeader , "; " ); // FIXME: space not required after ; ?!
 						if ( st.hasMoreTokens()) {
 							contentType = st.nextToken();
 						}
@@ -445,19 +468,24 @@ public class NanoHTTPD
 						postLine = postLine.trim();
 						decodeParms( postLine, parms );
 					}
+
+                    in.close();
 				}
 
-				if ( method.equalsIgnoreCase( "PUT" ))
-					files.put("content", saveTmpFile( fbuf, 0, f.size()));
-
 				// Ok, now do the serve()
-				Response r = serve( uri, method, header, parms, files );
-				if ( r == null )
-					sendError( HTTP_INTERNALERROR, "SERVER INTERNAL ERROR: Serve() returned a null response." );
-				else
-					sendResponse( r.status, r.mimeType, r.header, r.data );
+                try {
+                    f.close();
+                    Response r = serve(uri, method, header, parms, files);
+                    if (r == null)
+                        sendError(HTTP_INTERNALERROR, "SERVER INTERNAL ERROR: Serve() returned a null response.");
+                    else
+                        sendResponse(r.status, r.mimeType, r.header, r.data);
+                } finally {
+                    if (putHackTmpFile != null) {
+                        putHackTmpFile.delete();
+                    }
+                }
 
-				in.close();
 				is.close();
 			}
 			catch ( IOException ioe )
@@ -678,7 +706,7 @@ public class NanoHTTPD
 			{
 				String tmpdir = System.getProperty("java.io.tmpdir");
 				try {
-					File temp = File.createTempFile("NanoHTTPD", "", new File(tmpdir));
+					File temp = File.createTempFile(TMP_FILE_PREFIX, "", new File(tmpdir));
 					OutputStream fstream = new FileOutputStream(temp);
 					fstream.write(b, offset, len);
 					fstream.close();
@@ -814,7 +842,7 @@ public class NanoHTTPD
 
 				if ( data != null )
 				{
-					int pending = data.available();	// This is to support partial sends, see serveFile()
+                    int pending = data.available();	// This is to support partial sends, see serveFile()
 					byte[] buff = new byte[theBufferSize];
 					while (pending>0)
 					{
