@@ -37,7 +37,7 @@ module Calabash
           port = rand((1024..65535))
 
           monkey_starter_thread = Thread.new do
-            Thread.current[:output]= `#{_adb_command} shell monkey --port #{port}`
+            Thread.current[:output]= `#{adb_command} shell monkey --port #{port}`
           end
           sleep(4)
 
@@ -50,13 +50,13 @@ module Calabash
       end
 
       def existing_monkey_pids
-        procs = `#{_adb_command} shell ps`
+        procs = `#{adb_command} shell ps`
         procs.scan(/.+?\s(?<pid>[0-9]+).+?com.android.commands.monkey\r?\n?/).flatten
       end
 
       def kill_existing_monkey_processes
         existing_monkey_pids.each do |pid|
-          `#{_adb_command} shell kill -9 #{pid}`
+          `#{adb_command} shell kill -9 #{pid}`
         end
       end
 
