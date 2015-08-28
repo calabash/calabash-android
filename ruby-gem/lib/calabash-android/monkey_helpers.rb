@@ -34,7 +34,7 @@ module Calabash
           monkey_starter_thread = Thread.new do
             Thread.current[:output]= `#{adb_command} shell monkey --port #{port}`
           end
-          sleep(1)
+          sleep(4)
 
           output = monkey_starter_thread[:output]
           unless output && output.include?('Error binding to network socket.')
