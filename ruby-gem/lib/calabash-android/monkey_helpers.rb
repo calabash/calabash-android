@@ -10,7 +10,7 @@ module Calabash
       @@monkey_pid = nil
 
       def monkey_move_from(from_x, from_y, to_x, to_y, args={})
-        @@monkey_port = start_monkey
+        start_monkey
         monkey_touch(:down, from_x, from_y)
         sleep(args.fetch(:hold_time))
 
@@ -31,7 +31,6 @@ module Calabash
       def get_monkey_port
         MAX_RETRIES.times do
           port = rand((1024..65535))
-
           monkey_starter_thread = Thread.new do
             Thread.current[:output]= `#{adb_command} shell monkey --port #{port}`
           end
@@ -56,7 +55,7 @@ module Calabash
         }
 
         wait_for(options) {
-          perform_action("send_tcp", @@monkey_port, 'sleep 0', true)
+          perform_action('send_tcp', @@monkey_port, 'sleep 0', true)
         }
       end
 
@@ -74,18 +73,18 @@ module Calabash
       def kill_monkey_processes_on_host
         unless xamarin_test_cloud?
           monkey_args = "#{adb_command} shell monkey --port"
-          if is_windows?
+          if Env.is_windows?
             processes = `WMIC PATH win32_process GET Commandline, processid /FORMAT:CSV`.split(/\r?\n/).flatten
             processes.each do |process|
               components = process.split(',')
-              if components.length > 2 && components[1].starts_with?(monkey_args)
+              if components.length > 2 && components[1].index(monkey_args) == 0
                 `kill -9 #{components[2]}`
               end
             end
           else
             processes = `ps -xww -o pid,user,args`.split("\n").flatten
             processes.each do |process|
-              if process.starts_with? monkey_args
+              if process.index(monkey_args) == 0
                 pid = process.strip().split(' ')[0].to_i
                 `kill -9 #{pid}`
               end
