@@ -28,25 +28,36 @@ module Calabash
         monkey_touch(:up, to_x, to_y)
       end
 
-      def start_monkey
-        unless xamarin_test_cloud? #monkey processes are automatically killed in XTC
-          kill_existing_monkey_processes
-        end
-
+      def get_monkey_port
         MAX_RETRIES.times do
           port = rand((1024..65535))
 
           monkey_starter_thread = Thread.new do
             Thread.current[:output]= `#{adb_command} shell monkey --port #{port}`
           end
-          sleep(4)
+          sleep(1)
 
           output = monkey_starter_thread[:output]
           unless output && output.include?('Error binding to network socket.')
             return port
           end
         end
-        raise 'Unable to start com.android.commands.monkey'
+        raise 'Unable to start monkey on device'
+      end
+
+      def start_monkey
+        kill_existing_monkey_processes
+        @@monkey_port   = get_monkey_port
+        monkey_timeout  = 10
+
+        options = {
+            :timeout => monkey_timeout,
+            :timeout_message => "Monkey did not start on #{@@monkey_port} in #{monkey_timeout} seconds"
+        }
+
+        wait_for(options) {
+          perform_action("send_tcp", @@monkey_port, 'sleep 0', true)
+        }
       end
 
       def existing_monkey_pids
@@ -54,10 +65,38 @@ module Calabash
         procs.scan(/.+?\s(?<pid>[0-9]+).+?com.android.commands.monkey\r?\n?/).flatten
       end
 
-      def kill_existing_monkey_processes
+      def kill_monkey_processes_on_device
         existing_monkey_pids.each do |pid|
           `#{adb_command} shell kill -9 #{pid}`
         end
+      end
+
+      def kill_monkey_processes_on_host
+        unless xamarin_test_cloud?
+          monkey_args = "#{adb_command} shell monkey --port"
+          if is_windows?
+            processes = `WMIC PATH win32_process GET Commandline, processid /FORMAT:CSV`.split(/\r?\n/).flatten
+            processes.each do |process|
+              components = process.split(',')
+              if components.length > 2 && components[1].starts_with?(monkey_args)
+                `kill -9 #{components[2]}`
+              end
+            end
+          else
+            processes = `ps -xww -o pid,user,args`.split("\n").flatten
+            processes.each do |process|
+              if process.starts_with? monkey_args
+                pid = process.strip().split(' ')[0].to_i
+                `kill -9 #{pid}`
+              end
+            end
+          end
+        end
+      end
+
+      def kill_existing_monkey_processes
+        kill_monkey_processes_on_host
+        kill_monkey_processes_on_device
       end
 
       def monkey_tap(x, y, should_start_monkey=true)
@@ -80,11 +119,7 @@ module Calabash
       end
 
       def adb_command
-        if xamarin_test_cloud?
-          Env.adb_path
-        else
           default_device.adb_command
-        end
       end
     end
   end
