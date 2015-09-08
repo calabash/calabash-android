@@ -239,18 +239,23 @@ public class UIQueryASTWith implements UIQueryAST {
 			return true;
 		}
 
-		try {
-			Method getTextM = view.getClass().getMethod("getText");
-			Object text = getTextM.invoke(view);
-			if (text != null && text.toString().equals(expected)) {
-				return true;
-			}
+		ArrayList<String> getTextMethods = new ArrayList<String>();
+		getTextMethods.add("getText");
+		getTextMethods.add("getHint");
 
-		} catch (Exception e) {
+		for (String methodName : getTextMethods) {
+			try {
+				Method getTextM = view.getClass().getMethod(methodName);
+				Object text = getTextM.invoke(view);
+				if (text != null && text.toString().equals(expected)) {
+					return true;
+				}
+			} catch (Exception e) {
+				continue;
+			}
 		}
 
 		return false;
-
 	}
 
 	public static UIQueryASTWith fromAST(CommonTree step) {
