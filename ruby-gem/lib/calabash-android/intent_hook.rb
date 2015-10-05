@@ -39,7 +39,11 @@ module Calabash
         attr_reader :type, :data
 
         def data_as_hash
-          @data_hash_method.call
+          if @data_hash_method
+            @data_hash_method.call
+          else
+            {}
+          end
         end
 
         def self.do_nothing
