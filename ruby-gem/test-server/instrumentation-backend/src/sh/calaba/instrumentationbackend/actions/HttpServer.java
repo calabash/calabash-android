@@ -34,8 +34,6 @@ import sh.calaba.instrumentationbackend.FranklyResult;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient;
-import sh.calaba.instrumentationbackend.actions.webview.ExecuteJavascript;
-import sh.calaba.instrumentationbackend.intenthook.ActivityIntentFilter;
 import sh.calaba.instrumentationbackend.intenthook.DoNothingHook;
 import sh.calaba.instrumentationbackend.intenthook.InstrumentationHook;
 import sh.calaba.instrumentationbackend.intenthook.IntentHook;

@@ -28,8 +28,6 @@ public class CalabashInstrumentationTestRunner extends InstrumentationTestRunner
         StatusReporter statusReporter = new StatusReporter(getContext());
         Logger.info("Server version: " + Version.VERSION);
 
-        final String mainActivity;
-
         try {
             final String mainActivity;
 
