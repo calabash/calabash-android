@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+
+import sh.calaba.exposed.InstrumentationTestRunnerExposed;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
 import sh.calaba.instrumentationbackend.actions.version.Version;
 import sh.calaba.instrumentationbackend.intenthook.IIntentHook;
@@ -22,7 +24,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.UserHandle;
 
-public class CalabashInstrumentationTestRunner extends InstrumentationTestRunnerExecStartActivityExposed {
+public class CalabashInstrumentationTestRunner extends InstrumentationTestRunnerExposed {
 	@Override
     public void onCreate(Bundle arguments) {
         StatusReporter statusReporter = new StatusReporter(getContext());
