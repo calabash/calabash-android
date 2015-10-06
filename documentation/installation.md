@@ -29,7 +29,7 @@ If you are on Mac you may see an error like this:
     Password:
     Building native extensions.  This could take a while...
     ERROR:  Error installing calabash-android:
-  ERROR: Failed to build gem native extension.
+    ERROR: Failed to build gem native extension.
 
     /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby extconf.rb
     mkmf.rb can't find header files for ruby at /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/ruby.h
