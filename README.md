@@ -70,6 +70,14 @@ The predefined steps are located in the `features/step_definitions` folder. A co
 Troubleshooting
 ---------------
 
+### Problems starting the tests
+
+If your app instantaneously crashes right after being started, bear in mind that it needs the permission `android.permission.INTERNET` in order for calabash tests to run ( [Issue #278](https://github.com/calabash/calabash-android/issues/278) ). Add the following xml to your AndroidManifest.xml if you don't have it already:
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+```
+
 ### Problems clicking on buttons and text
 
 If it seems that buttons/text aren't being clicked properly, you need to add the following xml to your AndroidManifest.xml:
