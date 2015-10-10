@@ -304,7 +304,7 @@ module Calabash module Android
       end
 
       def install_app(app_path)
-        cmd = "#{adb_command} install \"#{app_path}\""
+        cmd = "#{adb_command} install \"#{app_path}\" 2>&1"
         log "Installing: #{app_path}"
         result = `#{cmd}`
         log result
