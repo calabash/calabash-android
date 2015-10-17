@@ -1,3 +1,5 @@
+require 'calabash-android/management/adb'
+
 module Calabash
   module Android
     module TextHelpers
@@ -23,6 +25,7 @@ module Calabash
         tap_when_element_exists(uiquery, options)
         sleep 0.5
         keyboard_enter_text(text, options)
+        hide_keyboard()
       end
 
       def clear_text_in(query_string, options={})
@@ -32,6 +35,12 @@ module Calabash
         end
 
         clear_text(options)
+      end
+      
+      def hide_keyboard()
+        if system 'adb shell dumpsys input_method | grep -qi mInputShown=true'
+          system 'adb shell input keyevent 4'
+        end
       end
 
       def clear_text(options={})
