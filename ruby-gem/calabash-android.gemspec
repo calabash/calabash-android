@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.executables   = "calabash-android"
   s.require_paths = ["lib"]
 
-  s.add_dependency( "cucumber", '~> 1.3.17' )
+  s.add_dependency( "cucumber" )
   s.add_dependency( "json", '~> 1.8' )
   s.add_dependency( 'retriable', '>= 1.3.3.1', '< 1.5')
   s.add_dependency( "slowhandcuke", '~> 0.0.3')
