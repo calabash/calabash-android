@@ -291,6 +291,10 @@ module Calabash module Android
         log `#{forward_cmd}`
       end
 
+      def _sdk_version
+        `#{adb_command} shell getprop ro.build.version.sdk`.to_i
+      end
+
       def reinstall_apps
         uninstall_app(package_name(@app_path))
         uninstall_app(package_name(@test_server_path))
@@ -304,7 +308,12 @@ module Calabash module Android
       end
 
       def install_app(app_path)
-        cmd = "#{adb_command} install \"#{app_path}\""
+        if _sdk_version >= 23
+          cmd = "#{adb_command} install -g \"#{app_path}\""
+        else
+          cmd = "#{adb_command} install \"#{app_path}\""
+        end
+
         log "Installing: #{app_path}"
         result = `#{cmd}`
         log result
@@ -318,7 +327,12 @@ module Calabash module Android
       end
 
       def update_app(app_path)
-        cmd = "#{adb_command} install -r \"#{app_path}\""
+        if _sdk_version >= 23
+          cmd = "#{adb_command} install -rg \"#{app_path}\""
+        else
+          cmd = "#{adb_command} install -r \"#{app_path}\""
+        end
+
         log "Updating: #{app_path}"
         result = `#{cmd}`
         log "result: #{result}"
