@@ -193,8 +193,7 @@ public class WebContainer {
         try {
             float scale = getScale();
 
-            int[] webviewLocation = new int[2];
-            getView().getLocationOnScreen(webviewLocation);
+            int[] webviewLocation = UIQueryUtils.getViewLocationOnScreen(getView());
             //center_x, center_y
             //left, top, width, height
             int center_x = (int)translateCoordToScreen(webviewLocation[0], scale, rectangle.get("center_x"));

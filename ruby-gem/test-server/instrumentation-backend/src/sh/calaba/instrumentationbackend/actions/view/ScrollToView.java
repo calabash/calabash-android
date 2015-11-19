@@ -90,8 +90,7 @@ public class ScrollToView implements Action, IOnViewAction {
                 UIQueryUtils.runOnViewThread(view, new Runnable() {
                     @Override
                     public void run() {
-                        int[] webViewLocation = new int[2];
-                        view.getLocationOnScreen(webViewLocation);
+                        int[] webViewLocation = UIQueryUtils.getViewLocationOnScreen(view);
 
                         int webViewHeight = view.getHeight();
                         int webViewWidth = view.getWidth();

@@ -24,6 +24,7 @@ import sh.calaba.instrumentationbackend.query.Query;
 import sh.calaba.instrumentationbackend.query.ViewMapper;
 import sh.calaba.instrumentationbackend.query.WebContainer;
 import sh.calaba.instrumentationbackend.query.antlr.UIQueryParser;
+import sh.calaba.instrumentationbackend.utils.ViewWrapper;
 import sh.calaba.org.codehaus.jackson.JsonParseException;
 import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 import sh.calaba.org.codehaus.jackson.type.TypeReference;
@@ -256,6 +257,12 @@ public class UIQueryUtils {
 			throw errorResult.get();
 		}
 		return result.get();
+	}
+
+	public static int[] getViewLocationOnScreen(View view) {
+		ViewWrapper viewWrapper = new ViewWrapper(view);
+
+		return viewWrapper.getLocationOnScreen();
 	}
 
 	@SuppressWarnings("rawtypes")

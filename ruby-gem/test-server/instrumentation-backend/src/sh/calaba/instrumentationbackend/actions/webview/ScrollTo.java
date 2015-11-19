@@ -9,6 +9,7 @@ import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.Action;
 import sh.calaba.instrumentationbackend.actions.Actions;
 import sh.calaba.instrumentationbackend.query.QueryResult;
+import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
 
 import android.test.TouchUtils;
 import android.webkit.WebView;
@@ -44,10 +45,9 @@ public class ScrollTo implements Action {
 
     private boolean keepScrolling(String uiQuery, WebView webView) {
         int centerY = getCenterY(uiQuery, webView);
-        System.out.println("Keep scrolling centerY: "+  centerY);
+        System.out.println("Keep scrolling centerY: " + centerY);
 
-        int[] location = new int[2];
-        webView.getLocationOnScreen(location);
+        int[] location = UIQueryUtils.getViewLocationOnScreen(webView);
         int top = location[1];
         int bottom = top + webView.getHeight();
 
@@ -59,10 +59,9 @@ public class ScrollTo implements Action {
 
     private boolean isVisible(String uiQuery, WebView webView) {
         int centerY = getCenterY(uiQuery, webView);
-        System.out.println("isVisible centerY: "+  centerY);
+        System.out.println("isVisible centerY: " + centerY);
 
-        int[] location = new int[2];
-        webView.getLocationOnScreen(location);
+        int[] location = UIQueryUtils.getViewLocationOnScreen(webView);
         int top = location[1];
         int bottom = top + webView.getHeight();
         System.out.println("isVisible top: "+  top);

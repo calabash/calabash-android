@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.query.ast.UIQueryUtils;
+import sh.calaba.instrumentationbackend.utils.ViewWrapper;
+
 import android.content.res.Resources;
 import android.view.View;
 import android.widget.Button;
@@ -49,8 +51,7 @@ public class ViewMapper {
 
     public static Map<String, Integer> getRectForView(View v) {
         Map<String,Integer> rect = new HashMap<String,Integer>();
-		int[] location = new int[2];
-		v.getLocationOnScreen(location);
+		int[] location = UIQueryUtils.getViewLocationOnScreen(v);
 
 		rect.put("x", location[0]);
 		rect.put("y", location[1]);
