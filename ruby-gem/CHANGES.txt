@@ -1,3 +1,7 @@
+0.5.13
+      Do not depend on any specific version of Cucumber
+      Grant all permissions when installing an app on M
+
 0.5.12
       Fix Calabash WebView queries not working for new Android
       System WebViews in Lollipop and M.
