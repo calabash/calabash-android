@@ -160,7 +160,9 @@ public class ViewWrapper {
 
             android.view.ViewParent androidViewParent = (android.view.ViewParent) mParentField.get(androidView);
 
-            if (androidViewParent instanceof android.view.View) {
+            if (androidViewParent == null) {
+                mParent = null;
+            } else if (androidViewParent instanceof android.view.View) {
                 View parentView = new View();
                 parentView.initializeFromAndroidView((android.view.View) androidViewParent);
                 mParent = (ViewParent) parentView;
@@ -174,8 +176,12 @@ public class ViewWrapper {
                 throw new RuntimeException("Unknown class '" + androidViewParent.getClass().getName() + " as a parent");
             }
 
-            mAttachInfo = new AttachInfo();
-            mAttachInfo.initializeFromAndroidAttachInfo(mAttachInfoField.get(androidView));
+            if (mAttachInfoField.get(androidView) != null) {
+                mAttachInfo = new AttachInfo();
+                mAttachInfo.initializeFromAndroidAttachInfo(mAttachInfoField.get(androidView));
+            } else {
+                mAttachInfo = null;
+            }
         }
 
         private boolean hasIdentityMatrix() {
