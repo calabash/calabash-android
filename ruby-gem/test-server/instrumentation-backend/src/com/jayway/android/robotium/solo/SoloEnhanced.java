@@ -9,8 +9,8 @@ import android.graphics.PointF;
 public class SoloEnhanced extends Solo {
 	private MapViewUtils mapViewUtils;
 
-	public SoloEnhanced(Instrumentation instrumentation, Activity activity) {
-		super(instrumentation, activity);
+	public SoloEnhanced(Instrumentation instrumentation) {
+		super(instrumentation);
 		this.mapViewUtils = new MapViewUtils(instrumentation, viewFetcher, sleeper, waiter);
 	}
     public ActivityUtils getActivityUtils() {
