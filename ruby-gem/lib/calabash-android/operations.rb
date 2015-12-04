@@ -43,7 +43,7 @@ module Calabash module Android
     end
 
     def current_activity
-      `#{default_device.adb_command} shell dumpsys window windows`.each_line.grep(/mFocusedApp.+[\.\/]([^.\s\/\}]+)/){$1}.first
+      `#{default_device.adb_command} shell dumpsys window windows`.force_encoding('UTF-8').each_line.grep(/mFocusedApp.+[\.\/]([^.\s\/\}]+)/){$1}.first
     end
 
     def log(message)
