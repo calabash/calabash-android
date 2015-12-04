@@ -5,6 +5,8 @@ You need to have Ruby installed. Verify your installation by running ruby -v in 
 
 If you are on Windows you can get Ruby from [RubyInstaller.org](http://rubyinstaller.org/)
 
+You'll also need to have the Java Development Kit (JDK) installed and available. Calabash will attempt to automatically find this from registry keys on windows, or monodroid config elsewhere, but you can also specify it explicitly by setting the `JAVA_HOME` environment variable to its location (e.g. C:\Program Files\Java\jdk1.8.0_20), or having the JDK binaries themselves (i.e. C:\Program Files\Java\jdk1.8.0_20\bin) in your path. 
+
 You should have the Android SDK installed. You can download it from [here](http://developer.android.com/sdk/index.html).  Create an environment variable with the name : `ANDROID_HOME` and its value pointing to the location of the unzipped downloaded SDK.
 
 You also need to have Ant installed and added to your path. It can be downloaded from [here](https://ant.apache.org/bindownload.cgi).
