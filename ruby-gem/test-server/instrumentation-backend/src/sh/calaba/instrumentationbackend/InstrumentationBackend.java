@@ -15,8 +15,8 @@ import android.os.Bundle;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 
-import com.jayway.android.robotium.solo.PublicViewFetcher;
-import com.jayway.android.robotium.solo.SoloEnhanced;
+import com.robotium.solo.PublicViewFetcher;
+import com.robotium.solo.SoloEnhanced;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -138,7 +138,7 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
             solo = new SoloEnhanced(getInstrumentation(), activity);
             setActivity(activity);
 
-            viewFetcher = new PublicViewFetcher(solo.getActivityUtils());
+            viewFetcher = new PublicViewFetcher(getInstrumentation());
 
             HttpServer httpServer = HttpServer.getInstance();
             httpServer.setReady();

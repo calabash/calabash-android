@@ -1,4 +1,4 @@
-package com.jayway.android.robotium.solo;
+package com.robotium.solo;
 
 import java.util.List;
 
@@ -75,8 +75,8 @@ public class SoloEnhanced extends Solo {
 	}
 
     public void doubleTapOnScreen(float x, float y) {
-        clicker.clickOnScreen(x,y);
-        clicker.clickOnScreen(x,y);
+        clicker.clickOnScreen(x, y, null);
+        clicker.clickOnScreen(x, y, null);
     }
 
     public void runOnMainSync(Runnable runner) {

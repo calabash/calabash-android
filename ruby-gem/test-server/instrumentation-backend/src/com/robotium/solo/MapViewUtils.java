@@ -1,4 +1,4 @@
-package com.jayway.android.robotium.solo;
+package com.robotium.solo;
 
 import java.util.ArrayList;
 import java.util.List;
