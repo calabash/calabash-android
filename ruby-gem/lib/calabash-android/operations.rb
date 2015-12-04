@@ -19,6 +19,7 @@ require 'retriable'
 require 'cucumber'
 require 'date'
 require 'time'
+require 'shellwords'
 
 
 module Calabash module Android
@@ -777,7 +778,8 @@ module Calabash module Android
           params = hash.map {|k,v| "-e \"#{k}\" \"#{v}\""}.join(" ")
 
           logcat_id = get_logcat_id()
-          cmd = "#{adb_command} shell am instrument -e logcat #{logcat_id} -e name \"#{name}\" #{params} #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.SetPreferences"
+          am_cmd = Shellwords.escape("am instrument -e logcat #{logcat_id} -e name \"#{name}\" #{params} #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.SetPreferences")
+          cmd = "#{adb_command} shell #{am_cmd}"
 
           raise "Could not set preferences" unless system(cmd)
 
