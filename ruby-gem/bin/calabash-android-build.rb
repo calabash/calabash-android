@@ -52,6 +52,17 @@ def calabash_build(app)
 
       Zip::File.new("dummy.apk").extract("AndroidManifest.xml","customAndroidManifest.xml")
       Zip::File.open("TestServer.apk") do |zip_file|
+        begin
+          check_file("AndroidManifest.xml")
+          manifest_exists = true
+        rescue
+          manifest_exists = false
+        end
+
+        if manifest_exists
+          zip_file.remove("AndroidManifest.xml")
+        end
+
         zip_file.add("AndroidManifest.xml", "customAndroidManifest.xml")
       end
     end
