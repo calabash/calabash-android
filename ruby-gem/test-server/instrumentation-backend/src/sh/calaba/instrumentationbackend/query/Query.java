@@ -117,7 +117,7 @@ public class Query {
 		switch (step.getType()) {
 		case UIQueryParser.QUALIFIED_NAME:
 			try {
-				return new UIQueryASTClassName(Class.forName(step.getText()));
+				return new UIQueryASTClassName(Class.forName(step.getText(), false, Query.class.getClassLoader()));
 			} catch (ClassNotFoundException e) {
 				return new UIQueryASTClassName((String)null);
 			}
