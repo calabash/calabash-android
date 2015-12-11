@@ -12,9 +12,20 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.com/calabash"
   s.summary     = %q{Client for calabash-android for automated functional testing on Android}
   s.description = %q{calabash-android drives tests for native  and hybrid Android apps. }
-  s.files         = `git ls-files | grep -v "test-server/instrumentation-backend"`.split("\n") +  ["lib/calabash-android/lib/AndroidManifest.xml","lib/calabash-android/lib/TestServer.apk"]
   s.executables   = "calabash-android"
   s.require_paths = ["lib"]
+  s.files         = lambda do
+      # This should be in lib/calabash-android somewhere
+      ["irbrc"] +
+      Dir.glob("bin/**/*.rb") + ["bin/calabash-android"] +
+      Dir.glob("test-server/calabash-js/src/*.js") +
+      Dir.glob("lib/**/*.jar") +
+      Dir.glob("features-skeleton/**/*.*") +
+      ["epl-v10.html", "LICENSE"] +
+      ["lib/calabash-android/lib/TestServer.apk",
+       "test-server/AndroidManifest.xml",
+       "test-server/build.xml"]
+  end.call
 
   s.add_dependency( "cucumber" )
   s.add_dependency( "json", '~> 1.8' )
