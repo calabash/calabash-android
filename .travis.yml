@@ -1,0 +1,23 @@
+# Run on linux
+language: ruby
+
+# Container based: faster
+sudo: false
+
+rvm:
+  - 2.0.0
+  - 2.1.2
+  - 2.2.3
+
+script:
+  - bin/ci/travis/run.sh
+
+notifications:
+  email:
+    recipients:
+      - joshua.moody@xamarin.com
+      - chris.fuentes@xamarin.com
+      - tobias.roikjer@xamarin.com
+    on_success: never
+    on_failure: always
+
