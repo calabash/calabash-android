@@ -3,7 +3,9 @@
       package="#testPackage#"
       android:versionCode="3"
       android:versionName="0.3.0">
-    <application android:label="instrumentation_backend">
+    <application android:label="instrumentation_backend"
+        android:largeHeap="true">
+
       <uses-library android:name="android.test.runner" />
       <uses-library android:name="com.google.android.maps" android:required="false" />
       <activity
@@ -31,8 +33,18 @@
             android:stateNotNeeded="true"
             android:noHistory="true"
             android:excludeFromRecents="true"/>
+    <activity
+        android:name="sh.calaba.instrumentationbackend.FakeCameraActivity"
+        android:label="FakeCameraActivity"
+        android:exported="true"
+        android:finishOnTaskLaunch="true"
+        android:stateNotNeeded="true"
+        android:noHistory="true"
+        android:excludeFromRecents="true"
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
     </application>
-    <uses-sdk android:minSdkVersion="4" />
+    <uses-sdk android:minSdkVersion="4"
+        android:targetSdkVersion="21"/>
     <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner" />
     <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.ClearAppData" />
     <instrumentation android:targetPackage="#targetPackage#" android:name="sh.calaba.instrumentationbackend.ClearAppData2" />
@@ -47,5 +59,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
 </manifest>

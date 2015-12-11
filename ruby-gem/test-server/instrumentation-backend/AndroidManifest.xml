@@ -4,7 +4,8 @@
     android:versionCode="3"
     android:versionName="0.3.0" >
 
-    <uses-sdk android:minSdkVersion="6" />
+    <uses-sdk android:minSdkVersion="8"
+        android:targetSdkVersion="22"/>
 
     <application android:label="CalabashTestServer" android:debuggable="true">
         <uses-library android:name="android.test.runner" />

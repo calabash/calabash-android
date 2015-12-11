@@ -15,6 +15,9 @@ require 'calabash-android/drag_helpers'
 require 'calabash-android/wait_helpers'
 require 'calabash-android/version'
 require 'calabash-android/env'
+require 'calabash-android/android_intent'
+require 'calabash-android/android_component'
+require 'calabash-android/intent_hook'
 require 'retriable'
 require 'cucumber'
 require 'date'
@@ -278,15 +281,17 @@ module Calabash module Android
     class Device
       attr_reader :app_path, :test_server_path, :serial, :server_port, :test_server_port
 
-      def initialize(cucumber_world, serial, server_port, app_path, test_server_path, test_server_port = 7102)
-
+      def initialize(cucumber_world, serial, server_port, app_path,
+                     test_server_path, test_server_port = 7102)
         @cucumber_world = cucumber_world
         @serial = serial || default_serial
         @server_port = server_port || default_server_port
         @app_path = app_path
         @test_server_path = test_server_path
         @test_server_port = test_server_port
+      end
 
+      def forward_port
         forward_cmd = "#{adb_command} forward tcp:#{@server_port} tcp:#{@test_server_port}"
         log forward_cmd
         log `#{forward_cmd}`
@@ -457,9 +462,7 @@ module Calabash module Android
             @http = init_request(options)
           end
           header = options[:header] || {}
-          header["Content-Type"] = "application/json;charset=utf-8"
-          options[:header] = header
-
+          header["Content-Type"] ||= "application/json;charset=utf-8"
 
           response = if options[:method] == :post
                        @http.post(options[:uri], options)
@@ -627,6 +630,8 @@ module Calabash module Android
         if keyguard_enabled?
           wake_up
         end
+
+        forward_port
 
         env_options = options
 
@@ -1234,6 +1239,54 @@ module Calabash module Android
       end
 
       result['result']
+    end
+
+    def last_broadcast_intent
+      result = JSON.parse(http("/last-broadcast-intent"))
+
+      unless result['outcome'] == 'SUCCESS'
+        raise "/last-broadcast-intent failed because: #{result['reason']}\n#{result['detail']}"
+      end
+
+      json = JSON.parse(result['result'])
+
+      if json.nil?
+        nil
+      else
+        AndroidIntent.from_json(json)
+      end
+    end
+
+    def add_file(path_or_file)
+      file = File.new(path_or_file)
+
+      http_put('/add-file', File.binread(file))
+    end
+
+    def add_intent_hook(intent_hook)
+      result = JSON.parse(http('/intent-hook', intent_hook))
+
+      if result['outcome'] && result['outcome'] != 'SUCCESS'
+        raise "/intent-hook failed because: #{result['reason']}\n#{result['detail']}"
+      end
+    end
+
+    def fake_camera_with_image(path_or_file, usage_count=1)
+      file = File.new(path_or_file)
+
+      extension = File.extname(path_or_file)
+
+      if extension != '.jpg' && extension != '.jpeg'
+        raise ArgumentError, "Supplied image file must be a .jpg or .jpeg, not '#{extension}'"
+      end
+
+      file_on_device = add_file(file)
+
+      intent = Calabash::Android::AndroidIntent.with_action('android.media.action.IMAGE_CAPTURE')
+      filter = Calabash::Android::IntentHook::Filter.new(intent)
+      reaction = Calabash::Android::IntentHook::Reaction.take_picture(file_on_device)
+
+      add_intent_hook(Calabash::Android::IntentHook.new(reaction, filter, usage_count))
     end
 
     def map(query, method_name, *method_args)

@@ -7,13 +7,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.InterruptedException;
 import java.lang.Override;
 import java.lang.Runnable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +34,13 @@ import sh.calaba.instrumentationbackend.FranklyResult;
 import sh.calaba.instrumentationbackend.InstrumentationBackend;
 import sh.calaba.instrumentationbackend.Result;
 import sh.calaba.instrumentationbackend.actions.webview.CalabashChromeClient;
+import sh.calaba.instrumentationbackend.intenthook.DoNothingHook;
+import sh.calaba.instrumentationbackend.intenthook.InstrumentationHook;
+import sh.calaba.instrumentationbackend.intenthook.IntentHook;
+
+import sh.calaba.instrumentationbackend.intenthook.TakePictureHook;
 import sh.calaba.instrumentationbackend.json.JSONUtils;
+import sh.calaba.instrumentationbackend.json.requests.IntentHookRequest;
 import sh.calaba.instrumentationbackend.query.InvocationOperation;
 import sh.calaba.instrumentationbackend.query.Operation;
 import sh.calaba.instrumentationbackend.query.Query;
@@ -40,10 +50,12 @@ import sh.calaba.org.codehaus.jackson.map.ObjectMapper;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -163,6 +175,120 @@ public class HttpServer extends NanoHTTPD {
                 Exception ex = new Exception("Could not invoke method", e);
 
                 return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8", FranklyResult.fromThrowable(ex).asJson());
+            }
+        }
+        else if (uri.endsWith("/add-file")) {
+            // NOTE: There is a PUT hack in NanoHTTPD that stores PUTs in a tmp file,
+            //       we need that!
+            if (!"PUT".equals(method)) {
+                return new Response(HTTP_BADREQUEST, "test/plain;charset=utf-8", "Only PUT supported for this endpoint, not '" + method + "'");
+            }
+
+            try {
+                String tmpFilePath = files.getProperty("content");
+                Context targetContext = InstrumentationBackend.instrumentation.getTargetContext();
+
+                String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                String fileName = timeStamp + ".out";
+
+                OutputStream fileOutputStream = targetContext.openFileOutput(fileName, Context.MODE_PRIVATE);
+                InputStream fileInputStream = new FileInputStream(tmpFilePath);
+
+                Utils.copyContents(fileInputStream, fileOutputStream);
+
+                fileInputStream.close();
+                fileOutputStream.close();
+
+                // context.openFileOutput will place the file in /data/data/<pkg>/files/<file>
+                File outFile = new File(targetContext.getFilesDir(), fileName);
+
+                return new Response(HTTP_OK, "application/octet-stream", outFile.getAbsolutePath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else if (uri.endsWith("/intent-hook")) {
+            String json = params.getProperty("json");
+            ObjectMapper mapper = JSONUtils.calabashObjectMapper();
+
+            try {
+                IntentHookRequest request = mapper.readValue(json, IntentHookRequest.class);
+                IntentHook intentHook;
+
+                if (request.getType().equals("instrumentation")) {
+                    Map data = request.getData();
+
+                    // TODO: Make a class for this
+                    int testServerPort = Integer.parseInt((String) data.get("testServerPort"));
+                    String targetPackage = (String) data.get("targetPackage");
+                    String clazz = (String) data.get("class");
+
+                    String mainActivity = (String) data.get("mainActivity");
+                    Map componentMap = (Map) data.get("component");
+
+                    ComponentName componentName = new ComponentName((String) componentMap.get("packageName"),
+                            (String) componentMap.get("className"));
+
+                    intentHook = new InstrumentationHook(componentName,
+                            testServerPort, targetPackage, clazz, mainActivity);
+                } else if (request.getType().equals("do-nothing")) {
+                    intentHook = new DoNothingHook();
+                } else if (request.getType().equals("take-picture")) {
+                    Map data = request.getData();
+                    File imageFile = new File((String) data.get("imageFile"));
+
+                    intentHook = new TakePictureHook(imageFile);
+                } else {
+                    throw new Exception("Invalid type '" + request.getType() + "'");
+                }
+
+                InstrumentationBackend.putIntentHook(request.getIntentFilterData(), intentHook,
+                        request.getUsageCount());
+
+                return new Response(HTTP_OK, "application/json;charset=utf-8", FranklyResult.emptyResult().asJson());
+            } catch (Exception e) {
+                return new NanoHTTPD.Response(HTTP_OK, "application/json;charset=utf-8",
+                        FranklyResult.fromThrowable(e).asJson());
+            }
+        }
+        else if (uri.endsWith("/last-broadcast-intent")) {
+            List<Intent> intents = InstrumentationBackend.intents;
+            Map franklyResult = new HashMap<String, String>();
+            ObjectMapper mapper = JSONUtils.calabashObjectMapper();
+
+            if (intents.isEmpty()) {
+                Map<String, Object> result = new HashMap<String, Object>();
+
+                result.put("index", -1);
+                result.put("intent", null);
+
+                try {
+                    franklyResult.put("outcome", "SUCCESS");
+                    franklyResult.put("result", mapper.writeValueAsString(result));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                try {
+                    int index = intents.size() - 1;
+                    Map<String, Object> result = new HashMap<String, Object>();
+                    Intent intent = intents.get(index);
+
+                    result.put("index", index);
+                    result.put("intent", intent);
+
+                    franklyResult.put("outcome", "SUCCESS");
+                    franklyResult.put("result", mapper.writeValueAsString(result));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            try {
+                return new Response(HTTP_OK, "application/json;charset=utf-8",
+                        mapper.writeValueAsString(franklyResult));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
         else if (uri.endsWith("/backdoor")) {

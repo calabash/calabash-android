@@ -4,6 +4,9 @@ import android.os.Looper;
 import android.os.MessageQueue;
 import sh.calaba.instrumentationbackend.actions.Actions;
 import sh.calaba.instrumentationbackend.actions.HttpServer;
+import sh.calaba.instrumentationbackend.intenthook.ActivityIntentFilter;
+import sh.calaba.instrumentationbackend.intenthook.IIntentHook;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -19,13 +22,17 @@ import com.jayway.android.robotium.solo.PublicViewFetcher;
 import com.jayway.android.robotium.solo.SoloEnhanced;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Activity> {
     public static String testPackage;
     public static String mainActivityName;
     public static Class<? extends Activity> mainActivity;
+    public static Intent activityIntent;
     public static Bundle extras;
     
     private static final String TAG = "InstrumentationBackend";
@@ -34,6 +41,9 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
     public static SoloEnhanced solo;
     public static PublicViewFetcher viewFetcher;
     public static Actions actions;
+    public static List<Intent> intents = new ArrayList<Intent>();
+    private static Map<ActivityIntentFilter, IntentHookWithCount> intentHooks =
+            new HashMap<ActivityIntentFilter, IntentHookWithCount>();
 
     public InstrumentationBackend() {
         super((Class<Activity>)mainActivity);
@@ -66,16 +76,22 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        Intent i = new Intent(Intent.ACTION_MAIN);
-        i.setClassName(testPackage, mainActivityName);
-        i.addCategory("android.intent.category.LAUNCHER");
-        i.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 
-        if (extras != null) {
-            i.putExtras(extras);
+        if (activityIntent != null) {
+            // Extras are not passed if intent is given
+            setActivityIntent(activityIntent);
+        } else {
+            Intent i = new Intent(Intent.ACTION_MAIN);
+            i.setClassName(testPackage, mainActivityName);
+            i.addCategory("android.intent.category.LAUNCHER");
+            i.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+
+            if (extras != null) {
+                i.putExtras(extras);
+            }
+
+            setActivityIntent(i);
         }
-
-        setActivityIntent(i);
 
         actions = new Actions(getInstrumentation(), this);
         instrumentation = getInstrumentation();
@@ -169,6 +185,58 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
 
     }
 
+    public static void putIntentHook(ActivityIntentFilter activityIntentFilter, IIntentHook intentHook,
+                                     int hookUsageCount) {
+        Logger.debug("Adding intent hook '" + intentHook + "' for '" + activityIntentFilter + "'");
+        intentHooks.put(activityIntentFilter, new IntentHookWithCount(intentHook, hookUsageCount));
+    }
+
+    public static void removeIntentHook(ActivityIntentFilter activityIntentFilter) {
+        Logger.debug("Removing intent hook for '" + activityIntentFilter + "'");
+
+        IntentHookWithCount intentHookWithCount = intentHooks.get(activityIntentFilter);
+
+        if (intentHookWithCount != null) {
+            intentHookWithCount.getIntentHook().onRemoved();
+        }
+
+        intentHooks.remove(activityIntentFilter);
+    }
+
+    public static ActivityIntentFilter getFilterFor(Intent intent, Activity targetActivity) {
+        for (ActivityIntentFilter activityIntentFilter : intentHooks.keySet()) {
+            if (activityIntentFilter.match(intent, targetActivity)) {
+                return activityIntentFilter;
+            }
+        }
+
+        return null;
+    }
+
+    public static IIntentHook useIntentHookFor(Intent intent, Activity targetActivity) {
+        ActivityIntentFilter activityIntentFilter = getFilterFor(intent, targetActivity);
+
+        if (activityIntentFilter == null) {
+            return null;
+        } else {
+            IntentHookWithCount intentHookWithCount = intentHooks.get(activityIntentFilter);
+
+            intentHookWithCount.use();
+
+            if (intentHookWithCount.shouldRemove()) {
+                removeIntentHook(activityIntentFilter);
+            }
+
+            return intentHookWithCount.getIntentHook();
+        }
+    }
+
+    public static boolean shouldFilter(Intent intent, Activity targetActivity) {
+        ActivityIntentFilter activityIntentFilter = getFilterFor(intent, targetActivity);
+
+        return (activityIntentFilter != null);
+    }
+
     public static void log(String message) {
         Log.i(TAG, message);
     }
@@ -185,6 +253,34 @@ public class InstrumentationBackend extends ActivityInstrumentationTestCase2<Act
             for (final String provider : locationService.getAllProviders()) {
                 locationService.removeTestProvider(provider);
             }
+        }
+    }
+
+    private static class IntentHookWithCount {
+        private IIntentHook intentHook;
+        private int count;
+
+        private IntentHookWithCount(IIntentHook intentHook, int count) {
+            this.intentHook = intentHook;
+            this.count = count;
+        }
+
+        public IIntentHook getIntentHook() {
+            return intentHook;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public void use() {
+            if (count != -1) {
+                count--;
+            }
+        }
+
+        public boolean shouldRemove() {
+            return (count == 0);
         }
     }
 }
