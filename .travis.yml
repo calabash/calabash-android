@@ -18,6 +18,6 @@ notifications:
       - joshua.moody@xamarin.com
       - chris.fuentes@xamarin.com
       - tobias.roikjer@xamarin.com
-    on_success: never
+    on_success: change
     on_failure: always
 
