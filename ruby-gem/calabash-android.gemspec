@@ -27,4 +27,12 @@ Gem::Specification.new do |s|
   s.add_development_dependency( 'rake', '~> 10.3' )
   s.add_development_dependency( 'yard', '~> 0.8' )
   s.add_development_dependency( 'redcarpet', '~> 3.1' )
+  s.add_development_dependency( "rspec_junit_formatter" )
+  s.add_development_dependency( "rspec", "~> 3.0" )
+  s.add_development_dependency( "pry" )
+  s.add_development_dependency( "pry-nav" )
+  s.add_development_dependency( "guard-rspec" )
+  s.add_development_dependency( "guard-bundler" )
+  s.add_development_dependency( "growl" )
+  s.add_development_dependency( "stub_env" )
 end

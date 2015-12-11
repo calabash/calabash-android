@@ -1,0 +1,26 @@
+notification :growl, sticky: false, priority: 0
+logger level: :info
+clearing :on
+
+guard 'bundler' do
+  watch('Gemfile')
+  watch(/^.+\.gemspec/)
+end
+
+# NOTE: This Guardfile only watches unit specs.
+
+options =
+      {
+            cmd: 'bundle exec rspec',
+            spec_paths: ['spec/lib'],
+            failed_mode: :focus,
+            all_after_pass: true,
+            all_on_start: true
+      }
+
+guard(:rspec, options) do
+  watch(%r{^spec/.+_spec\.rb$})
+  watch(%r{^lib/calabash-android/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
+  watch('spec/spec_helper.rb')  { 'spec/lib' }
+end
+
