@@ -6,6 +6,7 @@ Gem::Specification.new do |s|
   s.name        = "calabash-android"
   s.version     = Calabash::Android::VERSION
   s.platform    = Gem::Platform::RUBY
+  s.license     = "EPL-1.0"
   s.authors     = ["Jonas Maturana Larsen"]
   s.email       = ["jonas@lesspainful.com"]
   s.homepage    = "http://github.com/calabash"
