@@ -21,6 +21,10 @@ Gemfile.lock
 .ruby-gemset
 .bundle
 
+# rspec
+ruby-gem/spec/reports
+ruby-gem/tmp
+
 # emacs and vim
 (.*/)?\#[^/]*\#$
 tags
