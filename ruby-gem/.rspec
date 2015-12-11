@@ -1,0 +1,7 @@
+--color
+#--warnings
+#--backtrace
+--format documentation
+--format RspecJunitFormatter
+--out spec/reports/rspec.xml
+--require spec_helper
