@@ -31,12 +31,13 @@ def calabash_build(app)
   FileUtils.mkdir_p File.dirname(test_server_file_name) unless File.exist? File.dirname(test_server_file_name)
 
   unsigned_test_apk = File.join(File.dirname(__FILE__), '..', 'lib/calabash-android/lib/TestServer.apk')
+  test_server_manifest = File.join(File.dirname(__FILE__), '..', 'lib', 'calabash-android', 'lib', 'AndroidManifest.xml')
 
   android_platform = Env.android_platform_path
   Dir.mktmpdir do |workspace_dir|
     Dir.chdir(workspace_dir) do
       FileUtils.cp(unsigned_test_apk, "TestServer.apk")
-      FileUtils.cp(File.join(File.dirname(__FILE__), '..', 'test-server/AndroidManifest.xml'), "AndroidManifest.xml")
+      FileUtils.cp(test_server_manifest, "AndroidManifest.xml")
 
       unless system %Q{"#{RbConfig.ruby}" -pi.bak -e "gsub(/#targetPackage#/, '#{package_name(app)}')" AndroidManifest.xml}
         raise "Could not replace package name in manifest"

@@ -1,6 +1,13 @@
 require 'bundler'
 load 'lib/calabash-android/env.rb'
 
+# Monkey patch 'log' for env
+class Env
+  def self.log(message, error = false)
+    $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}"
+  end
+end
+
 def build
   test_server_template_dir = find_server_repo_or_raise
 
@@ -31,6 +38,7 @@ def build
     FileUtils.mkdir_p "test_servers" unless File.exist? "test_servers"
 
     FileUtils.cp(File.join(@test_server_dir, "bin", "Test_unsigned.apk"), File.join(File.dirname(__FILE__), 'lib/calabash-android/lib/TestServer.apk'))
+    FileUtils.cp(File.join(@test_server_dir, "AndroidManifest.xml"), File.join(File.dirname(__FILE__), 'lib/calabash-android/lib/AndroidManifest.xml'))
   end
 end
 
