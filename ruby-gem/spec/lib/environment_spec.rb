@@ -42,20 +42,20 @@ describe Calabash::Android::Environment do
     it "returns true if JENKINS_HOME defined" do
       stub_env({"JENKINS_HOME" => "/Users/Shared/Jenkins"})
 
-      expect(Calabash::Android::Environment.jenkins?).to be_truthy
+      expect(Calabash::Android::Environment.jenkins?).to be == true
     end
 
     describe "returns false if JENKINS_HOME" do
       it "is nil" do
         stub_env({"JENKINS_HOME" => nil})
 
-        expect(Calabash::Android::Environment.jenkins?).to be_falsey
+        expect(Calabash::Android::Environment.jenkins?).to be == false
       end
 
       it "is empty string" do
         stub_env({"JENKINS_HOME" => ""})
 
-        expect(Calabash::Android::Environment.jenkins?).to be_falsey
+        expect(Calabash::Android::Environment.jenkins?).to be == false
       end
     end
   end
@@ -64,20 +64,20 @@ describe Calabash::Android::Environment do
     it "returns true if TRAVIS defined" do
       stub_env({"TRAVIS" => "some truthy value"})
 
-      expect(Calabash::Android::Environment.travis?).to be_truthy
+      expect(Calabash::Android::Environment.travis?).to be == true
     end
 
     describe "returns false if TRAVIS" do
       it "is nil" do
         stub_env({"TRAVIS" => nil})
 
-        expect(Calabash::Android::Environment.travis?).to be_falsey
+        expect(Calabash::Android::Environment.travis?).to be == false
       end
 
       it "is empty string" do
         stub_env({"TRAVIS" => ""})
 
-        expect(Calabash::Android::Environment.travis?).to be_falsey
+        expect(Calabash::Android::Environment.travis?).to be == false
       end
     end
   end
@@ -86,20 +86,20 @@ describe Calabash::Android::Environment do
     it "returns true if CIRCLECI defined" do
       stub_env({"CIRCLECI" => true})
 
-      expect(Calabash::Android::Environment.circle_ci?).to be_truthy
+      expect(Calabash::Android::Environment.circle_ci?).to be == true
     end
 
     describe "returns false if CIRCLECI" do
       it "is nil" do
         stub_env({"CIRCLECI" => nil})
 
-        expect(Calabash::Android::Environment.circle_ci?).to be_falsey
+        expect(Calabash::Android::Environment.circle_ci?).to be == false
       end
 
       it "is empty string" do
         stub_env({"CIRCLECI" => ""})
 
-        expect(Calabash::Android::Environment.circle_ci?).to be_falsey
+        expect(Calabash::Android::Environment.circle_ci?).to be == false
       end
     end
   end
@@ -108,20 +108,20 @@ describe Calabash::Android::Environment do
     it "returns true if TEAMCITY_PROJECT_NAME defined" do
       stub_env({"TEAMCITY_PROJECT_NAME" => "project name"})
 
-      expect(Calabash::Android::Environment.teamcity?).to be_truthy
+      expect(Calabash::Android::Environment.teamcity?).to be == true
     end
 
     describe "returns false if TEAMCITY_PROJECT_NAME" do
       it "is nil" do
         stub_env({"TEAMCITY_PROJECT_NAME" => nil})
 
-        expect(Calabash::Android::Environment.teamcity?).to be_falsey
+        expect(Calabash::Android::Environment.teamcity?).to be == false
       end
 
       it "is empty string" do
         stub_env({"TEAMCITY_PROJECT_NAME" => ""})
 
-        expect(Calabash::Android::Environment.teamcity?).to be_falsey
+        expect(Calabash::Android::Environment.teamcity?).to be == false
       end
     end
   end
@@ -135,7 +135,7 @@ describe Calabash::Android::Environment do
         expect(Calabash::Android::Environment).to receive(:teamcity?).and_return false
         expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return true
 
-        expect(Calabash::Android::Environment.ci?).to be_truthy
+        expect(Calabash::Android::Environment.ci?).to be == true
       end
 
       it "Jenkins" do
@@ -145,7 +145,7 @@ describe Calabash::Android::Environment do
         expect(Calabash::Android::Environment).to receive(:teamcity?).and_return false
         expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return false
 
-        expect(Calabash::Android::Environment.ci?).to be_truthy
+        expect(Calabash::Android::Environment.ci?).to be == true
       end
 
       it "Travis" do
@@ -155,7 +155,7 @@ describe Calabash::Android::Environment do
         expect(Calabash::Android::Environment).to receive(:teamcity?).and_return false
         expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return false
 
-        expect(Calabash::Android::Environment.ci?).to be_truthy
+        expect(Calabash::Android::Environment.ci?).to be == true
       end
 
       it "Circle CI" do
@@ -165,7 +165,7 @@ describe Calabash::Android::Environment do
         expect(Calabash::Android::Environment).to receive(:teamcity?).and_return false
         expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return false
 
-        expect(Calabash::Android::Environment.ci?).to be_truthy
+        expect(Calabash::Android::Environment.ci?).to be == true
       end
 
       it "TeamCity" do
@@ -175,7 +175,7 @@ describe Calabash::Android::Environment do
         expect(Calabash::Android::Environment).to receive(:teamcity?).and_return true
         expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return false
 
-        expect(Calabash::Android::Environment.ci?).to be_truthy
+        expect(Calabash::Android::Environment.ci?).to be == true
       end
     end
 
@@ -186,7 +186,7 @@ describe Calabash::Android::Environment do
       expect(Calabash::Android::Environment).to receive(:teamcity?).and_return false
       expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return false
 
-      expect(Calabash::Android::Environment.ci?).to be_falsey
+      expect(Calabash::Android::Environment.ci?).to be == false
     end
   end
 
@@ -196,20 +196,20 @@ describe Calabash::Android::Environment do
     it "returns true if CI defined" do
       stub_env({"CI" => true})
 
-      expect(Calabash::Android::Environment.send(:ci_var_defined?)).to be_truthy
+      expect(Calabash::Android::Environment.send(:ci_var_defined?)).to be == true
     end
 
     describe "returns false if CI" do
       it "is nil" do
         stub_env({"CI" => nil})
 
-        expect(Calabash::Android::Environment.send(:ci_var_defined?)).to be_falsey
+        expect(Calabash::Android::Environment.send(:ci_var_defined?)).to be == false
       end
 
       it "is empty string" do
         stub_env({"CI" => ""})
 
-        expect(Calabash::Android::Environment.send(:ci_var_defined?)).to be_falsey
+        expect(Calabash::Android::Environment.send(:ci_var_defined?)).to be == false
       end
     end
   end
