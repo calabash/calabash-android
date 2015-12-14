@@ -912,6 +912,8 @@ module Calabash module Android
     end
 
     def press_user_action_button(action_name=nil)
+      wait_for_keyboard
+
       if action_name.nil?
         perform_action("press_user_action_button")
       else

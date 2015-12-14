@@ -12,6 +12,7 @@ module Calabash
       end
 
       def keyboard_enter_text(text, options = {})
+        wait_for_keyboard
         perform_action('keyboard_enter_text', text)
       end
 
@@ -21,7 +22,6 @@ module Calabash
 
       def enter_text(uiquery, text, options = {})
         tap_when_element_exists(uiquery, options)
-        sleep 0.5
         keyboard_enter_text(text, options)
       end
 
@@ -48,6 +48,29 @@ module Calabash
 
       def escape_quotes(str)
         str.gsub("'", "\\\\'")
+      end
+
+      def keyboard_visible?
+        input_method = `#{default_device.adb_command} shell dumpsys input_method`.force_encoding('UTF-8')
+        shown = input_method.each_line.grep(/mInputShown\s*=\s*(.*)/){$1}.first.chomp
+
+        if shown == "true"
+          true
+        elsif shown == "false"
+          false
+        else
+          raise "Could not detect keyboard visibility. '#{shown}'"
+        end
+      end
+
+      def wait_for_keyboard(opt={})
+        params = opt.clone
+        params[:timeout_message] ||= "Timed out waiting for the keyboard to appear"
+        params[:timeout] ||= 5
+
+        wait_for(params) do
+          keyboard_visible?
+        end
       end
     end
   end
