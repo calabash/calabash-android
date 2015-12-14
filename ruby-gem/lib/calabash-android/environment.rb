@@ -1,12 +1,16 @@
 module Calabash
   module Android
+
+    # @!visibility private
     class Environment
 
+    # @!visibility private
       # Returns true if running on Windows
       def self.windows?
         RbConfig::CONFIG['host_os'][/mswin|mingw|cygwin/, 0] != nil
       end
 
+    # @!visibility private
       # Returns the user home directory
       def self.user_home_directory
         if self.xtc?
@@ -31,16 +35,19 @@ module Calabash
         end
       end
 
+      # @!visibility private
       # Returns true if debugging is enabled.
       def self.debug?
         ENV['DEBUG'] == '1'
       end
 
+      # @!visibility private
       # Returns true if we are running on the XTC
       def self.xtc?
         ENV['XAMARIN_TEST_CLOUD'] == '1'
       end
 
+      # @!visibility private
       # Returns true if running in Jenkins CI
       #
       # Checks the value of JENKINS_HOME
@@ -49,6 +56,7 @@ module Calabash
         !!value && value != ''
       end
 
+      # @!visibility private
       # Returns true if running in Travis CI
       #
       # Checks the value of TRAVIS
@@ -57,6 +65,7 @@ module Calabash
         !!value && value != ''
       end
 
+      # @!visibility private
       # Returns true if running in Circle CI
       #
       # Checks the value of CIRCLECI
@@ -65,6 +74,7 @@ module Calabash
         !!value && value != ''
       end
 
+      # @!visibility private
       # Returns true if running in Teamcity
       #
       # Checks the value of TEAMCITY_PROJECT_NAME
@@ -73,6 +83,7 @@ module Calabash
         !!value && value != ''
       end
 
+      # @!visibility private
       # Returns true if running in Teamcity
       #
       # Checks the value of GITLAB_CI
@@ -81,6 +92,7 @@ module Calabash
         !!value && value != ''
       end
 
+      # @!visibility private
       # Returns true if running in a CI environment
       def self.ci?
         [
