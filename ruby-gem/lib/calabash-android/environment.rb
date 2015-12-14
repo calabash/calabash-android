@@ -68,23 +68,6 @@ module Calabash
         ].any?
       end
 
-      # !@visibility private
-      def self.with_debugging(debug, &block)
-        if debug
-          original_value = ENV['DEBUG']
-
-          begin
-            ENV['DEBUG'] = '1'
-            block.call
-          ensure
-            ENV['DEBUG'] = original_value
-          end
-
-        else
-          block.call
-        end
-      end
-
       private
 
       # !@visibility private
