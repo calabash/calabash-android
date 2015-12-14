@@ -57,6 +57,14 @@ module Calabash
         !!value && value != ''
       end
 
+      # Returns true if running in Teamcity
+      #
+      # Checks the value of GITLAB_CI
+      def self.gitlab?
+        value = ENV["GITLAB_CI"]
+        !!value && value != ''
+      end
+
       # Returns true if running in a CI environment
       def self.ci?
         [
@@ -64,7 +72,8 @@ module Calabash
           self.travis?,
           self.jenkins?,
           self.circle_ci?,
-          self.teamcity?
+          self.teamcity?,
+          self.gitlab?
         ].any?
       end
 

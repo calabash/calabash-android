@@ -126,6 +126,28 @@ describe Calabash::Android::Environment do
     end
   end
 
+  describe ".gitlab?" do
+    it "returns true if GITLAB_CI is defined" do
+      stub_env({"GITLAB_CI" => true})
+
+      expect(Calabash::Android::Environment.gitlab?).to be == true
+    end
+
+    describe "returns false if GITLAB_CI undefined or empty" do
+      it "is nil" do
+        stub_env({"GITLAB_CI" => nil})
+
+        expect(Calabash::Android::Environment.gitlab?).to be == false
+      end
+
+      it "is empty string" do
+        stub_env({"GITLAB_CI" => ""})
+
+        expect(Calabash::Android::Environment.gitlab?).to be == false
+      end
+    end
+  end
+
   describe ".ci?" do
     describe "truthy" do
       it "CI" do
@@ -133,6 +155,7 @@ describe Calabash::Android::Environment do
         expect(Calabash::Android::Environment).to receive(:travis?).and_return false
         expect(Calabash::Android::Environment).to receive(:circle_ci?).and_return false
         expect(Calabash::Android::Environment).to receive(:teamcity?).and_return false
+        expect(Calabash::Android::Environment).to receive(:gitlab?).and_return false
         expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return true
 
         expect(Calabash::Android::Environment.ci?).to be == true
@@ -143,6 +166,7 @@ describe Calabash::Android::Environment do
         expect(Calabash::Android::Environment).to receive(:travis?).and_return false
         expect(Calabash::Android::Environment).to receive(:circle_ci?).and_return false
         expect(Calabash::Android::Environment).to receive(:teamcity?).and_return false
+        expect(Calabash::Android::Environment).to receive(:gitlab?).and_return false
         expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return false
 
         expect(Calabash::Android::Environment.ci?).to be == true
@@ -153,6 +177,7 @@ describe Calabash::Android::Environment do
         expect(Calabash::Android::Environment).to receive(:travis?).and_return true
         expect(Calabash::Android::Environment).to receive(:circle_ci?).and_return false
         expect(Calabash::Android::Environment).to receive(:teamcity?).and_return false
+        expect(Calabash::Android::Environment).to receive(:gitlab?).and_return false
         expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return false
 
         expect(Calabash::Android::Environment.ci?).to be == true
@@ -163,6 +188,7 @@ describe Calabash::Android::Environment do
         expect(Calabash::Android::Environment).to receive(:travis?).and_return false
         expect(Calabash::Android::Environment).to receive(:circle_ci?).and_return true
         expect(Calabash::Android::Environment).to receive(:teamcity?).and_return false
+        expect(Calabash::Android::Environment).to receive(:gitlab?).and_return false
         expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return false
 
         expect(Calabash::Android::Environment.ci?).to be == true
@@ -173,6 +199,18 @@ describe Calabash::Android::Environment do
         expect(Calabash::Android::Environment).to receive(:travis?).and_return false
         expect(Calabash::Android::Environment).to receive(:circle_ci?).and_return false
         expect(Calabash::Android::Environment).to receive(:teamcity?).and_return true
+        expect(Calabash::Android::Environment).to receive(:gitlab?).and_return false
+        expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return false
+
+        expect(Calabash::Android::Environment.ci?).to be == true
+      end
+
+      it "GitLab" do
+        expect(Calabash::Android::Environment).to receive(:jenkins?).and_return false
+        expect(Calabash::Android::Environment).to receive(:travis?).and_return false
+        expect(Calabash::Android::Environment).to receive(:circle_ci?).and_return false
+        expect(Calabash::Android::Environment).to receive(:teamcity?).and_return false
+        expect(Calabash::Android::Environment).to receive(:gitlab?).and_return true
         expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return false
 
         expect(Calabash::Android::Environment.ci?).to be == true
@@ -184,6 +222,7 @@ describe Calabash::Android::Environment do
       expect(Calabash::Android::Environment).to receive(:travis?).and_return false
       expect(Calabash::Android::Environment).to receive(:circle_ci?).and_return false
       expect(Calabash::Android::Environment).to receive(:teamcity?).and_return false
+      expect(Calabash::Android::Environment).to receive(:gitlab?).and_return false
       expect(Calabash::Android::Environment).to receive(:ci_var_defined?).and_return false
 
       expect(Calabash::Android::Environment.ci?).to be == false
