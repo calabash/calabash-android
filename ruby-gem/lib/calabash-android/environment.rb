@@ -1,7 +1,11 @@
 module Calabash
   module Android
-
     class Environment
+
+      # Returns true if running on Windows
+      def self.windows?
+        RbConfig::CONFIG['host_os'][/mswin|mingw|cygwin/, 0] != nil
+      end
 
       # Returns the user home directory
       def self.user_home_directory
@@ -10,8 +14,20 @@ module Calabash
           FileUtils.mkdir_p(home)
           home
         else
-          require 'etc'
-          Etc.getpwuid.dir
+          if self.windows?
+            # http://stackoverflow.com/questions/4190930/cross-platform-means-of-getting-users-home-directory-in-ruby
+            home = ENV["HOME"] || ENV["USERPROFILE"]
+          else
+            require "etc"
+            home = Etc.getpwuid.dir
+          end
+
+          unless File.exist?(home)
+            home = File.join("./", "tmp", "home")
+            FileUtils.mkdir_p(home)
+          end
+
+          home
         end
       end
 

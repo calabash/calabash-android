@@ -12,6 +12,27 @@ describe Calabash::Android::Environment do
       expect(Calabash::Android::Environment.user_home_directory).to be == expected
       expect(File.exist?(expected)).to be_truthy
     end
+
+    describe "Windows" do
+
+      before do
+        expect(Calabash::Android::Environment).to receive(:windows?).and_return true
+      end
+
+      it "returns HOME if it is defined" do
+        stub_env({"HOME" => "C:\\my\\home\\dir"})
+        expect(File).to receive(:exist?).with("C:\\my\\home\\dir").and_return true
+
+        expect(Calabash::Android::Environment.user_home_directory).to be == "C:\\my\\home\\dir"
+      end
+
+      it "returns USERPROFILE if HOME is not defined" do
+        stub_env({"USERPROFILE" => "C:\\my\\home\\dir", "HOME" => nil})
+        expect(File).to receive(:exist?).with("C:\\my\\home\\dir").and_return true
+
+        expect(Calabash::Android::Environment.user_home_directory).to be == "C:\\my\\home\\dir"
+      end
+    end
   end
 
   describe '.debug?' do
