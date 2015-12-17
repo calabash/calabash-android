@@ -15,6 +15,11 @@ require 'calabash-android/drag_helpers'
 require 'calabash-android/wait_helpers'
 require 'calabash-android/version'
 require 'calabash-android/env'
+require 'calabash-android/environment'
+require 'calabash-android/dot_dir'
+require 'calabash-android/logging'
+require 'calabash-android/store/preferences'
+require 'calabash-android/usage_tracker'
 require 'retriable'
 require 'cucumber'
 require 'date'
@@ -702,6 +707,11 @@ module Calabash module Android
         end
 
         log("Client and server versions match (client: #{client_version}, server: #{server_version}). Proceeding...")
+
+        # What is Calabash tracking? Read this post for information
+        # No private data (like ip addresses) are collected
+        # https://github.com/calabash/calabash-android/issues/655
+        Calabash::Android::UsageTracker.new.post_usage_async
       end
 
       def shutdown_test_server

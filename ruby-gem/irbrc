@@ -54,3 +54,20 @@ end
 
 extend Calabash::Android::Operations
 
+
+def preferences
+  Calabash::Android::Preferences.new
+end
+
+def disable_usage_tracking
+  preferences.usage_tracking = "none"
+  puts "Calabash will not collect usage information."
+  "none"
+end
+
+def enable_usage_tracking(level="system_info")
+  preferences.usage_tracking = level
+  puts "Calabash will collect statistics using the '#{level}' rule."
+  level
+end
+
