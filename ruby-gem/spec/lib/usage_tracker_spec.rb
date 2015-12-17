@@ -145,7 +145,7 @@ describe Calabash::Android::UsageTracker do
       expect(hash[:irb]).to be == false
       expect(hash[:ruby_version]).to be_truthy
       expect(hash.has_key?(:used_bundle_exec)).to be_truthy
-      expect(hash[:used_cucumber]).to be == false
+      expect(hash[:used_cucumber]).to be == true # Calabash-Android always respond true
       expect(hash[:version]).to be_truthy
       expect(hash.has_key?(:ci)).to be_truthy
       expect(hash.has_key?(:jenkins)).to be_truthy
@@ -168,7 +168,7 @@ describe Calabash::Android::UsageTracker do
   end
 
   it "#used_cucumber?" do
-    expect(tracker.send(:used_cucumber?)).to be_falsey
+    expect(tracker.send(:used_cucumber?)).to be == true # Calabash-Android always respond true
   end
 end
 
