@@ -38,7 +38,9 @@ module Calabash
       # @!visibility private
       # Returns true if debugging is enabled.
       def self.debug?
-        ENV['DEBUG'] == '1'
+        ENV['DEBUG'] == '1' ||
+          ARGV.include?("-v") ||
+          ARGV.include?("--verbose")
       end
 
       # @!visibility private
