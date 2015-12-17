@@ -1,4 +1,5 @@
 require 'calabash-android/defaults'
+require 'calabash-android/environment'
 require 'calabash-android/operations'
 require 'calabash-android/version'
 require 'calabash-android/abase'
