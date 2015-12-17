@@ -1,5 +1,6 @@
 require 'calabash-android/defaults'
 require 'calabash-android/environment'
+require 'calabash-android/dot_dir'
 require 'calabash-android/logging'
 require 'calabash-android/operations'
 require 'calabash-android/version'
