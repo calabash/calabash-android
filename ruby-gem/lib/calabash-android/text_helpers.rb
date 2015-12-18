@@ -20,8 +20,10 @@ module Calabash
         keyboard_enter_text(character[0,1], options)
       end
 
+      # Appends `text` into the first view matching `uiquery`.
       def enter_text(uiquery, text, options = {})
         tap_when_element_exists(uiquery, options)
+        set_selection(-1, -1)
         keyboard_enter_text(text, options)
       end
 
