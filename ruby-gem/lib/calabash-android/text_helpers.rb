@@ -34,16 +34,10 @@ module Calabash
         clear_text(options)
       end
 
+      # Clears the text of the currently focused view.
       def clear_text(options={})
-        if options.is_a?(String)
-          puts "Warning: The method clear_text now clears the text in the currently focused view. Use clear_text_in instead"
-          puts "Notice that clear_text_in only clears the text of the first element matching the given query, not all."
-          puts "Use query(query, setText: '') to replicate the old behaviour"
-
-          clear_text_in(options)
-        else
-          perform_action('clear_text')
-        end
+        set_selection(-1, -1)
+        perform_action("delete_surrounding_text", -1, 0)
       end
 
       def escape_quotes(str)
