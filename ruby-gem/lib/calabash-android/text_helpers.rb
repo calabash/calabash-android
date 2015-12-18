@@ -50,6 +50,16 @@ module Calabash
         str.gsub("'", "\\\\'")
       end
 
+      # Sets the selection of the currently focused view.
+      #
+      # @param [Integer] selection_start The start of the selection, can be
+      #  negative to begin counting from the end of the string.
+      # @param [Integer] selection_end The end of the selection, can be
+      #  negative to begin counting from the end of the string.
+      def set_selection(selection_start, selection_end)
+        perform_action("set_selection", selection_start, selection_end)
+      end
+
       def keyboard_visible?
         input_method = `#{default_device.adb_command} shell dumpsys input_method`.force_encoding('UTF-8')
         shown = input_method.each_line.grep(/mInputShown\s*=\s*(.*)/){$1}.first.chomp
