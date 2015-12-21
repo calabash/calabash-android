@@ -23,8 +23,7 @@ Gem::Specification.new do |s|
       Dir.glob("features-skeleton/**/*.*") +
       ["epl-v10.html", "LICENSE"] +
       ["lib/calabash-android/lib/TestServer.apk",
-       "test-server/AndroidManifest.xml",
-       "test-server/build.xml"]
+       "lib/calabash-android/lib/AndroidManifest.xml"]
   end.call
 
   s.add_dependency( "cucumber" )
