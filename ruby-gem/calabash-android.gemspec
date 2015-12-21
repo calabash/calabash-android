@@ -19,6 +19,8 @@ Gem::Specification.new do |s|
       ["irbrc"] +
       Dir.glob("bin/**/*.rb") + ["bin/calabash-android"] +
       Dir.glob('lib/**/*.rb') +
+      ["lib/calabash-android/deprecated_actions.map",
+      "lib/calabash-android/removed_actions.txt"] +
       Dir.glob("test-server/calabash-js/src/*.js") +
       Dir.glob("lib/**/*.jar") +
       Dir.glob("features-skeleton/**/*.*") +
