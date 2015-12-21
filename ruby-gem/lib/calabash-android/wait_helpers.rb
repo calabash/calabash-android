@@ -14,7 +14,7 @@ module Calabash
           :post_timeout => 0,
           :timeout_message => 'Timed out waiting...',
           :screenshot_on_error => true
-      }.freeze
+      }
 
       def wait_for(options_or_timeout=DEFAULT_OPTS, &block)
         #note Hash is preferred, number acceptable for backwards compat
