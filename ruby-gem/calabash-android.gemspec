@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
       # This should be in lib/calabash-android somewhere
       ["irbrc"] +
       Dir.glob("bin/**/*.rb") + ["bin/calabash-android"] +
+      Dir.glob('lib/**/*.rb') +
       Dir.glob("test-server/calabash-js/src/*.js") +
       Dir.glob("lib/**/*.jar") +
       Dir.glob("features-skeleton/**/*.*") +
