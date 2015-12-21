@@ -20,34 +20,38 @@ module Calabash
         keyboard_enter_text(character[0,1], options)
       end
 
+      # Appends `text` into the first view matching `uiquery`.
       def enter_text(uiquery, text, options = {})
         tap_when_element_exists(uiquery, options)
+        sleep 0.5
+        set_selection(-1, -1)
         keyboard_enter_text(text, options)
       end
 
       def clear_text_in(query_string, options={})
-        unless query_string.nil?
-          touch(query_string, options)
-          sleep 0.5
-        end
-
+        touch(query_string, options)
+        sleep 0.5
         clear_text(options)
       end
 
+      # Clears the text of the currently focused view.
       def clear_text(options={})
-        if options.is_a?(String)
-          puts "Warning: The method clear_text now clears the text in the currently focused view. Use clear_text_in instead"
-          puts "Notice that clear_text_in only clears the text of the first element matching the given query, not all."
-          puts "Use query(query, setText: '') to replicate the old behaviour"
-
-          clear_text_in(options)
-        else
-          perform_action('clear_text')
-        end
+        set_selection(-1, -1)
+        perform_action("delete_surrounding_text", -1, 0)
       end
 
       def escape_quotes(str)
         str.gsub("'", "\\\\'")
+      end
+
+      # Sets the selection of the currently focused view.
+      #
+      # @param [Integer] selection_start The start of the selection, can be
+      #  negative to begin counting from the end of the string.
+      # @param [Integer] selection_end The end of the selection, can be
+      #  negative to begin counting from the end of the string.
+      def set_selection(selection_start, selection_end)
+        perform_action("set_selection", selection_start, selection_end)
       end
 
       def keyboard_visible?
