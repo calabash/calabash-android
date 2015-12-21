@@ -23,16 +23,14 @@ module Calabash
       # Appends `text` into the first view matching `uiquery`.
       def enter_text(uiquery, text, options = {})
         tap_when_element_exists(uiquery, options)
+        sleep 0.5
         set_selection(-1, -1)
         keyboard_enter_text(text, options)
       end
 
       def clear_text_in(query_string, options={})
-        unless query_string.nil?
-          touch(query_string, options)
-          sleep 0.5
-        end
-
+        touch(query_string, options)
+        sleep 0.5
         clear_text(options)
       end
 
