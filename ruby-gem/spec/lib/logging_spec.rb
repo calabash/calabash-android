@@ -139,6 +139,10 @@ describe Calabash::Android::Logging do
            end.string.gsub(/\e\[(\d+)m/, "")
 
            expected = "DEBUG: Could not write:\n\nmessage\n\nto calabash.log because:\n\nDid not get the last hit\n\n"
+
+           actual.gsub!($-0, "")
+           expected.gsub!($-0, "")
+
            expect(actual).to be == expected
         end
 
