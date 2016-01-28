@@ -14,9 +14,32 @@ If you have any questions on Calabash-Android, please use the Google group [http
 
 ### Documentation
 The documention is split into the following sections:
+
 * [Installation](documentation/installation.md)
 * [Ruby API](documentation/ruby_api.md)
 * [Wiki (which includes information on constructing uiquery strings )](https://github.com/calabash/calabash-android/wiki/05-Query-Syntax)
+
+Calabash Android requires ruby >= 2.0 (latest stable release is preferred).
+
+#### Ruby on MacOS
+
+On MacOS, we recommend using a managed Ruby like
+[rbenv](https://github.com/sstephenson/rbenv) or [rvm](https://rvm.io/)).  If
+you are just getting started or don't want to commit to a managed Ruby, you
+should install and use the [Calabash Sandbox](https://github.com/calabash/install).
+
+```
+# Installs the Calabash Sandbox
+$ curl -sSL https://raw.githubusercontent.com/calabash/install/master/install-osx.sh | bash
+```
+
+Please do **not** install gems with `sudo`
+
+For more information about ruby on MacOS, see these Wiki pages:
+
+* [Ruby on MacOS](https://github.com/calabash/calabash-ios/wiki/Ruby-on-MacOS)
+* [Best Practice: Never install gems with sudo](https://github.com/calabash/calabash-ios/wiki/Best-Practice%3A--Never-install-gems-with-sudo)
+
 
 #### Upgrading to Calabash-android 0.5
 
