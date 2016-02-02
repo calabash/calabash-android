@@ -37,6 +37,7 @@ module Calabash
       # Clears the text of the currently focused view.
       def clear_text(options={})
         set_selection(-1, -1)
+        sleep 0.1
         perform_action("delete_surrounding_text", -1, 0)
       end
 
