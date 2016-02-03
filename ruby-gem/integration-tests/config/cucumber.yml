@@ -2,4 +2,4 @@
   ENV['APP_PATH'] = 'features/support/apps/general.apk'
 %>
 
-webview: --tags webview
+webview: --tags @webview

@@ -1,3 +1,4 @@
+@webview
 Feature: Webviews
   A user should be able to query for elements within an iframe. e.g. query("ww css:'iframe' css:'...'")
   Scenario: Querying for elements inside a non-cross domain iframe
