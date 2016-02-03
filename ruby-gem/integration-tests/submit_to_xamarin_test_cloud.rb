@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 require 'fileutils'
 
-devices = "e35445f7"
+devices = "0746d8d6"
 series = "master"
 locale = "en_US"
 user = ENV['XTC_USER'] || raise("Please set 'XTC_USER'")
