@@ -122,7 +122,7 @@ A high-level waiting function. This captures the common practice of waiting for 
 Takes a query and waits for it to return a results. Calls `wait_for` supplying `options`.
 
 
-    irb(main):009:0> wait_for_element_exist( "* marked:'Please sign in'", :timeout => 10)
+    irb(main):009:0> wait_for_elements_exist( "* marked:'Please sign in'", :timeout => 10)
 
 
 ### wait_for_elements_exist(elements_arr, options={})
