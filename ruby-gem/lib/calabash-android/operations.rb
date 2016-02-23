@@ -1037,12 +1037,15 @@ module Calabash module Android
       begin
         Timeout.timeout(timeout, WaitError) do
           scroll_view_query_string = "android.widget.ScrollView index:0"
+          nested_scroll_view_query_string = "android.support.v4.widget.NestedScrollView index:0"
           list_view_query_string = "android.widget.AbsListView index:0"
           web_view_query_string = "android.webkit.WebView index:0"
 
           loop do
             if element_exists(scroll_view_query_string)
               return scroll_view_query_string
+            elsif element_exists(nested_scroll_view_query_string)
+              return nested_scroll_view_query_string
             elsif element_exists(list_view_query_string)
               return list_view_query_string
             elsif element_exists(web_view_query_string)
