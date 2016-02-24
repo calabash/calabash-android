@@ -90,6 +90,12 @@ module Calabash
             end
 
             def self.setup
+                if ENV['CI_NO_ANDROID_RUNTIME'] == '1'
+                    @@android_dependencies = {}
+                    @@java_dependencies = {}
+                    return
+                end
+
                 @@halt_scanning = false
                 @@halt_scanning_thread = nil
 
