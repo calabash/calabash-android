@@ -22,6 +22,8 @@ module Calabash
             end
 
             def self.android_dependencies(key)
+                setup unless defined?(@@android_dependencies)
+
                 if @@android_dependencies.has_key?(key)
                     file = @@android_dependencies[key]
 
@@ -36,6 +38,8 @@ module Calabash
             end
 
             def self.java_dependencies(key)
+                setup unless defined?(@@java_dependencies)
+
                 if key == :ant_path
                     ant_executable
                 elsif @@java_dependencies.has_key?(key)

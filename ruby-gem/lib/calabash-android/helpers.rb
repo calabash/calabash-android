@@ -8,8 +8,6 @@ require 'calabash-android/environment'
 require 'calabash-android/logging'
 require 'calabash-android/dependencies'
 
-Calabash::Android::Dependencies.setup
-
 def package_name(app)
   unless File.exist?(app)
     raise "Application '#{app}' does not exist"
