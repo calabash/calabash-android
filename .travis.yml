@@ -9,6 +9,9 @@ rvm:
   - 2.1.2
   - 2.2.3
 
+env:
+  - DEBUG=1
+
 script:
   - bin/ci/travis/run.sh
 
