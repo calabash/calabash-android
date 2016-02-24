@@ -20,12 +20,14 @@ require 'calabash-android/dot_dir'
 require 'calabash-android/logging'
 require 'calabash-android/store/preferences'
 require 'calabash-android/usage_tracker'
+require 'calabash-android/dependencies'
 require 'retriable'
 require 'cucumber'
 require 'date'
 require 'time'
 require 'shellwords'
 
+Calabash::Android::Dependencies.setup
 
 module Calabash module Android
 
@@ -558,7 +560,7 @@ module Calabash module Android
       end
 
       def adb_command
-        "#{Env.adb_path} -s #{serial}"
+        "\"#{Calabash::Android::Dependencies.adb_path}\" -s #{serial}"
       end
 
       def default_serial
@@ -595,7 +597,7 @@ module Calabash module Android
       end
 
       def connected_devices
-        lines = `#{Env.adb_path} devices`.split("\n")
+        lines = `"#{Calabash::Android::Dependencies.adb_path}" devices`.split("\n")
         start_index = lines.index{ |x| x =~ /List of devices attached/ } + 1
         lines[start_index..-1].collect { |l| l.split("\t").first }
       end
