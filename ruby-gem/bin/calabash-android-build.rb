@@ -22,7 +22,7 @@ def calabash_build(app)
 
     puts ""
     puts "Notice that resigning an app might break some functionality."
-    puts "Getting a copy of the certificate used when the app was build will in general be more reliable."
+    puts "Getting a copy of the certificate used when the app was built will in general be more reliable."
 
     exit 1
   end
