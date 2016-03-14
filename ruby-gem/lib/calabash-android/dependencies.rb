@@ -203,7 +203,9 @@ module Calabash
                     end.reverse.map{|dir| File.join('build-tools', File.basename(dir))}
 
                 if build_tools_directories.empty?
-                    build_tools_directories = [File.join('build-tools', File.basename(build_tools_files.reverse.first))]
+                    unless build_tools_files.reverse.first.nil?
+                        build_tools_directories = [File.join('build-tools', File.basename(build_tools_files.reverse.first))]
+                    end
                 end
 
                 build_tools_directories + ['platform-tools', 'tools']
