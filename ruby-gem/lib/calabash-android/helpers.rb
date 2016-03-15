@@ -97,7 +97,7 @@ def build_test_server_if_needed(app_path)
       exit 1
     else
       puts "No test server found for this combination of app and calabash version. Recreating test server."
-      require File.join(File.dirname(__FILE__), '..', '..', 'bin', 'calabash-android-build')
+      require File.join(File.dirname(__FILE__), '..', '..', 'bin', 'calabash-android')
       calabash_build(app_path)
     end
   end
