@@ -7,6 +7,7 @@ require 'calabash-android/java_keystore'
 require 'calabash-android/environment'
 require 'calabash-android/logging'
 require 'calabash-android/dependencies'
+require 'calabash-android/version'
 
 def package_name(app)
   unless File.exist?(app)
