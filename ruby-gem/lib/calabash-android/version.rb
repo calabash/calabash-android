@@ -1,5 +1,5 @@
 module Calabash
   module Android
-    VERSION = "0.6.1.pre2"
+    VERSION = "0.7.0"
   end
 end
