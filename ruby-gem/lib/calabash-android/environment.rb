@@ -1,8 +1,11 @@
 module Calabash
   module Android
-
     # @!visibility private
     class Environment
+      # @!visibility private
+      class InvalidEnvironmentError < RuntimeError; end
+      # @!visibility private
+      class InvalidJavaSDKHome < RuntimeError; end
 
     # @!visibility private
       # Returns true if running on Windows

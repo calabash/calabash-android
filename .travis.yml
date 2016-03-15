@@ -9,6 +9,9 @@ rvm:
   - 2.1.2
   - 2.2.3
 
+env:
+  - CI_NO_ANDROID_RUNTIME=1
+
 script:
   - bin/ci/travis/run.sh
 

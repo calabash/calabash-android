@@ -2,15 +2,12 @@
 
 require 'fileutils'
 require 'rbconfig'
-require 'calabash-android/helpers'
-require 'calabash-android/java_keystore'
-require 'calabash-android/env'
 
 # for ruby 1.9.1 and earlier
 unless defined? RbConfig.ruby
-  def RbConfig.ruby
-    File.join(RbConfig::CONFIG["bindir"], RbConfig::CONFIG["ruby_install_name"] + RbConfig::CONFIG["EXEEXT"])
-  end
+    def RbConfig.ruby
+        File.join(RbConfig::CONFIG["bindir"], RbConfig::CONFIG["ruby_install_name"] + RbConfig::CONFIG["EXEEXT"])
+    end
 end
 
 
@@ -32,11 +29,6 @@ end
 
 
 require File.join(File.dirname(__FILE__), "calabash-android-helpers")
-require File.join(File.dirname(__FILE__), "calabash-android-generate")
-require File.join(File.dirname(__FILE__), "calabash-android-build")
-require File.join(File.dirname(__FILE__), "calabash-android-run")
-require File.join(File.dirname(__FILE__), "calabash-android-setup")
-require File.join(File.dirname(__FILE__), "calabash-android-console")
 
 @features_dir = File.join(FileUtils.pwd, "features")
 @support_dir = File.join(@features_dir, "support")
@@ -44,79 +36,100 @@ require File.join(File.dirname(__FILE__), "calabash-android-console")
 @script_dir = File.join(File.dirname(__FILE__), '..', 'scripts')
 
 def is_apk_file?(file_path)
-  file_path.end_with? ".apk" and File.exist? file_path
+    file_path.end_with? ".apk" and File.exist? file_path
 end
 
 def relative_to_full_path(file_path)
-  File.expand_path(file_path)
+    File.expand_path(file_path)
 end
 
 if ARGV.length == 0
-  print_usage
-else
-  cmd = ARGV.shift
-
-  case cmd
-  when 'help'
-    print_help
-  when 'build'
-    Env.exit_if_env_not_set_up
-
-    if ARGV.empty?
-      puts "Please specify the app you want to build a test server for"
-      exit 1
-    elsif !File.exist?(ARGV.first)
-      puts "Could not find file '#{ARGV.first}'"
-      exit 1
-    elsif !is_apk_file?(ARGV.first)
-      puts "'#{ARGV.first}' is not a valid android application"
-      exit 1
-    else
-      while not ARGV.empty? and is_apk_file?(ARGV.first)
-        calabash_build(relative_to_full_path(ARGV.shift))
-      end
-    end
-  when 'run'
-    Env.exit_if_env_not_set_up
-    if ARGV.empty? or not is_apk_file?(ARGV.first)
-      puts "The first parameter must be the path to the apk file."
-      exit 1
-    else
-      exit calabash_run(relative_to_full_path(ARGV.shift))
-    end
-  when 'gen'
-    calabash_scaffold
-  when 'console'
-    Env.exit_if_env_not_set_up
-
-    if ARGV.empty? or not is_apk_file?(ARGV.first)
-      puts "The first parameter must be the path to the apk file."
-      exit 1
-    else
-      calabash_console(relative_to_full_path(ARGV.shift))
-    end
-  when 'setup'
-    Env.exit_if_env_not_set_up
-    calabash_setup
-  when 'resign'
-    Env.exit_if_env_not_set_up
-
-    if ARGV.empty?
-      puts "Please specify the app you want to resign"
-      exit 1
-    elsif !File.exist?(ARGV.first)
-      puts "Could not find file '#{ARGV.first}'"
-      exit 1
-    elsif !is_apk_file?(ARGV.first)
-      puts "'#{ARGV.first}' is not a valid android application"
-      exit 1
-    else
-      resign_apk(File.expand_path(ARGV.first))
-    end
-  when 'version'
-    puts Calabash::Android::VERSION
-  else
-    puts "Invalid command '#{cmd}'"
     print_usage
-  end
+else
+    cmd = ARGV.shift
+
+    case cmd
+        when 'help'
+            print_help
+        when 'build'
+            require 'calabash-android/helpers'
+            require 'calabash-android/java_keystore'
+            require 'calabash-android/env'
+            require File.join(File.dirname(__FILE__), "calabash-android-build")
+
+            if ARGV.empty?
+                puts "Please specify the app you want to build a test server for"
+                exit 1
+            elsif !File.exist?(ARGV.first)
+                puts "Could not find file '#{ARGV.first}'"
+                exit 1
+            elsif !is_apk_file?(ARGV.first)
+                puts "'#{ARGV.first}' is not a valid android application"
+                exit 1
+            else
+                while not ARGV.empty? and is_apk_file?(ARGV.first)
+                    calabash_build(relative_to_full_path(ARGV.shift))
+                end
+            end
+        when 'run'
+            require 'calabash-android/helpers'
+            require 'calabash-android/java_keystore'
+            require 'calabash-android/env'
+            require File.join(File.dirname(__FILE__), "calabash-android-run")
+
+            if ARGV.empty? or not is_apk_file?(ARGV.first)
+                puts "The first parameter must be the path to the apk file."
+                exit 1
+            else
+                exit calabash_run(relative_to_full_path(ARGV.shift))
+            end
+        when 'gen'
+            require 'calabash-android/helpers'
+            require 'calabash-android/java_keystore'
+            require 'calabash-android/env'
+            require File.join(File.dirname(__FILE__), "calabash-android-generate")
+
+            calabash_scaffold
+        when 'console'
+            require 'calabash-android/helpers'
+            require 'calabash-android/java_keystore'
+            require 'calabash-android/env'
+            require File.join(File.dirname(__FILE__), "calabash-android-console")
+
+            if ARGV.empty? or not is_apk_file?(ARGV.first)
+                puts "The first parameter must be the path to the apk file."
+                exit 1
+            else
+                calabash_console(relative_to_full_path(ARGV.shift))
+            end
+        when 'setup'
+            require 'calabash-android/helpers'
+            require 'calabash-android/java_keystore'
+            require 'calabash-android/env'
+            require File.join(File.dirname(__FILE__), "calabash-android-setup")
+
+            calabash_setup
+        when 'resign'
+            require 'calabash-android/helpers'
+            require 'calabash-android/java_keystore'
+            require 'calabash-android/env'
+
+            if ARGV.empty?
+                puts "Please specify the app you want to resign"
+                exit 1
+            elsif !File.exist?(ARGV.first)
+                puts "Could not find file '#{ARGV.first}'"
+                exit 1
+            elsif !is_apk_file?(ARGV.first)
+                puts "'#{ARGV.first}' is not a valid android application"
+                exit 1
+            else
+                resign_apk(File.expand_path(ARGV.first))
+            end
+        when 'version'
+            puts Calabash::Android::VERSION
+        else
+            puts "Invalid command '#{cmd}'"
+            print_usage
+    end
 end

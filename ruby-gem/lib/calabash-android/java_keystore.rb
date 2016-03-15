@@ -6,13 +6,13 @@ class JavaKeystore
     raise "No such keystore file '#{location}'" unless File.exists?(File.expand_path(location))
     log "Reading keystore data from keystore file '#{File.expand_path(location)}'"
 
-    keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"', '-J"-Duser.language=en-US"')
+    keystore_data = system_with_stdout_on_success(Calabash::Android::Dependencies.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"', '-J"-Duser.language=en-US"')
 
     if keystore_data.nil?
       if keystore_alias.empty?
         log "Could not obtain keystore data. Will try to extract alias automatically"
 
-        keystore_data = system_with_stdout_on_success(Env.keytool_path, '-list', '-v', '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"', '-J"-Duser.language=en-US"')
+        keystore_data = system_with_stdout_on_success(Calabash::Android::Dependencies.keytool_path, '-list', '-v', '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"', '-J"-Duser.language=en-US"')
         aliases = keystore_data.scan(/Alias name\:\s*(.*)/).flatten
 
         if aliases.length == 0
@@ -56,7 +56,7 @@ class JavaKeystore
     log "Signing using the signature algorithm: '#{signing_algorithm}'"
     log "Signing using the digest algorithm: '#{digest_algorithm}'"
 
-    unless system_with_stdout_on_success(Env.jarsigner_path, '-sigfile', 'CERT', '-sigalg', signing_algorithm, '-digestalg', digest_algorithm, '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
+    unless system_with_stdout_on_success(Calabash::Android::Dependencies.jarsigner_path, '-sigfile', 'CERT', '-sigalg', signing_algorithm, '-digestalg', digest_algorithm, '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
       raise "Could not sign app: #{apk_path}"
     end
   end

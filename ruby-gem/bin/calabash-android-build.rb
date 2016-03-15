@@ -47,7 +47,7 @@ def calabash_build(app)
         raise "Could not replace test package name in manifest"
       end
 
-      unless system %Q{"#{Env.tools_dir}/aapt" package -M AndroidManifest.xml  -I "#{android_platform}/android.jar" -F dummy.apk}
+      unless system %Q{"#{Calabash::Android::Dependencies.aapt_path}" package -M AndroidManifest.xml  -I "#{android_platform}/android.jar" -F dummy.apk}
         raise "Could not create dummy.apk"
       end
 
