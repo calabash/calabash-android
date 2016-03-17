@@ -127,6 +127,7 @@ else
                 resign_apk(File.expand_path(ARGV.first))
             end
         when 'version'
+            require 'calabash-android/version'
             puts Calabash::Android::VERSION
         else
             puts "Invalid command '#{cmd}'"
