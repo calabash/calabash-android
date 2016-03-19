@@ -63,7 +63,7 @@ class JavaKeystore
 
   def system_with_stdout_on_success(cmd, *args)
     a = Escape.shell_command(args)
-    cmd = "#{cmd} #{a.gsub("'", '"')}"
+    cmd = "\"#{cmd}\" #{a.gsub("'", '"')}"
     log cmd
     out = `#{cmd}`
     if $?.exitstatus == 0
