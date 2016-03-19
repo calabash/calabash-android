@@ -183,7 +183,7 @@ def fingerprint_from_apk(app_path)
       raise "No signature files found in META-INF. Cannot proceed." if signature_files.empty?
       raise "More than one signature file (DSA or RSA) found in META-INF. Cannot proceed." if signature_files.length > 1
 
-      cmd = "#{Calabash::Android::Dependencies.keytool_path} -v -printcert -J\"-Dfile.encoding=utf-8\" -file \"#{signature_files.first}\""
+      cmd = "\"#{Calabash::Android::Dependencies.keytool_path}\" -v -printcert -J\"-Dfile.encoding=utf-8\" -file \"#{signature_files.first}\""
       log cmd
       fingerprints = `#{cmd}`
       md5_fingerprint = extract_md5_fingerprint(fingerprints)
