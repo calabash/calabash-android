@@ -1,5 +1,5 @@
 module Calabash
   module Android
-    VERSION = "0.7.3.preintentstart1"
+    VERSION = "0.7.3.preintentstart2"
   end
 end
