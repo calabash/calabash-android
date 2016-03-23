@@ -332,6 +332,15 @@ module Calabash module Android
           ::Cucumber.wants_to_quit = true
           raise "#{pn} did not get installed. Reason: '#{result.lines.last.chomp}'. Aborting!"
         end
+
+        # Enable GPS location mocking on Android Marshmallow+
+        if _sdk_version >= 23
+          cmd = "#{adb_command} shell appops set #{package_name(app_path)} 58 allow"
+          log("Enabling GPS mocking using '#{cmd}'")
+          `#{cmd}`
+        end
+
+        true
       end
 
       def update_app(app_path)
