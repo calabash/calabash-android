@@ -139,8 +139,8 @@ module Calabash module Android
       default_device.push(local, remote)
     end
 
-    def start_test_server_in_background(options={})
-      default_device.start_test_server_in_background(options)
+    def start_test_server_in_background(options={}, &block)
+      default_device.start_test_server_in_background(options, &block)
     end
 
     def shutdown_test_server
@@ -640,14 +640,15 @@ module Calabash module Android
         raise "Could not push #{local} to #{remote}" unless system(cmd)
       end
 
-      def start_test_server_in_background(options={})
+      def start_test_server_in_background(options={}, &block)
         raise "Will not start test server because of previous failures." if ::Cucumber.wants_to_quit
 
         if keyguard_enabled?
           wake_up
         end
 
-        env_options = options
+        env_options = options.clone
+        env_options.delete(:intent)
 
         env_options[:target_package] ||= package_name(@app_path)
         env_options[:main_activity] ||= main_activity(@app_path)
@@ -722,10 +723,24 @@ module Calabash module Android
 
         log("Client and server versions match (client: #{client_version}, server: #{server_version}). Proceeding...")
 
+        block.call if block
+
+        start_application(options[:intent])
+
         # What is Calabash tracking? Read this post for information
         # No private data (like ip addresses) are collected
         # https://github.com/calabash/calabash-android/issues/655
         Calabash::Android::UsageTracker.new.post_usage_async
+      end
+
+      def start_application(intent)
+        result = JSON.parse(http("/start-application", {intent: intent.to_json}))
+
+        if result['outcome'] != 'SUCCESS'
+          raise result['detail']
+        end
+
+        result['result']
       end
 
       def shutdown_test_server
