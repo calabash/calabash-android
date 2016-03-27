@@ -648,7 +648,6 @@ module Calabash module Android
         env_options = options.clone
         env_options.delete(:intent)
 
-        env_options[:target_package] ||= package_name(@app_path)
         env_options[:main_activity] ||= main_activity(@app_path)
         env_options[:test_server_port] ||= @test_server_port
         env_options[:class] ||= "sh.calaba.instrumentationbackend.InstrumentationBackend"
