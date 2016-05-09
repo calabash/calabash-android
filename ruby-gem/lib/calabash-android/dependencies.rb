@@ -217,6 +217,11 @@ module Calabash
 
                 sorted_files = files.sort_by {|item| '%08s' % item.split('-').last}.reverse
 
+                if sorted_files.first.nil?
+                    raise Environment::InvalidEnvironmentError,
+                          "Could not find any platform directory in '#{File.join(android_sdk_location, 'platforms')}'"
+                end
+
                 File.join('platforms', File.basename(sorted_files.first))
             end
 
