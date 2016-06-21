@@ -19,3 +19,47 @@ Then(/^I should be able to interact with them$/) do
     raise "Expected 'Hello World' got '#{value}'"
   end
 end
+
+Given(/^I have a webview available$/) do
+  ensure_app_installed
+  start_test_server_in_background
+  touch("* marked:'Web View'")
+  wait_for_element_exists("webview")
+end
+
+When(/^I evaluate bad javascript$/) do
+  @error = nil
+
+  begin
+    evaluate_javascript("webview", "invalid.invalid")
+  rescue => e
+    @error = e
+  end
+end
+
+Then(/^I should get an error with an javascript exception$/) do
+  if @error.nil?
+    raise 'No error was raised'
+  else
+    puts "error message: #{@error.message}"
+
+    unless @error.message.include?('invalid')
+      raise "Expected an error with a javascript exception. Got #{@error.message}"
+    end
+  end
+end
+
+And(/^it has no body$/) do
+  evaluate_javascript("webview", "document.getElementsByTagName('html')[0].removeChild(document.body)")
+  sleep 2
+end
+
+When(/^I query for elements$/) do
+  @result = query("webview css:'*'")
+end
+
+Then(/^none should be returned$/) do
+  unless @result.empty?
+    raise "Results were returned! #{@result}"
+  end
+end

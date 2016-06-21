@@ -33,7 +33,6 @@ def calabash_build(app)
   unsigned_test_apk = File.join(File.dirname(__FILE__), '..', 'lib/calabash-android/lib/TestServer.apk')
   test_server_manifest = File.join(File.dirname(__FILE__), '..', 'lib', 'calabash-android', 'lib', 'AndroidManifest.xml')
 
-  android_platform = Env.android_platform_path
   Dir.mktmpdir do |workspace_dir|
     Dir.chdir(workspace_dir) do
       FileUtils.cp(unsigned_test_apk, "TestServer.apk")
@@ -47,7 +46,7 @@ def calabash_build(app)
         raise "Could not replace test package name in manifest"
       end
 
-      unless system %Q{"#{Calabash::Android::Dependencies.aapt_path}" package -M AndroidManifest.xml  -I "#{android_platform}/android.jar" -F dummy.apk}
+      unless system %Q{"#{Calabash::Android::Dependencies.aapt_path}" package -M AndroidManifest.xml  -I "#{Calabash::Android::Dependencies.android_jar_path}" -F dummy.apk}
         raise "Could not create dummy.apk"
       end
 
