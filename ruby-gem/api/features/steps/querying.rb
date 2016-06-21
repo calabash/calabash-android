@@ -78,8 +78,11 @@ end
 
 
 Then(/^the list of results should contain both elements from the dialogue as well as elements outside the dialogue$/) do
-  unless @query_results.find {|e| e['id'] == 'button2'} && @query_results.find {|e| e['id'] == 'buttonGotoWebView'}
-    raise "Both elements from the dialogue as well as elements outside the dialogue were returned"
+  inside = @query_results.find {|e| e['id'] == 'button2'}
+  outside = @query_results.find {|e| e['id'] == @top_most_button_id}
+
+  unless inside && outside
+    raise "Both elements from the dialogue as well as elements outside the dialogue were not returned. Inside: #{inside}, outside (#{@top_most_button_id}): #{outside}"
   end
 end
 
