@@ -730,7 +730,7 @@ module Calabash module Android
       end
 
       def start_application(intent)
-        result = JSON.parse(http("/start-application", {intent: intent.to_json}))
+        result = JSON.parse(http("/start-application", {intent: intent}))
 
         if result['outcome'] != 'SUCCESS'
           raise result['detail']
