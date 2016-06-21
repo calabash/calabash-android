@@ -3,6 +3,7 @@ Given(/^a screen with a view with some id$/) do
 end
 
 When(/^Calabash queries for a any view with that id$/) do
+  pan_up_to_see("* id:'buttonGotoDatePicker'", 5)
   @query_results = query("* id:'buttonGotoDatePicker'")
   @expect = {'id' => 'buttonGotoDatePicker'}
 end
