@@ -1,5 +1,5 @@
 Given(/^any visible view$/) do
-  wait_for_element_exists("* id:'buttonGotoOrientations'")
+  pan_up_to_see("* id:'buttonGotoOrientations'", 5)
   @type = :native
 end
 
