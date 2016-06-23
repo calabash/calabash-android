@@ -357,6 +357,7 @@ module Calabash module Android
 
         unless succeeded
           ::Cucumber.wants_to_quit = true
+          pn = package_name(app_path)
           raise "#{pn} did not get updated. Aborting!"
         end
       end
