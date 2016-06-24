@@ -7,6 +7,14 @@ os:
   - linux
   - osx
 
+# rvm ships with a version of gem and bundler that is too old.
+before_install:
+  - gem update --system
+  - gem --version
+  - gem uninstall -Vax --force --no-abort-on-dependent bundler
+  - gem install bundler --version 1.12.5
+  - bundler --version
+
 rvm:
   - 2.0.0
   - 2.1.2
