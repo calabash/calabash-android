@@ -41,7 +41,10 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency( 'rake', '~> 10.3' )
   s.add_development_dependency( 'yard', '~> 0.8' )
-  s.add_development_dependency( 'redcarpet', '~> 3.1' )
+  puts RUBY_PLATFORM
+  if RUBY_PLATFORM[/darwin/] || RUBY_PLATFORM["linux"]
+    s.add_development_dependency( 'redcarpet', '~> 3.1' )
+  end
   s.add_development_dependency( "rspec_junit_formatter" )
   s.add_development_dependency( "rspec", "~> 3.0" )
   s.add_development_dependency( "pry" )
