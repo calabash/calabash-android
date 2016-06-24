@@ -1,8 +1,11 @@
-# Run on linux
 language: ruby
 
 # Container based: faster
 sudo: false
+
+os:
+  - linux
+  - osx
 
 rvm:
   - 2.0.0
