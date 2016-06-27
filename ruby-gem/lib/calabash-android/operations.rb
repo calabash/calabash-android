@@ -644,7 +644,8 @@ module Calabash module Android
         if keyguard_enabled?
           wake_up
         end
-
+        app_tries = options[:app_launch_tries] || 100
+        options.delete(:app_launch_tries) unless options[:app_launch_tries].nil?
         env_options = options
 
         env_options[:target_package] ||= package_name(@app_path)
@@ -668,7 +669,7 @@ module Calabash module Android
         log cmd
         raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
 
-        Retriable.retriable :tries => 100, :interval => 0.1 do
+        Retriable.retriable :tries => app_tries, :interval => 0.1 do
           raise "App did not start" unless app_running?
         end
 
