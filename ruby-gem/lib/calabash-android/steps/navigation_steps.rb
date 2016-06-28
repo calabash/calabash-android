@@ -7,7 +7,8 @@ Then /^I press the menu key$/ do
 end
 
 Then /^I press the enter button$/ do
-  perform_action('send_key_enter')
+  press_user_action_button
+  # Or, possibly, press_enter_button
 end
 
 
