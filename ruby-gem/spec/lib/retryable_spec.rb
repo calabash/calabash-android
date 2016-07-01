@@ -1,16 +1,10 @@
 require 'stringio'
 
-describe Calabash::Android::Retryable do
-  class StubObject
-    include Calabash::Android::Retryable
-  end
-
-  describe ".retriable" do
-    subject { StubObject.new }
-
+describe Calabash::Android::Retry do
+  describe "#retry" do
     it 'retries' do
       expect {
-        subject.retriable({ tries: 2, interval: 0.01 }) do
+        Calabash::Android::Retry.retry({ tries: 2, interval: 0.01 }) do
           raise "foo"
         end
       }.to raise_error(RuntimeError)
@@ -19,7 +13,7 @@ describe Calabash::Android::Retryable do
     it 'succeeds' do
       expect {
         nr = 0
-        subject.retriable({ tries: 2, interval: 0.01 }) do
+        Calabash::Android::Retry.retry({ tries: 2, interval: 0.01 }) do
           nr = nr + 1
           if nr == 2
             :ok

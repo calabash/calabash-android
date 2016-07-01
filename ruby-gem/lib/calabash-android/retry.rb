@@ -1,9 +1,7 @@
 module Calabash
   module Android
-    module Retryable
-
-
-      def retriable(opts, &blk)
+    module Retry
+      def self.retry(opts, &blk)
         tries = opts[:tries]
         interval = opts[:interval]
 
