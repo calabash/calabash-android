@@ -1,12 +1,14 @@
 Installation
 ============
 
+For an in-depth guide see [the Xamarin docs for Calabash installation](https://developer.xamarin.com/guides/testcloud/calabash/configuring/)
+
 ### Calabash Sandbox
 
 If you are new to Ruby or gem management, we suggest you use the [Calabash sandbox](https://github.com/calabash/install)
 
 ### Prerequisites
-You need to have Ruby installed. Verify your installation by running ruby -v in a terminal - it should print "ruby 2.0.0" (or higher).
+You need to have Ruby installed. Verify your installation by running ruby -v in a terminal - it should print "ruby 2.0.0" (or higher). We recommend using a managed version of Ruby like rbenv or rvm.
 
 If you are on Windows you can get Ruby from [RubyInstaller.org](http://rubyinstaller.org/)
 
@@ -35,5 +37,9 @@ source "https://rubygems.org"
 gem 'calabash-android'
 gem 'cucumber'
 ```
+
+Install using `bundle install`. Remeber to regularly update your Calabash/Cucumber dependencies by running `bundle update`.
+
+Run *all* commands by prefixing `bundler exec`, e.g. `bundle exec calabash-android run ...` or `bundle exec calabash-android console`...
 
 You should *never* install gems with sudo. If you are having issues installing bundler, we recommend using the Calabash Sandbox or using a managed version of Ruby, e.g. rbenv or rvm.
