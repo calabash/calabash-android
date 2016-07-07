@@ -188,6 +188,24 @@ module Calabash module Android
       default_device.clear_preferences(name)
     end
 
+    def set_activity_orientation(orientation)
+      unless orientation.is_a?(Symbol)
+        raise ArgumentError, "Orientation is not a symbol"
+      end
+
+      unless orientation == :landscape || orientation == :portrait ||
+          orientation == :reverse_landscape || orientation == :reverse_portrait
+        raise ArgumentError, "Invalid orientation given. Use :landscape, :portrait, :reverse_landscape, or :reverse_portrait"
+      end
+
+      perform_action("set_activity_orientation", orientation.to_s)
+    end
+
+    # Note: Android 2.2 will always return either portrait or landscape, not reverse_portrait or reverse_landscape
+    def get_activity_orientation
+      perform_action("get_activity_orientation")
+    end
+
     def query(uiquery, *args)
       converted_args = []
       args.each do |arg|
