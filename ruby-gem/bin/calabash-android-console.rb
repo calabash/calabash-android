@@ -15,11 +15,6 @@ def calabash_console(app_path = nil)
 
   ENV['IRBRC'] = path
 
-
-  unless ENV['MAIN_ACTIVITY']
-    ENV['MAIN_ACTIVITY'] = main_activity(app_path)
-  end
-
   unless ENV['APP_PATH']
     ENV['APP_PATH'] = app_path
   end

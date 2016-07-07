@@ -17,11 +17,11 @@ def calabash_run(app_path = nil)
 
     test_server_path = test_server_path(app_path)
 
-    main_activity = ENV['MAIN_ACTIVITY'] || main_activity(app_path)
+    env = "APP_PATH=\"#{app_path}\" TEST_APP_PATH=\"#{test_server_path}\""
 
-    env = "MAIN_ACTIVITY=#{main_activity} "\
-          "APP_PATH=\"#{app_path}\" "\
-          "TEST_APP_PATH=\"#{test_server_path}\""
+    if ENV['MAIN_ACTIVITY']
+      env = "#{env} MAIN_ACTIVITY=#{ENV['MAIN_ACTIVITY']}"
+    end
   else
     env = ""
   end
