@@ -394,6 +394,10 @@ module Calabash
                 if File.exist?('~/Library/Developer/Xamarin/android-sdk-mac_x86/')
                     return '~/Library/Developer/Xamarin/android-sdk-mac_x86/'
                 end
+                
+                if File.exist?('~/Library/Developer/Xamarin/android-sdk-macosx/')
+                    return '~/Library/Developer/Xamarin/android-sdk-macosx/'
+                end
 
                 if File.exist?('C:\\Android\\android-sdk')
                     return 'C:\\Android\\android-sdk'
