@@ -29,6 +29,9 @@ module Calabash
 
           perform_action("touch_coordinate", center_x, center_y)
         else
+          if query_string.nil? && (options.nil? || options.empty?)
+            raise "Can't touch nil"
+          end
           execute_gesture(Gesture.with_parameters(Gesture.tap(options), {query_string: query_string}.merge(options)))
         end
       end
