@@ -143,6 +143,7 @@ module Calabash
         end
 
         def self.with_parameters(multi_touch_gesture, params={})
+          raise "Query string can not be nil" if params[:query_string].nil?
           multi_touch_gesture.query_string = params[:query_string] if params[:query_string]
           multi_touch_gesture.timeout = params[:timeout] if params[:timeout]
 
