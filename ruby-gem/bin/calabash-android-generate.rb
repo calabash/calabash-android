@@ -1,24 +1,26 @@
-def calabash_scaffold
+def calabash_scaffold(questions = true)
   if File.exists?(@features_dir)
     puts "A features directory already exists. Stopping..."
     exit 1
   end
 
-  msg("Question") do
-    puts "I'm about to create a features directory here:"
+  if questions
+    msg("Question") do
+      puts "I'm about to create a features directory here:"
+      puts ""
+      puts "#{ENV["PWD"]}/features"
+      puts ""
+      puts "This directory will contain all of your calabash tests."
+      puts "Shall I proceed? (Y/n)"
+    end
+
+    response = STDIN.gets.chomp.downcase
+    proceed = response == "" || response == "y"
+
     puts ""
-    puts "#{ENV["PWD"]}/features"
-    puts ""
-    puts "This directory will contain all of your calabash tests."
-    puts "Shall I proceed? (Y/n)"
   end
 
-  response = STDIN.gets.chomp.downcase
-  proceed = response == "" || response == "y"
-
-  puts ""
-
-  if !proceed
+  if !proceed && questions
     puts "Skipping installation of features/ directory"
   else
     FileUtils.cp_r(@source_dir, @features_dir)
@@ -48,27 +50,29 @@ def calabash_scaffold
       puts ""
     end
   else
-    msg("Question") do
-      puts "I want to create a Gemfile for you."
-      puts "Shall I proceed? (Y/n)"
+    if questions
+      msg("Question") do
+        puts "I want to create a Gemfile for you."
+        puts "Shall I proceed? (Y/n)"
+      end
 
       response = STDIN.gets.chomp.downcase
       proceed = response == "" || response == "y"
 
       puts ""
+    end
 
-      if !proceed
-        puts "Skipping installation of Gemfile"
-      else
-        File.open(gemfile, "w") do |file|
-          file.write("source \"https://rubygems.org\"\n")
-          file.write("\n")
-          file.write(gemline)
-          file.write("\n")
-        end
-        puts "Created: #{gemfile}"
-        puts""
+    if !proceed && questions
+      puts "Skipping installation of Gemfile"
+    else
+      File.open(gemfile, "w") do |file|
+        file.write("source \"https://rubygems.org\"\n")
+        file.write("\n")
+        file.write(gemline)
+        file.write("\n")
       end
+      puts "Created: #{gemfile}"
+      puts""
     end
   end
   puts "My work is done here."
