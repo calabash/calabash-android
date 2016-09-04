@@ -50,30 +50,14 @@ def calabash_scaffold(questions = true)
       puts ""
     end
   else
-    if questions
-      msg("Question") do
-        puts "I want to create a Gemfile for you."
-        puts "Shall I proceed? (Y/n)"
-      end
-
-      response = STDIN.gets.chomp.downcase
-      proceed = response == "" || response == "y"
-
-      puts ""
+    File.open(gemfile, "w") do |file|
+      file.write("source \"https://rubygems.org\"\n")
+      file.write("\n")
+      file.write(gemline)
+      file.write("\n")
     end
-
-    if !proceed && questions
-      puts "Skipping installation of Gemfile"
-    else
-      File.open(gemfile, "w") do |file|
-        file.write("source \"https://rubygems.org\"\n")
-        file.write("\n")
-        file.write(gemline)
-        file.write("\n")
-      end
-      puts "Created: #{gemfile}"
-      puts""
-    end
+    puts "Created: #{gemfile}"
+    puts""
   end
   puts "My work is done here."
 end
