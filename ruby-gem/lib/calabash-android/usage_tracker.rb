@@ -66,6 +66,11 @@ module Calabash
       end
 
       # @!visibility private
+      def distinct_id
+        preferences.distinct_id
+      end
+
+      # @!visibility private
       def info_we_are_allowed_to_track
         preferences.usage_tracking
       end
@@ -158,7 +163,7 @@ module Calabash
         hash = {
           :event_name => "session",
           :data_version => DATA_VERSION,
-          :user_id => user_id
+          :distinct_id => distinct_id
         }
 
         if allowed == "system_info"
