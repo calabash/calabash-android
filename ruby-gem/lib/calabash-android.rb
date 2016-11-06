@@ -1,3 +1,4 @@
+require 'calabash-android/utils'
 require 'calabash-android/defaults'
 require 'calabash-android/environment'
 require 'calabash-android/dot_dir'

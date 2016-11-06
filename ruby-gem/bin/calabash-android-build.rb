@@ -50,20 +50,22 @@ def calabash_build(app)
         raise "Could not create dummy.apk"
       end
 
-      Zip::File.new("dummy.apk").extract("AndroidManifest.xml","customAndroidManifest.xml")
-      Zip::File.open("TestServer.apk") do |zip_file|
-        begin
-          check_file("AndroidManifest.xml")
-          manifest_exists = true
-        rescue
-          manifest_exists = false
-        end
+      Calabash::Utils.with_silent_zip do
+        Zip::File.new("dummy.apk").extract("AndroidManifest.xml","customAndroidManifest.xml")
+        Zip::File.open("TestServer.apk") do |zip_file|
+          begin
+            check_file("AndroidManifest.xml")
+            manifest_exists = true
+          rescue
+            manifest_exists = false
+          end
 
-        if manifest_exists
-          zip_file.remove("AndroidManifest.xml")
-        end
+          if manifest_exists
+            zip_file.remove("AndroidManifest.xml")
+          end
 
-        zip_file.add("AndroidManifest.xml", "customAndroidManifest.xml")
+          zip_file.add("AndroidManifest.xml", "customAndroidManifest.xml")
+        end
       end
     end
     keystore.sign_apk("#{workspace_dir}/TestServer.apk", test_server_file_name)

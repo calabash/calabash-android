@@ -53,6 +53,7 @@ else
             print_help
         when 'build'
             require 'calabash-android/helpers'
+            require 'calabash-android/utils'
             require 'calabash-android/java_keystore'
             require 'calabash-android/env'
             require File.join(File.dirname(__FILE__), "calabash-android-build")
