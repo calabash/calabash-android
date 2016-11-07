@@ -169,9 +169,13 @@ def fingerprint_from_apk(app_path)
     Dir.chdir(tmp_dir) do
       FileUtils.cp(app_path, "app.apk")
       FileUtils.mkdir("META-INF")
-      Zip::File.foreach("app.apk") do |z|
-        z.extract if /^META-INF\/\w+.(rsa|dsa)/i =~ z.name
+
+      Calabash::Utils.with_silent_zip do
+        Zip::File.foreach("app.apk") do |z|
+          z.extract if /^META-INF\/\w+.(rsa|dsa)/i =~ z.name
+        end
       end
+
       signature_files = Dir["#{tmp_dir}/META-INF/*"]
 
       log 'Signature files:'
