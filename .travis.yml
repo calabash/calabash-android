@@ -18,7 +18,7 @@ before_install:
 # rvm does not support any ruby 2.3 as of Jun 11 2016
 rvm:
   - 2.1.5
-  - 2.2.3
+  - 2.2.5
 
 env:
   - CI_NO_ANDROID_RUNTIME=1
