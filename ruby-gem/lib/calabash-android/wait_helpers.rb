@@ -16,23 +16,20 @@ module Calabash
           :screenshot_on_error => true
       }
 
-      def wait_for(options_or_timeout=DEFAULT_OPTS, &block)
+      def wait_for(options_or_timeout={}, &block)
         #note Hash is preferred, number acceptable for backwards compat
-        default_timeout = 30
-        timeout = options_or_timeout || default_timeout
-        post_timeout=0
-        retry_frequency=0.3
-        timeout_message = nil
-        screenshot_on_error = true
+        timeout = options_or_timeout || DEFAULT_OPTS[:timeout]
+        retry_frequency = DEFAULT_OPTS[:retry_frequency]
+        post_timeout = DEFAULT_OPTS[:post_timeout]
+        timeout_message = DEFAULT_OPTS[:timeout_message]
+        screenshot_on_error = DEFAULT_OPTS[:screenshot_on_error]
 
         if options_or_timeout.is_a?(Hash)
-          timeout = options_or_timeout[:timeout] || default_timeout
-          retry_frequency = options_or_timeout[:retry_frequency] || retry_frequency
-          post_timeout = options_or_timeout[:post_timeout] || post_timeout
-          timeout_message = options_or_timeout[:timeout_message]
-          if options_or_timeout.key?(:screenshot_on_error)
-            screenshot_on_error = options_or_timeout[:screenshot_on_error]
-          end
+          timeout = options_or_timeout[:timeout] || DEFAULT_OPTS[:timeout]
+          retry_frequency = options_or_timeout[:retry_frequency] || DEFAULT_OPTS[:retry_frequency]
+          post_timeout = options_or_timeout[:post_timeout] || DEFAULT_OPTS[:post_timeout]
+          timeout_message = options_or_timeout[:timeout_message] || DEFAULT_OPTS[:timeout_message]
+          screenshot_on_error = options_or_timeout[:screenshot_on_error] || DEFAULT_OPTS[:screenshot_on_error]
         end
 
         begin

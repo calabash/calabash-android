@@ -79,9 +79,9 @@ Waits for a condition to occur. Takes a hash of options and a block to be called
 
 
     {
-     :timeout => 10, #maximum number of seconds to wait
-     :retry_frequency => 0.2, #wait this long before retrying the block
-     :post_timeout => 0.1, #wait this long after the block returns true
+     :timeout => 30, #maximum number of seconds to wait
+     :retry_frequency => 0.3, #wait this long before retrying the block
+     :post_timeout => 0, #wait this long after the block returns true
      :timeout_message => "Timed out waiting...", #error message in case options[:timeout] is exceeded
      :screenshot_on_error => true # take a screenshot in case of error
     }
