@@ -191,8 +191,8 @@ def fingerprint_from_apk(app_path)
       cmd = "\"#{Calabash::Android::Dependencies.keytool_path}\" -v -printcert -J\"-Dfile.encoding=utf-8\" -file \"#{signature_files.first}\""
       log cmd
       fingerprints = `#{cmd}`
-      md5_fingerprint = extract_md5_fingerprint(fingerprints)
-      log "MD5 fingerprint for signing cert (#{app_path}): #{md5_fingerprint}"
+      md5_fingerprint = extract_sha1_fingerprint(fingerprints)
+      log "SHA1 fingerprint for signing cert (#{app_path}): #{md5_fingerprint}"
       md5_fingerprint
     end
   end
@@ -201,6 +201,12 @@ end
 def extract_md5_fingerprint(fingerprints)
   m = fingerprints.scan(/MD5.*((?:[a-fA-F\d]{2}:){15}[a-fA-F\d]{2})/).flatten
   raise "No MD5 fingerprint found:\n #{fingerprints}" if m.empty?
+  m.first
+end
+
+def extract_sha1_fingerprint(fingerprints)
+  m = fingerprints.scan(/SHA1.*((?:[a-fA-F\d]{2}:){15}[a-fA-F\d]{2})/).flatten
+  raise "No SHA1 fingerprint found:\n #{fingerprints}" if m.empty?
   m.first
 end
 
