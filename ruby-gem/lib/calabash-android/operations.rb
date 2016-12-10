@@ -642,7 +642,7 @@ module Calabash module Android
       end
 
       def clear_app_data
-        cmd = "#{adb_command} shell am instrument #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.ClearAppData"
+        cmd = "#{adb_command} shell am instrument #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.ClearAppData2"
         raise "Could not clear data" unless system(cmd)
       end
 
