@@ -15,9 +15,8 @@ Before do |scenario|
       log 'First scenario in feature - reinstalling apps'
     end
 
-    uninstall_apps
-    install_app(ENV['TEST_APP_PATH'])
-    install_app(ENV['APP_PATH'])
+    ensure_app_installed
+    clear_app_data
     FeatureMemory.feature = feature
     FeatureMemory.invocation = 1
   else
