@@ -384,12 +384,16 @@ module Calabash module Android
         log "Uninstalling: #{package_name}"
         log `#{adb_command} uninstall #{package_name}`
 
-        succeeded = !(`#{adb_command} shell pm list packages`.lines.map{|line| line.chomp.sub("package:", "")}.include?(package_name))
+        succeeded = !application_installed?(package_name)
 
         unless succeeded
           ::Cucumber.wants_to_quit = true
           raise "#{package_name} was not uninstalled. Aborting!"
         end
+      end
+
+      def application_installed?(package_name)
+        (`#{adb_command} shell pm list packages`.lines.map{|line| line.chomp.sub("package:", "")}.include?(package_name))
       end
 
       def app_running?
@@ -642,8 +646,21 @@ module Calabash module Android
       end
 
       def clear_app_data
+        unless application_installed?(package_name(@app_path))
+          raise "Cannot clear data, application #{package_name(@app_path)} is not installed"
+        end
+
+        unless application_installed?(package_name(@test_server_path))
+          raise "Cannot clear data, test-server #{package_name(@test_server_path)} is not installed"
+        end
+
         cmd = "#{adb_command} shell am instrument #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.ClearAppData2"
         raise "Could not clear data" unless system(cmd)
+
+        # Wait for the cleanup activity to finish. This is a hard sleep for now
+        sleep 2
+
+        true
       end
 
       def pull(remote, local)
