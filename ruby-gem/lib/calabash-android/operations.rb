@@ -106,6 +106,14 @@ module Calabash module Android
       default_device.reinstall_apps
     end
 
+    # Ensures that the application and the test-server are installed.
+    #
+    # If the application has already been installed, it does nothing.
+    # If the test-server has already been installed, it does nothing.
+    def ensure_app_installed
+      default_device.ensure_apps_installed
+    end
+
     def reinstall_test_server
       default_device.reinstall_test_server
     end
@@ -331,6 +339,22 @@ module Calabash module Android
       def reinstall_test_server
         uninstall_app(package_name(@test_server_path))
         install_app(@test_server_path)
+      end
+
+      def ensure_apps_installed
+        @installed_apps ||= []
+
+        unless @installed_apps.include?(@app_path)
+          uninstall_app(package_name(@app_path))
+          install_app(@app_path)
+          @installed_apps << @app_path
+        end
+
+        unless @installed_apps.include?(@test_server_path)
+          uninstall_app(package_name(@test_server_path))
+          install_app(@test_server_path)
+          @installed_apps << @test_server_path
+        end
       end
 
       def install_app(app_path)
