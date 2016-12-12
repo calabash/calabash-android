@@ -26,6 +26,7 @@ require 'cucumber'
 require 'date'
 require 'time'
 require 'shellwords'
+require 'digest'
 
 Calabash::Android::Dependencies.setup
 
@@ -341,19 +342,21 @@ module Calabash module Android
         install_app(@test_server_path)
       end
 
+      @@installed_apps ||= {}
+
       def ensure_apps_installed
-        @installed_apps ||= []
+        apps = [@app_path, @test_server_path]
 
-        unless @installed_apps.include?(@app_path)
-          uninstall_app(package_name(@app_path))
-          install_app(@app_path)
-          @installed_apps << @app_path
-        end
+        apps.each do |app|
+          package = package_name(app)
+          md5 = Digest::MD5.file(File.expand_path(app))
 
-        unless @installed_apps.include?(@test_server_path)
-          uninstall_app(package_name(@test_server_path))
-          install_app(@test_server_path)
-          @installed_apps << @test_server_path
+          if !application_installed?(package) || (!@@installed_apps.keys.include?(package) || @@installed_apps[package] != md5)
+            log "MD5 checksum for app '#{app}' (#{package}): #{md5}"
+            uninstall_app(package)
+            install_app(app)
+            @@installed_apps[package] = md5
+          end
         end
       end
 
