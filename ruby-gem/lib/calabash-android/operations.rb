@@ -656,6 +656,9 @@ module Calabash module Android
       end
 
       def connected_devices
+        # Run empty ADB command to remove eventual first-run messages
+        `"#{Calabash::Android::Dependencies.adb_path}" devices`
+
         lines = `"#{Calabash::Android::Dependencies.adb_path}" devices`.split("\n")
         start_index = lines.index{ |x| x =~ /List of devices attached/ } + 1
         lines[start_index..-1].collect { |l| l.split("\t").first }
