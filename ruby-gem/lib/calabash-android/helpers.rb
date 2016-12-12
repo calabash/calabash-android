@@ -217,5 +217,7 @@ def extract_signature_algorithm_name(fingerprints)
 end
 
 def log(message, error = false)
-  $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}" if (error or ARGV.include? "-v" or ARGV.include? "--verbose")
+  if error or ARGV.include? "-v" or ARGV.include? "--verbose" or ENV["DEBUG"] == "1"
+    $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}"
+  end
 end

@@ -54,7 +54,7 @@ module Calabash module Android
     end
 
     def log(message)
-      $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}" if (ARGV.include? "-v" or ARGV.include? "--verbose")
+      $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}" if (ARGV.include? "-v" or ARGV.include? "--verbose" or ENV["DEBUG"] == "1")
     end
 
     def macro(txt)
