@@ -38,6 +38,7 @@ Gem::Specification.new do |s|
   s.add_dependency( 'escape', '~> 0.0.4')
   s.add_dependency( 'luffa' )
 
+  s.add_development_dependency( 'archive-zip', '>= 0.9.0')
   s.add_development_dependency( 'rake', '~> 10.3' )
   s.add_development_dependency( 'yard', '~> 0.8' )
   puts RUBY_PLATFORM

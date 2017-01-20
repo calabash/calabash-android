@@ -1,4 +1,6 @@
 require 'bundler'
+require 'archive/zip'
+
 load 'lib/calabash-android/env.rb'
 
 # Monkey patch 'log' for env
@@ -46,6 +48,15 @@ task :build do
   build
 end
 
+task :zip do
+  test_server_template_dir = find_server_repo_or_raise + "/server"
+  server_version = Calabash::Android::VERSION
+
+  puts "Zipping calabash-android-server at path '#{test_server_template_dir}' version #{server_version}"
+
+  Archive::Zip.archive("calabash-android-server-#{server_version}.zip", test_server_template_dir)
+end
+
 def find_server_repo_or_raise
   calabash_server_dir = ENV['CALABASH_SERVER_PATH'] || File.join(File.dirname(__FILE__), '..', '..', 'calabash-android-server')
   unless File.exist?(calabash_server_dir) && File.exists?(File.join(calabash_server_dir, "server", "calabash-js", "src"))
@@ -68,7 +79,6 @@ For full instuctions see: https://github.com/calabash/calabash-android/wiki/Buil
   end
   calabash_server_dir
 end
-
 
 Bundler::GemHelper.install_tasks
 
