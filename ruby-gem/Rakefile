@@ -49,12 +49,21 @@ task :build do
 end
 
 task :zip do
-  test_server_code_dir = find_server_repo_or_raise + "/server"
+  test_server_code_dir = find_server_repo_or_raise
   server_version = Calabash::Android::VERSION
 
   puts "Zipping calabash-android-server at path '#{test_server_code_dir}' version #{server_version}"
 
-  Archive::Zip.archive("calabash-android-server-#{server_version}.zip", test_server_code_dir)
+  items_to_zip = [
+      "#{test_server_code_dir}/server",
+      "#{test_server_code_dir}/bin",
+      "#{test_server_code_dir}/LICENSE",
+      "#{test_server_code_dir}/NOTICE",
+      "#{test_server_code_dir}/epl-v10.html",
+      "#{test_server_code_dir}/README.md"
+  ]
+
+  Archive::Zip.archive("calabash-android-server-#{server_version}.zip", items_to_zip)
 end
 
 def find_server_repo_or_raise
