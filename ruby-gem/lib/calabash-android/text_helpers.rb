@@ -41,8 +41,22 @@ module Calabash
         perform_action("delete_surrounding_text", -1, 0)
       end
 
+      def escape_backslashes(str)
+        backslash = "\\"
+        str.gsub(backslash, backslash*4)
+      end
+
+      def escape_newlines(str)
+        newline = "\n"
+        str.gsub(newline, "\\n")
+      end
+
       def escape_quotes(str)
         str.gsub("'", "\\\\'")
+      end
+
+      def escape_string(str)
+        escape_newlines(escape_quotes(escape_backslashes(str)))
       end
 
       # Sets the selection of the currently focused view.
