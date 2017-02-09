@@ -1,40 +1,45 @@
-require 'rubygems'
-require 'irb/completion'
-require 'irb/ext/save-history'
-
 begin
-  require 'awesome_print'
-rescue LoadError => e
-  msg = ["Caught a LoadError: could not load 'awesome_print'",
-         "#{e}",
-         '',
-         'Use bundler (recommended) or uninstall awesome_print.',
-         '',
-         '# Use bundler (recommended)',
-         '$ bundle update',
-         '$ bundle exec calabash-android console <path to apk>',
-         '',
-         '# Uninstall',
-         '$ gem update --system',
-         '$ gem uninstall -Vax --force --no-abort-on-dependent awesome_print']
-  puts msg
+  require 'rubygems'
+  require 'irb/completion'
+  require 'irb/ext/save-history'
+
+  begin
+    require 'awesome_print'
+  rescue LoadError => e
+    msg = ["Caught a LoadError: could not load 'awesome_print'",
+          "#{e}",
+          '',
+          'Use bundler (recommended) or uninstall awesome_print.',
+          '',
+          '# Use bundler (recommended)',
+          '$ bundle update',
+          '$ bundle exec calabash-android console <path to apk>',
+          '',
+          '# Uninstall',
+          '$ gem update --system',
+          '$ gem uninstall -Vax --force --no-abort-on-dependent awesome_print']
+    puts msg
+    exit(1)
+  end
+
+  AwesomePrint.irb!
+
+  ARGV.concat [ "--readline",
+                "--prompt-mode",
+                "simple" ]
+
+  # 50 entries in the list
+  IRB.conf[:SAVE_HISTORY] = 50
+
+  # Store results in home directory with specified file name
+  IRB.conf[:HISTORY_FILE] = ".irb-history"
+
+  require 'calabash-android/defaults'
+  require 'calabash-android/operations'
+rescue Exception => e
+  puts "Error loading Calabash irbrc: #{e}"
   exit(1)
 end
-
-AwesomePrint.irb!
-
-ARGV.concat [ "--readline",
-              "--prompt-mode",
-              "simple" ]
-
-# 50 entries in the list
-IRB.conf[:SAVE_HISTORY] = 50
-
-# Store results in home directory with specified file name
-IRB.conf[:HISTORY_FILE] = ".irb-history"
-
-require 'calabash-android/defaults'
-require 'calabash-android/operations'
 
 module Calabash
   module Android
