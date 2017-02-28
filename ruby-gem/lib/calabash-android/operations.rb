@@ -1122,10 +1122,6 @@ module Calabash module Android
       ni
     end
 
-    def done
-      ni
-    end
-
     def find_scrollable_view(options={})
       timeout = options[:timeout] || 30
 
