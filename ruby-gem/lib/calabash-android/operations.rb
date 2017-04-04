@@ -733,8 +733,8 @@ module Calabash module Android
         log cmd
         raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
 
-        Calabash::Android::Retry.retry :tries => 100, :interval => 0.1 do
-          raise "App did not start" unless app_running?
+        Calabash::Android::Retry.retry :tries => 600, :interval => 0.1 do
+          raise "App did not start see adb logcat for details" unless app_running?
         end
 
         begin
