@@ -93,6 +93,13 @@ else
             require File.join(File.dirname(__FILE__), "calabash-android-generate")
 
             calabash_scaffold
+        when 'gen-no-questions'
+            require 'calabash-android/helpers'
+            require 'calabash-android/java_keystore'
+            require 'calabash-android/env'
+            require File.join(File.dirname(__FILE__), "calabash-android-generate")
+
+            calabash_scaffold false
         when 'console'
             require 'calabash-android/helpers'
             require 'calabash-android/utils'
