@@ -660,8 +660,8 @@ module Calabash module Android
         `"#{Calabash::Android::Dependencies.adb_path}" devices`
 
         lines = `"#{Calabash::Android::Dependencies.adb_path}" devices`.split("\n")
-        start_index = lines.index{ |x| x =~ /List of devices attached/ } + 1
-        lines[start_index..-1].collect { |l| l.split("\t").first }
+        raw_devices = lines.select { |line| line !~ /List of devices attached|\*.+\*/ }
+        raw_devices.collect { |l| l.split("\t").first }
       end
 
       def wake_up
