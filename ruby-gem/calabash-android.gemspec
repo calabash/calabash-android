@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
   s.add_dependency( "cucumber" )
   s.add_dependency( "json", '~> 1.8' )
   s.add_dependency( "slowhandcuke", '~> 0.0.3')
-  s.add_dependency( "rubyzip", "~> 1.1" )
+  s.add_dependency( "rubyzip", "~> 1.2" )
   s.add_dependency( "awesome_print", '~> 1.2')
   s.add_dependency( 'httpclient', '>= 2.7.1', '< 3.0')
   s.add_dependency( 'escape', '~> 0.0.4')
