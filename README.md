@@ -72,7 +72,27 @@ Running test
 ------------
 To run your test:
 
-    calabash-android run <apk>
+- Build apk
+- Resign apk (optional, you'll require this step if your apk is signed)
+
+        calabash-android resign <apk>
+
+- Build test server apk (result is saved in `test_servers` directory)
+
+        calabash-android build <apk>
+
+- Run test
+
+
+        # set required environment variables
+        export APP_PATH=<apk>
+        export TEST_APP_PATH=test_servers/<test_server_apk>
+        # run "default" profile from cucumber.yml
+        calabash-android run
+        # run your custom "regression" profile
+        calabash-android run --profile regression
+        # run using tags
+        calabash-android run --tags @smoke,@regression --tags ~@debug
 
 Calabash-android will install an instrumentation along with your app when executing the app. We call this instrumentation for "test server". The "test server" has special permission that allows it to interact very closely with your app during test.
 Everytime you test a new binary or use an upgraded version of calabash a new test server will be build.
