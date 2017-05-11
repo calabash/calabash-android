@@ -112,3 +112,7 @@ If it seems that buttons/text aren't being clicked properly, you need to add the
 Where SDK_VERSION is the version of the Android SDK you are using. Version numbers can be found [here](http://developer.android.com/reference/android/os/Build.VERSION_CODES.html)
 
 For example, Android 4.0 uses version 14, Android 4.0.3 uses version 15 and Android 4.1 uses version 16.
+
+### Problems not starting the first activity when running on a device
+
+If performing tests on a real device (even for CI builds) then make sure that your device is locked (slide to unlock). Unlocked devices will not work unless the screen is turned on. 
