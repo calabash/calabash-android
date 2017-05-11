@@ -11,4 +11,5 @@ require 'calabash-android/steps/screenshot_steps'
 require 'calabash-android/steps/search_steps'
 require 'calabash-android/steps/spinner_steps'
 require 'calabash-android/steps/time_picker_steps'
+require 'calabash-android/steps/locale_steps'
 
