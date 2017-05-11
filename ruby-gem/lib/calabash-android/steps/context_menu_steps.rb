@@ -15,3 +15,8 @@ end
 Then /^I long press "([^\"]*)"$/ do |text|
   long_press_when_element_exists("* {text CONTAINS[c] '#{text}'}")
 end
+
+
+Then /^I long press on screen (\d+)% from the left and (\d+)% from the top$/ do |x, y|
+  performAction('press_long_on_coord',x, y)
+end

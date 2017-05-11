@@ -39,6 +39,8 @@ Long presses the view containing the specified text and selects the menu item wi
 
 Long presses the view containing the specified text and selects the menu item marked by the specified identifier in the context menu that appears. 
 
+    Then /^I long press on screen (\d+)% from the left and (\d+)% from the top$/ do |x, y|
+Long presses coordinates based on % from the screen dimensions. 
 
     Given /^I set the date to "(\d\d-\d\d-\d\d\d\d)" on DatePicker with index "([^\"]*)"$/ do |date, index|
 Finds the datepicker with the specified index and changes the date.
