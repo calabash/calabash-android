@@ -1,3 +1,5 @@
+require 'calabash-android/management/adb'
+
 module Calabash
   module Android
     module TextHelpers
@@ -26,12 +28,19 @@ module Calabash
         sleep 0.5
         set_selection(-1, -1)
         keyboard_enter_text(text, options)
+        hide_keyboard()
       end
 
       def clear_text_in(query_string, options={})
         touch(query_string, options)
         sleep 0.5
         clear_text(options)
+      end
+      
+      def hide_keyboard()
+        if system 'adb shell dumpsys input_method | grep -qi mInputShown=true'
+          system 'adb shell input keyevent 4'
+        end
       end
 
       # Clears the text of the currently focused view.
