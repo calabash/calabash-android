@@ -685,11 +685,17 @@ module Calabash module Android
 
         cmd_arr << "#{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
 
-        cmd = cmd_arr.join(" ")
+        if options[:with_uiautomator]
+          cmd_arr.insert(2, "-w")
+          shutdown_test_server
+          @adb_shell_pid = Process.spawn(cmd_arr.join(" "), :in => '/dev/null') rescue "Could not execute command to start test server with uiautomator"
+        else
+          cmd = cmd_arr.join(" ")
 
-        log "Starting test server using:"
-        log cmd
-        raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
+          log "Starting test server using:"
+          log cmd
+          raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
+        end
 
         Calabash::Android::Retry.retry :tries => 100, :interval => 0.1 do
           raise "App did not start" unless app_running?
@@ -791,6 +797,10 @@ module Calabash module Android
       def shutdown_test_server
         begin
           collect_coverage_data
+          unless @adb_shell_pid.nil?
+            Process.kill("HUP",@adb_shell_pid)
+            @adb_shell_pid = nil
+          end
           http("/kill")
           Timeout::timeout(3) do
             sleep 0.3 while app_running?
