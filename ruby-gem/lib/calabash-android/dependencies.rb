@@ -394,16 +394,16 @@ module Calabash
                 if File.exist?(File.expand_path('~/Library/Developer/Xamarin/android-sdk-mac_x86/'))
                     return File.expand_path('~/Library/Developer/Xamarin/android-sdk-mac_x86/')
                 end
-                
+
                 if File.exist?(File.expand_path('~/Library/Developer/Xamarin/android-sdk-macosx/'))
                     return File.expand_path('~/Library/Developer/Xamarin/android-sdk-macosx/')
                 end
-                
+
                 # Default location when installing with Android Studio
                 if File.exist?(File.expand_path('~/Library/Android/sdk/'))
                     return File.expand_path('~/Library/Android/sdk/')
                 end
-                
+
                 if File.exist?('C:\\Android\\android-sdk')
                     return 'C:\\Android\\android-sdk'
                 end

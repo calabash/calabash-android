@@ -44,4 +44,3 @@ end
 Then /^I drag from (\d+):(\d+) to (\d+):(\d+) moving with (\d+) steps$/ do |from_x, from_y, to_x, to_y, steps|
   perform_action('drag', from_x, to_x, from_y, to_y, steps)
 end
-   

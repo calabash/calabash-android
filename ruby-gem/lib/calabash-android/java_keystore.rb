@@ -92,7 +92,7 @@ class JavaKeystore
   end
 
   def self.get_keystores
-    if keystore = keystore_from_settings 
+    if keystore = keystore_from_settings
       [ keystore ]
     else
       [

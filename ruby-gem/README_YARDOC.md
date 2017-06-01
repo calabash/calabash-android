@@ -120,7 +120,7 @@ Default values can be specified by including them after the option key in `()`.
 
 #### multiple return values
 
-You can list multiple return tags for a method in the case where a method has 
+You can list multiple return tags for a method in the case where a method has
 distinct return cases.   Each case should begin with “if …”
 
 ```
@@ -151,7 +151,7 @@ To mark an object as private, use this tag.
 
 * `# @!visibility private`
 
-Objects that are within the (Ruby) scope of `private` will be recognized 
+Objects that are within the (Ruby) scope of `private` will be recognized
 automatically by yard as private.
 
 ```

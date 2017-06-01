@@ -23,4 +23,3 @@ guard(:rspec, options) do
   watch(%r{^lib/calabash-android/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
   watch('spec/spec_helper.rb')  { 'spec/lib' }
 end
-

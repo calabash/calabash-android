@@ -274,4 +274,3 @@ describe Calabash::Android::Environment do
     end
   end
 end
-

@@ -11,4 +11,3 @@ describe Calabash::Android::WaitHelpers do
     end
   end
 end
-

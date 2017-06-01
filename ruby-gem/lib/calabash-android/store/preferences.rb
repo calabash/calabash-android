@@ -208,4 +208,3 @@ We do not recommend that edit the preferences file by hand.
     end
   end
 end
-

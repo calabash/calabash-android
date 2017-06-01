@@ -177,7 +177,7 @@ The following are all equivalent
     touch(query("button index:0"))
     touch(query("button").first)
     touch(query("button"))
-    
+
 # Entering text
 ### `keyboard_enter_text(text, options={})`
 
@@ -215,7 +215,7 @@ Pushes a file from the local computer to the device:
 
     push("file.jpg", "/sdcard/file.jpg")
 
-Uses [adb](http://developer.android.com/tools/help/adb.html) so same rules apply: 
+Uses [adb](http://developer.android.com/tools/help/adb.html) so same rules apply:
 
 * Won't be able to pull or push from restricted folders such as /data/data
 * If destination path already exists, it's overwritten without warning
