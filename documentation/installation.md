@@ -1,5 +1,4 @@
-Installation
-============
+# Installation
 
 For an in-depth guide see [the Xamarin docs for Calabash installation](https://developer.xamarin.com/guides/testcloud/calabash/configuring/)
 
