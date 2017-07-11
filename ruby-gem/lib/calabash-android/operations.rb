@@ -408,15 +408,21 @@ module Calabash module Android
       end
 
       def uninstall_app(package_name)
-        log "Uninstalling: #{package_name}"
-        log `#{adb_command} uninstall #{package_name}`
+	    exists = application_installed?(package_name)
+		
+		if exists
+          log "Uninstalling: #{package_name}"
+          log `#{adb_command} uninstall #{package_name}`
 
-        succeeded = !application_installed?(package_name)
+          succeeded = !application_installed?(package_name)
 
-        unless succeeded
-          ::Cucumber.wants_to_quit = true
-          raise "#{package_name} was not uninstalled. Aborting!"
-        end
+          unless succeeded
+            ::Cucumber.wants_to_quit = true
+            raise "#{package_name} was not uninstalled. Aborting!"
+          end
+		else
+		  log "Package not installed: #{package_name}. Skipping uninstall."
+		end
       end
 
       def application_installed?(package_name)
