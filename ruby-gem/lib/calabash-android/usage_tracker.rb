@@ -189,4 +189,3 @@ module Calabash
     end
   end
 end
-

@@ -2,7 +2,7 @@ Given(/^an editable view with text in it$/) do
   goto_native_editable_view
 
   results = query(native_editable_query, setText: "Some sample text")
-  
+
   if results.length == 0
     raise "View for query '#{native_editable_query}' not found"
   end

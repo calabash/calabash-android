@@ -171,4 +171,3 @@ describe Calabash::Android::UsageTracker do
     expect(tracker.send(:used_cucumber?)).to be == true # Calabash-Android always respond true
   end
 end
-

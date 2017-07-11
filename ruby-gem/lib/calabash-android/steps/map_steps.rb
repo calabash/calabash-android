@@ -48,7 +48,7 @@ Then /^the map should be centred at (-?\d+\.\d+), (-?\d+\.\d+)$/ do | lat, lon |
   lat = lat.to_f
   lon = lon.to_f
   tol = 0.00001
-  if( (lat - actual_lat).abs > tol || (lon - actual_lon).abs > tol ) 
+  if( (lat - actual_lat).abs > tol || (lon - actual_lon).abs > tol )
     raise StandardError.new( "The map should have been centred on: #{lat},#{lon} but was actually centred on #{bonus_info.inspect}" )
   end
 end

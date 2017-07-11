@@ -10,4 +10,3 @@ bundle update
 gem build calabash-android.gemspec
 
 bundle exec rake unit
-

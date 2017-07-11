@@ -14,4 +14,3 @@ describe Calabash::Android::DotDir do
     expect(File.exist?(path)).to be_truthy
   end
 end
-

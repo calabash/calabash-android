@@ -255,4 +255,3 @@ describe Calabash::Android::Preferences do
      store.send(:log_defaults_reset)
   end
 end
-

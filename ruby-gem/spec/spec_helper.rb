@@ -105,4 +105,3 @@ RSpec.configure do |config|
   # stub_env('key', 'value')
   config.include StubEnv::Helpers
 end
-

@@ -170,4 +170,3 @@ describe Calabash::Android::Logging do
     end
   end
 end
-

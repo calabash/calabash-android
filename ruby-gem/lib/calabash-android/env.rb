@@ -112,7 +112,7 @@ class Env
   def self.java_executable
     is_windows? ? 'java.exe' : 'java'
   end
-  
+
   def self.keytool_executable
     is_windows? ? 'keytool.exe' : 'keytool'
   end
@@ -145,7 +145,7 @@ class Env
 
   def self.adb_path
     %Q("#{android_home_path}/platform-tools/#{adb_executable}")
-  end  
+  end
 
   def self.path_if_android_home(path)
     path if path && File.exists?(File.join(path, 'platform-tools', adb_executable))
@@ -184,4 +184,3 @@ class Env
   end
 
 end
-
