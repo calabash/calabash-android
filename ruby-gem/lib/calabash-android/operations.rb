@@ -795,10 +795,13 @@ module Calabash module Android
 
         start_application(options[:intent])
 
-        # What is Calabash tracking? Read this post for information
-        # No private data (like ip addresses) are collected
+        # What was Calabash tracking? Read this post for information
+        # No private data (like ip addresses) were collected
         # https://github.com/calabash/calabash-android/issues/655
-        Calabash::Android::UsageTracker.new.post_usage_async
+        #
+        # Removing usage tracking to avoid problems with EU General Data
+        # Protection Regulation which takes effect in 2018.
+        # Calabash::Android::UsageTracker.new.post_usage_async
       end
 
       def start_application(intent)
