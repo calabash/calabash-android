@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
        "lib/calabash-android/lib/AndroidManifest.xml"]
   end.call
 
-  s.add_dependency( "cucumber" )
+  s.add_dependency( "cucumber", "~> 2.0")
   s.add_dependency( "json", '~> 1.8' )
   s.add_dependency( "slowhandcuke", '~> 0.0.3')
   s.add_dependency( "rubyzip", "~> 1.1" )
