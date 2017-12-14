@@ -1,10 +1,21 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require "calabash-android/version"
 
 Gem::Specification.new do |s|
   s.name        = "calabash-android"
-  s.version     = Calabash::Android::VERSION
+  s.version     = begin
+    file = "#{File.expand_path(File.join(File.dirname(__FILE__),
+                                      "lib", "calabash-android", "version.rb"))}"
+    m = Module.new
+    m.module_eval IO.read(file).force_encoding("utf-8")
+    version = m::Calabash::Android::VERSION
+    unless /(\d+\.\d+\.\d+(\.pre\d+)?)/.match(version)
+      raise %Q{
+Could not parse constant Calabash::Android::VERSION: '#{version}'
+into a valid version, e.g. 1.2.3 or 1.2.3.pre10
+}
+    end
+    version
+  end
   s.platform    = Gem::Platform::RUBY
   s.license     = "EPL-1.0"
   s.authors     = ["Jonas Maturana Larsen"]
