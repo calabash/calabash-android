@@ -1,3 +1,18 @@
+### 0.9.2
+
+The test server bundled with this gem has the following properties:
+
+```shell
+targetSdkLevel="22"
+ minSdkVersion="8"
+```
+
+* Gem: do not munge the load path #850
+
+#### Server Changes
+
+* Align targetSdkVersion in manifests and build script [#50](https://github.com/calabash/calabash-android-server/pull/50)
+
 ### 0.9.1
 
 * Gem: pin cucumber to < 3.0 #847
