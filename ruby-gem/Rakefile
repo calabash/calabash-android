@@ -9,37 +9,25 @@ class Env
 end
 
 def build
-  test_server_template_dir = find_server_repo_or_raise
+  test_server_dir = find_server_repo_or_raise
 
-  Dir.mktmpdir do |workspace_dir|
-    @test_server_dir = File.join(workspace_dir, 'calabash-android-server', 'server')
-    FileUtils.cp_r(test_server_template_dir, workspace_dir)
+  Dir.chdir(test_server_dir) do
+    system("bin/build.sh")
+    STDOUT.sync = true
 
-    args = [
-      Env.ant_path,
-      "clean",
-      "package",
-      "-debug",
-      "-Dtools.dir=\"#{Env.tools_dir}\"",
-      "-Dandroid.api.level=19",
-      "-Dversion=#{Calabash::Android::VERSION}",
-    ]
-    Dir.chdir(@test_server_dir) do
-      STDOUT.sync = true
-      IO.popen(args.join(" ")) do |io|
-        io.each { |s| print s }
-      end
-      if $?.exitstatus != 0
-        puts "Could not build the test server. Please see the output above."
-        exit $?.exitstatus
-      end
+    if $?.exitstatus != 0
+      puts "Could not build the test server. Please see the output above."
+      exit $?.exitstatus
     end
-
-    FileUtils.mkdir_p "test_servers" unless File.exist? "test_servers"
-
-    FileUtils.cp(File.join(@test_server_dir, "bin", "Test_unsigned.apk"), File.join(File.dirname(__FILE__), 'lib/calabash-android/lib/TestServer.apk'))
-    FileUtils.cp(File.join(@test_server_dir, "AndroidManifest.xml"), File.join(File.dirname(__FILE__), 'lib/calabash-android/lib/AndroidManifest.xml'))
   end
+
+  FileUtils.rm_rf "test_servers"
+  FileUtils.mkdir_p "test_servers"
+
+  FileUtils.cp(File.join(test_server_dir, "server", "bin", "Test_unsigned.apk"),
+               File.join(File.dirname(__FILE__),  'lib/calabash-android/lib/TestServer.apk'))
+  FileUtils.cp(File.join(test_server_dir, "server", "AndroidManifest.xml"),
+               File.join(File.dirname(__FILE__), 'lib/calabash-android/lib/AndroidManifest.xml'))
 end
 
 task :build do
