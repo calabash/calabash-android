@@ -50,7 +50,7 @@ into a valid version, e.g. 1.2.3 or 1.2.3.pre10
   s.add_dependency( 'luffa' )
 
   s.add_development_dependency( 'rake', '~> 10.3' )
-  s.add_development_dependency( 'yard', '~> 0.8' )
+  s.add_development_dependency( 'yard', '>= 0.9.12', '< 1.0' )
   puts RUBY_PLATFORM
   if RUBY_PLATFORM[/darwin/] || RUBY_PLATFORM["linux"]
     s.add_development_dependency( 'redcarpet', '~> 3.1' )
