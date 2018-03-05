@@ -18,8 +18,8 @@ module Calabash
 
       def wait_for(options_or_timeout=DEFAULT_OPTS, &block)
         #note Hash is preferred, number acceptable for backwards compat
-        timeout = options_or_timeout || default_timeout
         default_timeout = DEFAULT_OPTS[:timeout]
+        timeout = options_or_timeout || default_timeout
         post_timeout = DEFAULT_OPTS[:post_timeout]
         retry_frequency = DEFAULT_OPTS[:retry_frequency]
         timeout_message = DEFAULT_OPTS[:timeout_message]

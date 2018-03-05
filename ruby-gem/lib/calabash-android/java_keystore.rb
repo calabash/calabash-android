@@ -38,7 +38,7 @@ class JavaKeystore
     @password = password
     log "Key store data:"
     log keystore_data
-    @fingerprint = extract_md5_fingerprint(keystore_data)
+    @fingerprint = extract_sha1_fingerprint(keystore_data)
     @signature_algorithm_name = extract_signature_algorithm_name(keystore_data)
     log "Fingerprint: #{fingerprint}"
     log "Signature algorithm name: #{signature_algorithm_name}"

@@ -1,10 +1,21 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require "calabash-android/version"
 
 Gem::Specification.new do |s|
   s.name        = "calabash-android"
-  s.version     = Calabash::Android::VERSION
+  s.version     = begin
+    file = "#{File.expand_path(File.join(File.dirname(__FILE__),
+                                      "lib", "calabash-android", "version.rb"))}"
+    m = Module.new
+    m.module_eval IO.read(file).force_encoding("utf-8")
+    version = m::Calabash::Android::VERSION
+    unless /(\d+\.\d+\.\d+(\.pre\d+)?)/.match(version)
+      raise %Q{
+Could not parse constant Calabash::Android::VERSION: '#{version}'
+into a valid version, e.g. 1.2.3 or 1.2.3.pre10
+}
+    end
+    version
+  end
   s.platform    = Gem::Platform::RUBY
   s.license     = "EPL-1.0"
   s.authors     = ["Jonas Maturana Larsen"]
@@ -29,17 +40,17 @@ Gem::Specification.new do |s|
        "lib/calabash-android/lib/AndroidManifest.xml"]
   end.call
 
-  s.add_dependency( "cucumber" )
-  s.add_dependency( "json", '>= 1.8' )
+  s.add_dependency( "cucumber", "~> 2.0")
+  s.add_dependency( "json", '~> 1.8' )
   s.add_dependency( "slowhandcuke", '~> 0.0.3')
-  s.add_dependency( "rubyzip", "~> 1.1" )
+  s.add_dependency( "rubyzip", ">= 1.2.1" )
   s.add_dependency( "awesome_print", '~> 1.2')
   s.add_dependency( 'httpclient', '>= 2.7.1', '< 3.0')
   s.add_dependency( 'escape', '~> 0.0.4')
   s.add_dependency( 'luffa' )
 
   s.add_development_dependency( 'rake', '~> 10.3' )
-  s.add_development_dependency( 'yard', '~> 0.8' )
+  s.add_development_dependency( 'yard', '>= 0.9.12', '< 1.0' )
   puts RUBY_PLATFORM
   if RUBY_PLATFORM[/darwin/] || RUBY_PLATFORM["linux"]
     s.add_development_dependency( 'redcarpet', '~> 3.1' )

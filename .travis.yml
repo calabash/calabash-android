@@ -7,18 +7,8 @@ os:
   - linux
   - osx
 
-# rvm ships with a version of gem and bundler that is too old.
-before_install:
-  - gem update --system
-  - gem --version
-  - gem uninstall -Vax --force --no-abort-on-dependent bundler
-  - gem install bundler --version 1.12.5
-  - bundler --version
-
-# rvm does not support any ruby 2.3 as of Jun 11 2016
 rvm:
-  - 2.1.5
-  - 2.2.5
+  - 2.3.1
 
 env:
   - CI_NO_ANDROID_RUNTIME=1
@@ -29,9 +19,7 @@ script:
 notifications:
   email:
     recipients:
-      - joshua.moody@xamarin.com
-      - chris.fuentes@xamarin.com
-      - tobias.roikjer@xamarin.com
+      - josmoo@microsoft.com
     on_success: change
     on_failure: always
   slack:

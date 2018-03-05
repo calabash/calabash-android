@@ -99,6 +99,8 @@ module Calabash
       def kill_existing_monkey_processes
         kill_monkey_processes_on_host
         kill_monkey_processes_on_device
+        @@monkey_port = nil
+        @@monkey_pid = nil
       end
 
       def monkey_tap(x, y, should_start_monkey=true)

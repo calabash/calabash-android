@@ -26,6 +26,7 @@ require 'cucumber'
 require 'date'
 require 'time'
 require 'shellwords'
+require 'digest'
 
 Calabash::Android::Dependencies.setup
 
@@ -54,7 +55,7 @@ module Calabash module Android
     end
 
     def log(message)
-      $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}" if (ARGV.include? "-v" or ARGV.include? "--verbose")
+      $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}" if (ARGV.include? "-v" or ARGV.include? "--verbose" or ENV["DEBUG"] == "1")
     end
 
     def macro(txt)
@@ -104,6 +105,14 @@ module Calabash module Android
 
     def reinstall_apps
       default_device.reinstall_apps
+    end
+
+    # Ensures that the application and the test-server are installed.
+    #
+    # If the application has already been installed, it does nothing.
+    # If the test-server has already been installed, it does nothing.
+    def ensure_app_installed
+      default_device.ensure_apps_installed
     end
 
     def reinstall_test_server
@@ -337,6 +346,24 @@ module Calabash module Android
         install_app(@test_server_path)
       end
 
+      @@installed_apps ||= {}
+
+      def ensure_apps_installed
+        apps = [@app_path, @test_server_path]
+
+        apps.each do |app|
+          package = package_name(app)
+          md5 = Digest::MD5.file(File.expand_path(app))
+
+          if !application_installed?(package) || (!@@installed_apps.keys.include?(package) || @@installed_apps[package] != md5)
+            log "MD5 checksum for app '#{app}' (#{package}): #{md5}"
+            uninstall_app(package)
+            install_app(app)
+            @@installed_apps[package] = md5
+          end
+        end
+      end
+
       def install_app(app_path)
         if _sdk_version >= 23
           cmd = "#{adb_command} install -g \"#{app_path}\""
@@ -367,7 +394,7 @@ module Calabash module Android
 
       def update_app(app_path)
         if _sdk_version >= 23
-          cmd = "#{adb_command} install -rg \"#{app_path}\""
+          cmd = "#{adb_command} install -r -g \"#{app_path}\""
         else
           cmd = "#{adb_command} install -r \"#{app_path}\""
         end
@@ -385,15 +412,25 @@ module Calabash module Android
       end
 
       def uninstall_app(package_name)
-        log "Uninstalling: #{package_name}"
-        log `#{adb_command} uninstall #{package_name}`
+        exists = application_installed?(package_name)
 
-        succeeded = !(`#{adb_command} shell pm list packages`.lines.map{|line| line.chomp.sub("package:", "")}.include?(package_name))
+        if exists
+          log "Uninstalling: #{package_name}"
+          log `#{adb_command} uninstall #{package_name}`
 
-        unless succeeded
-          ::Cucumber.wants_to_quit = true
-          raise "#{package_name} was not uninstalled. Aborting!"
+          succeeded = !application_installed?(package_name)
+
+          unless succeeded
+            ::Cucumber.wants_to_quit = true
+            raise "#{package_name} was not uninstalled. Aborting!"
+          end
+        else
+          log "Package not installed: #{package_name}. Skipping uninstall."
         end
+      end
+
+      def application_installed?(package_name)
+        (`#{adb_command} shell pm list packages`.lines.map{|line| line.chomp.sub("package:", "")}.include?(package_name))
       end
 
       def app_running?
@@ -629,6 +666,9 @@ module Calabash module Android
       end
 
       def connected_devices
+        # Run empty ADB command to remove eventual first-run messages
+        `"#{Calabash::Android::Dependencies.adb_path}" devices`
+
         lines = `"#{Calabash::Android::Dependencies.adb_path}" devices`.split("\n")
         start_index = lines.index{ |x| x =~ /List of devices attached/ } + 1
         lines[start_index..-1].collect { |l| l.split("\t").first }
@@ -646,9 +686,21 @@ module Calabash module Android
       end
 
       def clear_app_data
-        collect_coverage_data
-        cmd = "#{adb_command} shell am instrument #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.ClearAppData"
+        unless application_installed?(package_name(@app_path))
+          raise "Cannot clear data, application #{package_name(@app_path)} is not installed"
+        end
+
+        unless application_installed?(package_name(@test_server_path))
+          raise "Cannot clear data, test-server #{package_name(@test_server_path)} is not installed"
+        end
+
+        cmd = "#{adb_command} shell am instrument #{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.ClearAppData2"
         raise "Could not clear data" unless system(cmd)
+
+        # Wait for the cleanup activity to finish. This is a hard sleep for now
+        sleep 2
+
+        true
       end
 
       def pull(remote, local)
@@ -697,8 +749,8 @@ module Calabash module Android
           raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
         end
 
-        Calabash::Android::Retry.retry :tries => 100, :interval => 0.1 do
-          raise "App did not start" unless app_running?
+        Calabash::Android::Retry.retry :tries => 600, :interval => 0.1 do
+          raise "App did not start see adb logcat for details" unless app_running?
         end
 
         begin
@@ -753,10 +805,13 @@ module Calabash module Android
 
         start_application(options[:intent])
 
-        # What is Calabash tracking? Read this post for information
-        # No private data (like ip addresses) are collected
+        # What was Calabash tracking? Read this post for information
+        # No private data (like ip addresses) were collected
         # https://github.com/calabash/calabash-android/issues/655
-        Calabash::Android::UsageTracker.new.post_usage_async
+        #
+        # Removing usage tracking to avoid problems with EU General Data
+        # Protection Regulation which takes effect in 2018.
+        # Calabash::Android::UsageTracker.new.post_usage_async
       end
 
       def start_application(intent)
@@ -1109,10 +1164,6 @@ module Calabash module Android
     end
 
     def cell_swipe(options={})
-      ni
-    end
-
-    def done
       ni
     end
 
