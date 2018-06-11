@@ -2,7 +2,7 @@ class JavaKeystore
   attr_reader :errors, :location, :keystore_alias, :password, :fingerprint
   attr_reader :signature_algorithm_name
 
-  def initialize(location, keystore_alias, password)
+  def initialize(location, keystore_alias, password, key_password = nil)
     raise "No such keystore file '#{location}'" unless File.exists?(File.expand_path(location))
     log "Reading keystore data from keystore file '#{File.expand_path(location)}'"
 
@@ -36,6 +36,7 @@ class JavaKeystore
     @location = location
     @keystore_alias = keystore_alias
     @password = password
+    @key_password = key_password
     log "Key store data:"
     log keystore_data
     @fingerprint = extract_sha1_fingerprint(keystore_data)
@@ -56,7 +57,26 @@ class JavaKeystore
     log "Signing using the signature algorithm: '#{signing_algorithm}'"
     log "Signing using the digest algorithm: '#{digest_algorithm}'"
 
-    unless system_with_stdout_on_success(Calabash::Android::Dependencies.jarsigner_path, '-sigfile', 'CERT', '-sigalg', signing_algorithm, '-digestalg', digest_algorithm, '-signedjar', dest_path, '-storepass', password, '-keystore',  location, apk_path, keystore_alias)
+    cmd_args = {
+      '-sigfile' => 'CERT',
+      '-sigalg' => signing_algorithm,
+      '-digestalg' => digest_algorithm,
+      '-signedjar' => dest_path,
+      '-storepass' => password,
+      '-keystore' =>  location,
+    }
+
+    unless @key_password.nil?
+      cmd_args['-keypass'] = @key_password
+    end
+
+    cmd_args = cmd_args.flatten
+    cmd_args << apk_path
+    cmd_args << keystore_alias
+
+    result = system_with_stdout_on_success(Calabash::Android::Dependencies.jarsigner_path, *cmd_args)
+
+    unless result
       raise "Could not sign app: #{apk_path}"
     end
   end
@@ -92,7 +112,7 @@ class JavaKeystore
   end
 
   def self.get_keystores
-    if keystore = keystore_from_settings 
+    if keystore = keystore_from_settings
       [ keystore ]
     else
       [
@@ -113,7 +133,7 @@ class JavaKeystore
       fail_if_key_missing(keystore, "keystore_alias")
       keystore["keystore_location"] = File.expand_path(keystore["keystore_location"])
       log("Keystore location specified in #{File.exist?(".calabash_settings") ? ".calabash_settings" : "calabash_settings"}.")
-      JavaKeystore.new(keystore["keystore_location"], keystore["keystore_alias"], keystore["keystore_password"])
+      JavaKeystore.new(keystore["keystore_location"], keystore["keystore_alias"], keystore["keystore_password"], keystore['key_password'])
   end
 
   def self.fail_if_key_missing(map, key)
