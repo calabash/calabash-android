@@ -140,6 +140,10 @@ module Calabash module Android
       default_device.clear_app_data
     end
 
+    def collect_coverage_data
+      default_device.collect_coverage_data
+    end
+
     def pull(remote, local)
       default_device.pull(remote, local)
     end
@@ -362,9 +366,9 @@ module Calabash module Android
 
       def install_app(app_path)
         if _sdk_version >= 23
-          cmd = "#{adb_command} install -g \"#{app_path}\""
+          cmd = "#{adb_command} install -g -t \"#{app_path}\""
         else
-          cmd = "#{adb_command} install \"#{app_path}\""
+          cmd = "#{adb_command} install -t \"#{app_path}\""
         end
 
         log "Installing: #{app_path}"
@@ -409,7 +413,7 @@ module Calabash module Android
 
       def uninstall_app(package_name)
         exists = application_installed?(package_name)
-        
+
         if exists
           log "Uninstalling: #{package_name}"
           log `#{adb_command} uninstall #{package_name}`
@@ -733,11 +737,17 @@ module Calabash module Android
 
         cmd_arr << "#{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
 
-        cmd = cmd_arr.join(" ")
+        if options[:with_uiautomator]
+          cmd_arr.insert(2, "-w")
+          shutdown_test_server
+          @adb_shell_pid = Process.spawn(cmd_arr.join(" "), :in => '/dev/null') rescue "Could not execute command to start test server with uiautomator"
+        else
+          cmd = cmd_arr.join(" ")
 
-        log "Starting test server using:"
-        log cmd
-        raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
+          log "Starting test server using:"
+          log cmd
+          raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
+        end
 
         Calabash::Android::Retry.retry :tries => 600, :interval => 0.1 do
           raise "App did not start see adb logcat for details" unless app_running?
@@ -818,8 +828,34 @@ module Calabash module Android
         result['result']
       end
 
+      def collect_coverage_data
+        coverage_dir = ENV['COVERAGE_DIR']
+        return unless coverage_dir && !coverage_dir.empty?
+        begin
+          res = http('/coverage')
+          if res && !res.empty?
+            i = 0
+            i += 1 while File.exist?((path = coverage_filename(coverage_dir, i)))
+            File.open(path, 'wb') { |f| f.write res }
+          end
+        rescue StandardError => e
+          # Not sure how important failure is here: some folks collect coverage routinely,
+          # but only check it periodically.
+          log("Failed to retrieve coverage: #{e}")
+        end
+      end
+
+      def coverage_filename(coverage_dir, i)
+        File.join(coverage_dir, "coverage.#{serial}.#{i}.ec".gsub(/[^\w.-]/, '_'))
+      end
+
       def shutdown_test_server
         begin
+          collect_coverage_data
+          unless @adb_shell_pid.nil?
+            Process.kill("HUP",@adb_shell_pid)
+            @adb_shell_pid = nil
+          end
           http("/kill")
           Timeout::timeout(3) do
             sleep 0.3 while app_running?
