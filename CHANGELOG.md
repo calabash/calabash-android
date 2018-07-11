@@ -1,3 +1,11 @@
+### 0.9.3
+
+Added support for Android P (api 28) devices.
+
+* Changed build process for server: added gradle build instead of ant.
+* Removed the use of blacklisted api for latest android versions.
+* Clean-up android server from external libs.
+
 ### 0.9.2
 
 The test server bundled with this gem has the following properties:

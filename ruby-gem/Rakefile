@@ -9,24 +9,26 @@ class Env
 end
 
 def build
-  test_server_dir = find_server_repo_or_raise
+  test_server_dir = File.join(find_server_repo_or_raise, "server")
 
   Dir.chdir(test_server_dir) do
-    system("bin/build.sh")
+    system('BUILDOUTPUT="$(./gradlew clean assembleAndroidTest -q)"')
     STDOUT.sync = true
 
     if $?.exitstatus != 0
       puts "Could not build the test server. Please see the output above."
       exit $?.exitstatus
+    else
+      puts "Calabash Android Server was built successfully."
     end
   end
 
   FileUtils.rm_rf "test_servers"
   FileUtils.mkdir_p "test_servers"
 
-  FileUtils.cp(File.join(test_server_dir, "server", "bin", "Test_unsigned.apk"),
+  FileUtils.cp(File.join(test_server_dir, "app", "build", "outputs", "apk", "androidTest", "debug", "TestServer.apk"),
                File.join(File.dirname(__FILE__),  'lib/calabash-android/lib/TestServer.apk'))
-  FileUtils.cp(File.join(test_server_dir, "server", "AndroidManifest.xml"),
+  FileUtils.cp(File.join(test_server_dir, "AndroidManifest.xml"),
                File.join(File.dirname(__FILE__), 'lib/calabash-android/lib/AndroidManifest.xml'))
 end
 

@@ -27,14 +27,7 @@ Calabash Android requires ruby >= 2.0 (latest stable release is preferred).
 #### Ruby on MacOS
 
 On MacOS, we recommend using a managed Ruby like
-[rbenv](https://github.com/sstephenson/rbenv) or [rvm](https://rvm.io/)).  If
-you are just getting started or don't want to commit to a managed Ruby, you
-should install and use the [Calabash Sandbox](https://github.com/calabash/install).
-
-```
-# Installs the Calabash Sandbox
-$ curl -sSL https://raw.githubusercontent.com/calabash/install/master/install-osx.sh | bash
-```
+[rbenv](https://github.com/sstephenson/rbenv) or [rvm](https://rvm.io/)).
 
 Please do **not** install gems with `sudo`
 
