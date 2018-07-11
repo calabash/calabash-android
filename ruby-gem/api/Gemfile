@@ -1,8 +1,7 @@
 source 'https://rubygems.org'
 
 
-gem 'json', '1.8.2'
-gem 'xamarin-test-cloud', '2.0.0.pre5'
+gem 'json', '~> 1.8'
+gem 'xamarin-test-cloud', '~> 2.0'
 gem 'cucumber', '~> 2.0.0'
-#gem 'calabash-android', '<version>'
 gem 'calabash-android', path: '../'
