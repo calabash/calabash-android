@@ -1,3 +1,7 @@
+### 0.9.4
+
+* Updated screenshot tool which compiled with java 8. #875
+
 ### 0.9.3
 
 Added support for Android P (api 28) devices.
