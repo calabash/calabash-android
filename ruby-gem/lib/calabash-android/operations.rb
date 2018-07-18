@@ -763,8 +763,6 @@ module Calabash module Android
           raise msg
         end
 
-        log "Checking client-server version match..."
-
         begin
           server_version = server_version()
         rescue
@@ -777,19 +775,33 @@ module Calabash module Android
 
         client_version = client_version()
 
-        unless server_version == client_version
-          msg = ["Calabash Client and Test-server version mismatch."]
-          msg << "Client version #{client_version}"
-          msg << "Test-server version #{server_version}"
-          msg << "Expected Test-server version #{client_version}"
-          msg << "\n\nSolution:\n\n"
-          msg << "Run 'reinstall_test_server' to make sure you have the correct version"
-          msg_s = msg.join("\n")
-          log(msg_s)
-          raise msg_s
-        end
+        if Calabash::Android::Environment.skip_version_check?
+          log(%Q[
+     Client version #{client_version}
+Test-server version #{server_version}
 
-        log("Client and server versions match (client: #{client_version}, server: #{server_version}). Proceeding...")
+])
+          $stdout.flush
+        else
+          log "Checking client-server version match..."
+
+          if server_version != client_version
+             raise(%Q[
+Calabash Client and Test-server version mismatch.
+
+              Client version #{client_version}
+         Test-server version #{server_version}
+Expected Test-server version #{client_version}
+
+Solution:
+
+Run 'reinstall_test_server' to make sure you have the correct version
+
+])
+          else
+            log("Client and server versions match (client: #{client_version}, server: #{server_version}). Proceeding...")
+          end
+        end
 
         block.call if block
 

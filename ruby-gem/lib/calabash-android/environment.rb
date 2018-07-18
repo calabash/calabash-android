@@ -39,6 +39,12 @@ module Calabash
       end
 
       # @!visibility private
+      # Returns true if the server / client version check can be skipped
+      def self.skip_version_check?
+        ENV["SKIP_VERSION_CHECK"] == "1"
+      end
+
+      # @!visibility private
       # Returns true if debugging is enabled.
       def self.debug?
         ENV['DEBUG'] == '1' ||
