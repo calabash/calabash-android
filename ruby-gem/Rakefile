@@ -14,9 +14,13 @@ def build
   if test_server_version != Calabash::Android::VERSION
     raise %Q{\033[31m
 Expected server version:
+
     #{test_server_version}
+
 to match gem version:
+
     #{Calabash::Android::VERSION}\033[0m
+
    }
   end
 
@@ -69,7 +73,7 @@ For full instuctions see: https://github.com/calabash/calabash-android/wiki/Buil
 end
 
 def test_server_version
-  test_server_version_path =  File.join(find_server_repo_or_raise, "version")
+  test_server_version_path = File.join(find_server_repo_or_raise, "version")
   File.read(test_server_version_path).chomp
 end
 
