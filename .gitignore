@@ -8,8 +8,6 @@ instrumentation_backend/assets/foo.bar
 *.*~
 **/.DS_STORE
 ruby-gem/pkg
-ruby-gem/lib/calabash-android/lib/TestServer.apk
-ruby-gem/lib/calabash-android/lib/AndroidManifest.xml
 ruby-gem/test-server/out
 calabash-android-*.gem
 .idea
