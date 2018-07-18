@@ -1,4 +1,5 @@
-notification :growl, sticky: false, priority: 0
+# $ brew install terminal-notifier
+notification :terminal_notifier, sticky: false, priority: 0 if `uname` =~ /Darwin/
 logger level: :info
 clearing :on
 
