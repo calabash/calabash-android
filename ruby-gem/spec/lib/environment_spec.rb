@@ -47,6 +47,20 @@ describe Calabash::Android::Environment do
     end
   end
 
+  describe ".skip_version_check" do
+    it "returns true if SKIP_VERSION_CHECK is '1'" do
+      stub_env("SKIP_VERSION_CHECK", "1")
+      expect(Calabash::Android::Environment.skip_version_check?).to be true
+    end
+
+    it "returns false if SKIP_VERSION_CHECK is != '1'" do
+      expect(Calabash::Android::Environment.skip_version_check?).to be false
+
+      stub_env("SKIP_VERSION_CHECK", "0")
+      expect(Calabash::Android::Environment.skip_version_check?).to be false
+    end
+  end
+
   describe '.xtc?' do
     it "returns true when XAMARIN_TEST_CLOUD == '1'" do
       stub_env('XAMARIN_TEST_CLOUD', '1')
