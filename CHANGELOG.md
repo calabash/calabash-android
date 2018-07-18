@@ -1,3 +1,9 @@
+### 0.9.5
+
+Align the gem and server version to 0.9.5
+
+* Add TestServer.apk and AndroidManifest to git index
+
 ### 0.9.4
 
 * Updated screenshot tool which compiled with java 8. #875
