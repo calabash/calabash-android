@@ -70,8 +70,8 @@ For full instuctions see: https://github.com/calabash/calabash-android/wiki/Buil
   calabash_server_dir
 end
 
-Bundler::GemHelper.install_tasks
 
+Bundler::GemHelper.install_tasks
 
 begin
   require "rspec/core/rake_task"
