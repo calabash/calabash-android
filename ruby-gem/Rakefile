@@ -58,7 +58,7 @@ to match gem version:
       def self.build_test_apk
         test_server_dir = File.join(self.find_server_repo_or_raise, "server")
         Dir.chdir(test_server_dir) do
-          system('BUILDOUTPUT="$(./gradlew clean assembleAndroidTest -q)"')
+          system("./gradlew clean assembleAndroidTest")
           STDOUT.sync = true
 
           if $?.exitstatus != 0
