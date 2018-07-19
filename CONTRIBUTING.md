@@ -30,15 +30,21 @@ license details.
 ```
 $ cd path/to/calabash-android-server
 $ git fetch --tags
-$ git co tag/1.2.3 1.2.3
+$ git checkout tag/1.2.3 1.2.3
 
 $ cd path/calabash-android/ruby-gem
+$ git checkout -b release/1.2.3
 
 1. Bump the ruby version in lib/calabash-android/verison.rb
-2. Build the TestServer.apk
-   $ rake build
-3. Release
-   $ rake release
+2. Build the TestServer.apk.
+   $ rake build_server
+3. Update the CHANGELOG.
+4. Check the README for items to update.
+5. Make pull request, get a review, and merge.
+
+$ git checkout master
+$ git pull
+$ rake release
 
 Announce the release on the public channels.
 ```
