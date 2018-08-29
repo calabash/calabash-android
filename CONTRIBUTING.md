@@ -29,10 +29,14 @@ license details.
 
 ```
 $ cd path/to/calabash-android-server
+$ git checkout develop
+$ git pull
 $ git fetch --tags
-$ git checkout tag/1.2.3 1.2.3
+$ git checkout -b tag/1.2.3 1.2.3
 
 $ cd path/calabash-android/ruby-gem
+$ git checkout master
+$ git pull
 $ git checkout -b release/1.2.3
 
 1. Bump the ruby version in lib/calabash-android/verison.rb
