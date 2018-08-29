@@ -1,3 +1,8 @@
+### 0.9.6
+
+* Updates the way the gem is released
+* Includes the latest TestServer.apk 0.9.6
+
 ### 0.9.5
 
 Align the gem and server version to 0.9.5
