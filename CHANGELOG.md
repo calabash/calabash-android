@@ -1,3 +1,7 @@
+### 0.9.6
+
+* Update the way the gem is released
+
 ### 0.9.5
 
 Align the gem and server version to 0.9.5
