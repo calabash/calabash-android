@@ -1,58 +1,15 @@
 require 'bundler'
-load 'lib/calabash-android/env.rb'
 
-# Monkey patch 'log' for env
-class Env
-  def self.log(message, error = false)
-    $stdout.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} - #{message}"
-  end
-end
+module Calabash
+  module Android
+    module Rake
+      def self.find_server_repo_or_raise
+        calabash_server_dir = ENV['CALABASH_SERVER_PATH'] ||
+          File.join(File.dirname(__FILE__), '..', '..', 'calabash-android-server')
 
-def build
-  test_server_dir = File.join(find_server_repo_or_raise, "server")
-
-  if test_server_version != Calabash::Android::VERSION
-    raise %Q{
-Expected server version:
-
-    #{test_server_version}
-
-to match gem version:
-
-    #{Calabash::Android::VERSION}
-
-   }
-  end
-
-  Dir.chdir(test_server_dir) do
-    system('BUILDOUTPUT="$(./gradlew clean assembleAndroidTest -q)"')
-    STDOUT.sync = true
-
-    if $?.exitstatus != 0
-      puts "Could not build the test server. Please see the output above."
-      exit $?.exitstatus
-    else
-      puts "Calabash Android Server was built successfully."
-    end
-  end
-
-  FileUtils.rm_rf "test_servers"
-  FileUtils.mkdir_p "test_servers"
-
-  FileUtils.cp(File.join(test_server_dir, "app", "build", "outputs", "apk", "androidTest", "debug", "TestServer.apk"),
-               File.join(File.dirname(__FILE__),  'lib/calabash-android/lib/TestServer.apk'))
-  FileUtils.cp(File.join(test_server_dir, "AndroidManifest.xml"),
-               File.join(File.dirname(__FILE__), 'lib/calabash-android/lib/AndroidManifest.xml'))
-end
-
-task :build do
-  build
-end
-
-def find_server_repo_or_raise
-  calabash_server_dir = ENV['CALABASH_SERVER_PATH'] || File.join(File.dirname(__FILE__), '..', '..', 'calabash-android-server')
-  unless File.exist?(calabash_server_dir) && File.exists?(File.join(calabash_server_dir, "server", "calabash-js", "src"))
-    raise %Q{
+        unless File.exist?(calabash_server_dir) &&
+            File.exists?(File.join(calabash_server_dir, "server", "calabash-js", "src"))
+          raise %Q[
 Expected to find the calabash-android-server repo at:
 
     #{File.expand_path(calabash_server_dir)}
@@ -67,16 +24,69 @@ $ CALABASH_SERVER_PATH=/path/to/server bundle exec rake build
 
 For full instuctions see: https://github.com/calabash/calabash-android/wiki/Building-calabash-android
 
-    }
+]
+        end
+        calabash_server_dir
+      end
+
+      def self.test_server_version
+        test_server_version_path = File.join(self.find_server_repo_or_raise, "version")
+        File.read(test_server_version_path).chomp
+      end
+
+      def expect_versions_aligned
+        if ENV["SKIP_VERSION_CHECK"] == "1"
+          puts "Skipping gem/server version check"
+        else
+          test_server_dir = File.join(self.find_server_repo_or_raise, "server")
+
+          if test_server_version != Calabash::Android::VERSION
+            raise(%Q[
+Expected server version:
+
+    #{test_server_version}
+
+to match gem version:
+
+    #{Calabash::Android::VERSION}
+
+])
+          end
+        end
+      end
+
+      def self.build_test_apk
+        test_server_dir = File.join(self.find_server_repo_or_raise, "server")
+        Dir.chdir(test_server_dir) do
+          system("./gradlew clean assembleAndroidTest")
+          STDOUT.sync = true
+
+          if $?.exitstatus != 0
+            puts "Could not build the test server. Please see the output above."
+            exit $?.exitstatus
+          else
+            puts "Calabash Android Server was built successfully."
+          end
+        end
+
+        FileUtils.rm_rf "test_servers"
+        FileUtils.mkdir_p "test_servers"
+
+        FileUtils.cp(File.join(test_server_dir, "app", "build", "outputs",
+                               "apk", "androidTest", "debug", "TestServer.apk"),
+                     File.join(File.dirname(__FILE__),
+                               'lib/calabash-android/lib/TestServer.apk'))
+        FileUtils.cp(File.join(test_server_dir, "AndroidManifest.xml"),
+                     File.join(File.dirname(__FILE__),
+                               'lib/calabash-android/lib/AndroidManifest.xml'))
+      end
+    end
   end
-  calabash_server_dir
 end
 
-def test_server_version
-  test_server_version_path = File.join(find_server_repo_or_raise, "version")
-  File.read(test_server_version_path).chomp
+task :build_server do
+  Calabash::Android::Rake.build_test_apk
 end
-
 
 Bundler::GemHelper.install_tasks
 
