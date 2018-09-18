@@ -1,3 +1,7 @@
+### 0.9.7
+
+* Includes the latest TestServer.apk 0.9.7
+
 ### 0.9.6
 
 * Updates the way the gem is released
