@@ -173,7 +173,7 @@ def fingerprint_from_apk(app_path)
 
       Calabash::Utils.with_silent_zip do
         Zip::File.foreach("app.apk") do |z|
-          z.extract if /^META-INF\/\w+.(rsa|dsa)/i =~ z.name
+          z.extract if /^META-INF\/\w+\.(rsa|dsa)$/i =~ z.name
         end
       end
 
