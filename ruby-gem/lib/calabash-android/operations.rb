@@ -362,9 +362,9 @@ module Calabash module Android
 
       def install_app(app_path)
         if _sdk_version >= 23
-          cmd = "#{adb_command} install -g \"#{app_path}\""
+          cmd = "#{adb_command} install -g -t \"#{app_path}\""
         else
-          cmd = "#{adb_command} install \"#{app_path}\""
+          cmd = "#{adb_command} install -t \"#{app_path}\""
         end
 
         log "Installing: #{app_path}"
