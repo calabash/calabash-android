@@ -1,5 +1,4 @@
 require 'rexml/document'
-require 'luffa'
 require 'timeout'
 
 if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
@@ -193,13 +192,13 @@ module Calabash
                 build_tools_directories =
                     build_tools_files.select do |dir|
                         begin
-                            Luffa::Version.new(File.basename(dir))
+                            Calabash::Android::Version.new(File.basename(dir))
                             true
                         rescue ArgumentError
                             false
                         end
                     end.sort do |a, b|
-                        Luffa::Version.compare(Luffa::Version.new(File.basename(a)), Luffa::Version.new(File.basename(b)))
+                        Calabash::Android::Version.compare(Calabash::Android::Version.new(File.basename(a)), Calabash::Android::Version.new(File.basename(b)))
                     end.reverse.map{|dir| File.join('build-tools', File.basename(dir))}
 
                 if build_tools_directories.empty?
