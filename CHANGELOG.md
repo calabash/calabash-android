@@ -1,8 +1,22 @@
+### 0.9.9
+
+Users can update to ruby 2.6 and use whatever version bundler they would
+like.
+
+* gem: remove luffa dependency; add Version class #907
+* Fixed typos in README.md #906
+* Fixing META-INF regex #902
+* Allow test APKs to be installed #865
+
+#### Test Server 0.9.9
+
+* Feature/fix activity monitor race #84
+
 ### 0.9.8
 
 No behavior changes in TestServer.apk.
 
-This release allows Calabash Android to used with json 2.0
+This release allows Calabash Android to be used with json 2.0
 and cucumber 3.0.  This will also allow users to update
 their ruby to 2.5.x.
 
