@@ -1,7 +1,7 @@
 module Calabash
   module Android
-    VERSION = "0.9.8.uia4"
+    VERSION = "0.9.8.uia8"
   end
 end
 
-# Server from Branch uiautomator2#b872ecbc190182d30f59a80ed769018e55bc5fc1
+# Server from Branch uiautomator2#7542be54f3482ee868546832411383b29ee60df0
