@@ -1,0 +1,30 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 24
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'net.java.dev.jna:jna:4.5.1@aar'
+    implementation 'com.android.support:appcompat-v7:24.1.0'
+    implementation 'com.android.support:recyclerview-v7:24.1.0'
+}

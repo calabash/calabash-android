@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">XTC Android Sample</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_scroll">Scroll Activity</string>
+    <string name="title_activity_view_data">View Data</string>
+    <string name="title_activity_spell_check">Spell Check</string>
+    <string name="title_activity_directional_swipe">Directional Swipe</string>
+    <string name="title_activity_views">Views Activity</string>
+
+    <string-array name="coffee_names">
+        <item>Choose</item>
+        <item>Volluto</item>
+        <item>Arpeggio</item>
+        <item>Kazaar</item>
+    </string-array>
+    <string-array name="fruits">
+        <item>Choose</item>
+        <item>Apple</item>
+        <item>Banana</item>
+        <item>Orange</item>
+    </string-array>
+
+    <string name="title_activity_portrait">PortraitActivity</string>
+    <string name="title_activity_reverse_portrait">ReversePortraitActivity</string>
+    <string name="title_activity_landscape">LandscapeActivity</string>
+    <string name="title_activity_reverse_landscape">ReverseLandscapeActivity</string>
+    <string name="title_activity_orientations">OrientationsActivity</string>
+    <string name="title_activity_scollplicated_activty">ScollplicatedActivty</string>
+    <string name="fullscreen">fullscreen</string>
+    <string name="splitscreen">splitscreen</string>
+    <string name="title_activity_multi_scroll">MultiScroll</string>
+    <string name="title_activity_scroll_short">ScrollShortActivity</string>
+    <string name="title_activity_horizontal_scroll">HorizontalScrollActivity</string>
+    <string name="title_activity_list_view_activity">ListViewExample</string>
+    <string name="title_activity_recycle_view_activity">RecycleViewExample</string>
+    <string name="title_activity_textfields">TextfieldsActivity</string>
+    <string name="title_activity_drag_and_drop">DragAndDropActivity</string>
+
+</resources>

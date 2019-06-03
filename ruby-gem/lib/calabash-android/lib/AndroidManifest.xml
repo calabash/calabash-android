@@ -4,7 +4,7 @@
     android:versionCode="4"
     android:versionName="0.4.0">
 
-    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="22" />
+    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="28" />
 
     <application android:label="instrumentation_backend"
       android:largeHeap="true"
