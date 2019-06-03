@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.xamarin.xtcandroidsample.ScollplicatedActivity" >
+    <item android:id="@+id/action_fullscreen"
+        android:title="@string/fullscreen"
+        android:orderInCategory="100"
+        android:icon="@android:drawable/ic_menu_add"
+        app:showAsAction="never" />
+    <item android:id="@+id/action_split"
+        android:title="@string/splitscreen"
+        android:orderInCategory="101"
+        android:icon="@android:drawable/ic_delete"
+        app:showAsAction="never" />
+</menu>

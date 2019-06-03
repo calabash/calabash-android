@@ -23,7 +23,7 @@ into a valid version, e.g. 1.2.3 or 1.2.3.pre10
   s.email       = ["jonas@lesspainful.com"]
   s.homepage    = "http://github.com/calabash"
   s.summary     = %q{Client for calabash-android for automated functional testing on Android}
-  s.description = %q{calabash-android drives tests for native  and hybrid Android apps. }
+  s.description = %q{calabash-android drives tests for native and hybrid Android apps. }
   s.executables   = "calabash-android"
   s.require_paths = ["lib"]
   s.files         = lambda do

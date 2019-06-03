@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Webview test project</title>
+    <script>
+			window.onload = function() {
+				var form = document.getElementById('inputForm');
+
+				form.onsubmit = function(e) {
+					try
+					{
+						var input = document.getElementById('inputText');
+						var result = document.getElementById('result');
+						var content = input.value;
+
+						result.innerHTML = content;
+					}
+					finally
+					{
+						return false;
+					}
+				};
+			}
+		</script>
+    <style>
+        body	{
+        background-color: #f4f4f4;
+        }
+
+        div#content	{
+        width: 100%;
+        }
+
+        label	{
+        font-weight: bold;
+        color: #333;
+        }
+
+        input	{
+        margin-top: 10px;
+        margin-bottom: 25px;
+        margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="content">
+    <div>
+        <form action="" id="inputForm">
+            <label for="inputText">Input some text:</label><br />
+            <input type="text" size="20" id="inputText" />
+            <input type="submit" value="Send" id="inputButton" />
+        </form>
+    </div>
+    <div>
+        <span id="result">&lt;RESULT&gt;</span>
+    </div>
+</div>
+</body>
+</html>

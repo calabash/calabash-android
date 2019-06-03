@@ -1,0 +1,256 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity">
+    <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical">
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Web View"
+                android:id="@+id/buttonGotoWebView"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="onButtonClick"/>
+
+            <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Frames Web View"
+                    android:id="@+id/buttonGotoFramesWebView"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:onClick="onButtonClick"/>
+
+            <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Date Picker"
+                    android:id="@+id/buttonGotoDatePicker"
+                    android:layout_below="@+id/buttonGotoWebView"
+                    android:layout_alignLeft="@+id/buttonGotoWebView"
+                    android:onClick="onButtonClick"/>
+
+            <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Scroll Screen"
+                    android:id="@+id/buttonGotoScrollScreen"
+                    android:layout_below="@+id/buttonGotoDatePicker"
+                    android:layout_alignLeft="@+id/buttonGotoDatePicker"
+                    android:onClick="onButtonClick"/>
+
+            <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Input with Spell Check"
+                    android:id="@+id/buttonGotoSpellCheck"
+                    android:layout_below="@+id/buttonGotoViewData"
+                    android:layout_alignLeft="@+id/buttonGotoViewData"
+                    android:onClick="onButtonClick"
+                    android:layout_gravity="center"/>
+
+            <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Directional Swipe Measurer"
+                    android:id="@+id/buttonGotoDirectionalSwipe"
+                    android:layout_below="@+id/buttonGotoSpellCheck"
+                    android:layout_alignLeft="@+id/buttonGotoSpellCheck"
+                    android:onClick="onButtonClick"
+                    android:layout_gravity="center"/>
+
+            <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Views Sample"
+                    android:id="@+id/buttonGotoViewsSample"
+                    android:layout_below="@+id/buttonGotoDirectionalSwipe"
+                    android:layout_alignLeft="@+id/buttonGotoDirectionalSwipe"
+                    android:onClick="onButtonClick"/>
+
+            <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="View Data"
+                    android:id="@+id/buttonGotoViewData"
+                    android:layout_below="@+id/buttonGotoViewsSample"
+                    android:layout_alignLeft="@+id/buttonGotoViewsSample"
+                    android:onClick="onButtonClick"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Orientations"
+                android:id="@+id/buttonGotoOrientations"
+                android:layout_below="@+id/buttonGotoViewData"
+                android:layout_alignLeft="@+id/buttonGotoViewData"
+                android:onClick="onButtonClick"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="List View"
+                android:id="@+id/buttonGotoListView"
+                android:layout_below="@+id/buttonGotoOrientations"
+                android:layout_alignLeft="@+id/buttonGotoOrientations"
+                android:onClick="onButtonClick"/>
+
+
+            <ImageButton
+                android:id="@+id/imageButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_launcher"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Scroll Webview"
+                android:id="@+id/buttonScrollWebView"
+                android:layout_below="@+id/imageButton"
+                android:layout_alignLeft="@+id/imageButton"
+                android:onClick="onButtonClick"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Its Scrollplicated"
+                android:id="@+id/buttonScrollplicated"
+                android:layout_below="@+id/buttonScrollWebView"
+                android:layout_alignLeft="@+id/buttonScrollWebView"
+                android:onClick="onButtonClick"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Multiscroll"
+                android:id="@+id/buttonMultiScoll"
+                android:layout_below="@+id/buttonScrollplicated"
+                android:layout_alignLeft="@+id/buttonScrollplicated"
+                android:onClick="onButtonClick"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Shortscroll"
+                android:id="@+id/buttonShortScroll"
+                android:layout_below="@+id/buttonMultiScoll"
+                android:layout_alignLeft="@+id/buttonMultiScoll"
+                android:onClick="onButtonClick"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Horizontalscroll"
+                android:id="@+id/buttonHoriScroll"
+                android:layout_below="@+id/buttonShortScroll"
+                android:layout_alignLeft="@+id/buttonShortScroll"
+                android:onClick="onButtonClick"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="ListView"
+                android:id="@+id/buttonListView"
+                android:layout_below="@+id/buttonListView"
+                android:layout_alignLeft="@+id/buttonListView"
+                android:onClick="onButtonClick"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="ListViewLong"
+                android:id="@+id/buttonListViewLong"
+                android:layout_below="@+id/buttonHoriScroll"
+                android:layout_alignLeft="@+id/buttonHoriScroll"
+                android:onClick="onButtonClick"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="RecycleView"
+                android:id="@+id/recycleView"
+                android:layout_below="@+id/buttonListViewLong"
+                android:layout_alignLeft="@+id/buttonListViewLong"
+                android:onClick="onButtonClick"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="RecycleViewLong"
+                android:id="@+id/recycleViewLong"
+                android:layout_below="@+id/recycleView"
+                android:layout_alignLeft="@+id/recycleView"
+                android:onClick="onButtonClick"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Text fields"
+                android:id="@+id/buttonGotoTextfieldsView"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="onButtonClick" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Drag and Drop"
+                android:id="@+id/buttonDragAndDropView"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="onButtonClick" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Location"
+                android:id="@+id/buttonGotoLocation"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="onButtonClick" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Crash on purpose!"
+                android:id="@+id/buttonCrashOnPurpose"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="onButtonClick" />
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Native Crash on purpose!"
+                android:id="@+id/buttonNativeCrashOnPurpose"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="onButtonClick" />
+
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Web View Swipe"
+                android:id="@+id/buttonWebViewSwipe"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="onButtonClick" />
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

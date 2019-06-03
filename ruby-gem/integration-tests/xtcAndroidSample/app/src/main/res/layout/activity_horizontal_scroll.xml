@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.xamarin.xtcandroidsample.HorizontalScrollActivity">
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/horizontalScrollView2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <AbsoluteLayout
+            android:layout_width="1000dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/horizontalScrollAbs">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="0dp"
+                android:layout_y="0dp"
+                android:id="@+id/buttonStart"
+                android:text="Start"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="100dp"
+                android:layout_y="0dp"
+                android:id="@+id/buttonCenter"
+                android:text="Center"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="300dp"
+                android:layout_y="0dp"
+                android:id="@+id/buttonEnd"
+                android:text="End"/>
+            </AbsoluteLayout>
+    </HorizontalScrollView>
+
+
+</RelativeLayout>
