@@ -1,4 +1,3 @@
-require 'pry'
 
 Given /^I see a view with orientation "(.*)"$/ do |orientation|
   scroll_to_push_button 'Orientations'
