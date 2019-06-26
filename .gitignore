@@ -3,7 +3,6 @@ gen
 staging
 instrumentation_backend/.settings
 instrumentation_backend/assets/foo.bar
-*.png
 *.swp
 *.*~
 **/.DS_STORE
