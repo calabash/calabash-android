@@ -27,6 +27,15 @@ $ bundle exec calabash-android run app/build/outputs/apk/debug/NativeTestApp.apk
 cucumber features/webview.feature:4 # Scenario: Querying for elements inside a non-cross domain iframe
 ```
 
+There are more tests in `ruby-gem/api` against the NativeTestApp, but
+the binary has been committed to git - find it in
+ruby-gem/api/features/support/apps/general.apk.  That is an older
+version of NativeTestApp.  The ruby-gem/api is probably a more
+comprehensive set of tests against the calabash-android API that the
+features in this directory.  Someone should copy the features, steps,
+and hooks, from ruby-gem/api to here.  It might be trick to merge the
+feature/support/hooks.rb.
+
 ## Submit to App Center
 
 Work in progress.
