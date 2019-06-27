@@ -1,0 +1,19 @@
+jobs:
+- job:
+  strategy:
+    matrix:
+      Mojave:
+        IMAGE_POOL: 'macOS-10.14'
+      Ubuntu-16:
+        IMAGE_POOL: 'ubuntu-16.04'
+  pool:
+    vmImage: $(IMAGE_POOL)
+
+  steps:
+  - task: Gradle@2
+    inputs:
+      workingDirectory: 'ruby-gem/integration-tests/NativeTestApp'
+      gradleWrapperFile: 'ruby-gem/integration-tests/NativeTestApp/gradlew'
+      gradleOptions: '-Xmx3072m'
+      publishJUnitResults: false
+      tasks: 'assemble'
