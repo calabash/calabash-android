@@ -1,3 +1,8 @@
+### 0.9.10
+
+* add old xtc test app and tests #910
+* Update build settings for integration test app #911
+
 ### 0.9.9
 
 Users can update to ruby 2.6 and use whatever version bundler they would
