@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="#testPackage#"
-    android:versionCode="4"
-    android:versionName="0.4.0">
+    android:versionCode="10"
+    android:versionName="0.9.10">
 
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="28" />
 
@@ -58,5 +58,4 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
-
 </manifest>
