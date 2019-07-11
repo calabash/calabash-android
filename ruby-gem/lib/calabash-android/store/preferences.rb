@@ -8,7 +8,7 @@ module Calabash
 
     # Users preferences persisted across runs:
     #
-    # ~/.calabash/preferences/preferences.json
+    # ~/.test-cloud-dev/preferences/preferences.json
     class Preferences
       def initialize
         dot_dir = Calabash::Android::DotDir.directory
