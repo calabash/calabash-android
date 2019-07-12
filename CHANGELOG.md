@@ -1,3 +1,15 @@
+### 0.9.11
+
+The TestServer.apk in 0.9.10 had a fatal bug.
+
+In 0.9.11, the TestServer.apk has been fixed.
+
+This provides preliminary support for running against Android Q
+devices.  In Android Q beta 4 we know that the test server would
+not start on Android Emulators.  The workaround is to test on
+devices.  We believe Q beta 5 will contain a fix for this problem,
+but we have not tested this.
+
 ### 0.9.10
 
 * add old xtc test app and tests #910

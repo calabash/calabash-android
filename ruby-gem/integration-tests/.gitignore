@@ -8,4 +8,3 @@ tags
 test_servers
 *.png
 !NativeTestApp/**/*.png
-!Gemfile.lock
