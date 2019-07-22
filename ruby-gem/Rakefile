@@ -4,8 +4,10 @@ module Calabash
   module Android
     module Rake
       def self.find_server_repo_or_raise
-        calabash_server_dir = ENV['CALABASH_SERVER_PATH'] ||
-          File.join(File.dirname(__FILE__), '..', '..', 'calabash-android-server')
+        calabash_server_dir =
+          File.expand_path(ENV['CALABASH_SERVER_PATH'] ||
+                           File.join(File.dirname(__FILE__), '..', '..',
+                                     'calabash-android-server'))
 
         unless File.exist?(calabash_server_dir) &&
             File.exists?(File.join(calabash_server_dir, "server", "calabash-js", "src"))
@@ -38,7 +40,7 @@ For full instuctions see: https://github.com/calabash/calabash-android/wiki/Buil
         if ENV["SKIP_VERSION_CHECK"] == "1"
           puts "Skipping gem/server version check"
         else
-          test_server_dir = File.join(self.find_server_repo_or_raise, "server")
+          test_server_dir = self.find_server_repo_or_raise
 
           if test_server_version != Calabash::Android::VERSION
             raise(%Q[
@@ -56,8 +58,8 @@ to match gem version:
       end
 
       def self.build_test_apk
-        test_server_dir = File.join(self.find_server_repo_or_raise, "server")
-        Dir.chdir(test_server_dir) do
+        test_server_dir = self.find_server_repo_or_raise
+        Dir.chdir(File.join(test_server_dir, "server")) do
           system("./gradlew clean assembleAndroidTest")
           STDOUT.sync = true
 
@@ -72,8 +74,7 @@ to match gem version:
         FileUtils.rm_rf "test_servers"
         FileUtils.mkdir_p "test_servers"
 
-        FileUtils.cp(File.join(test_server_dir, "app", "build", "outputs",
-                               "apk", "androidTest", "debug", "TestServer.apk"),
+        FileUtils.cp(File.join(test_server_dir,"TestServer.apk"),
                      File.join(File.dirname(__FILE__),
                                'lib/calabash-android/lib/TestServer.apk'))
         FileUtils.cp(File.join(test_server_dir, "AndroidManifest.xml"),

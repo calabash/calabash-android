@@ -1,3 +1,9 @@
+### 0.9.12
+
+Fixes a fatal error in the Android Test Server:
+
+* location mocking: only stop mocking if we started #95
+
 ### 0.9.11
 
 The TestServer.apk in 0.9.10 had a fatal bug.
