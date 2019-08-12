@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+
+gem "calabash-android", path: "../"
+gem "xamarin-test-cloud", "~> 2.3"
+gem "pry"
+gem "pry-nav"

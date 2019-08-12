@@ -16,7 +16,7 @@ Please see [xamarin.com/test-cloud](http://xamarin.com/test-cloud).
 If you have any questions on Calabash-Android, please use the Google group [http://groups.google.com/group/calabash-android](http://groups.google.com/group/calabash-android)
 
 ### Documentation
-The documention is split into the following sections:
+The documentation is split into the following sections:
 
 * [Installation](documentation/installation.md)
 * [Ruby API](documentation/ruby_api.md)
@@ -71,8 +71,9 @@ To run your test:
     calabash-android run <apk>
 
 Calabash-android will install an instrumentation along with your app when executing the app. We call this instrumentation for "test server". The "test server" has special permission that allows it to interact very closely with your app during test.
-Everytime you test a new binary or use an upgraded version of calabash a new test server will be build.
-The test server is an intrumentation that will run along with your app on the device to execute the test.
+
+Every time you test a new binary or use an upgraded version of calabash a new test server will be build. The test server is an intrumentation that will run along with your app on the device to execute the test.
+
 
 ### Screenshot location
 Screenshots are placed in the current working directory by default. The location can be changed by setting the `SCREENSHOT_PATH` environment variable.

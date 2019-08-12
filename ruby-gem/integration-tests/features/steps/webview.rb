@@ -1,9 +1,9 @@
+
 Given(/^I am in a webview with an iframe$/) do
   ensure_app_installed
   start_test_server_in_background
-  touch("* marked:'Web View'")
+  touch("* marked:'Frames Web View'")
   wait_for_element_exists("webview")
-  query("webview", loadUrl: "https://cdn.rawgit.com/calabash/calabash-android/master/ruby-gem/integration-tests/features/support/data/page_with_iframe.html")
 end
 
 When(/^I search for elements inside an iframe$/) do
@@ -11,8 +11,12 @@ When(/^I search for elements inside an iframe$/) do
 end
 
 Then(/^I should be able to interact with them$/) do
+# TODO: scroll_to("webview css:'iframe' {nodeName LIKE[c] 'IFRAME'} css:'button'") do not work
+#
+  scroll_to("all webview css:'iframe'")
   touch("webview css:'iframe' {nodeName LIKE[c] 'IFRAME'} css:'button'")
   sleep 1
+  #TODO: content loaded by webview does not work, since index.js is not found.
   value = query("webview css:'iframe' css:'#result'").first['textContent']
 
   if value != 'Hello World'

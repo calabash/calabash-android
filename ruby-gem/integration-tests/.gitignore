@@ -1,3 +1,10 @@
-Gemfile
-Gemfile.lock
+# macOS
+.DS_STORE
+
+# emacs and vim
+(.*/)?\#[^/]*\#$
+tags
+
 test_servers
+*.png
+!NativeTestApp/**/*.png

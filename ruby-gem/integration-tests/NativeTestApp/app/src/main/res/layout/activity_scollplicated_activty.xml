@@ -1,0 +1,73 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.xamarin.xtcandroidsample.ScollplicatedActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:text="Its Scollplicated"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView1"
+            android:gravity="center"
+            android:layout_marginTop="12dp"/>
+
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/horizontalScrollView"
+            android:layout_gravity="center" >
+
+            <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/scrollView">
+                <AbsoluteLayout
+                    android:layout_width="5000dp"
+                    android:layout_height="5000dp">
+                    <Button
+                        android:id="@+id/testingButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_x="50dp"
+                        android:layout_y="50dp"
+                        android:text="testing"
+                        />
+                    <Button
+                        android:id="@+id/oneButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_x="400dp"
+                        android:layout_y="300dp"
+                        android:text="one"
+                        />
+
+                    <Button
+                        android:id="@+id/twoButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_x="90dp"
+                        android:layout_y="300dp"
+                        android:text="two"
+                        />
+
+                    <Button
+                        android:id="@+id/middleButton"
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:layout_x="190dp"
+                        android:layout_y="190dp"
+                        android:text="middle"
+                        />
+                </AbsoluteLayout>
+                </ScrollView>
+        </HorizontalScrollView>
+    </LinearLayout>
+</FrameLayout>

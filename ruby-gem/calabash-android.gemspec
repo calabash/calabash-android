@@ -4,7 +4,8 @@ Gem::Specification.new do |s|
   s.name        = "calabash-android"
   s.version     = begin
     file = "#{File.expand_path(File.join(File.dirname(__FILE__),
-                                      "lib", "calabash-android", "version.rb"))}"
+                                         "lib", "calabash-android",
+                                         "version.rb"))}"
     m = Module.new
     m.module_eval IO.read(file).force_encoding("utf-8")
     version = m::Calabash::Android::VERSION
@@ -22,7 +23,7 @@ into a valid version, e.g. 1.2.3 or 1.2.3.pre10
   s.email       = ["jonas@lesspainful.com"]
   s.homepage    = "http://github.com/calabash"
   s.summary     = %q{Client for calabash-android for automated functional testing on Android}
-  s.description = %q{calabash-android drives tests for native  and hybrid Android apps. }
+  s.description = %q{calabash-android drives tests for native and hybrid Android apps. }
   s.executables   = "calabash-android"
   s.require_paths = ["lib"]
   s.files         = lambda do
@@ -43,11 +44,10 @@ into a valid version, e.g. 1.2.3 or 1.2.3.pre10
   s.add_dependency( 'json' )
   s.add_dependency( 'cucumber' )
   s.add_dependency( "slowhandcuke", '~> 0.0.3')
-  s.add_dependency( "rubyzip", "~> 1.2" )
+  s.add_dependency( "rubyzip", ">= 1.2.2", "< 1.3")
   s.add_dependency( "awesome_print", '~> 1.2')
   s.add_dependency( 'httpclient', '>= 2.7.1', '< 3.0')
   s.add_dependency( 'escape', '~> 0.0.4')
-  s.add_dependency( 'luffa' )
 
   s.add_development_dependency( 'rake', '~> 10.3' )
   s.add_development_dependency( 'yard', '>= 0.9.12', '< 1.0' )
