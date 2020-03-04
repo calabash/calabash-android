@@ -5,15 +5,8 @@ Welcome to Calabash for Android
 >After delivering support for the final releases of iOS 11 and Android 8 operating systems, Microsoft will discontinue our contributions to developing Calabash, the open-source mobile app testing tool. We hope that the community will continue to fully adopt and maintain it. As part of our transition on the development of Calabash, we've provided an overview of mobile app UI and end-to-end testing frameworks as a starting point for teams who are looking to re-evaluate their testing strategy. Please see our [Mobile App Testing Frameworks Overview](https://docs.microsoft.com/en-us/appcenter/migration/test-cloud/frameworks) document.
 
 Calabash is an automated testing technology for Android and iOS native and hybrid applications.
-This repository contains support for Android, for iOS, see [Calabash Landing Page](http://calaba.sh/).
 
-Calabash is a free open source project, developed and maintained by [Xamarin](http://xamarin.com).
-
-While Calabash is completely free, Xamarin provides a number of commercial services centered around Calabash and quality assurance for mobile, namely Xamarin Test Cloud consisting of hosted test-execution environments which let you execute Calabash tests on a large number of Android and iOS devices.
-
-Please see [xamarin.com/test-cloud](http://xamarin.com/test-cloud).
-
-If you have any questions on Calabash-Android, please use the Google group [http://groups.google.com/group/calabash-android](http://groups.google.com/group/calabash-android)
+Calabash is a free open source project that is looking for a maintainer.
 
 ### Documentation
 The documentation is split into the following sections:
