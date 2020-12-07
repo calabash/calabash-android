@@ -409,7 +409,7 @@ module Calabash module Android
 
       def uninstall_app(package_name)
         exists = application_installed?(package_name)
-        
+
         if exists
           log "Uninstalling: #{package_name}"
           log `#{adb_command} uninstall #{package_name}`
@@ -733,17 +733,11 @@ module Calabash module Android
 
         cmd_arr << "#{package_name(@test_server_path)}/sh.calaba.instrumentationbackend.CalabashInstrumentationTestRunner"
 
-        if options[:with_uiautomator]
-          cmd_arr.insert(2, "-w")
-          shutdown_test_server
-          @adb_shell_pid = Process.spawn(cmd_arr.join(" "), :in => '/dev/null') rescue "Could not execute command to start test server with uiautomator"
-        else
-          cmd = cmd_arr.join(" ")
+        cmd = cmd_arr.join(" ")
 
-          log "Starting test server using:"
-          log cmd
-          raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
-        end
+        log "Starting test server using:"
+        log cmd
+        raise "Could not execute command to start test server" unless system("#{cmd} 2>&1")
 
         Calabash::Android::Retry.retry :tries => 600, :interval => 0.1 do
           raise "App did not start see adb logcat for details" unless app_running?
@@ -838,10 +832,6 @@ Run 'reinstall_test_server' to make sure you have the correct version
 
       def shutdown_test_server
         begin
-          unless @adb_shell_pid.nil?
-            Process.kill("HUP",@adb_shell_pid)
-            @adb_shell_pid = nil
-          end
           http("/kill")
           Timeout::timeout(3) do
             sleep 0.3 while app_running?

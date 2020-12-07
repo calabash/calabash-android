@@ -1,7 +1,7 @@
 module Calabash
   module Android
-    VERSION = "0.9.12.uia4"
-    # Server Commit fdcea4e05fdbcf9508702a176ab2fa2b6e20cf3b
+    VERSION = "0.9.12.uia5"
+    # Server Commit 1f82c787779a5cf98adabc3d083f547713c5a667
 
     # A model of a software release version that can be used to compare two versions.
     #
