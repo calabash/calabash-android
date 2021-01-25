@@ -51,6 +51,10 @@ class JavaKeystore
 
     # E.g. MD5withRSA or MD5withRSAandMGF1
     encryption = signature_algorithm_name.split('with')[1].split('and')[0]
+
+    # keytool with newer java versions has "Signature algorithm name: SHA1withRSA (weak)"
+    encryption.gsub!(' (weak)', '')
+
     signing_algorithm = "SHA1with#{encryption}"
     digest_algorithm = 'SHA1'
 
