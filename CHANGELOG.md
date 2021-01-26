@@ -1,3 +1,8 @@
+### 0.9.14
+
+Support for API 29
+Support for Java > 8
+
 ### 0.9.12
 
 Fixes a fatal error in the Android Test Server:
