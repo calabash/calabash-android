@@ -44,12 +44,12 @@ into a valid version, e.g. 1.2.3 or 1.2.3.pre10
   s.add_dependency( 'json' )
   s.add_dependency( 'cucumber' )
   s.add_dependency( "slowhandcuke", '~> 0.0.3')
-  s.add_dependency( "rubyzip", ">= 1.2.2", "< 1.3")
+  s.add_dependency( "rubyzip", "1.3.0")
   s.add_dependency( "awesome_print", '~> 1.2')
   s.add_dependency( 'httpclient', '>= 2.7.1', '< 3.0')
   s.add_dependency( 'escape', '~> 0.0.4')
 
-  s.add_development_dependency( 'rake', '~> 10.3' )
+  s.add_development_dependency( 'rake', '12.3.3' )
   s.add_development_dependency( 'yard', '>= 0.9.12', '< 1.0' )
   puts RUBY_PLATFORM
   if RUBY_PLATFORM[/darwin/] || RUBY_PLATFORM["linux"]
