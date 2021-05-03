@@ -5,9 +5,10 @@ sudo: false
 
 os:
   - linux
+  - osx
 
 rvm:
-  - 2.3.1
+  - 2.7.1
 
 env:
   - CI_NO_ANDROID_RUNTIME=1
