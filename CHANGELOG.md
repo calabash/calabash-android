@@ -1,4 +1,4 @@
-### 0.9.14
+### 0.9.15
 Changes for Android Test Server:
 * Fixes a process of clearing data
 * Replaces deleted "mServedView" with "getServerViewLocked"
