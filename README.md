@@ -132,6 +132,22 @@ Where **strategy** and **action** can be:
 | isScrollable | is the element scrollable? |
 | isSelected | is the element selected? |
 
+We also have some gestures we can use with the **perform_action** method:
+
+| Gesture | Parameters | Function |
+|--------|----------|-----------|
+| touch_coordinate | x, y | Tap on the screen at the given coordinates |
+| double_tap_coordinate | x, y | Double tap on the screen at the given coordinates |
+| long_press_coordinate | x, y, millis | Long tap on the screen at the given coordinates, for the given milliseconds |
+| drag | origin x, origin y, destination x, destination y, steps | perform a drag gesture, from starting coordinates to a percentage on each axis |
+| drag_coordinates | origin x, origin y, destination x, destination y, steps | perform a drag gesture, from starting coordinates to destination coordinates |
+| drag_leave_keyboard | origin x, origin y, destination x, destination y, steps | perform a drag gesture, from starting coordinates to destination coordinates. Without interfering with the keyboard, if its displayed. |
+| resume_application | package of the application | Restores closed application. |
+| swipe | 'left' or 'right | Performs a left or right swipe |
+| click_on_screen | x, y  | Performs a tap on a x, y percentage of screen size |
+
+
+
 ### Screenshot location
 Screenshots are placed in the current working directory by default. The location can be changed by setting the `SCREENSHOT_PATH` environment variable.
 
