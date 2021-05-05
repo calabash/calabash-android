@@ -67,6 +67,70 @@ Calabash-android will install an instrumentation along with your app when execut
 
 Every time you test a new binary or use an upgraded version of calabash a new test server will be build. The test server is an intrumentation that will run along with your app on the device to execute the test.
 
+Using UIAutomator2
+------------------
+
+To benefit from UIAutomator2 test capabilities (like interacting with other apps or system elements), you must start the test server with:
+`start_test_server_in_background(with_uiautomator: true)`
+
+Then you will be able to use the command perform_action('*method*', *{parameters}*) which includes the following actions.
+
+| Method | Parameter | Function |
+|--------|----------|-----------|
+| uiautomator_touch_text | Text | Tap on element with text |
+| uiautomator_touch_partial_text | Text | Tap on element containing text |
+| pull_notification | none | Open the notification shutter |
+| clear_notifications | none | Clear notifications and close the shutter |
+| uiautomator_text_dump | none | Dumps text from elements in the UI hierarchy |
+| uiautomator_ui_dump | Text | Dumps elements in the UI hierarchy |
+| wifi | 'on' or 'off' | Switch device wifi on or off |
+| wait_for_idle_sync | none | Wait for idle state |
+
+And the more advanced command `uiautomator_execute` which takes 4 arguments.
+
+`perform_action('uiautomator_execute', 'strategy', 'locator', element index, 'action')`
+
+This will return true, and the result of the query if succeeds or an exception if the strategy, or action are invalid.
+If an element is not found, it will return false.
+
+Where **strategy** and **action** can be:
+
+| strategy | description |
+|----------|-------------|
+| class | class type of ui element |
+| res | element resource |
+| desc | ui element description |
+| descContains | ui element description contains |
+| descEndsWith | ui element description ends with |
+| descStartWith | ui element description starts with text |
+| text | ui element with text |
+| textContains | ui element contains text  |
+| textEndsWith | ui element ends with text |
+| textStartWith | ui element starts with text |
+| pkg | package name from application of ui element |
+
+| action | description |
+|----------|-------------|
+| click | tap on element |
+| longClick | long tap on element |
+| getText | get text from element |
+| getContentDescription | get description |
+| getClassName | get class name |
+| getResourceName | get resource name |
+| getVisibleBounds | get coords for visible bounds of element |
+| getVisibleCenter | get coords for visible center of element |
+| getApplicationPackage | get package name of application |
+| getChildCount | number of children elements |
+| clear | clear text from element |
+| isCheckable | can the element be checked? |
+| isChecked | is the element checked? |
+| isClickable | is the element clickable? |
+| isEnabled | is the element enabled? |
+| isFocusable | can the element be focused? |
+| isFocused | is the element focused? |
+| isLongClickable | can the element be long clicked? |
+| isScrollable | is the element scrollable? |
+| isSelected | is the element selected? |
 
 ### Screenshot location
 Screenshots are placed in the current working directory by default. The location can be changed by setting the `SCREENSHOT_PATH` environment variable.
