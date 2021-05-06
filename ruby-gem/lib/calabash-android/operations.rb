@@ -792,7 +792,7 @@ Test-server version #{server_version}
           log "Checking client-server version match..."
 
           if server_version != client_version
-             raise(%Q[
+             log(%Q[
 Calabash Client and Test-server version mismatch.
 
               Client version #{client_version}
