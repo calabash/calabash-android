@@ -63,7 +63,7 @@ module Calabash
         else
           begin
             embed(path, 'image/png', msg)
-          rescue => NoMethodError
+          rescue NoMethodError
             attach(path, 'image/png')
           end
           
