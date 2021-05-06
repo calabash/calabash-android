@@ -158,7 +158,11 @@ module Calabash module Android
 
     def screenshot_embed(options={:prefix => nil, :name => nil, :label => nil})
       path = default_device.screenshot(options)
-      embed(path, "image/png", options[:label] || File.basename(path))
+      begin
+        embed(path, "image/png", options[:label] || File.basename(path))
+      rescue NoMethodError
+        attach(path, "image/png")
+      end  
     end
 
     def screenshot(options={:prefix => nil, :name => nil})
