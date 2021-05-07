@@ -158,7 +158,11 @@ module Calabash module Android
 
     def screenshot_embed(options={:prefix => nil, :name => nil, :label => nil})
       path = default_device.screenshot(options)
-      embed(path, "image/png", options[:label] || File.basename(path))
+      begin
+        embed(path, "image/png", options[:label] || File.basename(path))
+      rescue NoMethodError
+        attach(path, "image/png")
+      end  
     end
 
     def screenshot(options={:prefix => nil, :name => nil})
@@ -792,7 +796,7 @@ Test-server version #{server_version}
           log "Checking client-server version match..."
 
           if server_version != client_version
-             raise(%Q[
+             log(%Q[
 Calabash Client and Test-server version mismatch.
 
               Client version #{client_version}

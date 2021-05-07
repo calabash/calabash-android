@@ -1,3 +1,10 @@
+### 0.9.20
+* Support for Cucumber 6.0
+
+### 0.9.16
+Changes for Android Test Server:
+* Enable UIautomator2 changes
+
 ### 0.9.15
 Changes for Android Test Server:
 * Fixes a process of clearing data
