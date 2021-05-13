@@ -1,11 +1,18 @@
+### 0.9.21
+
+* Update test server, now includes swipe in UIautomator2
+
 ### 0.9.20
+
 * Support for Cucumber 6.0
 
 ### 0.9.16
+
 Changes for Android Test Server:
 * Enable UIautomator2 changes
 
 ### 0.9.15
+
 Changes for Android Test Server:
 * Fixes a process of clearing data
 * Replaces deleted "mServedView" with "getServerViewLocked"
