@@ -170,11 +170,11 @@ def fingerprint_from_apk(app_path)
     Dir.chdir(tmp_dir) do
       FileUtils.cp(app_path, "app.apk")
       FileUtils.mkdir("META-INF")
-
+require 'pry'
+      binding.pry
       Calabash::Utils.with_silent_zip do
         Zip::File.foreach("app.apk") do |z|
           #if /^META-INF\/\w+\.(rsa|dsa)$/i =~ z.name
-            puts z.path
             extract(z.path) { z }
           #end
         end
