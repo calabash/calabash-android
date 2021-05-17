@@ -175,7 +175,7 @@ def fingerprint_from_apk(app_path)
         Zip::File.foreach("app.apk") do |z|
           #if /^META-INF\/\w+\.(rsa|dsa)$/i =~ z.name
           log 'gotcha' if File.exists?("app.apk")  
-          Zip.extract("app.apk") { z }
+          Zip::File.extract("app.apk") { z }
           #end
         end
       end
