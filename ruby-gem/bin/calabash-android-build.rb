@@ -1,6 +1,6 @@
 def calabash_build(app)
   apk_fingerprint = fingerprint_from_apk(app)
-  log "#{app} was signed with a certificate with fingerprint #{apk_fingerprint}"
+  calabash_log "#{app} was signed with a certificate with fingerprint #{apk_fingerprint}"
 
   keystores = JavaKeystore.get_keystores
   if keystores.empty?
@@ -72,7 +72,7 @@ def calabash_build(app)
     begin
 
     rescue => e
-      log e
+      calabash_log e
       raise "Could not sign test server"
     end
   end

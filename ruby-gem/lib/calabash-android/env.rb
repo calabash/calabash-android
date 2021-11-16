@@ -10,7 +10,7 @@ class Env
 
   def self.exit_unless_android_sdk_is_available
     if android_home_path
-      log "Android SDK found at: #{android_home_path}"
+      calabash_log "Android SDK found at: #{android_home_path}"
       return
     end
     puts "Could not find an Android SDK please make sure it is installed."
@@ -27,8 +27,8 @@ class Env
   def self.exit_unless_jdk_is_available
     jdk = jdk_path
     if find_executable_on_path(keytool_executable) || jdk
-      log "JDK found on PATH." if find_executable_on_path(keytool_executable)
-      log "JDK found at: #{jdk}" if jdk
+      calabash_log "JDK found on PATH." if find_executable_on_path(keytool_executable)
+      calabash_log "JDK found at: #{jdk}" if jdk
       return
     end
     puts "Could not find Java Development Kit please make sure it is installed."
@@ -84,7 +84,7 @@ class Env
     zipalign_path = File.join(android_home_path, 'tools', zipalign_executable)
 
     unless File.exists?(zipalign_path)
-      log "Did not find zipalign at '#{zipalign_path}'. Trying to find zipalign in tools directories."
+      calabash_log "Did not find zipalign at '#{zipalign_path}'. Trying to find zipalign in tools directories."
 
       tools_directories.each do |dir|
         zipalign_path = File.join(dir, zipalign_executable)
@@ -93,10 +93,10 @@ class Env
     end
 
     if File.exists?(zipalign_path)
-      log "Found zipalign at '#{zipalign_path}'"
+      calabash_log "Found zipalign at '#{zipalign_path}'"
       zipalign_path
     else
-      log("Did not find zipalign in any of '#{tools_directories.join("','")}'.", true)
+      calabash_log("Did not find zipalign in any of '#{tools_directories.join("','")}'.", true)
       raise 'Could not find zipalign'
     end
   end
@@ -131,7 +131,7 @@ class Env
 
   def self.tools_dir
     tools_dir = tools_directories.first
-    log "Found tools directory at '#{tools_dir}'"
+    calabash_log "Found tools directory at '#{tools_dir}'"
     tools_dir
   end
 

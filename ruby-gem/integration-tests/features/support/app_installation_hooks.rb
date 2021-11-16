@@ -10,9 +10,9 @@ Before do |scenario|
   feature = scenario.feature
   if FeatureMemory.feature != feature || ENV['RESET_BETWEEN_SCENARIOS'] == '1'
     if ENV['RESET_BETWEEN_SCENARIOS'] == '1'
-      log 'New scenario - reinstalling apps'
+      calabash_log 'New scenario - reinstalling apps'
     else
-      log 'First scenario in feature - reinstalling apps'
+      calabash_log 'First scenario in feature - reinstalling apps'
     end
 
     uninstall_apps

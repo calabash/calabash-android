@@ -8,7 +8,7 @@ module Calabash
       include Calabash::Android::MonkeyHelpers
 
       def drag_coordinates(from_x, from_y, to_x, to_y, steps=10, hold_time=0.5, hang_time=0.5)
-        log "Dragging from #{from_x},#{from_y} to #{to_x},#{to_y}"
+        calabash_log "Dragging from #{from_x},#{from_y} to #{to_x},#{to_y}"
         monkey_move_from(from_x, from_y,
                          to_x, to_y,
                          hold_time: hold_time,
