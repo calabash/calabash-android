@@ -4,13 +4,13 @@ class JavaKeystore
 
   def initialize(location, keystore_alias, password, key_password = nil)
     raise "No such keystore file '#{location}'" unless File.exists?(File.expand_path(location))
-    log "Reading keystore data from keystore file '#{File.expand_path(location)}'"
+    calabash_log "Reading keystore data from keystore file '#{File.expand_path(location)}'"
 
     keystore_data = system_with_stdout_on_success(Calabash::Android::Dependencies.keytool_path, '-list', '-v', '-alias', keystore_alias, '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"', '-J"-Duser.language=en-US"')
 
     if keystore_data.nil?
       if keystore_alias.empty?
-        log "Could not obtain keystore data. Will try to extract alias automatically"
+        calabash_log "Could not obtain keystore data. Will try to extract alias automatically"
 
         keystore_data = system_with_stdout_on_success(Calabash::Android::Dependencies.keytool_path, '-list', '-v', '-keystore', location, '-storepass', password, '-J"-Dfile.encoding=utf-8"', '-J"-Duser.language=en-US"')
         aliases = keystore_data.scan(/Alias name\:\s*(.*)/).flatten
@@ -21,14 +21,14 @@ class JavaKeystore
           raise 'Multiple aliases found in keystore. Please specify alias using calabash-android setup'
         else
           keystore_alias = aliases.first
-          log "Extracted keystore alias '#{keystore_alias}'. Continuing"
+          calabash_log "Extracted keystore alias '#{keystore_alias}'. Continuing"
 
           return initialize(location, keystore_alias, password)
         end
       else
         error = "Could not list certificates in keystore. Probably because the password was incorrect."
         @errors = [{:message => error}]
-        log error
+        calabash_log error
         raise error
       end
     end
@@ -37,12 +37,12 @@ class JavaKeystore
     @keystore_alias = keystore_alias
     @password = password
     @key_password = key_password
-    log "Key store data:"
-    log keystore_data
+    calabash_log "Key store data:"
+    calabash_log keystore_data
     @fingerprint = extract_sha1_fingerprint(keystore_data)
     @signature_algorithm_name = extract_signature_algorithm_name(keystore_data)
-    log "Fingerprint: #{fingerprint}"
-    log "Signature algorithm name: #{signature_algorithm_name}"
+    calabash_log "Fingerprint: #{fingerprint}"
+    calabash_log "Signature algorithm name: #{signature_algorithm_name}"
   end
 
   def sign_apk(apk_path, dest_path)
@@ -58,8 +58,8 @@ class JavaKeystore
     signing_algorithm = "SHA1with#{encryption}"
     digest_algorithm = 'SHA1'
 
-    log "Signing using the signature algorithm: '#{signing_algorithm}'"
-    log "Signing using the digest algorithm: '#{digest_algorithm}'"
+    calabash_log "Signing using the signature algorithm: '#{signing_algorithm}'"
+    calabash_log "Signing using the digest algorithm: '#{digest_algorithm}'"
 
     cmd_args = {
       '-sigfile' => 'CERT',
@@ -88,7 +88,7 @@ class JavaKeystore
   def system_with_stdout_on_success(cmd, *args)
     a = Escape.shell_command(args)
     cmd = "\"#{cmd}\" #{a.gsub("'", '"')}"
-    log cmd
+    calabash_log cmd
     out = `#{cmd}`
     if $?.exitstatus == 0
       out
@@ -103,14 +103,14 @@ class JavaKeystore
     if File.exists? path
       keystore = JavaKeystore.new(path, 'androiddebugkey', 'android')
       if keystore.errors
-        log "Trying to "
+        calabash_log "Trying to "
         nil
       else
-        log "Unlocked keystore at #{path} - fingerprint: #{keystore.fingerprint}"
+        calabash_log "Unlocked keystore at #{path} - fingerprint: #{keystore.fingerprint}"
         keystore
       end
     else
-      log "Trying to read keystore from: #{path} - no such file"
+      calabash_log "Trying to read keystore from: #{path} - no such file"
       nil
     end
   end
@@ -136,7 +136,7 @@ class JavaKeystore
       fail_if_key_missing(keystore, "keystore_password")
       fail_if_key_missing(keystore, "keystore_alias")
       keystore["keystore_location"] = File.expand_path(keystore["keystore_location"])
-      log("Keystore location specified in #{File.exist?(".calabash_settings") ? ".calabash_settings" : "calabash_settings"}.")
+      calabash_log("Keystore location specified in #{File.exist?(".calabash_settings") ? ".calabash_settings" : "calabash_settings"}.")
       JavaKeystore.new(keystore["keystore_location"], keystore["keystore_alias"], keystore["keystore_password"], keystore['key_password'])
   end
 
