@@ -65,4 +65,5 @@ into a valid version, e.g. 1.2.3 or 1.2.3.pre10
   s.add_development_dependency("listen", "3.0.6")
   s.add_development_dependency( "growl" )
   s.add_development_dependency( "stub_env" )
+  s.add_development_dependency( "rexml" )
 end
