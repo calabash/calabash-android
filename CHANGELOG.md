@@ -1,3 +1,7 @@
+### 0.9.26
+
+* Upgraded a vulnerable dependency - rubyzip
+
 ### 0.9.21
 
 * Update test server, now includes swipe in UIautomator2
