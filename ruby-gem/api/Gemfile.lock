@@ -59,4 +59,4 @@ DEPENDENCIES
   xamarin-test-cloud (~> 2.0)
 
 BUNDLED WITH
-   1.17.3
+   2.3.16
