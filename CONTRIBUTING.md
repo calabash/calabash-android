@@ -39,7 +39,7 @@ $ git checkout master
 $ git pull
 $ git checkout -b release/1.2.3
 
-1. Bump the ruby version in lib/calabash-android/verison.rb
+1. Bump the ruby version in lib/calabash-android/version.rb
 2. Build the TestServer.apk.
    $ rake build_server
 3. Update the CHANGELOG.
