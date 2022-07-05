@@ -1,6 +1,6 @@
 ### 0.9.26
 
-* Upgraded a vulnerable dependencies - rubyzip, json
+* Upgraded a vulnerable dependencies - rubyzip, json, bundler
 
 ### 0.9.21
 
