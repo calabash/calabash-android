@@ -7,7 +7,7 @@ PATH
       escape (~> 0.0.4)
       httpclient (>= 2.7.1, < 3.0)
       json
-      rubyzip (= 1.2.3)
+      rubyzip (= 1.3.0)
       slowhandcuke (~> 0.0.3)
 
 GEM
@@ -36,7 +36,7 @@ GEM
     multi_json (1.13.1)
     multi_test (0.1.2)
     retriable (2.0.2)
-    rubyzip (1.2.3)
+    rubyzip (1.3.0)
     slowhandcuke (0.0.3)
       cucumber
     thor (0.20.3)
