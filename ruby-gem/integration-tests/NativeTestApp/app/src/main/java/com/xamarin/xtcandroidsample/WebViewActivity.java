@@ -29,7 +29,7 @@ public class WebViewActivity extends Activity {
             if (showFrames) {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1)
                 {
-                    webView.loadUrl("https://s3-eu-west-1.amazonaws.com/calabash-files/webpages-for-tests/page.html");
+                    webView.loadUrl("https://xtcruntimeartifacts.blob.core.windows.net/calabash-files/webpages-for-tests/page.html");
                 }
                 else {
                     webView.loadData(
